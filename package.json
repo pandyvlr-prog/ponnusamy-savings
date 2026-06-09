@@ -1,0 +1,21 @@
+{
+  "name": "ponnusamy-savings",
+  "version": "1.0.0",
+  "description": "Simple Chit Management for Everyone",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx http-server -p 3000",
+    "start": "npx http-server -p 3000"
+  },
+  "keywords": [
+    "chit",
+    "savings",
+    "finance",
+    "manager"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
