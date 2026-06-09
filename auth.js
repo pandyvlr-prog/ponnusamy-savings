@@ -4,6 +4,7 @@ const supabaseAnonKey = 'sb_publishable_qtUyeCpKdqAYYQsIDKiStQ_8ZM39iIU';
 let supabaseClient = null;
 try {
     supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    window.supabaseClient = supabaseClient;
 } catch (e) {
     console.error("Supabase failed to load", e);
     alert("Error: Failed to load Supabase! Please ensure you have an internet connection and are not running on file:/// with restrictions.");
@@ -15,6 +16,7 @@ const AuthState = {
     currentUser: null,
     theme: 'light'
 };
+window.AuthState = AuthState;
 
 async function initAuth() {
     if (!supabaseClient) {
@@ -30,13 +32,14 @@ async function initAuth() {
         if (session) {
             AuthState.isAuthenticated = true;
             AuthState.currentUser = {
+                id: session.user.id, // Ensure ID is passed down!
                 name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
                 email: session.user.email,
                 avatar: session.user.user_metadata?.avatar_url || null
             };
             navigateTo('screen-dashboard');
             updateProfileUI();
-            if (typeof loadState === 'function') loadState();
+            if (typeof loadState === 'function') await loadState();
             if (typeof renderDashboard === 'function') renderDashboard();
         } else {
             AuthState.isAuthenticated = false;
@@ -48,22 +51,23 @@ async function initAuth() {
     }
 
     // Listen for auth changes (like returning from Google login redirect)
-    supabaseClient.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
             AuthState.isAuthenticated = true;
             AuthState.currentUser = {
+                id: session.user.id, // Ensure ID is passed down!
                 name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
                 email: session.user.email,
                 avatar: session.user.user_metadata?.avatar_url || null
             };
             navigateTo('screen-dashboard');
             updateProfileUI();
-            if (typeof loadState === 'function') loadState();
+            if (typeof loadState === 'function') await loadState();
             if (typeof renderDashboard === 'function') renderDashboard();
         } else if (event === 'SIGNED_OUT') {
             AuthState.isAuthenticated = false;
             AuthState.currentUser = null;
-            if (typeof loadState === 'function') loadState();
+            if (typeof loadState === 'function') await loadState();
             navigateTo('screen-landing');
         }
     });

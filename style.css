@@ -383,11 +383,11 @@ body {
 
 /* Floating Action Button */
 .fab-btn {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: var(--primary-gradient);
     color: white;

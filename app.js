@@ -105,36 +105,73 @@ function getStorageKey(key) {
     return `ponnusamy_${key}`;
 }
 
-function loadState() {
+async function loadState() {
     try {
+        // Fallback Local Storage load first
         const storedGroups = localStorage.getItem(getStorageKey('groups'));
         const storedMembers = localStorage.getItem(getStorageKey('members'));
         const storedTemplates = localStorage.getItem('ponnusamy_templates');
-        const storedEmail = localStorage.getItem(getStorageKey('backup_email'));
         
         State.groups = storedGroups ? JSON.parse(storedGroups) : [];
         State.members = storedMembers ? JSON.parse(storedMembers) : [];
         State.templates = storedTemplates ? JSON.parse(storedTemplates) : [];
-        State.backupEmail = storedEmail || '';
+
+        // If authenticated with Supabase, pull cloud data
+        if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+            const { data, error } = await window.supabaseClient
+                .from('user_data')
+                .select('*')
+                .eq('user_id', window.AuthState.currentUser.id)
+                .single();
+                
+            if (data) {
+                // We have cloud data! Override local state
+                State.groups = data.groups_data || [];
+                State.members = data.members_data || [];
+                State.templates = data.templates_data || [];
+                
+                // Save to local storage for offline use
+                localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
+                localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
+                localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates));
+            } else if (error && error.code === 'PGRST116') {
+                // No cloud data yet (row not found). Let's push our local data!
+                await saveState(); 
+            } else if (error) {
+                console.error("Supabase load error:", error);
+            }
+        }
+        
     } catch (e) {
-        console.error('Error loading state from LocalStorage:', e);
-        showNotification('Failed to load saved data. Starting fresh.', 'error');
-        State.groups = [];
-        State.members = [];
-        State.templates = [];
-        State.backupEmail = '';
+        console.error('Error loading state:', e);
     }
 }
 
-function saveState() {
+async function saveState() {
     try {
+        // Always save locally first for speed and offline fallback
         localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
         localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
         localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates || []));
-        localStorage.setItem(getStorageKey('backup_email'), State.backupEmail || '');
+        
+        // If authenticated with Supabase, sync to cloud
+        if (window.supabaseClient && window.AuthState?.isAuthenticated && window.AuthState.currentUser?.id) {
+            const { error } = await window.supabaseClient
+                .from('user_data')
+                .upsert({
+                    user_id: window.AuthState.currentUser.id,
+                    groups_data: State.groups,
+                    members_data: State.members,
+                    templates_data: State.templates,
+                    updated_at: new Date().toISOString()
+                });
+                
+            if (error) {
+                console.error("Supabase save error:", error);
+            }
+        }
     } catch (e) {
-        console.error('Error saving state to LocalStorage:', e);
-        showNotification('Storage full! Could not save updates.', 'error');
+        console.error('Error saving state:', e);
     }
 }
 
