@@ -4815,12 +4815,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function initAppearanceSettings() {
-    const savedFont = localStorage.getItem('pms_font_family') || \"'Lora', serif\";
+    const savedFont = localStorage.getItem('pms_font_family') || "'Lora', serif";
     const savedSize = localStorage.getItem('pms_font_size') || "16";
 
     document.documentElement.style.setProperty('--font-body', savedFont);
     document.documentElement.style.setProperty('--font-heading', savedFont);
-    document.documentElement.style.fontSize = `px`;
+    document.documentElement.style.fontSize = savedSize + "px";
 
     const fontSelect = document.getElementById('settings-font-family');
     const sizeSlider = document.getElementById('settings-font-size');
@@ -4829,7 +4829,7 @@ function initAppearanceSettings() {
     if (fontSelect) fontSelect.value = savedFont;
     if (sizeSlider) {
         sizeSlider.value = savedSize;
-        if(sizeLabel) sizeLabel.textContent = `px`;
+        if(sizeLabel) sizeLabel.textContent = savedSize + "px";
     }
 
     if (fontSelect) {
@@ -4844,9 +4844,9 @@ function initAppearanceSettings() {
     if (sizeSlider) {
         sizeSlider.addEventListener('input', (e) => {
             const size = e.target.value;
-            if(sizeLabel) sizeLabel.textContent = `px`;
+            if(sizeLabel) sizeLabel.textContent = size + "px";
             localStorage.setItem('pms_font_size', size);
-            document.documentElement.style.fontSize = `px`;
+            document.documentElement.style.fontSize = size + "px";
         });
     }
 }
