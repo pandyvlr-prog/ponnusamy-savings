@@ -16,10 +16,10 @@
     --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Dark Mode Theme Variables (Default) */
-    --bg-primary: #070709;
-    --bg-surface: #0e0e12;
-    --bg-surface-elevated: #16161d;
-    --bg-surface-glass: rgba(14, 14, 18, 0.8);
+    --bg-primary: transparent;
+    --bg-surface: rgba(14, 14, 18, 0.7);
+    --bg-surface-elevated: rgba(22, 22, 29, 0.85);
+    --bg-surface-glass: rgba(14, 14, 18, 0.6);
     
     --primary: #d4af37; /* Luxury Gold */
     --primary-hover: #b8860b;
