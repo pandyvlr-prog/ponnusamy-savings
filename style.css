@@ -21,17 +21,17 @@
     --bg-surface-elevated: rgba(22, 22, 29, 0.85);
     --bg-surface-glass: rgba(14, 14, 18, 0.6);
     
-    --primary: #d4af37; /* Luxury Gold */
-    --primary-hover: #b8860b;
-    --primary-glow: rgba(212, 175, 55, 0.12);
-    --primary-gradient: linear-gradient(135deg, #fce07e 0%, #d4af37 50%, #b8860b 100%);
-    --title-gradient: linear-gradient(to right, #ffffff, #fce07e);
+    --primary: #ff5f2e; /* Vibrant Sunset Orange */
+    --primary-hover: #e04b21;
+    --primary-glow: rgba(255, 95, 46, 0.15);
+    --primary-gradient: linear-gradient(135deg, #ff8b3d 0%, #ff5f2e 100%);
+    --title-gradient: linear-gradient(to right, #ffffff, #ff8b3d);
     
-    --accent: #dfb24c; 
-    --accent-glow: rgba(223, 178, 76, 0.08);
+    --accent: #ff8b3d; 
+    --accent-glow: rgba(255, 139, 61, 0.1);
     
-    --blue: #d4af37; 
-    --blue-glow: rgba(212, 175, 55, 0.08);
+    --blue: #ff5f2e; 
+    --blue-glow: rgba(255, 95, 46, 0.1);
     
     --red: #ff453a; 
     --red-hover: #ff3b30;
@@ -76,17 +76,17 @@
     --bg-surface-elevated: rgba(255, 255, 255, 0.95); /* Elevated cement depth */
     --bg-surface-glass: rgba(255, 255, 255, 0.7);
     
-    --primary: #c59b3f; /* Crisp Gold */
-    --primary-hover: #a17822;
-    --primary-glow: rgba(197, 155, 63, 0.06);
-    --primary-gradient: linear-gradient(135deg, #dfb24c 0%, #c59b3f 100%);
-    --title-gradient: linear-gradient(to right, #1c1c1e, #a17822);
+    --primary: #ff5f2e; /* Vibrant Sunset Orange */
+    --primary-hover: #e04b21;
+    --primary-glow: rgba(255, 95, 46, 0.1);
+    --primary-gradient: linear-gradient(135deg, #ff8b3d 0%, #ff5f2e 100%);
+    --title-gradient: linear-gradient(to right, #1c1c1e, #ff5f2e);
     
-    --accent: #a17822;
-    --accent-glow: rgba(161, 120, 34, 0.05);
+    --accent: #ff5f2e;
+    --accent-glow: rgba(255, 95, 46, 0.08);
     
-    --blue: #a17822;
-    --blue-glow: rgba(161, 120, 34, 0.05);
+    --blue: #ff5f2e;
+    --blue-glow: rgba(255, 95, 46, 0.08);
     
     --red: #ff3b30;
     --red-hover: #e02b20;
@@ -173,10 +173,10 @@ body::before {
     position: absolute;
     border-radius: 50%;
     background: #000000;
-    box-shadow: inset -10px -10px 40px rgba(255, 0, 0, 0.4), 
-                inset 10px 10px 20px rgba(255, 0, 0, 0.2), 
-                0 0 30px rgba(255, 0, 0, 0.3);
-    border: 1px solid rgba(255, 0, 0, 0.3);
+    box-shadow: inset -10px -10px 40px rgba(255, 95, 46, 0.4), 
+                inset 10px 10px 20px rgba(255, 95, 46, 0.2), 
+                0 0 30px rgba(255, 95, 46, 0.3);
+    border: 1px solid rgba(255, 95, 46, 0.3);
 }
 
 .sphere-1 { width: 300px; height: 300px; top: -100px; left: -50px; animation: floatHorror 15s infinite ease-in-out alternate, breatheHorror 4s infinite ease-in-out alternate; }
@@ -195,8 +195,8 @@ body::before {
 @keyframes floatHorror2 { 0% { transform: translate(0px, 0px) rotate(0deg) scale(1); } 100% { transform: translate(-30px, 30px) rotate(-10deg) scale(1.1); } }
 @keyframes floatHorror3 { 0% { transform: translate(0px, 0px) scale(1); } 100% { transform: translate(40px, -20px) scale(1.05); } }
 @keyframes breatheHorror {
-    0% { box-shadow: inset -10px -10px 40px rgba(255, 0, 0, 0.2), inset 10px 10px 20px rgba(255, 0, 0, 0.1), 0 0 20px rgba(255, 0, 0, 0.1); border-color: rgba(255, 0, 0, 0.1); }
-    100% { box-shadow: inset -15px -15px 60px rgba(255, 0, 0, 0.6), inset 15px 15px 30px rgba(255, 0, 0, 0.4), 0 0 50px rgba(255, 0, 0, 0.5); border-color: rgba(255, 0, 0, 0.6); }
+    0% { box-shadow: inset -10px -10px 40px rgba(255, 95, 46, 0.2), inset 10px 10px 20px rgba(255, 95, 46, 0.1), 0 0 20px rgba(255, 95, 46, 0.1); border-color: rgba(255, 95, 46, 0.1); }
+    100% { box-shadow: inset -15px -15px 60px rgba(255, 95, 46, 0.6), inset 15px 15px 30px rgba(255, 95, 46, 0.4), 0 0 50px rgba(255, 95, 46, 0.5); border-color: rgba(255, 95, 46, 0.6); }
 }
 
 /* App Container Shell - Full viewport wide website dashboard */
@@ -230,26 +230,23 @@ body::before {
 /* Screen Transitions */
 .app-screen {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(30px) scale(0.96);
-    transform: translateY(10px) scale(0.98);
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(20px) scale(0.97);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
     z-index: 10;
+    visibility: hidden;
 }
 
 .app-screen.active {
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0) scale(1);
-    transform: translateY(0) scale(1);
     z-index: 20;
+    visibility: visible;
 }
 
 /* Custom Scrollbar for Inner Content */
