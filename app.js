@@ -4136,3 +4136,74 @@ function generateGlobalPdfReport() {
         showNotification('Error generating PDF', 'error');
     });
 }
+
+
+
+/* --- PWA Install Logic --- */
+let deferredPrompt;
+const pwaPopup = document.getElementById('pwa-install-prompt');
+const btnPwaInstall = document.getElementById('pwa-install-btn');
+const btnPwaLater = document.getElementById('pwa-later-btn');
+const btnPwaClose = document.getElementById('pwa-close-btn');
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('SW registration failed: ', err);
+        });
+    });
+}
+
+// Handle Install Prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Show our custom UI
+    if (pwaPopup && localStorage.getItem('pwaPromptDeclined') !== 'true') {
+        pwaPopup.style.display = 'flex';
+        // Small delay to allow display:flex to apply before adding class for transition
+        setTimeout(() => {
+            pwaPopup.classList.add('show');
+        }, 50);
+    }
+});
+
+function hidePwaPopup(decline = false) {
+    if (pwaPopup) {
+        pwaPopup.classList.remove('show');
+        setTimeout(() => {
+            pwaPopup.style.display = 'none';
+        }, 500); // match transition duration
+    }
+    if (decline) {
+        localStorage.setItem('pwaPromptDeclined', 'true');
+    }
+}
+
+if (btnPwaClose) btnPwaClose.addEventListener('click', () => hidePwaPopup(false));
+if (btnPwaLater) btnPwaLater.addEventListener('click', () => hidePwaPopup(true));
+
+if (btnPwaInstall) {
+    btnPwaInstall.addEventListener('click', async () => {
+        hidePwaPopup();
+        if (deferredPrompt) {
+            // Show the install prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(User response to the install prompt:  + outcome);
+            // We've used the prompt, and can't use it again, throw it away
+            deferredPrompt = null;
+        }
+    });
+}
+
+window.addEventListener('appinstalled', () => {
+    // Clear the deferredPrompt so it can be garbage collected
+    deferredPrompt = null;
+    hidePwaPopup();
+    console.log('PWA was installed');
+});

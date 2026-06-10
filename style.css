@@ -2788,3 +2788,129 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 }
 
 
+
+
+/* --- PWA Install Prompt Styles --- */
+.pwa-install-popup {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(150%);
+    width: 90%;
+    max-width: 400px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+}
+
+.pwa-install-popup.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.pwa-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.pwa-close:hover {
+    color: #fff;
+}
+
+.pwa-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pwa-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: #fff; /* logo-light background */
+    flex-shrink: 0;
+}
+
+.pwa-text h4 {
+    margin: 0 0 6px 0;
+    font-size: 1rem;
+    font-family: var(--font-heading);
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pwa-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+}
+
+.pwa-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.pwa-btn-later {
+    flex: 1;
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pwa-btn-later:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pwa-btn-install {
+    flex: 2;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: background 0.2s, transform 0.1s;
+}
+
+.pwa-btn-install:hover {
+    background: #2563eb;
+}
+
+.pwa-btn-install:active {
+    transform: scale(0.98);
+}
