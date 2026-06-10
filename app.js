@@ -106,19 +106,27 @@ function getStorageKey(key) {
 }
 
 function ensureDefaultTemplates() {
-    if (!State.templates || State.templates.length === 0) {
+    if (!State.templates) State.templates = [];
+    
+    const userId = window.AuthState?.currentUser?.id || 'guest';
+    const initKey = 'ponnusamy_default_templates_initialized_' + userId;
+    
+    if (!localStorage.getItem(initKey)) {
         const inst12 = {}; const pay12 = {};
         for(let m=1; m<=12; m++) { inst12[m] = 2500; pay12[m] = 30000; }
         
         const inst20 = {}; const pay20 = {};
         for(let m=1; m<=20; m++) { inst20[m] = 5000; pay20[m] = 100000; }
         
-        State.templates = [
+        State.templates.push(
             { id: generateUUID(), amount: 30000, duration: 12, installments: inst12, payouts: pay12 },
             { id: generateUUID(), amount: 100000, duration: 20, installments: inst20, payouts: pay20 }
-        ];
-        // We do not call saveState() here directly to avoid infinite loops or overwriting during load,
-        // it will be naturally saved when loadState() finishes and calls saveState() or next time saveState is called.
+        );
+        
+        localStorage.setItem(initKey, 'true');
+        return true; // indicates it added templates
+    }
+    return false;
     }
 }
 
@@ -170,6 +178,10 @@ async function loadState() {
             } else if (error) {
                 console.error("Supabase load error:", error);
             }
+        }
+        
+        if (ensureDefaultTemplates()) {
+            await saveState();
         }
         
     } catch (e) {
@@ -4275,6 +4287,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
+
 
 
 
