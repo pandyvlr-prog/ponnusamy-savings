@@ -3367,7 +3367,8 @@ function renderChecklist(member, group) {
         const targetMonthNum = State.paymentModalTargetMonth;
         
         if (filterMode === 'single_month' && targetMonthNum) {
-            if (m !== targetMonthNum) continue;
+            // Show the target month, AND any month that is currently due or partially paid
+            if (m !== targetMonthNum && (isPaid || !isCurrentOrPast)) continue;
         } else if (filterMode === 'due_only') {
             if (isPaid || !isCurrentOrPast) continue;
         }
