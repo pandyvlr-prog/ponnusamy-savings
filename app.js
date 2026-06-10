@@ -127,9 +127,7 @@ function ensureDefaultTemplates() {
         return true; // indicates it added templates
     }
     return false;
-    }
 }
-
 async function loadState() {
     try {
         // Fallback Local Storage load first
