@@ -2618,12 +2618,14 @@ function renderDashboardMembersList(searchQuery = '') {
             let hasTakenPayout = false;
             let payoutVal = 0;
             let payoutMethod = null;
+            let payoutDate = null;
             if (member.payments) {
                 for (let m = 1; m <= group.duration; m++) {
                     if (member.payments[m] && member.payments[m].payoutClaimed) {
                         hasTakenPayout = true;
                         payoutVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : group.chitAmount;
                         payoutMethod = member.payments[m].payoutMethod;
+                        payoutDate = member.payments[m].payoutDate;
                         break;
                     }
                 }
@@ -2652,6 +2654,7 @@ function renderDashboardMembersList(searchQuery = '') {
                 hasTakenPayout,
                 payoutVal,
                 payoutMethod,
+                payoutDate,
                 paymentMethodThisMonth
             });
         });
@@ -2840,7 +2843,15 @@ function renderDashboardMembersList(searchQuery = '') {
             methodLetterHtml = ` <span style="color: #4285F4; font-weight: 800;">/ G</span>`;
         }
 
-        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill" style="background-color: rgba(147, 51, 234, 0.12); color: #9333ea; border: 1px solid rgba(147, 51, 234, 0.3);"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
+        let dateStr = '';
+        if (item.payoutDate) {
+            const parts = item.payoutDate.split('-');
+            if (parts.length === 3) {
+                dateStr = ` <span style="font-size: 0.65rem; opacity: 0.8; font-weight: 800; margin-left: 2px;">(${parts[2]}/${parts[1]})</span>`;
+            }
+        }
+
+        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill" style="background-color: rgba(147, 51, 234, 0.12); color: #9333ea; border: 1px solid rgba(147, 51, 234, 0.3);"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}${dateStr}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
 
         let schemeAmountStr = '';
         let amount = item.group.chitAmount;
@@ -3401,10 +3412,18 @@ function renderChecklist(member, group) {
             }
         }
 
+        let payoutDateHtml = '';
+        if (isClaimed && member.payments[m] && member.payments[m].payoutDate) {
+            const parts = member.payments[m].payoutDate.split('-');
+            if (parts.length === 3) {
+                payoutDateHtml = `<div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; margin-top: 2px;">${parts[2]}/${parts[1]}/${parts[0].slice(-2)}</div>`;
+            }
+        }
+
         const payoutHtml = isClaimed 
             ? `<div style="display: flex; flex-direction: column; align-items: center;"><div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; color: var(--green-dark); background-color: rgba(48, 209, 88, 0.1); border-radius: var(--radius-sm); border: 1px solid rgba(48, 209, 88, 0.3); cursor: pointer; text-transform: uppercase;">
                  <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Taken ₹${payoutVal.toLocaleString('en-IN')}
-               </div>${payoutMethodHtml}</div>`
+               </div>${payoutMethodHtml}${payoutDateHtml}</div>`
             : `<div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; color: var(--primary); border: 1px dashed var(--primary); border-radius: var(--radius-sm); cursor: pointer; text-transform: uppercase;">
                  Claim ₹${payoutVal.toLocaleString('en-IN')}
                </div>`;
@@ -4299,6 +4318,7 @@ document.getElementById('btn-confirm-payout').addEventListener('click', () => {
         if (member) {
             member.payments[pendingPayoutMonthNum].payoutClaimed = true;
             member.payments[pendingPayoutMonthNum].payoutMethod = document.querySelector('input[name="payout-method"]:checked').value;
+            member.payments[pendingPayoutMonthNum].payoutDate = document.getElementById('payout-date-input').value;
             if (member.payments[pendingPayoutMonthNum].payoutMethod === 'gpay') {
                 member.payments[pendingPayoutMonthNum].payoutNote = document.getElementById('payout-note-input').value.trim();
             } else {
