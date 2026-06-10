@@ -20,41 +20,6 @@ window.parseInt = function(val, radix) {
     return originalParseInt(val, radix);
 };
 
-function formatCalendarDateHtml(dateStr, colorHex) {
-    if (dateStr === '--' || dateStr === 'N/A' || !dateStr) {
-        return `<span style="color: var(--text-muted); font-weight: 800;">${dateStr || '--'}</span>`;
-    }
-    if (dateStr === 'Checked') {
-        return `<span style="color: ${colorHex}; font-weight: 800;"><i data-lucide="check-circle" style="width: 16px; height: 16px;"></i></span>`;
-    }
-    
-    const parts = dateStr.split('/');
-    if (parts.length === 3) {
-        const day = parts[0];
-        const monthNum = parseInt(parts[1], 10);
-        const year = parts[2];
-        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-        const monthStr = monthNames[monthNum - 1] || "";
-        
-        const headerColor = colorHex === '#f59e0b' || colorHex === '#d97706' ? colorHex : '#ef4444'; 
-
-        return `
-            <div style="display: inline-flex; flex-direction: column; align-items: center; background: #ffffff; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #e2e8f0; min-width: 44px; text-align: center;">
-                <div style="background-color: ${headerColor}; color: white; width: 100%; font-size: 0.5rem; font-weight: 800; padding: 2px 0; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                    ${year}
-                </div>
-                <div style="font-size: 0.45rem; font-weight: 800; color: #475569; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">
-                    ${monthStr}
-                </div>
-                <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a; line-height: 1; padding-bottom: 2px;">
-                    ${day}
-                </div>
-            </div>
-        `;
-    }
-    return `<span style="color: ${colorHex}; font-weight: 800;">${dateStr}</span>`;
-}
-
 function formatNumberIndian(val) {
     if (val === undefined || val === null || val === '') return '';
     const num = parseInt(val.toString().replace(/[^\d]/g, ''), 10);
@@ -2907,13 +2872,11 @@ function renderDashboardMembersList(searchQuery = '') {
             dateColor = '#f59e0b';
         }
 
-        let paidDateHtml = formatCalendarDateHtml(paidDateText, dateColor);
-
         if (!item.isApplicable) {
             monthNoText = '--';
             dueAmountText = 'N/A';
             paidAmountText = 'N/A';
-            paidDateHtml = `<span style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted);">N/A</span>`;
+            paidDateText = 'N/A';
             dueColor = 'var(--text-muted)';
             paidColor = 'var(--text-muted)';
             dateColor = 'var(--text-muted)';
@@ -2971,9 +2934,9 @@ function renderDashboardMembersList(searchQuery = '') {
             <span style="font-size: 0.8rem; color: var(--text-secondary); text-align: left;">${item.group.name}</span>
             <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: center;">${dueAmountText}</span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: center;">${paidAmountText}</span>
-            <span style="display: flex; justify-content: center; align-items: center; text-align: center;">${paidDateHtml}</span>
+            <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
+            <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
+            <span style="display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 800; color: ${dateColor}; text-align: center;">${paidDateText}</span>
             <div style="display: flex; justify-content: center; align-items: center;">
                 ${checkboxHtml}
             </div>
@@ -4735,7 +4698,6 @@ function generateGlobalPdfReport() {
         }
         let rowDueText = row.dueAmount === 0 ? '--' : `₹${formatNumberIndian(row.dueAmount)}`;
         let rowPaidText = row.paidAmount === 0 ? '--' : `₹${formatNumberIndian(row.paidAmount)}`;
-        let rowDateHtml = formatCalendarDateHtml(row.paidDate, rowDateColor);
 
         tableRowsHtml += `
             <tr style="background-color: ${rowBg};">
@@ -4746,9 +4708,9 @@ function generateGlobalPdfReport() {
                     <span style="border: 1px solid #e2e8f0; background: #ffffff; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; color: #1e293b;">${row.scheme}</span>
                 </td>
                 <td style="padding: 12px 10px; color: #d97706; font-size: 12px; font-weight: 800; text-align: center; border: 1px solid #d1d5db;">${row.monthNo}</td>
-                <td style="padding: 12px 10px; text-align: center; color: ${rowDueColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowDueText}</td>
-                <td style="padding: 12px 10px; text-align: center; color: ${rowPaidColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowPaidText}</td>
-                <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${rowDateHtml}</td>
+                <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowDueText}</td>
+                <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowPaidText}</td>
+                <td style="padding: 12px 10px; color: ${rowDateColor}; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${row.paidDate}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${markPill}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${chitPill}</td>
             </tr>
@@ -4764,8 +4726,8 @@ function generateGlobalPdfReport() {
                     <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Chit Group</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Scheme</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Month No.</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Due Amount</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Amount</th>
+                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Due Amount</th>
+                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Amount</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Date</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Mark</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Chit Taken</th>
@@ -4947,30 +4909,6 @@ function initAppearanceSettings() {
             if(sizeLabel) sizeLabel.textContent = size + "px";
             localStorage.setItem('pms_font_size', size);
             document.documentElement.style.fontSize = size + "px";
-        });
-    }
-
-    // Font Settings Modal Logic
-    const btnOpenFontSettings = document.getElementById('btn-open-font-settings');
-    const fontSettingsModal = document.getElementById('font-settings-modal-backdrop');
-    const btnCloseFontSettings = document.getElementById('btn-close-font-settings-modal');
-    const btnSaveFontSettings = document.getElementById('btn-save-font-settings');
-
-    if (btnOpenFontSettings) {
-        btnOpenFontSettings.addEventListener('click', () => {
-            fontSettingsModal.classList.add('active');
-        });
-    }
-    
-    if (btnCloseFontSettings) {
-        btnCloseFontSettings.addEventListener('click', () => {
-            fontSettingsModal.classList.remove('active');
-        });
-    }
-    
-    if (btnSaveFontSettings) {
-        btnSaveFontSettings.addEventListener('click', () => {
-            fontSettingsModal.classList.remove('active');
         });
     }
 }
