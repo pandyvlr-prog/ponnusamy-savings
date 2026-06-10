@@ -2920,3 +2920,28 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 
 
 
+
+/* === MOBILE PERFORMANCE OPTIMIZATIONS === */
+@media (max-width: 768px) {
+    /* Disable expensive blur filters on low-end devices / tablets */
+    .group-hero-card, .header, .bottom-nav, .modal-content {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    /* Optimize animations - force hardware acceleration and prevent layout thrashing */
+    * {
+        transition-property: transform, opacity, background-color, border-color, color !important;
+        /* Disable width, height, margin, padding animations on mobile */
+    }
+    
+    /* Disable aggressive glowing box shadows that cause lag */
+    .progress-fill {
+        animation: none !important;
+        box-shadow: none !important;
+    }
+    
+    .btn:hover, .dashboard-card:hover, .member-row:hover {
+        transform: none !important;
+    }
+}
