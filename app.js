@@ -2898,10 +2898,26 @@ function renderDashboardMembersList(searchQuery = '') {
                 });
             }
 
-            row.addEventListener('click', () => {
-                State.selectedGroupId = item.group.id;
-                openPaymentModal(item.member.id);
-            });
+            const nameEl = row.querySelector('.member-name');
+            if (nameEl) {
+                nameEl.style.cursor = 'pointer';
+                nameEl.style.textDecoration = 'underline';
+                nameEl.style.textDecorationColor = 'transparent';
+                nameEl.style.transition = 'text-decoration-color 0.2s ease, color 0.2s ease';
+                nameEl.addEventListener('mouseenter', () => {
+                    nameEl.style.textDecorationColor = 'var(--primary)';
+                    nameEl.style.color = 'var(--primary)';
+                });
+                nameEl.addEventListener('mouseleave', () => {
+                    nameEl.style.textDecorationColor = 'transparent';
+                    nameEl.style.color = 'var(--text-main)';
+                });
+                nameEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    State.selectedGroupId = item.group.id;
+                    openPaymentModal(item.member.id);
+                });
+            }
         }
 
         listContainer.appendChild(row);
@@ -4730,6 +4746,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
 
 
 
