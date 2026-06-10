@@ -3226,7 +3226,7 @@ function openPaymentModal(memberId, filterMode = 'all', targetMonthNum = null) {
     const schemeText = `${group.duration}M / ${schemeAmountStr}`;
     
     // Fill text labels
-    document.getElementById('payment-modal-group-name').innerHTML = `${group.name} <span style="color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.05em; background-color: rgba(147, 51, 234, 0.1); padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${schemeText}</span>`;
+    document.getElementById('payment-modal-group-name').innerHTML = `${group.name} <span style="color: #b45309; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.05em; background-color: #fef3c7; border: 1px solid #fcd34d; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${schemeText}</span>`;
     document.getElementById('payment-modal-member-name').textContent = member.name;
     
     // Fill member profile details
