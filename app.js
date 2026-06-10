@@ -3211,8 +3211,22 @@ function openPaymentModal(memberId, filterMode = 'all', targetMonthNum = null) {
     
     State.selectedMemberId = memberId;
     
+    // Calculate scheme string
+    let schemeAmountStr = '';
+    let amount = group.chitAmount;
+    if (amount >= 100000) {
+        let lakhs = amount / 100000;
+        schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + ' Lakh';
+    } else if (amount >= 1000) {
+        let k = amount / 1000;
+        schemeAmountStr = (k % 1 === 0 ? k : k.toFixed(1)) + 'K';
+    } else {
+        schemeAmountStr = amount.toString();
+    }
+    const schemeText = `${group.duration}M / ${schemeAmountStr}`;
+    
     // Fill text labels
-    document.getElementById('payment-modal-group-name').textContent = group.name;
+    document.getElementById('payment-modal-group-name').innerHTML = `${group.name} <span style="color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.05em; background-color: rgba(147, 51, 234, 0.1); padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${schemeText}</span>`;
     document.getElementById('payment-modal-member-name').textContent = member.name;
     
     // Fill member profile details
