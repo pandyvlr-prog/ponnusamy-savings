@@ -30,13 +30,17 @@ async function initAuth() {
         const { data: { session } } = await supabaseClient.auth.getSession();
         
         if (session) {
+            // Force network fetch to get the absolute latest user_metadata across devices
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
+            const activeUser = user || session.user;
+            
             AuthState.isAuthenticated = true;
             AuthState.currentUser = {
-                id: session.user.id, // Ensure ID is passed down!
-                name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
-                email: session.user.email,
-                avatar: session.user.user_metadata?.avatar_url || null,
-                user_metadata: session.user.user_metadata || {}
+                id: activeUser.id, // Ensure ID is passed down!
+                name: activeUser.user_metadata?.full_name || activeUser.email.split('@')[0],
+                email: activeUser.email,
+                avatar: activeUser.user_metadata?.avatar_url || null,
+                user_metadata: activeUser.user_metadata || {}
             };
             navigateTo('screen-dashboard');
             updateProfileUI();
@@ -54,13 +58,17 @@ async function initAuth() {
     // Listen for auth changes (like returning from Google login redirect)
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
+            // Force network fetch to get the absolute latest user_metadata across devices
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
+            const activeUser = user || session.user;
+            
             AuthState.isAuthenticated = true;
             AuthState.currentUser = {
-                id: session.user.id, // Ensure ID is passed down!
-                name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
-                email: session.user.email,
-                avatar: session.user.user_metadata?.avatar_url || null,
-                user_metadata: session.user.user_metadata || {}
+                id: activeUser.id, // Ensure ID is passed down!
+                name: activeUser.user_metadata?.full_name || activeUser.email.split('@')[0],
+                email: activeUser.email,
+                avatar: activeUser.user_metadata?.avatar_url || null,
+                user_metadata: activeUser.user_metadata || {}
             };
             navigateTo('screen-dashboard');
             updateProfileUI();
