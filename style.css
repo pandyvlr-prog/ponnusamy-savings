@@ -160,13 +160,21 @@ body::before {
 }
 
 [data-theme="light"] #horror-bg {
-    display: none; /* Hide in light mode */
+    display: block; 
+    background-color: #f8fafc;
+}
+
+[data-theme="light"] .horror-sphere {
+    background: #ffffff;
+}
+
+[data-theme="light"] .horror-fog {
+    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(255, 255, 255, 0.8) 100%);
 }
 
 /* Keep Light Mode Background Active */
 [data-theme="light"] body::before {
-    display: block;
-    content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+    display: none;
 }
 
 .horror-sphere {
