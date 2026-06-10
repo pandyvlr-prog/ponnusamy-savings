@@ -60,11 +60,11 @@
 [data-theme="light"] body::before { 
     opacity: 1; 
     background: 
-        radial-gradient(at 0% 0%, rgba(243, 232, 255, 1) 0px, transparent 50%),
-        radial-gradient(at 50% 0%, rgba(219, 234, 254, 1) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(254, 240, 138, 0.5) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(224, 231, 255, 1) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(252, 231, 243, 1) 0px, transparent 50%),
+        radial-gradient(at 0% 0%, rgba(254, 240, 138, 0.7) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(219, 244, 230, 1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(254, 240, 138, 0.7) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(204, 251, 241, 0.8) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(252, 245, 211, 1) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(204, 251, 241, 0.8) 0px, transparent 50%);
     background-color: #f8fafc;
     z-index: -1;
@@ -142,12 +142,12 @@ body {
 body::before {
     content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
     background: 
-        radial-gradient(at 0% 0%, rgba(30, 20, 50, 0.8) 0px, transparent 50%),
-        radial-gradient(at 50% 0%, rgba(15, 20, 45, 0.8) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(45, 30, 15, 0.8) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(20, 15, 35, 0.8) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(35, 25, 45, 0.8) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(10, 15, 30, 0.8) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(120, 0, 255, 0.25) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(0, 150, 255, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(255, 180, 0, 0.2) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(0, 255, 180, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(200, 0, 255, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(255, 80, 0, 0.15) 0px, transparent 50%);
     background-color: #050508;
     z-index: -1; transition: opacity 0.4s ease; opacity: 1;
 }
