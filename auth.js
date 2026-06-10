@@ -132,8 +132,8 @@ function triggerVaultTransition(callback) {
         
         setTimeout(() => {
             overlay.classList.remove('active');
-        }, 1200);
-    }, 400);
+        }, 1600);
+    }, 500);
 }
 
 function setupAuthListeners() {

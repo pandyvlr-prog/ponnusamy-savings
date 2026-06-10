@@ -3100,19 +3100,23 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 .transition-overlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background-color: var(--bg-primary);
+    background: radial-gradient(circle at center, rgba(14, 14, 18, 0.98) 0%, rgba(5, 5, 8, 1) 100%);
     z-index: 99999;
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+    transform: scale(1.05);
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.5s;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .transition-overlay.active {
     opacity: 1;
     visibility: visible;
+    transform: scale(1);
 }
 
 .transition-content {
@@ -3120,45 +3124,55 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.95);
     opacity: 0;
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
 }
 
 .transition-overlay.active .transition-content {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
 }
 
 .transition-logo-wrapper {
-    width: 80px; height: 80px;
+    width: 90px; height: 90px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.02) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.4);
     display: flex; justify-content: center; align-items: center;
-    margin-bottom: 24px;
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
-    animation: pulseLogo 2s infinite ease-in-out;
+    margin-bottom: 28px;
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5);
+    animation: epicPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes epicPulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 30px rgba(212, 175, 55, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
 }
 
 .transition-title {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: var(--text-main);
-    margin: 0 0 12px 0;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #fce07e 0%, #d4af37 50%, #b8860b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 16px 0;
+    filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.3));
 }
 
 .transition-text {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-secondary);
-    letter-spacing: 1px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 5px;
+    animation: shimmerText 2s linear infinite;
 }
 
-@keyframes pulseLogo {
-    0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
-    50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(212, 175, 55, 0.3); }
-    100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+@keyframes shimmerText {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; text-shadow: 0 0 15px var(--primary); }
+    100% { opacity: 0.5; }
 }
