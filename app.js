@@ -2867,6 +2867,10 @@ function renderDashboardMembersList(searchQuery = '') {
 
         let dueColor = item.dueAmount > 0 ? (item.paidAmount > 0 ? '#f59e0b' : 'var(--red-dark)') : 'var(--text-muted)';
         let paidColor = item.paidAmount > 0 ? (item.dueAmount > 0 ? '#f59e0b' : 'var(--green-dark)') : 'var(--text-muted)';
+        let dateColor = item.displayPaidDate !== '--' ? '#0ea5e9' : 'var(--text-muted)';
+        if (item.paidAmount > 0 && item.dueAmount > 0 && item.displayPaidDate !== '--') {
+            dateColor = '#f59e0b';
+        }
 
         if (!item.isApplicable) {
             monthNoText = '--';
@@ -2875,6 +2879,7 @@ function renderDashboardMembersList(searchQuery = '') {
             paidDateText = 'N/A';
             dueColor = 'var(--text-muted)';
             paidColor = 'var(--text-muted)';
+            dateColor = 'var(--text-muted)';
             checkboxHtml = `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">N/A</span>`;
         } else {
             // isFuture rows are treated same as DUE — user wants to see & mark them
@@ -2931,7 +2936,7 @@ function renderDashboardMembersList(searchQuery = '') {
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
-            <span style="display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 800; color: ${item.displayPaidDate !== '--' ? '#0ea5e9' : 'var(--text-muted)'}; text-align: center;">${paidDateText}</span>
+            <span style="display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 800; color: ${dateColor}; text-align: center;">${paidDateText}</span>
             <div style="display: flex; justify-content: center; align-items: center;">
                 ${checkboxHtml}
             </div>
@@ -4687,6 +4692,10 @@ function generateGlobalPdfReport() {
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f9fafb';
         let rowDueColor = row.dueAmount > 0 ? (row.paidAmount > 0 ? '#d97706' : '#ef4444') : '#94a3b8';
         let rowPaidColor = row.paidAmount > 0 ? (row.dueAmount > 0 ? '#d97706' : '#10b981') : '#94a3b8';
+        let rowDateColor = row.paidDate !== '--' ? '#0ea5e9' : '#94a3b8';
+        if (row.paidAmount > 0 && row.dueAmount > 0 && row.paidDate !== '--') {
+            rowDateColor = '#d97706';
+        }
         let rowDueText = row.dueAmount === 0 ? '--' : `₹${formatNumberIndian(row.dueAmount)}`;
         let rowPaidText = row.paidAmount === 0 ? '--' : `₹${formatNumberIndian(row.paidAmount)}`;
 
@@ -4701,7 +4710,7 @@ function generateGlobalPdfReport() {
                 <td style="padding: 12px 10px; color: #d97706; font-size: 12px; font-weight: 800; text-align: center; border: 1px solid #d1d5db;">${row.monthNo}</td>
                 <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowDueText}</td>
                 <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowPaidText}</td>
-                <td style="padding: 12px 10px; color: ${row.paidDate !== '--' ? '#0ea5e9' : '#94a3b8'}; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${row.paidDate}</td>
+                <td style="padding: 12px 10px; color: ${rowDateColor}; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${row.paidDate}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${markPill}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${chitPill}</td>
             </tr>
