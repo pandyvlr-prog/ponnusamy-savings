@@ -1092,7 +1092,7 @@ function setupEventListeners() {
             const icon = btnGlobalRefresh.querySelector('i');
             if (icon) icon.classList.add('spin-anim');
             await loadState();
-            renderGlobalDashboard();
+            renderDashboard();
             if (icon) icon.classList.remove('spin-anim');
             if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
         });
@@ -1165,7 +1165,7 @@ function setupEventListeners() {
             const icon = btnDetailsRefresh.querySelector('i');
             if (icon) icon.classList.add('spin-anim');
             await loadState();
-            renderGroupDetails();
+            renderGroupDetails(State.selectedGroupId);
             if (icon) icon.classList.remove('spin-anim');
             if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
         });
