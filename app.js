@@ -68,7 +68,7 @@ const State = {
     tempMemberList: [], // Used during group creation
     dashboardSelectedMonth: 'current',
     dashboardFilter: 'all',
-    backupEmail: '',
+    backupEmail: localStorage.getItem('ponnusamy_backup_email') || '',
     templateFilterDuration: '12'
 };
 
@@ -129,6 +129,12 @@ async function loadState() {
                 State.groups = data.groups_data || [];
                 State.members = data.members_data || [];
                 State.templates = data.templates_data || [];
+                
+                // Sync backup email from user metadata
+                if (window.AuthState?.currentUser?.user_metadata?.backupEmail !== undefined) {
+                    State.backupEmail = window.AuthState.currentUser.user_metadata.backupEmail;
+                    localStorage.setItem('ponnusamy_backup_email', State.backupEmail);
+                }
                 
                 // Save to local storage for offline use
                 localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
@@ -585,7 +591,15 @@ function setupEventListeners() {
                 // Save Mode
                 const val = emailInput.value.trim();
                 State.backupEmail = val;
+                localStorage.setItem('ponnusamy_backup_email', val);
                 saveState();
+                
+                // Sync backup email securely to Supabase User Profile
+                if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+                    window.supabaseClient.auth.updateUser({
+                        data: { backupEmail: val }
+                    });
+                }
                 
                 emailInput.disabled = true;
                 editEmailBtn.innerHTML = `<i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>`;
@@ -4225,4 +4239,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
+
 
