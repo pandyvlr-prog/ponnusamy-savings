@@ -1305,7 +1305,7 @@ body::before {
 
 .filter-pill.text-amber-pill.active {
     background-color: var(--accent);
-    color: var(--bg-primary);
+    color: #ffffff;
     border-color: var(--accent);
     box-shadow: 0 4px 10px rgba(223, 178, 76, 0.25);
 }
