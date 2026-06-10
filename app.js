@@ -105,6 +105,23 @@ function getStorageKey(key) {
     return `ponnusamy_${key}`;
 }
 
+function ensureDefaultTemplates() {
+    if (!State.templates || State.templates.length === 0) {
+        const inst12 = {}; const pay12 = {};
+        for(let m=1; m<=12; m++) { inst12[m] = 2500; pay12[m] = 30000; }
+        
+        const inst20 = {}; const pay20 = {};
+        for(let m=1; m<=20; m++) { inst20[m] = 5000; pay20[m] = 100000; }
+        
+        State.templates = [
+            { id: generateUUID(), amount: 30000, duration: 12, installments: inst12, payouts: pay12 },
+            { id: generateUUID(), amount: 100000, duration: 20, installments: inst20, payouts: pay20 }
+        ];
+        // We do not call saveState() here directly to avoid infinite loops or overwriting during load,
+        // it will be naturally saved when loadState() finishes and calls saveState() or next time saveState is called.
+    }
+}
+
 async function loadState() {
     try {
         // Fallback Local Storage load first
@@ -118,6 +135,13 @@ async function loadState() {
 
         // If authenticated with Supabase, pull cloud data
         if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+            // Force network fetch of user_metadata silently in the background
+            try {
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (user) {
+                    window.AuthState.currentUser.user_metadata = user.user_metadata || {};
+                }
+            } catch (e) {}
             const { data, error } = await window.supabaseClient
                 .from('user_data')
                 .select('*')
@@ -596,6 +620,13 @@ function setupEventListeners() {
                 
                 // Sync backup email securely to Supabase User Profile
                 if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+            // Force network fetch of user_metadata silently in the background
+            try {
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (user) {
+                    window.AuthState.currentUser.user_metadata = user.user_metadata || {};
+                }
+            } catch (e) {}
                     window.supabaseClient.auth.updateUser({
                         data: { backupEmail: val }
                     });
@@ -4244,6 +4275,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
+
 
 
 
