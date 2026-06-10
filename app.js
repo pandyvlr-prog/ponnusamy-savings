@@ -1085,6 +1085,19 @@ function setupEventListeners() {
         });
     }
 
+    // Global Refresh Button
+    const btnGlobalRefresh = document.getElementById('btn-global-refresh');
+    if (btnGlobalRefresh) {
+        btnGlobalRefresh.addEventListener('click', async () => {
+            const icon = btnGlobalRefresh.querySelector('i');
+            if (icon) icon.classList.add('spin-anim');
+            await loadState();
+            renderGlobalDashboard();
+            if (icon) icon.classList.remove('spin-anim');
+            if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
+        });
+    }
+
     // Global PDF Export Modal Bindings
     const btnGlobalExportPdf = document.getElementById('btn-global-export-pdf');
     if (btnGlobalExportPdf) {
@@ -1142,6 +1155,19 @@ function setupEventListeners() {
     if (btnGenerateGlobalPdf) {
         btnGenerateGlobalPdf.addEventListener('click', () => {
             generateGlobalPdfReport();
+        });
+    }
+
+    // Details Refresh Button
+    const btnDetailsRefresh = document.getElementById('btn-details-refresh');
+    if (btnDetailsRefresh) {
+        btnDetailsRefresh.addEventListener('click', async () => {
+            const icon = btnDetailsRefresh.querySelector('i');
+            if (icon) icon.classList.add('spin-anim');
+            await loadState();
+            renderGroupDetails();
+            if (icon) icon.classList.remove('spin-anim');
+            if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
         });
     }
 
