@@ -2460,8 +2460,11 @@ function renderDashboardGroupsList() {
         return;
     }
     
-    // Sort groups by creation date (newest first)
-    const sortedGroups = [...State.groups].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Sort groups chronologically (May 2026, Jun 2026, etc)
+    const sortedGroups = [...State.groups].sort((a, b) => {
+        if (a.startYear !== b.startYear) return a.startYear - b.startYear;
+        return a.startMonth - b.startMonth;
+    });
     
     sortedGroups.forEach(group => {
         const metrics = getGroupMetrics(group.id);
@@ -2480,7 +2483,7 @@ function renderDashboardGroupsList() {
         card.innerHTML = `
             <div class="group-card-header">
                 <div class="group-card-title">${group.name}</div>
-                <div class="group-card-amount">₹${currentInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 })}/mo</div>
+                <div class="group-card-amount">₹${group.amount.toLocaleString('en-IN')}</div>
             </div>
             <div class="group-card-info">
                 <div class="info-item">
@@ -2769,6 +2772,23 @@ function renderDashboardMembersList(searchQuery = '') {
     const statTargetCollection = document.getElementById('dashboard-target-collection-text');
     if (statTargetCollection) {
         statTargetCollection.textContent = `Target: ₹${totalExpectedAmount.toLocaleString('en-IN')}`;
+    }
+
+    // Update Surplus/Deficit calculation
+    const containerSD = document.getElementById('stat-surplus-deficit-container');
+    if (containerSD) {
+        const difference = totalExpectedAmount - amountChitTaken;
+        if (amountChitTaken === 0 && totalExpectedAmount === 0) {
+            containerSD.innerHTML = `<span style="color: #9ca3af;">--</span>`;
+            containerSD.style.backgroundColor = "transparent";
+        } else if (difference < 0) {
+            containerSD.innerHTML = `<span style="color: #ef4444;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+        } else if (difference >= 0) {
+            containerSD.innerHTML = `<span style="color: #22c55e;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
+        }
+        if (window.lucide) window.lucide.createIcons();
     }
 
     // Filter by dashboard filter status pill

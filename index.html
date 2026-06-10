@@ -23,7 +23,7 @@
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=27">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -232,6 +232,11 @@
                                 <span class="metric-label">Chit Taken</span>
                                 <span class="metric-value" style="color: #9333ea;" id="stat-summary-chit-taken-amount">₹0</span>
                                 <span id="stat-summary-chit-taken-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: #9333ea;">(0)</span>
+                                <div style="margin-top: 10px; border-top: 1px solid rgba(147, 51, 234, 0.2); padding-top: 8px;">
+                                    <div id="stat-surplus-deficit-container" style="font-size: 0.85rem; font-weight: 700; display: flex; justify-content: center; padding: 4px; border-radius: 4px;">
+                                        <!-- Computed in JS -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1397,7 +1402,7 @@
     </div>
     
     <script src="auth.js?v=4"></script>
-    <script src="app.js?v=26"></script>
+    <script src="app.js?v=27"></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
@@ -1578,6 +1583,7 @@
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { alert("Error: " + msg + " \nLine: " + lineNo); }</script>
+
 
 
 
