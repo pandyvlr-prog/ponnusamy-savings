@@ -35,7 +35,8 @@ async function initAuth() {
                 id: session.user.id, // Ensure ID is passed down!
                 name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
                 email: session.user.email,
-                avatar: session.user.user_metadata?.avatar_url || null
+                avatar: session.user.user_metadata?.avatar_url || null,
+                user_metadata: session.user.user_metadata || {}
             };
             navigateTo('screen-dashboard');
             updateProfileUI();
@@ -58,7 +59,8 @@ async function initAuth() {
                 id: session.user.id, // Ensure ID is passed down!
                 name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
                 email: session.user.email,
-                avatar: session.user.user_metadata?.avatar_url || null
+                avatar: session.user.user_metadata?.avatar_url || null,
+                user_metadata: session.user.user_metadata || {}
             };
             navigateTo('screen-dashboard');
             updateProfileUI();
@@ -312,3 +314,4 @@ function setupAuthListeners() {
 
 // Call on load
 document.addEventListener('DOMContentLoaded', initAuth);
+

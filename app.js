@@ -3713,6 +3713,11 @@ async function resetAllData() {
         if (typeof exportBackup === 'function') {
             exportBackup();
         }
+        
+        // Auto-email backup before wipe
+        if (typeof emailBackupDraft === 'function' && State.backupEmail) {
+            emailBackupDraft();
+        }
 
         // Add a small delay to ensure download starts before state vanishes
         setTimeout(() => {
@@ -4239,6 +4244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
 
 
 
