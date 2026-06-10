@@ -4157,12 +4157,14 @@ if ('serviceWorker' in navigator) {
 
 // Handle Install Prompt
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent the mini-infobar from appearing on mobile
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault();
     // Stash the event so it can be triggered later.
     deferredPrompt = e;
     // Show our custom UI
-    if (pwaPopup && localStorage.getItem('pwaPromptDeclined') !== 'true') {
+    if (pwaPopup) {
+        // Force clear the declined flag for testing
+        localStorage.removeItem('pwaPromptDeclined');
         pwaPopup.style.display = 'flex';
         // Small delay to allow display:flex to apply before adding class for transition
         setTimeout(() => {
@@ -4186,6 +4188,21 @@ function hidePwaPopup(decline = false) {
 if (btnPwaClose) btnPwaClose.addEventListener('click', () => hidePwaPopup(false));
 if (btnPwaLater) btnPwaLater.addEventListener('click', () => hidePwaPopup(true));
 
+const btnManualInstall = document.getElementById('btn-manual-install');
+if (btnManualInstall) {
+    btnManualInstall.addEventListener('click', () => {
+        // Close dropdown
+        const menu = document.getElementById('header-dropdown-menu');
+        if (menu) menu.classList.remove('active');
+        
+        // Show PWA popup
+        if (pwaPopup) {
+            pwaPopup.style.display = 'flex';
+            setTimeout(() => pwaPopup.classList.add('show'), 50);
+        }
+    });
+}
+
 if (btnPwaInstall) {
     btnPwaInstall.addEventListener('click', async () => {
         hidePwaPopup();
@@ -4197,6 +4214,8 @@ if (btnPwaInstall) {
             console.log('User response to the install prompt: ' + outcome);
             // We've used the prompt, and can't use it again, throw it away
             deferredPrompt = null;
+        } else {
+            alert("Your browser doesn't support automatic installation. Please click the 'Share' or 'Menu' button in your browser and select 'Add to Home Screen' or 'Install App'.");
         }
     });
 }
