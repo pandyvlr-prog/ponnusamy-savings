@@ -2340,19 +2340,7 @@ function renderDashboardMembersList(searchQuery = '') {
             <div style="display: flex; justify-content: center; align-items: center;">
                 ${reminderBtnHtml || '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>'}
             </div>
-            <button class="mobile-expand-btn" type="button" aria-label="Toggle Details">
-                <i data-lucide="more-vertical" style="width: 18px; height: 18px;"></i>
-            </button>
         `;
-
-        // Toggle row expansion on mobile
-        const expandBtn = row.querySelector('.mobile-expand-btn');
-        if (expandBtn) {
-            expandBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                row.classList.toggle('expanded');
-            });
-        }
 
         if (item.isApplicable) {
             const chk = row.querySelector('.status-badge-pill.paid, .status-badge-pill.partial, .status-badge-pill.pending');

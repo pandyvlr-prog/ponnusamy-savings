@@ -1901,21 +1901,9 @@ body {
     transform: rotate(180deg);
 }
 
-/* Hide extra fields by default on mobile */
-.dashboard-member-row > span:nth-child(4),
-.dashboard-member-row > span:nth-child(5),
-.dashboard-member-row > span:nth-child(6),
-.dashboard-member-row > span:nth-child(8) {
-    display: none;
-}
+/* Hide extra fields by default on mobile - REMOVED so all values are shown */
 
-/* Show fields when expanded */
-.dashboard-member-row.expanded > span:nth-child(4),
-.dashboard-member-row.expanded > span:nth-child(5),
-.dashboard-member-row.expanded > span:nth-child(6),
-.dashboard-member-row.expanded > span:nth-child(8) {
-    display: flex;
-}
+/* Show fields when expanded - REMOVED */
 
 /* Render layout inline for card fields on mobile */
 .dashboard-member-row > span,
