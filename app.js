@@ -609,7 +609,7 @@ function setupEventListeners() {
     const editEmailBtn = document.getElementById('btn-edit-backup-email');
     if (emailInput && editEmailBtn) {
         emailInput.value = State.backupEmail || '';
-        editEmailBtn.addEventListener('click', () => {
+        editEmailBtn.addEventListener('click', async () => {
             const isEditing = !emailInput.disabled;
             if (isEditing) {
                 // Save Mode
