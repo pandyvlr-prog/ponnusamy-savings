@@ -60,16 +60,11 @@ document.addEventListener('input', (e) => {
 
 // --- Global Application State ---
 const State = {
-    chits: [],
-    customers: [],
-    payments: [],
     groups: [],
     members: [],
-    currentView: 'screen-landing',
+    currentView: 'screen-dashboard',
     selectedGroupId: null,
     selectedMemberId: null,
-    editingCustomerIndex: -1,
-    editingPaymentIndex: -1,
     tempMemberList: [], // Used during group creation
     dashboardSelectedMonth: 'current',
     dashboardFilter: 'all',
@@ -835,42 +830,6 @@ function setupRouting() {
             switchView(target);
         });
     });
-
-    // Landing Page Buttons -> Login Page
-    const btnGotoLogin = document.getElementById('btn-goto-login');
-    const navLoginBtn = document.getElementById('nav-login-btn');
-    const navGetStartedBtn = document.getElementById('nav-get-started-btn');
-    
-    [btnGotoLogin, navLoginBtn, navGetStartedBtn].forEach(btn => {
-        if (btn) btn.addEventListener('click', () => switchView('screen-login'));
-    });
-
-    // Login Form Submission -> Dashboard
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Simulate Authentication Delay and smoothly transition
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerHTML = '<i data-lucide="loader" class="spin-anim"></i> Signing in...';
-            lucide.createIcons();
-            
-            setTimeout(() => {
-                submitBtn.innerText = originalText;
-                switchView('screen-dashboard');
-            }, 800); // 800ms butter smooth delay feel
-        });
-    }
-    
-    // Google Login button -> Dashboard
-    const googleBtn = document.getElementById('google-login-btn');
-    if (googleBtn) {
-        googleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            switchView('screen-dashboard');
-        });
-    }
 }
 
 function switchView(viewId) {
@@ -878,25 +837,28 @@ function switchView(viewId) {
     const targetScreen = document.getElementById(viewId);
     
     if (activeScreen && targetScreen && activeScreen.id !== viewId) {
-        // Remove active class to trigger CSS exit transition
+        // Slide out active
+        activeScreen.style.transform = 'translateX(-30px)';
+        activeScreen.style.opacity = '0';
         activeScreen.classList.remove('active');
+        activeScreen.style.pointerEvents = 'none';
         
-        // Use setTimeout to allow the current frame to process before adding the active class
-        setTimeout(() => {
-            targetScreen.classList.add('active');
-            State.currentView = viewId;
-            
-            // Re-run specific initializers if needed
-            if (viewId === 'screen-dashboard') {
-                renderDashboard();
-            } else if (viewId === 'screen-group-details') {
-                if(State.selectedGroupId) renderGroupDetails(State.selectedGroupId);
-            }
-        }, 10);
-    } else if (!activeScreen && targetScreen) {
-        // Initial load
+        // Slide in target
         targetScreen.classList.add('active');
+        targetScreen.style.pointerEvents = 'auto';
+        // Force reflow
+        targetScreen.offsetHeight;
+        targetScreen.style.transform = 'translateX(0)';
+        targetScreen.style.opacity = '1';
+        
         State.currentView = viewId;
+        
+        // Contextual trigger on screen load
+        if (viewId === 'screen-dashboard') {
+            renderDashboard();
+        } else if (viewId === 'screen-group-details') {
+            renderGroupDetails(State.selectedGroupId);
+        }
     }
 }
 
