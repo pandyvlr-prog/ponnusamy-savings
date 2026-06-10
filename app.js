@@ -4911,4 +4911,28 @@ function initAppearanceSettings() {
             document.documentElement.style.fontSize = size + "px";
         });
     }
+
+    // Font Settings Modal Logic
+    const btnOpenFontSettings = document.getElementById('btn-open-font-settings');
+    const fontSettingsModal = document.getElementById('font-settings-modal-backdrop');
+    const btnCloseFontSettings = document.getElementById('btn-close-font-settings-modal');
+    const btnSaveFontSettings = document.getElementById('btn-save-font-settings');
+
+    if (btnOpenFontSettings) {
+        btnOpenFontSettings.addEventListener('click', () => {
+            fontSettingsModal.classList.add('active');
+        });
+    }
+    
+    if (btnCloseFontSettings) {
+        btnCloseFontSettings.addEventListener('click', () => {
+            fontSettingsModal.classList.remove('active');
+        });
+    }
+    
+    if (btnSaveFontSettings) {
+        btnSaveFontSettings.addEventListener('click', () => {
+            fontSettingsModal.classList.remove('active');
+        });
+    }
 }

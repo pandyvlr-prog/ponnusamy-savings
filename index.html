@@ -23,7 +23,7 @@
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <link rel="stylesheet" href="style.css?v=51">
+    <link rel="stylesheet" href="style.css?v=52">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -214,7 +214,7 @@
                     <div class="dashboard-card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h2 class="section-title-alt" style="margin-bottom: 0;">Dashboard Summary</h2>
-                            <span id="dashboard-target-collection-badge" style="background-color: rgba(37, 99, 235, 0.15); color: #3b82f6; padding: 6px 16px; border-radius: 8px; font-size: 1rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(37, 99, 235, 0.3);">
+                            <span id="dashboard-target-collection-badge" style="background-color: #2563eb; color: #ffffff; padding: 6px 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; border: 2px solid #1e40af; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
                                 <i data-lucide="target" style="width: 16px; height: 16px;"></i>
                                 <span id="dashboard-target-collection-text">Target: ₹0</span>
                             </span>
@@ -678,6 +678,201 @@
                                         <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
                                         <input type="file" id="settings-avatar-input" accept="image/*" style="display: none;">
                                     </label>
+</div>
+                            </div>
+                            <div class="form-grid-row">
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-work-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Place of Work</label>
+                                    <input type="text" id="member-work-input" placeholder="Place of work" maxlength="50" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-occupation-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Occupation</label>
+                                    <input type="text" id="member-occupation-input" placeholder="Occupation" maxlength="40" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-place-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Place</label>
+                                    <input type="text" id="member-place-input" placeholder="Place / City" maxlength="40" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                                <div class="form-grid-row">
+                                    <div class="form-group" style="gap: 4px;">
+                                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Customer Type</label>
+                                        <div style="display: flex; gap: 15px; align-items: center; padding: 8px 0;">
+                                            <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; color: var(--text-main);">
+                                                <input type="radio" name="member-customer-type" value="New" checked> New Customer
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; color: var(--text-main);">
+                                                <input type="radio" name="member-customer-type" value="Old"> Old Customer
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="gap: 4px;">
+                                        <label for="member-referred-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Referred By</label>
+                                        <input type="text" id="member-referred-input" placeholder="Referrer Name" maxlength="40" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="gap: 4px;">
+                                <label for="member-address-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Residential Address</label>
+                                <textarea id="member-address-input" placeholder="Full Address" maxlength="200" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-family: var(--font-body); resize: vertical; min-height: 50px; outline: none; transition: var(--transition-fast);"></textarea>
+                            </div>
+                            <button class="btn btn-secondary" id="btn-add-member-list" type="button" style="padding: 8px 16px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--radius-sm);">
+                                <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i> Add Member to List
+                            </button>
+                        </div>
+                        
+                        <div class="section-header">
+                            <span class="section-title-sub">Added Members</span>
+                            <span class="badge badge-accent" id="member-count-indicator">0 Members</span>
+                        </div>
+                        
+                        <div class="member-list-adding" id="added-members-list">
+                            <!-- Dynamic list of member name pills will go here -->
+                            <div class="empty-state-small">
+                                <p>No members added yet. Type a name above to start building the list.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="action-footer">
+                            <button class="btn btn-primary btn-block" id="btn-finalize-group">
+                                <i data-lucide="save"></i> Create Group & Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SCREEN 4: GROUP DETAILS -->
+            <section id="screen-group-details" class="app-screen">
+                <header class="screen-header">
+                    <button class="icon-btn btn-back" data-target="screen-dashboard">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <h2 id="details-header-title">Group Details</h2>
+                    <div class="header-actions-row" style="display: flex; gap: 8px;">
+                        <button class="icon-btn text-amber" id="btn-details-refresh" title="Refresh Data">
+                            <i data-lucide="refresh-cw"></i>
+                        </button>
+                        <button class="icon-btn text-amber" id="btn-details-export-pdf" title="Export PDF Report">
+                            <i data-lucide="download"></i>
+                        </button>
+                        <button class="icon-btn text-amber" id="btn-details-edit-group" title="Edit group details">
+                            <i data-lucide="edit-3"></i>
+                        </button>
+                        <button class="icon-btn text-amber" id="btn-details-add-member" title="Add new member to group">
+                            <i data-lucide="user-plus"></i>
+                        </button>
+                    </div>
+                </header>
+                
+                <div class="screen-content">
+                    <!-- Details Grid for Desktop (Meta details + Financials side-by-side) -->
+                    <div class="details-top-grid">
+                        <!-- Group Info Hero -->
+                        <div class="group-hero-card">
+                            <div class="hero-header">
+                                <h3 id="details-group-name">Group Name</h3>
+                                <span class="status-badge active-badge"><span class="dot"></span> Active</span>
+                            </div>
+                            
+                            <div class="hero-stats-row">
+                                <div class="hero-stat-item">
+                                    <span class="label">Month</span>
+                                    <span class="value" id="details-duration">0 Months</span>
+                                </div>
+                                <div class="hero-stat-item">
+                                    <span class="label">Scheme Amount</span>
+                                    <span class="value" id="details-installment-value">₹0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Month Adjuster Component -->
+                            <div class="month-selector-widget" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                    <span class="widget-label">Current Billing Month</span>
+                                    <span class="widget-label">Month Payout: <strong id="details-month-payout" style="color: var(--primary);">₹0</strong></span>
+                                </div>
+                                <div class="adjuster-controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                                    <button class="adjuster-btn" id="btn-month-decrement" aria-label="Previous Month">
+                                        <i data-lucide="minus"></i>
+                                    </button>
+                                    <span class="active-month-text" id="details-current-month-text">Month 1</span>
+                                    <button class="adjuster-btn" id="btn-month-increment" aria-label="Next Month">
+                                        <i data-lucide="plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Financial Overview Dashboard -->
+                        <div class="financials-dashboard">
+                            <div class="fin-card highlight-green">
+                                <span class="fin-label"><i data-lucide="check-circle" class="icon-inline text-green"></i> Total Collected</span>
+                                <span class="fin-val" id="details-total-collected" style="font-weight: 800; color: #166534;">₹0</span>
+                            </div>
+                            <div class="fin-card highlight-red">
+                                <span class="fin-label"><i data-lucide="alert-circle" class="icon-inline text-red"></i> Pending Payments</span>
+                                <span class="fin-val" id="details-total-pending" style="font-weight: 800; color: #991b1b;">₹0</span>
+                            </div>
+                            
+                            <!-- Collection Progress Bar -->
+                            <div class="collection-progress-container">
+                                <div class="progress-labels">
+                                    <span>Month <span id="progress-current-month">1</span> Progress</span>
+                                    <strong id="progress-percentage-text" class="text-green">0%</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-bar" id="details-progress-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-desc" id="progress-amount-desc">₹0 of ₹0 collected for active cycle</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter and Search controls -->
+                    <div class="search-filter-section">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="member-search-input" placeholder="Search members...">
+                        </div>
+                        
+                        <div class="filter-pills">
+                            <button class="filter-pill active" data-filter="all">All (<span id="count-filter-all">0</span>)</button>
+                            <button class="filter-pill text-green-pill" data-filter="paid">Paid (<span id="count-filter-paid">0</span>)</button>
+                            <button class="filter-pill text-red-pill" data-filter="pending">Pending (<span id="count-filter-pending">0</span>)</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Members Cards List -->
+                    <div class="member-cards-grid" id="details-members-grid">
+                        <!-- Dynamic member cards -->
+                    </div>
+                </div>
+            </section>
+            <!-- SCREEN: SETTINGS PAGE -->
+            <section id="screen-settings" class="app-screen">
+                <header class="app-header" style="padding-bottom: 0; border-bottom: none;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="icon-btn" id="btn-back-to-dashboard" style="background: var(--bg-surface);">
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+                        <h2 style="font-size: 1.25rem; font-weight: 700;">Settings</h2>
+                    </div>
+                </header>
+                
+                <div class="screen-content" style="padding-top: 10px;">
+                    <div class="settings-grid">
+                        
+                        <!-- Profile Details Card -->
+                        <div class="settings-card profile-settings-card">
+                            <div class="settings-card-header" style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px;">
+                                <div class="settings-avatar-large">
+                                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=80" alt="Avatar" id="settings-avatar-img">
+                                    <label class="avatar-edit-btn" for="settings-avatar-input" style="cursor: pointer;">
+                                        <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+                                        <input type="file" id="settings-avatar-input" accept="image/*" style="display: none;">
+                                    </label>
                                 </div>
                                 <div style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start;">
                                     <div>
@@ -686,6 +881,9 @@
                                         <p style="color: var(--text-tertiary); font-size: 0.75rem;">Image file size must be less than 2MB.</p>
                                     </div>
                                     <div style="display: flex; gap: 8px;">
+                                        <button class="icon-btn text-primary" id="btn-open-font-settings" title="Change Font" style="background: rgba(236, 72, 153, 0.1); width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(236, 72, 153, 0.2); color: #EC4899;">
+                                            <i data-lucide="type" style="width: 18px; height: 18px;"></i>
+                                        </button>
                                         <button class="icon-btn text-primary" id="btn-open-change-password" title="Change Password" style="background: var(--bg-surface-elevated); width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);">
                                             <i data-lucide="lock" style="width: 18px; height: 18px;"></i>
                                         </button>
@@ -768,43 +966,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Appearance & Theme Card -->
-                            <div class="settings-card">
-                                <div class="settings-card-header" style="display: flex; gap: 12px; margin-bottom: 20px;">
-                                    <div class="settings-icon-box" style="background-color: rgba(236, 72, 153, 0.1); color: #EC4899;"><i data-lucide="palette"></i></div>
-                                    <div>
-                                        <h3 style="font-size: 1.05rem; margin-bottom: 2px;">Appearance</h3>
-                                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Customize app font and text size.</p>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="gap: 8px; margin-bottom: 12px;">
-                                    <label for="settings-font-family" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">App Font Family</label>
-                                    <select id="settings-font-family" style="padding: 8px 12px; font-size: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
-                                        <option value="'Lora', serif">Lora (Serif Default)</option>
-                                        <option value="'Inter', sans-serif">Inter (Modern Sans)</option>
-                                        <option value="'Roboto', sans-serif">Roboto</option>
-                                        <option value="'Poppins', sans-serif">Poppins</option>
-                                        <option value="system-ui, -apple-system, sans-serif">System Default</option>
-                                        <option value="'Arial Narrow', Arial, sans-serif">Arial Narrow</option>
-                                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
-                                        <option value="'Bookman Old Style', Bookman, serif">Bookman Old Style</option>
-                                        <option value="'Marudham', sans-serif">Marudham</option>
-                                        <option value="sans-serif">Generic Sans Serif</option>
-                                        <option value="'Montserrat', sans-serif">Montserrat (Premium Sans)</option>
-                                        <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
-                                        <option value="'Georgia', serif">Georgia (Classic)</option>
-                                        <option value="'Courier New', Courier, monospace">Monospace (Fixed Width)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group" style="gap: 8px;">
-                                    <label for="settings-font-size" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Text Size Scale</label>
-                                    <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
-                                        <input type="range" id="settings-font-size" min="14" max="22" step="1" value="16" style="flex: 1;">
-                                        <span id="settings-font-size-label" style="font-weight: 700; width: 40px; text-align: right;">16px</span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         
                         <!-- Danger Zone Card -->
@@ -825,6 +986,49 @@
             </section>
         </main>
         
+        <!-- DIALOG/MODAL: FONT SETTINGS -->
+        <div class="modal-backdrop" id="font-settings-modal-backdrop">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 400px; margin: auto;">
+                <div class="modal-header">
+                    <h3 style="display: flex; align-items: center; gap: 8px;"><i data-lucide="type"></i> Font Settings</h3>
+                    <button class="icon-btn" id="btn-close-font-settings-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group" style="gap: 8px; margin-bottom: 12px;">
+                        <label for="settings-font-family" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">App Font Family</label>
+                        <select id="settings-font-family" style="padding: 8px 12px; font-size: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
+                            <option value="'Lora', serif">Lora (Serif Default)</option>
+                            <option value="'Inter', sans-serif">Inter (Modern Sans)</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Poppins', sans-serif">Poppins</option>
+                            <option value="system-ui, -apple-system, sans-serif">System Default</option>
+                            <option value="'Arial Narrow', Arial, sans-serif">Arial Narrow</option>
+                            <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                            <option value="'Bookman Old Style', Bookman, serif">Bookman Old Style</option>
+                            <option value="'Marudham', sans-serif">Marudham</option>
+                            <option value="sans-serif">Generic Sans Serif</option>
+                            <option value="'Montserrat', sans-serif">Montserrat (Premium Sans)</option>
+                            <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
+                            <option value="'Georgia', serif">Georgia (Classic)</option>
+                            <option value="'Courier New', Courier, monospace">Monospace (Fixed Width)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="gap: 8px;">
+                        <label for="settings-font-size" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Text Size Scale</label>
+                        <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                            <input type="range" id="settings-font-size" min="14" max="22" step="1" value="16" style="flex: 1;">
+                            <span id="settings-font-size-label" style="font-weight: 700; width: 40px; text-align: right;">16px</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-block" id="btn-save-font-settings">Done</button>
+                </div>
+            </div>
+        </div>
+
         <!-- DIALOG/MODAL: CHANGE PASSWORD -->
         <div class="modal-backdrop" id="change-password-modal-backdrop">
             <div class="simple-modal" style="width: calc(100% - 40px); max-width: 400px; margin: auto;">
@@ -1419,7 +1623,7 @@
     </div>
     
     <script src="auth.js?v=44"></script>
-    <script src="app.js?v=51"></script>
+    <script src="app.js?v=52"></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
@@ -1600,6 +1804,7 @@
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { alert("Error: " + msg + " \nLine: " + lineNo); }</script>
+
 
 
 
