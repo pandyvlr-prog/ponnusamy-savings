@@ -4,8 +4,8 @@
     --glass-blur: 20px;
 
     /* Theme-independent layout tokens */
-    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-heading: 'Lora', serif;
+    --font-body: 'Lora', serif;
     
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -2945,3 +2945,4 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
         transform: none !important;
     }
 }
+

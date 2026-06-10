@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ponnusamy Savings - Simple Chit Management</title>
+    <title>PMS - Simple Chit Management</title>
     <!-- Meta tags for SEO & Mobile App behaviour -->
     <meta name="description" content="Simple Chit Management for Everyone. Track chit groups, members, and monthly payments effortlessly.">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
     <!-- Google Fonts: Outfit (Brand/Headlines) & Inter (Body UI) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -23,7 +23,7 @@
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=5">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -52,7 +52,7 @@
                 <header class="landing-header">
                     <div class="landing-header-left">
                         <img src="logo-dark.jpg" class="app-logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 6px;">
-                        <span class="landing-header-title">Ponnusamy Savings</span>
+                        <span class="landing-header-title">PMS</span>
                     </div>
                     <div class="landing-header-right">
                         <button class="btn btn-text nav-login" id="nav-login-btn">Login</button>
@@ -65,8 +65,8 @@
                             <img src="logo-dark.jpg" class="app-logo" style="width: 100px; height: 100px; object-fit: contain; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
                         </div>
                         <h1 class="landing-title">Ponnusamy Monthly Saving</h1>
-                        <p class="landing-subtitle">Ponnusamy Savings provides an incredibly smooth experience for tracking your chit groups.<br>Monitor collections, pending dues, and group members effortlessly.</p>
-                        <button class="btn btn-primary landing-btn" id="btn-goto-login">Login to Ponnusamy Savings <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i></button>
+                        <p class="landing-subtitle">PMS provides an incredibly smooth experience for tracking your chit groups.<br>Monitor collections, pending dues, and group members effortlessly.</p>
+                        <button class="btn btn-primary landing-btn" id="btn-goto-login">Login to PMS <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i></button>
                     </div>
                     <div class="landing-features">
                         <div class="feature-item">
@@ -94,7 +94,7 @@
                     <div class="login-left">
                         <div class="login-header-logo">
                             <img src="logo-dark.jpg" class="app-logo" style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <span style="font-family: var(--font-heading); font-weight: 800; letter-spacing: 0.5px;">PONNUSAMY SAVINGS</span>
+                            <span style="font-family: var(--font-heading); font-weight: 800; letter-spacing: 0.5px;">PMS</span>
                         </div>
                         <div class="login-form-container">
                             <h2 class="login-title">Sign in to your account</h2>
@@ -144,7 +144,7 @@
                     <div class="header-logo-section">
                         <img src="logo-dark.jpg" class="app-logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: 10px; margin-right: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         <div class="header-titles">
-                            <h1 class="app-title">Ponnusamy Savings</h1>
+                            <h1 class="app-title">PMS</h1>
                             <p class="app-tagline" style="margin-bottom: 2px;">Simple Chit Management for Everyone</p>
                             <span id="dashboard-current-date" style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">Loading Date...</span>
                         </div>
@@ -1355,7 +1355,7 @@
             <div style="display: flex; align-items: center; gap: 20px;">
                 <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
                 <div>
-                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">Ponnusamy Savings</h1>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
                     <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Monthly Chit Fund Report</p>
                 </div>
             </div>
@@ -1445,7 +1445,7 @@
                 </div>
                 <div style="text-align: right; align-self: flex-end;">
                     <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
-                    <div style="font-size: 13px; color: #475569; font-weight: 800;">Ponnusamy Savings App</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
                 </div>
             </div>
         </div>
@@ -1458,7 +1458,7 @@
             <div style="display: flex; align-items: center; gap: 20px;">
                 <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
                 <div>
-                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">Ponnusamy Savings</h1>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
                     <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Global Dashboard Report</p>
                 </div>
             </div>
@@ -1502,7 +1502,7 @@
                 </div>
                 <div style="text-align: right; align-self: flex-end;">
                     <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
-                    <div style="font-size: 13px; color: #475569; font-weight: 800;">Ponnusamy Savings App</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
                 </div>
             </div>
         </div>
@@ -1514,7 +1514,7 @@
         <div class="pwa-content">
             <img src="logo-light.jpg" alt="App Logo" class="pwa-logo">
             <div class="pwa-text">
-                <h4>Install Ponnusamy Savings <i data-lucide="smartphone" style="width:14px; height:14px; display:inline-block;"></i></h4>
+                <h4>Install PMS <i data-lucide="smartphone" style="width:14px; height:14px; display:inline-block;"></i></h4>
                 <p>Add to your Home Screen for instant access, real-time sync, and native experience!</p>
             </div>
         </div>
@@ -1527,3 +1527,5 @@
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { alert("Error: " + msg + " \nLine: " + lineNo); }</script>
+
+

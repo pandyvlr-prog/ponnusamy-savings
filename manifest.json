@@ -1,6 +1,6 @@
 {
-  "name": "Ponnusamy Savings",
-  "short_name": "Savings",
+  "name": "PMS",
+  "short_name": "PMS",
   "description": "Simple Chit Management for Everyone. Track chit groups, members, and monthly payments effortlessly.",
   "start_url": "/index.html",
   "display": "fullscreen",
@@ -21,4 +21,5 @@
     }
   ]
 }
+
 
