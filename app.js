@@ -2624,7 +2624,15 @@ function renderDashboardMembersList(searchQuery = '') {
                 for (let m = 1; m <= group.duration; m++) {
                     if (member.payments[m] && member.payments[m].payoutClaimed) {
                         hasTakenPayout = true;
-                        payoutVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : group.chitAmount;
+                        payoutVal = group.chitAmount;
+                        if (group.payouts && group.payouts[m] !== undefined) {
+                            payoutVal = group.payouts[m];
+                        } else {
+                            const matchedTemplate = State.schemeTemplates && State.schemeTemplates.find(t => t.chitAmount === group.chitAmount && t.duration === group.duration);
+                            if (matchedTemplate && matchedTemplate.payouts && matchedTemplate.payouts[m] !== undefined) {
+                                payoutVal = matchedTemplate.payouts[m];
+                            }
+                        }
                         payoutMethod = member.payments[m].payoutMethod;
                         payoutDate = member.payments[m].payoutDate;
                         payoutMonthNum = m;
@@ -3347,14 +3355,20 @@ function renderChecklist(member, group) {
         const payment = member.payments[m] || { paid: false, paidAt: null, amount: group.monthlyInstallment, customDate: '', partialPaid: null };
         const isPaid = payment.paid;
         const isCurrentOrPast = m <= group.currentMonth;
-        
         const instVal = group.installments && group.installments[m] !== undefined ? group.installments[m] : group.monthlyInstallment;
-        const payoutVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : group.chitAmount;
-        
-        // Calculate partial paid values
+        let payoutVal = group.chitAmount;
+        if (group.payouts && group.payouts[m] !== undefined) {
+            payoutVal = group.payouts[m];
+        } else {
+            const matchedTemplate = State.schemeTemplates && State.schemeTemplates.find(t => t.chitAmount === group.chitAmount && t.duration === group.duration);
+            if (matchedTemplate && matchedTemplate.payouts && matchedTemplate.payouts[m] !== undefined) {
+                payoutVal = matchedTemplate.payouts[m];
+            }
+        }
         const enteredPartialVal = payment.partialPaid !== undefined && payment.partialPaid !== null ? payment.partialPaid : '';
         const currentPaid = isPaid ? instVal : (payment.partialPaid || 0);
         const currentDue = isPaid ? 0 : (instVal - currentPaid);
+        const partialBlinkClass = (payment.partialPaid > 0 && !isPaid) ? 'blink-partial' : '';
 
         if (isPaid) {
             paidCount++;
@@ -3442,7 +3456,7 @@ function renderChecklist(member, group) {
                 <span style="font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap;">${monthYearStr}</span>
             </div>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
-            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input" data-month="${m}" placeholder="0" value="${formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
+            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
             ${payoutHtml}
             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div class="row-checkbox-wrapper ${isPaid ? 'paid' : ''}" style="width: 20px; height: 20px; border-radius: 40%; border: 2px solid ${isPaid ? 'var(--green-dark)' : 'var(--text-muted)'}; background-color: ${isPaid ? 'var(--green-dark)' : 'transparent'}; color: ${isPaid ? '#fff' : 'transparent'}; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all var(--transition-fast);">

@@ -2946,3 +2946,12 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     }
 }
 
+@keyframes blink-partial {
+    0% { border-color: rgba(239, 68, 68, 0.8); background-color: rgba(239, 68, 68, 0.05); color: #ef4444; }
+    50% { border-color: rgba(34, 197, 94, 0.8); background-color: rgba(34, 197, 94, 0.05); color: #22c55e; }
+    100% { border-color: rgba(239, 68, 68, 0.8); background-color: rgba(239, 68, 68, 0.05); color: #ef4444; }
+}
+.blink-partial {
+    animation: blink-partial 1.2s infinite;
+    font-weight: 800 !important;
+}
