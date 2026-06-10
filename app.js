@@ -2168,6 +2168,7 @@ function renderDashboardMembersList(searchQuery = '') {
     let countPending = 0;
     let countChitTaken = 0;
     let amountChitTaken = 0;
+    let countNewCustomerMonth = 0;
     let countNewCustomer = 0;
     let countGpay = 0;
     let countCash = 0;
@@ -2188,6 +2189,7 @@ function renderDashboardMembersList(searchQuery = '') {
 
         if (item.member.customerType === 'New') {
             countNewCustomer++;
+            if (item.relativeMonthNum === 1) countNewCustomerMonth++;
         }
         
         if (item.paymentMethodThisMonth === 'gpay') {
@@ -2203,6 +2205,7 @@ function renderDashboardMembersList(searchQuery = '') {
     const dashCountPartial = document.getElementById('dash-count-partial');
     const dashCountPending = document.getElementById('dash-count-pending');
     const dashCountChitTaken = document.getElementById('dash-count-chit-taken');
+    const dashCountNewCustomerMonth = document.getElementById('dash-count-new-customer-month');
     const dashCountNewCustomer = document.getElementById('dash-count-new-customer');
     const dashCountGpay = document.getElementById('dash-count-gpay');
     const dashCountCash = document.getElementById('dash-count-cash');
@@ -2212,6 +2215,7 @@ function renderDashboardMembersList(searchQuery = '') {
     if (dashCountPartial) dashCountPartial.textContent = countPartial;
     if (dashCountPending) dashCountPending.textContent = countPending;
     if (dashCountChitTaken) dashCountChitTaken.textContent = countChitTaken;
+    if (dashCountNewCustomerMonth) dashCountNewCustomerMonth.textContent = countNewCustomerMonth;
     if (dashCountNewCustomer) dashCountNewCustomer.textContent = countNewCustomer;
     if (dashCountGpay) dashCountGpay.textContent = countGpay;
     if (dashCountCash) dashCountCash.textContent = countCash;
@@ -2257,6 +2261,8 @@ function renderDashboardMembersList(searchQuery = '') {
                 return !item.currentMonthPaid && item.paidAmount === 0;
             } else if (State.dashboardFilter === 'chit_taken') {
                 return item.hasTakenPayout;
+            } else if (State.dashboardFilter === 'new_customer_month') {
+                return item.member.customerType === 'New' && item.relativeMonthNum === 1;
             } else if (State.dashboardFilter === 'new_customer') {
                 return item.member.customerType === 'New';
             } else if (State.dashboardFilter === 'gpay') {
