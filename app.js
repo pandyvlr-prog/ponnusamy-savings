@@ -106,26 +106,7 @@ function getStorageKey(key) {
 }
 
 function ensureDefaultTemplates() {
-    if (!State.templates) State.templates = [];
-    
-    const userId = window.AuthState?.currentUser?.id || 'guest';
-    const initKey = 'ponnusamy_default_templates_initialized_' + userId;
-    
-    if (!localStorage.getItem(initKey)) {
-        const inst12 = {}; const pay12 = {};
-        for(let m=1; m<=12; m++) { inst12[m] = 2500; pay12[m] = 30000; }
-        
-        const inst20 = {}; const pay20 = {};
-        for(let m=1; m<=20; m++) { inst20[m] = 5000; pay20[m] = 100000; }
-        
-        State.templates.push(
-            { id: generateUUID(), amount: 30000, duration: 12, installments: inst12, payouts: pay12 },
-            { id: generateUUID(), amount: 100000, duration: 20, installments: inst20, payouts: pay20 }
-        );
-        
-        localStorage.setItem(initKey, 'true');
-        return true; // indicates it added templates
-    }
+    // Disabled temporarily until user provides their master JSON file with the 20+ correct templates
     return false;
 }
 async function loadState() {
@@ -4285,6 +4266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
 
 
 
