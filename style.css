@@ -102,14 +102,57 @@
 
 /* Global Reset & Base Styling */
 * {
+[data-theme="light"] {
+    --bg-primary: #d1d5db; /* Light dark cement gray base */
+    --bg-surface: #ffffff; /* Clean white cards */
+    --bg-surface-elevated: #e5e7eb; /* Elevated cement depth */
+    --bg-surface-glass: rgba(209, 213, 219, 0.85);
+    
+    --primary: #c59b3f; /* Crisp Gold */
+    --primary-hover: #a17822;
+    --primary-glow: rgba(197, 155, 63, 0.06);
+    --primary-gradient: linear-gradient(135deg, #dfb24c 0%, #c59b3f 100%);
+    --title-gradient: linear-gradient(to right, #1c1c1e, #a17822);
+    
+    --accent: #a17822;
+    --accent-glow: rgba(161, 120, 34, 0.05);
+    
+    --blue: #a17822;
+    --blue-glow: rgba(161, 120, 34, 0.05);
+    
+    --red: #ff3b30;
+    --red-hover: #e02b20;
+    --red-glow: rgba(255, 59, 48, 0.06);
+    
+    --green-light: rgba(0, 106, 78, 0.1);
+    --green-dark: #006A4E; /* High contrast luxury bottle green */
+    --red-light: rgba(255, 59, 48, 0.06);
+    --red-dark: #ff3b30;
+    
+    --text-main: #000000; /* Pure black for maximum contrast */
+    --text-secondary: #1f2937; /* Dark charcoal */
+    --text-muted: #4b5563; /* Dark gray */
+    
+    --border: rgba(0, 0, 0, 0.05);
+    --border-active: rgba(0, 0, 0, 0.1);
+    --border-glow: rgba(197, 155, 63, 0.15);
+ 
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.06);
+    --shadow-primary: 0 6px 16px rgba(197, 155, 63, 0.1);
+}
+
+/* Global Reset & Base Styling */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
 
-body, .app-device-shell, .app-container, .app-header, .screen-header, .dashboard-card, .group-card, .member-card, .fin-card, .modal-backdrop, .payment-modal, .simple-modal, .app-screen, .filter-pill, .btn, .icon-btn, input, select, .theme-slider-thumb, .slider-icon {
-    transition-property: all;
+body, .app-device-shell, .app-container, .app-header, .screen-header, .dashboard-card, .group-card, .member-card, .fin-card, .modal-backdrop, .payment-modal, .simple-modal, .filter-pill, .btn, .icon-btn, input, select, .theme-slider-thumb, .slider-icon {
+    transition-property: background-color, border-color, color, box-shadow, fill, stroke;
     transition-duration: 0.4s;
     transition-timing-function: ease;
 }
@@ -118,73 +161,6 @@ body {
     background-color: var(--bg-primary);
 }
 body::before {
-    content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 0%, #151323 0%, #05070f 70%); z-index: -1; transition: opacity 0.4s ease; opacity: 1;
-    color: var(--text-main);
-    font-family: var(--font-body);
-    font-weight: 600; /* Bold overall app text */
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-/* App Container Shell - Full viewport wide website dashboard */
-.app-device-shell {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    background-color: var(--bg-primary);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-/* Phone simulators hidden for website dashboard layout */
-.device-notch {
-    display: none !important;
-}
-
-.device-status-bar {
-    display: none !important;
-}
-
-/* Application SPA Content Container */
-.app-container {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background-color: var(--bg-primary);
-}
-
-/* Screen Transitions */
-.app-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(30px) scale(0.96);
-    filter: blur(6px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 10;
-}
-
-.app-screen.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-    z-index: 20;
-}
-
-/* Custom Scrollbar for Inner Content */
-.screen-content {
-    flex: 1;
     overflow-y: auto;
     padding: 16px 20px 80px 20px; /* space for bottom buttons / tabs */
     scrollbar-width: none; /* Firefox */
