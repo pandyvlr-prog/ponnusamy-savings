@@ -2903,8 +2903,8 @@ function renderDashboardMembersList(searchQuery = '') {
             <span style="font-size: 0.8rem; color: var(--text-secondary); text-align: left;">${item.group.name}</span>
             <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
-            <span style="text-align: left; padding-left: 4px;"><span class="amount-pill ${item.dueAmount > 0 ? 'pill-due' : 'pill-zero'}">${dueAmountText}</span></span>
-            <span style="text-align: left; padding-left: 4px;"><span class="amount-pill ${item.paidAmount > 0 ? 'pill-paid' : 'pill-zero'}">${paidAmountText}</span></span>
+            <span style="font-size: 1.05rem; font-weight: 800; color: ${item.dueAmount > 0 ? 'var(--red-dark)' : 'var(--green-dark)'}; text-align: left;">${dueAmountText}</span>
+            <span style="font-size: 1.05rem; font-weight: 800; color: ${item.paidAmount > 0 ? 'var(--green-dark)' : 'var(--text-muted)'}; text-align: left;">${paidAmountText}</span>
             <span style="font-size: 0.75rem; font-weight: 800; color: ${item.currentMonthPaid ? 'var(--green-dark)' : (item.displayPaidDate !== '--' ? '#f59e0b' : 'var(--text-muted)')}; text-align: left;">${paidDateText}</span>
             <div style="display: flex; justify-content: center; align-items: center;">
                 ${checkboxHtml}
