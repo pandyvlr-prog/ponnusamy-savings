@@ -17,8 +17,8 @@
 
     /* Dark Mode Theme Variables (Default) */
     --bg-primary: transparent;
-    --bg-surface: rgba(14, 14, 18, 0.7);
-    --bg-surface-elevated: rgba(22, 22, 29, 0.85);
+    --bg-surface: rgba(14, 14, 18, 0.92);
+    --bg-surface-elevated: rgba(22, 22, 29, 0.98);
     --bg-surface-glass: rgba(14, 14, 18, 0.6);
     
     --primary: #d4af37; /* Luxury Gold */
@@ -72,8 +72,8 @@
 
 [data-theme="light"] {
     --bg-primary: transparent; /* Light dark cement gray base */
-    --bg-surface: rgba(255, 255, 255, 0.85); /* Clean white cards with slight glass */
-    --bg-surface-elevated: rgba(255, 255, 255, 0.95); /* Elevated cement depth */
+    --bg-surface: rgba(255, 255, 255, 0.96); /* Clean white cards with slight glass */
+    --bg-surface-elevated: rgba(255, 255, 255, 1); /* Elevated cement depth */
     --bg-surface-glass: rgba(255, 255, 255, 0.7);
     
     --primary: #c59b3f; /* Crisp Gold */
