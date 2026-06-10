@@ -1598,9 +1598,30 @@ function setupEventListeners() {
         btnGlobalRefresh.addEventListener('click', async () => {
             const icon = btnGlobalRefresh.querySelector('i');
             if (icon) icon.classList.add('spin-anim');
+            
+            // Fade out container
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (dashboardContainer) {
+                dashboardContainer.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                dashboardContainer.style.opacity = '0';
+                dashboardContainer.style.transform = 'scale(0.98)';
+            }
+            
+            await new Promise(r => setTimeout(r, 200));
+            
             await loadState();
             renderDashboard();
-            if (icon) icon.classList.remove('spin-anim');
+            
+            // Fade back in
+            if (dashboardContainer) {
+                dashboardContainer.style.opacity = '1';
+                dashboardContainer.style.transform = 'scale(1)';
+            }
+            
+            setTimeout(() => {
+                if (icon) icon.classList.remove('spin-anim');
+            }, 300);
+            
             if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
         });
     }
