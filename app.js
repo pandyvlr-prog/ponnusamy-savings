@@ -4141,10 +4141,6 @@ function generateGlobalPdfReport() {
 
 /* --- PWA Install Logic --- */
 let deferredPrompt;
-const pwaPopup = document.getElementById('pwa-install-prompt');
-const btnPwaInstall = document.getElementById('pwa-install-btn');
-const btnPwaLater = document.getElementById('pwa-later-btn');
-const btnPwaClose = document.getElementById('pwa-close-btn');
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {
@@ -4155,74 +4151,71 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Handle Install Prompt
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
-    // Stash the event so it can be triggered later.
-    deferredPrompt = e;
-    // Show our custom UI
-    if (pwaPopup) {
-        // Force clear the declined flag for testing
-        localStorage.removeItem('pwaPromptDeclined');
-        pwaPopup.style.display = 'flex';
-        // Small delay to allow display:flex to apply before adding class for transition
-        setTimeout(() => {
-            pwaPopup.classList.add('show');
-        }, 50);
-    }
-});
+document.addEventListener('DOMContentLoaded', () => {
+    const pwaPopup = document.getElementById('pwa-install-prompt');
+    const btnPwaInstall = document.getElementById('pwa-install-btn');
+    const btnPwaLater = document.getElementById('pwa-later-btn');
+    const btnPwaClose = document.getElementById('pwa-close-btn');
+    const btnManualInstall = document.getElementById('btn-manual-install');
 
-function hidePwaPopup(decline = false) {
-    if (pwaPopup) {
-        pwaPopup.classList.remove('show');
-        setTimeout(() => {
-            pwaPopup.style.display = 'none';
-        }, 500); // match transition duration
-    }
-    if (decline) {
-        localStorage.setItem('pwaPromptDeclined', 'true');
-    }
-}
-
-if (btnPwaClose) btnPwaClose.addEventListener('click', () => hidePwaPopup(false));
-if (btnPwaLater) btnPwaLater.addEventListener('click', () => hidePwaPopup(true));
-
-const btnManualInstall = document.getElementById('btn-manual-install');
-if (btnManualInstall) {
-    btnManualInstall.addEventListener('click', () => {
-        // Close dropdown
-        const menu = document.getElementById('header-dropdown-menu');
-        if (menu) menu.classList.remove('active');
-        
-        // Show PWA popup
+    function hidePwaPopup(decline = false) {
         if (pwaPopup) {
+            pwaPopup.classList.remove('show');
+            setTimeout(() => {
+                pwaPopup.style.display = 'none';
+            }, 500); // match transition duration
+        }
+        if (decline) {
+            localStorage.setItem('pwaPromptDeclined', 'true');
+        }
+    }
+
+    if (btnPwaClose) btnPwaClose.addEventListener('click', () => hidePwaPopup(false));
+    if (btnPwaLater) btnPwaLater.addEventListener('click', () => hidePwaPopup(true));
+
+    if (btnManualInstall) {
+        btnManualInstall.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Close dropdown safely
+            const profileMenu = document.getElementById('profile-dropdown-menu');
+            if (profileMenu) profileMenu.classList.remove('active');
+            
+            // Show PWA popup
+            if (pwaPopup) {
+                pwaPopup.style.display = 'flex';
+                setTimeout(() => pwaPopup.classList.add('show'), 50);
+            }
+        });
+    }
+
+    if (btnPwaInstall) {
+        btnPwaInstall.addEventListener('click', async () => {
+            hidePwaPopup();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('User response to the install prompt: ' + outcome);
+                deferredPrompt = null;
+            } else {
+                alert("Your browser doesn't support automatic installation. Please click the 'Share' or 'Menu' button in your browser and select 'Add to Home Screen' or 'Install App'.");
+            }
+        });
+    }
+
+    // Handle Install Prompt globally
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (pwaPopup) {
+            localStorage.removeItem('pwaPromptDeclined');
             pwaPopup.style.display = 'flex';
             setTimeout(() => pwaPopup.classList.add('show'), 50);
         }
     });
-}
 
-if (btnPwaInstall) {
-    btnPwaInstall.addEventListener('click', async () => {
+    window.addEventListener('appinstalled', () => {
+        deferredPrompt = null;
         hidePwaPopup();
-        if (deferredPrompt) {
-            // Show the install prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log('User response to the install prompt: ' + outcome);
-            // We've used the prompt, and can't use it again, throw it away
-            deferredPrompt = null;
-        } else {
-            alert("Your browser doesn't support automatic installation. Please click the 'Share' or 'Menu' button in your browser and select 'Add to Home Screen' or 'Install App'.");
-        }
+        console.log('PWA was installed');
     });
-}
-
-window.addEventListener('appinstalled', () => {
-    // Clear the deferredPrompt so it can be garbage collected
-    deferredPrompt = null;
-    hidePwaPopup();
-    console.log('PWA was installed');
 });
