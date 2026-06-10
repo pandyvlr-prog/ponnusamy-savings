@@ -76,6 +76,7 @@ const State = {
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Theme
     setupTheme();
+    initAppearanceSettings();
 
     // Load data from localStorage
     loadState();
@@ -4812,3 +4813,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+function initAppearanceSettings() {
+    const savedFont = localStorage.getItem('pms_font_family') || \"'Lora', serif\";
+    const savedSize = localStorage.getItem('pms_font_size') || "16";
+
+    document.documentElement.style.setProperty('--font-body', savedFont);
+    document.documentElement.style.setProperty('--font-heading', savedFont);
+    document.documentElement.style.fontSize = `px`;
+
+    const fontSelect = document.getElementById('settings-font-family');
+    const sizeSlider = document.getElementById('settings-font-size');
+    const sizeLabel = document.getElementById('settings-font-size-label');
+
+    if (fontSelect) fontSelect.value = savedFont;
+    if (sizeSlider) {
+        sizeSlider.value = savedSize;
+        if(sizeLabel) sizeLabel.textContent = `px`;
+    }
+
+    if (fontSelect) {
+        fontSelect.addEventListener('change', (e) => {
+            const font = e.target.value;
+            localStorage.setItem('pms_font_family', font);
+            document.documentElement.style.setProperty('--font-body', font);
+            document.documentElement.style.setProperty('--font-heading', font);
+        });
+    }
+
+    if (sizeSlider) {
+        sizeSlider.addEventListener('input', (e) => {
+            const size = e.target.value;
+            if(sizeLabel) sizeLabel.textContent = `px`;
+            localStorage.setItem('pms_font_size', size);
+            document.documentElement.style.fontSize = `px`;
+        });
+    }
+}
