@@ -119,9 +119,6 @@ body, .app-device-shell, .app-container, .app-header, .screen-header, .dashboard
 
 body {
     background-color: var(--bg-primary);
-}
-body::before {
-    content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 0%, #151323 0%, #05070f 70%); z-index: -1; transition: opacity 0.4s ease; opacity: 1;
     color: var(--text-main);
     font-family: var(--font-body);
     font-weight: 600; /* Bold overall app text */
@@ -130,6 +127,9 @@ body::before {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+}
+body::before {
+    content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 0%, #151323 0%, #05070f 70%); z-index: -1; transition: opacity 0.4s ease; opacity: 1;
 }
 
 /* App Container Shell - Full viewport wide website dashboard */
@@ -2917,5 +2917,6 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 .pwa-btn-install:active {
     transform: scale(0.98);
 }
+
 
 
