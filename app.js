@@ -2971,8 +2971,8 @@ function renderDashboardMembersList(searchQuery = '') {
             <span style="font-size: 0.8rem; color: var(--text-secondary); text-align: left;">${item.group.name}</span>
             <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
+            <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: center;">${dueAmountText}</span>
+            <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: center;">${paidAmountText}</span>
             <span style="display: flex; justify-content: center; align-items: center; text-align: center;">${paidDateHtml}</span>
             <div style="display: flex; justify-content: center; align-items: center;">
                 ${checkboxHtml}
@@ -4746,8 +4746,8 @@ function generateGlobalPdfReport() {
                     <span style="border: 1px solid #e2e8f0; background: #ffffff; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; color: #1e293b;">${row.scheme}</span>
                 </td>
                 <td style="padding: 12px 10px; color: #d97706; font-size: 12px; font-weight: 800; text-align: center; border: 1px solid #d1d5db;">${row.monthNo}</td>
-                <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowDueText}</td>
-                <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowPaidText}</td>
+                <td style="padding: 12px 10px; text-align: center; color: ${rowDueColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowDueText}</td>
+                <td style="padding: 12px 10px; text-align: center; color: ${rowPaidColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowPaidText}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${rowDateHtml}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${markPill}</td>
                 <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${chitPill}</td>
@@ -4764,8 +4764,8 @@ function generateGlobalPdfReport() {
                     <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Chit Group</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Scheme</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Month No.</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Due Amount</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Amount</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Due Amount</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Amount</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Date</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Mark</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Chit Taken</th>
