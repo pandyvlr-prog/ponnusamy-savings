@@ -249,12 +249,18 @@ function setupTheme() {
     setIcons(savedTheme);
     
     const toggleTheme = () => {
+        document.documentElement.classList.add('theme-switching');
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('ponnusamy_theme', newTheme);
         setIcons(newTheme);
+        
+        // Force reflow and remove class
+        setTimeout(() => {
+            document.documentElement.classList.remove('theme-switching');
+        }, 50);
         
         showNotification(`Switched to ${newTheme} mode!`, 'info');
     };
@@ -4219,3 +4225,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+

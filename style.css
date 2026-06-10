@@ -100,6 +100,9 @@
     --shadow-primary: 0 6px 16px rgba(197, 155, 63, 0.1);
 }
 
+/* Disable transitions during theme switch */
+.theme-switching, .theme-switching * { transition: none !important; }
+
 /* Global Reset & Base Styling */
 * {
     margin: 0;
@@ -2914,4 +2917,5 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 .pwa-btn-install:active {
     transform: scale(0.98);
 }
+
 
