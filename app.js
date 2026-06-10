@@ -2480,7 +2480,7 @@ function renderDashboardGroupsList() {
             ? group.installments[group.currentMonth]
             : group.monthlyInstallment;
             
-        const schemeAmount = group.amount ? group.amount : (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
+        const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
 
         card.innerHTML = `
             <div class="group-card-header">
