@@ -118,18 +118,42 @@ function updateProfileUI() {
     if (settingsAvatar) settingsAvatar.src = avatarUrl;
 }
 
+function triggerVaultTransition(callback) {
+    const overlay = document.getElementById('transition-overlay');
+    if (!overlay) {
+        callback();
+        return;
+    }
+    
+    overlay.classList.add('active');
+    
+    setTimeout(() => {
+        callback();
+        
+        setTimeout(() => {
+            overlay.classList.remove('active');
+        }, 1200);
+    }, 400);
+}
+
 function setupAuthListeners() {
     // Landing -> Login
     document.getElementById('btn-goto-login').addEventListener('click', () => {
-        navigateTo('screen-login');
+        triggerVaultTransition(() => {
+            navigateTo('screen-login');
+        });
     });
     
     // Top Nav -> Login
     document.getElementById('nav-login-btn').addEventListener('click', () => {
-        navigateTo('screen-login');
+        triggerVaultTransition(() => {
+            navigateTo('screen-login');
+        });
     });
     document.getElementById('nav-get-started-btn').addEventListener('click', () => {
-        navigateTo('screen-login');
+        triggerVaultTransition(() => {
+            navigateTo('screen-login');
+        });
     });
 
     // Login Form Submit
