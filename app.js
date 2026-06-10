@@ -3457,7 +3457,7 @@ function renderChecklist(member, group) {
             ? `<div style="display: flex; flex-direction: column; align-items: center;"><div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; color: var(--green-dark); background-color: rgba(48, 209, 88, 0.1); border-radius: var(--radius-sm); border: 1px solid rgba(48, 209, 88, 0.3); cursor: pointer; text-transform: uppercase;">
                  <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Taken ₹${payoutVal.toLocaleString('en-IN')}
                </div>${payoutMethodHtml}${payoutDateHtml}</div>`
-            : `<div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; color: var(--primary); border: 1px dashed var(--primary); border-radius: var(--radius-sm); cursor: pointer; text-transform: uppercase;">
+            : `<div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: var(--radius-sm); box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4); cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s ease;">
                  Claim ₹${payoutVal.toLocaleString('en-IN')}
                </div>`;
 
