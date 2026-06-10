@@ -2619,6 +2619,7 @@ function renderDashboardMembersList(searchQuery = '') {
             let payoutVal = 0;
             let payoutMethod = null;
             let payoutDate = null;
+            let payoutMonthNum = null;
             if (member.payments) {
                 for (let m = 1; m <= group.duration; m++) {
                     if (member.payments[m] && member.payments[m].payoutClaimed) {
@@ -2626,6 +2627,7 @@ function renderDashboardMembersList(searchQuery = '') {
                         payoutVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : group.chitAmount;
                         payoutMethod = member.payments[m].payoutMethod;
                         payoutDate = member.payments[m].payoutDate;
+                        payoutMonthNum = m;
                         break;
                     }
                 }
@@ -2655,6 +2657,7 @@ function renderDashboardMembersList(searchQuery = '') {
                 payoutVal,
                 payoutMethod,
                 payoutDate,
+                payoutMonthNum,
                 paymentMethodThisMonth
             });
         });
@@ -2843,15 +2846,7 @@ function renderDashboardMembersList(searchQuery = '') {
             methodLetterHtml = ` <span style="color: #4285F4; font-weight: 800;">/ G</span>`;
         }
 
-        let dateStr = '';
-        if (item.payoutDate) {
-            const parts = item.payoutDate.split('-');
-            if (parts.length === 3) {
-                dateStr = ` <span style="font-size: 0.65rem; opacity: 0.8; font-weight: 800; margin-left: 2px;">(${parts[2]}/${parts[1]})</span>`;
-            }
-        }
-
-        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill" style="background-color: rgba(147, 51, 234, 0.12); color: #9333ea; border: 1px solid rgba(147, 51, 234, 0.3);"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}${dateStr}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
+        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill chit-taken-badge" style="background-color: rgba(147, 51, 234, 0.12); color: #9333ea; border: 1px solid rgba(147, 51, 234, 0.3); cursor: pointer;"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
 
         let schemeAmountStr = '';
         let amount = item.group.chitAmount;
@@ -2927,6 +2922,15 @@ function renderDashboardMembersList(searchQuery = '') {
                     e.stopPropagation();
                     State.selectedGroupId = item.group.id;
                     openPaymentModal(item.member.id);
+                });
+            }
+
+            const chitBadgeEl = row.querySelector('.chit-taken-badge');
+            if (chitBadgeEl) {
+                chitBadgeEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    State.selectedGroupId = item.group.id;
+                    openPaymentModal(item.member.id, 'single_month', item.payoutMonthNum);
                 });
             }
         }
