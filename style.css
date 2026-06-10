@@ -57,6 +57,8 @@
 }
  
 /* Light Mode Theme Variables */
+[data-theme="light"] body::before { opacity: 0; }
+
 [data-theme="light"] {
     --bg-primary: #d1d5db; /* Light dark cement gray base */
     --bg-surface: #ffffff; /* Clean white cards */
@@ -106,14 +108,17 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-body, .app-device-shell, .app-container, .app-header, .screen-header, .dashboard-card, .group-card, .member-card, .fin-card, .modal-backdrop, .payment-modal, .simple-modal, .app-screen, .filter-pill, .btn, .icon-btn, input, select {
-    transition-property: background-color, color, border-color, box-shadow;
+body, .app-device-shell, .app-container, .app-header, .screen-header, .dashboard-card, .group-card, .member-card, .fin-card, .modal-backdrop, .payment-modal, .simple-modal, .app-screen, .filter-pill, .btn, .icon-btn, input, select, .theme-slider-thumb, .slider-icon {
+    transition-property: all;
     transition-duration: 0.4s;
     transition-timing-function: ease;
 }
 
 body {
-    background: radial-gradient(circle at 50% 0%, #151323 0%, #05070f 70%);
+    background-color: var(--bg-primary);
+}
+body::before {
+    content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 0%, #151323 0%, #05070f 70%); z-index: -1; transition: opacity 0.4s ease; opacity: 1;
     color: var(--text-main);
     font-family: var(--font-body);
     font-weight: 600; /* Bold overall app text */
@@ -2668,5 +2673,117 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+
+
+
+/* --- Premium Group Details Redesign Overrides --- */
+
+.group-hero-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    padding: 24px !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    margin-bottom: 20px !important;
+}
+
+[data-theme='light'] .group-hero-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%) !important;
+    border: 1px solid rgba(255,255,255,0.8) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,1) !important;
+}
+
+.hero-header {
+    margin-bottom: 18px !important;
+}
+
+.hero-header h3 {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px !important;
+    background: var(--title-gradient) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.status-badge {
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: var(--green-dark) !important;
+}
+
+.hero-stats-row {
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+}
+
+.hero-stat-item {
+    gap: 4px !important;
+}
+
+.hero-stat-item .label {
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    opacity: 0.8 !important;
+}
+
+.hero-stat-item .value {
+    font-size: 1.35rem !important;
+}
+
+.month-selector-widget {
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 14px 16px !important;
+    border-radius: 16px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.month-selector-widget > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.widget-label {
+    font-size: 0.85rem !important;
+}
+
+.adjuster-controls {
+    width: 100% !important;
+    justify-content: space-between !important;
+    background: var(--bg-surface) !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+}
+
+.active-month-text {
+    font-size: 0.95rem !important;
+}
+
+.fin-card {
+    border-radius: 24px !important;
+    padding: 20px !important;
+    gap: 6px !important;
+    background: linear-gradient(145deg, var(--bg-surface-elevated) 0%, var(--bg-surface) 100%) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+}
+
+.fin-label {
+    font-size: 0.85rem !important;
+    opacity: 0.9 !important;
+}
+
+.fin-value {
+    font-size: 1.6rem !important;
+    letter-spacing: -0.5px !important;
 }
 

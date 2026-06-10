@@ -2477,7 +2477,10 @@ function renderGroupDetails(groupId) {
     // Update Hero elements
     document.getElementById('details-group-name').textContent = group.name;
     // Show monthly installment as the primary amount
-    document.getElementById('details-chit-value').textContent = '₹' + activeInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' / mo';
+    const chitValueEl = document.getElementById('details-chit-value');
+    if (chitValueEl) {
+        chitValueEl.textContent = '₹' + activeInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' / mo';
+    }
     
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const startMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
