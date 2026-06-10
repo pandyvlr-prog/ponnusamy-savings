@@ -3630,7 +3630,7 @@ function emailBackupDraft() {
     // Replace this URL with your Google Apps Script Web App URL
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQMuRKJrhJ9ETARBOCF9prnTN5orRys9Lg12vJm6YUgcGha0p64FGatZ5h_Y9y7j0q/exec";
 
-    fetch(GOOGLE_SCRIPT_URL, {
+    return fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
@@ -3716,7 +3716,7 @@ async function resetAllData() {
         
         // Auto-email backup before wipe
         if (typeof emailBackupDraft === 'function' && State.backupEmail) {
-            emailBackupDraft();
+            await emailBackupDraft();
         }
 
         // Add a small delay to ensure download starts before state vanishes
@@ -4244,6 +4244,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
     });
 });
+
+
 
 
 
