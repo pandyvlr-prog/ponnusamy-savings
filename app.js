@@ -2849,12 +2849,12 @@ function renderDashboardMembersList(searchQuery = '') {
 
         let methodLetterHtml = '';
         if (item.payoutMethod === 'cash') {
-            methodLetterHtml = ` <span style="color: var(--green-dark); font-weight: 800;">/ C</span>`;
+            methodLetterHtml = ` <span style="color: #d8b4fe; font-weight: 800;">/ C</span>`;
         } else if (item.payoutMethod === 'gpay') {
-            methodLetterHtml = ` <span style="color: #4285F4; font-weight: 800;">/ G</span>`;
+            methodLetterHtml = ` <span style="color: #93c5fd; font-weight: 800;">/ G</span>`;
         }
 
-        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill chit-taken-badge" style="background-color: rgba(147, 51, 234, 0.12); color: #9333ea; border: 1px solid rgba(147, 51, 234, 0.3); cursor: pointer;"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
+        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill chit-taken-badge" style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; border: none; box-shadow: 0 2px 6px rgba(147, 51, 234, 0.4); cursor: pointer; letter-spacing: 0.03em;"><i data-lucide="check-circle" style="width: 10px; height: 10px; color: #fff;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
 
         let schemeAmountStr = '';
         let amount = item.group.chitAmount;
@@ -3454,8 +3454,8 @@ function renderChecklist(member, group) {
         }
 
         const payoutHtml = isClaimed 
-            ? `<div style="display: flex; flex-direction: column; align-items: center;"><div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; color: var(--green-dark); background-color: rgba(48, 209, 88, 0.1); border-radius: var(--radius-sm); border: 1px solid rgba(48, 209, 88, 0.3); cursor: pointer; text-transform: uppercase;">
-                 <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Taken ₹${payoutVal.toLocaleString('en-IN')}
+            ? `<div style="display: flex; flex-direction: column; align-items: center;"><div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #ef4444, #b91c1c); border: none; border-radius: var(--radius-sm); box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4); cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s ease;">
+                 <i data-lucide="check-circle" style="width: 14px; height: 14px; color: #fff;"></i> Taken ₹${payoutVal.toLocaleString('en-IN')}
                </div>${payoutMethodHtml}${payoutDateHtml}</div>`
             : `<div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: var(--radius-sm); box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4); cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s ease;">
                  Claim ₹${payoutVal.toLocaleString('en-IN')}
