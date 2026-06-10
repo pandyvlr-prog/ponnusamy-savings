@@ -2865,8 +2865,8 @@ function renderDashboardMembersList(searchQuery = '') {
         let paidDateText = item.displayPaidDate;
         let checkboxHtml = '';
 
-        let dueColor = item.dueAmount > 0 ? (item.paidAmount > 0 ? '#f59e0b' : 'var(--red-dark)') : 'var(--text-muted)';
-        let paidColor = item.paidAmount > 0 ? (item.dueAmount > 0 ? '#f59e0b' : 'var(--green-dark)') : 'var(--text-muted)';
+        let dueColor = item.dueAmount > 0 ? 'var(--red-dark)' : 'var(--text-muted)';
+        let paidColor = item.paidAmount > 0 ? 'var(--green-dark)' : 'var(--text-muted)';
         let dateColor = item.displayPaidDate !== '--' ? '#0ea5e9' : 'var(--text-muted)';
         if (item.paidAmount > 0 && item.dueAmount > 0 && item.displayPaidDate !== '--') {
             dateColor = '#f59e0b';
@@ -4690,8 +4690,8 @@ function generateGlobalPdfReport() {
             : `<span style="color: #94a3b8; font-weight: 600;">--</span>`;
 
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f9fafb';
-        let rowDueColor = row.dueAmount > 0 ? (row.paidAmount > 0 ? '#d97706' : '#ef4444') : '#94a3b8';
-        let rowPaidColor = row.paidAmount > 0 ? (row.dueAmount > 0 ? '#d97706' : '#10b981') : '#94a3b8';
+        let rowDueColor = row.dueAmount > 0 ? '#ef4444' : '#94a3b8';
+        let rowPaidColor = row.paidAmount > 0 ? '#10b981' : '#94a3b8';
         let rowDateColor = row.paidDate !== '--' ? '#0ea5e9' : '#94a3b8';
         if (row.paidAmount > 0 && row.dueAmount > 0 && row.paidDate !== '--') {
             rowDateColor = '#d97706';
