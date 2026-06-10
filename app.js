@@ -2479,11 +2479,13 @@ function renderDashboardGroupsList() {
         const currentInstallment = group.installments && group.installments[group.currentMonth] !== undefined
             ? group.installments[group.currentMonth]
             : group.monthlyInstallment;
+            
+        const schemeAmount = group.amount ? group.amount : (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
 
         card.innerHTML = `
             <div class="group-card-header">
                 <div class="group-card-title">${group.name}</div>
-                <div class="group-card-amount">₹${group.amount.toLocaleString('en-IN')}</div>
+                <div class="group-card-amount">₹${schemeAmount.toLocaleString('en-IN')}</div>
             </div>
             <div class="group-card-info">
                 <div class="info-item">
