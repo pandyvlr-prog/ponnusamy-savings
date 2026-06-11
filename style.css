@@ -624,8 +624,10 @@ body {
 .group-card-amount {
     font-family: var(--font-heading);
     font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--primary);
+    font-weight: 900;
+    color: #a855f7;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.35);
+    letter-spacing: -0.3px;
 }
 
 .group-card-info {
@@ -2803,19 +2805,44 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%) translateY(150%);
-    width: 90%;
-    max-width: 400px;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    width: 92%;
+    max-width: 420px;
+    background: linear-gradient(145deg, rgba(15,23,42,0.97) 0%, rgba(30,41,59,0.97) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    border-radius: 24px;
+    padding: 22px 22px 18px;
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.07);
     z-index: 9999;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     opacity: 0;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    overflow: hidden;
+}
+
+.pwa-install-popup::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.pwa-install-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: -30px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .pwa-install-popup.show {
@@ -2827,95 +2854,110 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: none;
-    border: none;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
     color: #94a3b8;
     cursor: pointer;
-    padding: 4px;
+    padding: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+    z-index: 1;
 }
 
 .pwa-close:hover {
     color: #fff;
+    background: rgba(255,255,255,0.12);
 }
 
 .pwa-content {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
 }
 
 .pwa-logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
     object-fit: contain;
-    background: #fff; /* logo-light background */
+    background: #fff;
     flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 2px rgba(99,102,241,0.4);
 }
 
 .pwa-text h4 {
-    margin: 0 0 6px 0;
-    font-size: 1rem;
+    margin: 0 0 5px 0;
+    font-size: 1.05rem;
     font-family: var(--font-heading);
-    color: #f8fafc;
+    font-weight: 800;
+    color: #f1f5f9;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    letter-spacing: -0.2px;
 }
 
 .pwa-text p {
     margin: 0;
-    font-size: 0.8rem;
-    color: #cbd5e1;
-    line-height: 1.4;
+    font-size: 0.79rem;
+    color: #94a3b8;
+    line-height: 1.45;
 }
 
 .pwa-actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
 }
 
 .pwa-btn-later {
     flex: 1;
-    background: transparent;
-    color: #94a3b8;
-    border: none;
+    background: rgba(255,255,255,0.04);
+    color: #64748b;
+    border: 1px solid rgba(255,255,255,0.08);
     padding: 10px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.2s;
+    font-family: var(--font-body);
 }
 
 .pwa-btn-later:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
 }
 
 .pwa-btn-install {
     flex: 2;
-    background: #3b82f6;
+    background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
     color: white;
     border: none;
-    padding: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 12px;
+    padding: 11px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border-radius: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45), 0 1px 3px rgba(0,0,0,0.3);
+    transition: box-shadow 0.2s, transform 0.1s;
+    font-family: var(--font-body);
+    letter-spacing: 0.2px;
 }
 
 .pwa-btn-install:hover {
-    background: #2563eb;
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6), 0 1px 4px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
 }
 
 .pwa-btn-install:active {
@@ -2975,8 +3017,7 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 [data-theme="light"] .dashboard-main,
 [data-theme="light"] .settings-card,
 [data-theme="light"] .modal-content,
-[data-theme="light"] .simple-modal,
-[data-theme="light"] .group-card {
+[data-theme="light"] .simple-modal {
     background: var(--bg-surface);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -3198,6 +3239,34 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 #group-list-container {
     -webkit-overflow-scrolling: touch !important;
     scroll-behavior: smooth !important;
+}
+
+/* ---- Group card colored borders override (light theme should NOT override our new colored borders) ---- */
+[data-theme="light"] .group-card {
+    background-color: inherit !important;
+    border: inherit !important;
+    box-shadow: inherit !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* ---- Dark mode: Scheme amount purple glow ---- */
+[data-theme="dark"] .group-card-amount,
+.group-card-amount {
+    color: #a855f7;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.35);
+}
+
+/* ---- Icon blend mode for image-based icons ---- */
+/* Light theme: blend white background away by multiply */
+[data-theme="light"] .icon-blend-img {
+    mix-blend-mode: multiply;
+}
+/* Dark theme: screen mode to blend white into bg */
+[data-theme="dark"] .icon-blend-img,
+.icon-blend-img {
+    mix-blend-mode: screen;
+    filter: brightness(1.1);
 }
 
 

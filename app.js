@@ -2854,16 +2854,18 @@ function renderDashboardGroupsList() {
     });
 
     const boxColors = [
-        { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.05)' },
-        { border: '#10b981', bg: 'rgba(16, 185, 129, 0.05)' },
-        { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.05)' },
-        { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.05)' },
-        { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.05)' },
-        { border: '#ec4899', bg: 'rgba(236, 72, 153, 0.05)' },
-        { border: '#06b6d4', bg: 'rgba(6, 182, 212, 0.05)' },
-        { border: '#14b8a6', bg: 'rgba(20, 184, 166, 0.05)' }
+        { border: '#3b82f6', bg: 'rgba(59,130,246,0.07)' },
+        { border: '#10b981', bg: 'rgba(16,185,129,0.07)' },
+        { border: '#f59e0b', bg: 'rgba(245,158,11,0.07)' },
+        { border: '#ef4444', bg: 'rgba(239,68,68,0.07)' },
+        { border: '#8b5cf6', bg: 'rgba(139,92,246,0.07)' },
+        { border: '#ec4899', bg: 'rgba(236,72,153,0.07)' },
+        { border: '#06b6d4', bg: 'rgba(6,182,212,0.07)' },
+        { border: '#14b8a6', bg: 'rgba(20,184,166,0.07)' }
     ];
     
+    const mNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
     sortedGroups.forEach((group, index) => {
         const metrics = getGroupMetrics(group.id);
         const card = document.createElement('div');
@@ -2871,23 +2873,24 @@ function renderDashboardGroupsList() {
         card.setAttribute('data-id', group.id);
         
         const colorPair = boxColors[index % boxColors.length];
-        card.style.borderLeft = `5px solid ${colorPair.border}`;
+        card.style.border = `2px solid ${colorPair.border}`;
         card.style.backgroundColor = colorPair.bg;
-        
-        const progressPercentage = metrics.totalMembers > 0 
-            ? Math.round((metrics.paidMembersForCurrentMonth / metrics.totalMembers) * 100)
-            : 0;
-            
-        const currentInstallment = group.installments && group.installments[group.currentMonth] !== undefined
-            ? group.installments[group.currentMonth]
-            : group.monthlyInstallment;
+        card.style.boxShadow = `0 2px 12px ${colorPair.border}25, inset 0 1px 0 rgba(255,255,255,0.04)`;
             
         const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
+        
+        // Calculate date range labels using month names
+        const sMonthIdx = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
+        const sYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
+        const sDateObj = new Date(sYear, sMonthIdx, 1);
+        const eDateObj = new Date(sYear, sMonthIdx + group.duration - 1, 1);
+        const startLabel = `${mNames[sDateObj.getMonth()]} ${sDateObj.getFullYear()}`;
+        const endLabel = `${mNames[eDateObj.getMonth()]} ${eDateObj.getFullYear()}`;
 
         card.innerHTML = `
             <div class="group-card-header">
                 <div class="group-card-title" style="display: flex; align-items: center;">
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.72rem; font-weight: 900; margin-right: 8px; flex-shrink: 0;">${index + 1}</span>
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.78rem; font-weight: 900; margin-right: 10px; flex-shrink: 0;">${index + 1}</span>
                     <span>${group.name}</span>
                 </div>
                 <div class="group-card-amount">₹${schemeAmount.toLocaleString('en-IN')}</div>
@@ -2901,6 +2904,11 @@ function renderDashboardGroupsList() {
                     <i data-lucide="calendar"></i>
                     <span>${group.duration} Months</span>
                 </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.74rem; font-weight: 700;">
+                <span style="color: #22c55e; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${startLabel}</span>
+                <span style="color: var(--text-muted); font-weight: 800; font-size: 0.85rem; line-height: 1;">—</span>
+                <span style="color: #ef4444; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${endLabel}</span>
             </div>
         `;
         
@@ -4078,13 +4086,20 @@ function renderChecklist(member, group) {
                  Claim ₹${payoutVal.toLocaleString('en-IN')}
                </div>`;
 
+        const isCurrentMonth = (m === group.currentMonth);
+        const monthBadgeStyle = isCurrentMonth 
+            ? `background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; box-shadow: 0 0 8px rgba(37,99,235,0.4);`
+            : (isPaid 
+                ? `background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3);`
+                : (payment.partialPaid > 0 ? `background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3);` : `background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border);`));
+
         row.innerHTML = `
-            <span style="font-weight: 700; font-size: 0.8rem; color: var(--text-main);">${m}</span>
+            <span style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 7px; font-weight: 900; font-size: 0.78rem; font-family: var(--font-heading); ${monthBadgeStyle}">${m}</span>
             <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
                 <select class="custom-payment-date-select" data-month="${m}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); text-align: center;">
                     ${dateOptions}
                 </select>
-                <span style="font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap;">${monthYearStr}</span>
+                <span style="font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap;">📅 ${monthYearStr}</span>
             </div>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
             <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${formatNumberIndian(isPaid ? instVal : enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
