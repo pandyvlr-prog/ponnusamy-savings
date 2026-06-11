@@ -3258,15 +3258,13 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 }
 
 /* ---- Icon blend mode for image-based icons ---- */
-/* Light theme: blend white background away by multiply */
-[data-theme="light"] .icon-blend-img {
+.icon-blend-img {
     mix-blend-mode: multiply;
 }
-/* Dark theme: screen mode to blend white into bg */
+
+/* Dark theme: invert colors to turn white bg into black, then screen to drop black */
 [data-theme="dark"] .icon-blend-img,
-.icon-blend-img {
+body:not([data-theme="light"]) .icon-blend-img {
+    filter: invert(1) hue-rotate(180deg) brightness(1.5);
     mix-blend-mode: screen;
-    filter: brightness(1.1);
 }
-
-

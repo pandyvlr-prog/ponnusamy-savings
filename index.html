@@ -219,7 +219,7 @@
                     <!-- Metrics Dashboard Card -->
                     <div class="dashboard-card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h2 class="section-title-alt" style="margin-bottom: 0; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; letter-spacing: -0.3px;"><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: #a855f7; -webkit-text-fill-color: initial; flex-shrink: 0;"></i>Dashboard Summary</h2>
+                            <h2 class="section-title-alt" style="margin-bottom: 0; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37, #fce07e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; letter-spacing: -0.3px;"><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: #d4af37; -webkit-text-fill-color: initial; flex-shrink: 0;"></i>Dashboard Summary</h2>
                             <span id="dashboard-target-collection-badge" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; padding: 7px 18px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(0,0,0,0.3); letter-spacing: 0.3px;">
                                 <img src="target_icon.png" alt="Target" class="icon-blend-img" style="width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; vertical-align: middle;">
                                 <span id="dashboard-target-collection-text">Target: ₹0</span>
@@ -378,8 +378,18 @@
                             </select>
                         </div>
                         
-                        <div class="month-select-wrapper" style="width: 140px; min-width: 130px;">
-                            <select id="dashboard-month-select" style="padding: 8px 30px 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%; appearance: none; outline: none; cursor: pointer; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px;">
+                        <div class="custom-month-select-wrapper" style="position: relative; display: inline-block;">
+                            <button id="custom-month-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 180px; text-align: left; height: 38px; outline: none;" title="Select Month">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="calendar" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                                    <span id="custom-month-dropdown-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">Current Month</span>
+                                </div>
+                                <i data-lucide="chevron-down" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--text-muted);"></i>
+                            </button>
+                            <div id="custom-month-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 180px; max-height: 300px; overflow-y: auto; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <!-- Dynamically populated by JS -->
+                            </div>
+                            <select id="dashboard-month-select" style="display: none;">
                                 <option value="current">Current Month</option>
                             </select>
                         </div>
@@ -702,10 +712,7 @@
                                     <span class="label">Scheme Value</span>
                                     <span class="value" id="details-installment-value" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">₹0</span>
                                 </div>
-                                <div class="hero-stat-item">
-                                    <span class="label">Start Month - End Month</span>
-                                    <span class="value" id="details-group-period" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">--</span>
-                                </div>
+
                                 <div class="hero-stat-item">
                                     <span class="label">Group Name</span>
                                     <span class="value" id="details-group-name" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">Group Name</span>
