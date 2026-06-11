@@ -2790,13 +2790,30 @@ function renderDashboard() {
         // Keep selected day text updated
         const updateDateDropdownTrigger = () => {
             const textEl = newDateBtn.querySelector('#date-dropdown-selected-number');
+            const monthTextEl = newDateBtn.querySelector('#date-dropdown-month-text');
+            
+            if (monthTextEl) {
+                let activeMonthName = "ALL";
+                if (State.dashboardSelectedMonth === 'current' || State.dashboardSelectedMonth === 'accumulated') {
+                    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                    activeMonthName = monthNames[new Date().getMonth()];
+                } else if (State.dashboardSelectedMonth) {
+                    const parts = State.dashboardSelectedMonth.split('-');
+                    if (parts.length === 2) {
+                        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        activeMonthName = monthNames[parseInt(parts[1], 10)];
+                    }
+                }
+                monthTextEl.textContent = activeMonthName;
+            }
+            
             if (textEl) {
                 if (State.dashboardFilterDate) {
                     textEl.textContent = State.dashboardFilterDate;
-                    textEl.style.fontSize = '10px';
+                    textEl.style.fontSize = '14px';
                 } else {
                     textEl.textContent = 'ALL';
-                    textEl.style.fontSize = '8px';
+                    textEl.style.fontSize = '14px';
                 }
             }
         };
@@ -3201,6 +3218,9 @@ function renderDashboardMembersList(searchQuery = '') {
     let countNewCustomer = 0;
     let countGpay = 0;
     let countCash = 0;
+    
+    let gpayMembers = [];
+    let cashMembers = [];
 
     filteredList.forEach(item => {
         if (item.currentMonthPaid) {
@@ -3223,8 +3243,10 @@ function renderDashboardMembersList(searchQuery = '') {
         
         if (item.paymentMethodThisMonth === 'gpay') {
             countGpay++;
+            gpayMembers.push(item.member.name);
         } else if (item.paymentMethodThisMonth === 'cash') {
             countCash++;
+            cashMembers.push(item.member.name);
         }
     });
 
@@ -3284,8 +3306,8 @@ function renderDashboardMembersList(searchQuery = '') {
             { value: 'chit_taken', label: 'Chit Taken', count: countChitTaken },
             { value: 'new_customer_month', label: 'New Customer', count: countNewCustomerMonth },
             { value: 'new_customer', label: 'All New Customer', count: countNewCustomer },
-            { value: 'gpay', label: 'Gpay', count: countGpay },
-            { value: 'cash', label: 'Cash', count: countCash }
+            { value: 'gpay', label: 'Gpay', count: countGpay, subItems: gpayMembers },
+            { value: 'cash', label: 'Cash', count: countCash, subItems: cashMembers }
         ];
 
         customFilterMenu.innerHTML = '';
@@ -3317,8 +3339,13 @@ function renderDashboardMembersList(searchQuery = '') {
                 });
             }
 
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            
             menuItem.innerHTML = `
-                <span>${item.label}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    ${hasSubItems ? `<span class="submenu-toggle-icon" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(0,0,0,0.05); color: inherit; transition: background 0.2s; margin-left: -4px;"><i data-lucide="chevron-right" style="width: 14px; height: 14px; transition: transform 0.2s ease; pointer-events: none;"></i></span>` : ''}
+                    <span>${item.label}</span>
+                </div>
                 <span class="count-badge" style="
                     font-size: 0.72rem;
                     background-color: ${isActive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface-elevated)'};
@@ -3329,6 +3356,67 @@ function renderDashboardMembersList(searchQuery = '') {
                     border: 1px solid ${isActive ? 'rgba(255,255,255,0.1)' : 'var(--border)'};
                 ">${item.count}</span>
             `;
+
+            const subMenuContainer = document.createElement('div');
+            subMenuContainer.style.display = 'none';
+            subMenuContainer.style.flexDirection = 'column';
+            subMenuContainer.style.backgroundColor = 'var(--bg-body)';
+            subMenuContainer.style.borderTop = '1px solid var(--border)';
+            subMenuContainer.style.borderBottom = '1px solid var(--border)';
+            
+            if (hasSubItems) {
+                // Remove duplicate names if a member paid multiple chits with Gpay
+                const uniqueNames = [...new Set(item.subItems)];
+                uniqueNames.forEach(name => {
+                    const subItem = document.createElement('div');
+                    subItem.style.cssText = `
+                        padding: 8px 16px 8px 36px;
+                        font-size: 0.75rem;
+                        color: var(--text-muted);
+                        cursor: pointer;
+                        font-weight: 600;
+                        transition: background-color 0.15s ease, color 0.15s ease;
+                    `;
+                    subItem.textContent = name;
+                    subItem.addEventListener('mouseenter', () => {
+                        subItem.style.backgroundColor = 'var(--primary-glow)';
+                        subItem.style.color = 'var(--primary)';
+                    });
+                    subItem.addEventListener('mouseleave', () => {
+                        subItem.style.backgroundColor = 'transparent';
+                        subItem.style.color = 'var(--text-muted)';
+                    });
+                    subItem.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        State.dashboardFilter = item.value;
+                        const tagSelect = document.getElementById('dashboard-tag-filter');
+                        if (tagSelect) tagSelect.value = item.value;
+                        
+                        const searchInput = document.getElementById('dashboard-member-search');
+                        if (searchInput) searchInput.value = name;
+                        
+                        customFilterMenu.style.display = 'none';
+                        renderDashboardMembersList(name.toLowerCase());
+                    });
+                    subMenuContainer.appendChild(subItem);
+                });
+                
+                const toggleIconSpan = menuItem.querySelector('.submenu-toggle-icon');
+                if (toggleIconSpan) {
+                    toggleIconSpan.addEventListener('mouseenter', (e) => {
+                        toggleIconSpan.style.background = 'rgba(0,0,0,0.1)';
+                    });
+                    toggleIconSpan.addEventListener('mouseleave', (e) => {
+                        toggleIconSpan.style.background = 'rgba(0,0,0,0.05)';
+                    });
+                    toggleIconSpan.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isVisible = subMenuContainer.style.display === 'flex';
+                        subMenuContainer.style.display = isVisible ? 'none' : 'flex';
+                        toggleIconSpan.querySelector('i').style.transform = isVisible ? 'rotate(90deg)' : 'rotate(0deg)';
+                    });
+                }
+            }
 
             menuItem.addEventListener('click', () => {
                 State.dashboardFilter = item.value;
@@ -3368,7 +3456,10 @@ function renderDashboardMembersList(searchQuery = '') {
                 renderDashboardMembersList(searchVal);
             });
 
-            customFilterMenu.appendChild(menuItem);
+            const itemWrapper = document.createElement('div');
+            itemWrapper.appendChild(menuItem);
+            if (hasSubItems) itemWrapper.appendChild(subMenuContainer);
+            customFilterMenu.appendChild(itemWrapper);
         });
 
         // Update trigger button text with active filter label
