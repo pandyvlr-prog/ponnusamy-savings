@@ -301,18 +301,25 @@
                             <input type="text" id="dashboard-member-search" placeholder="Search members by name..." style="padding: 8px 12px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%;">
                         </div>
                         
-                        <!-- Tags Status Filter Select -->
-                        <div class="tag-select-wrapper" style="width: 140px; min-width: 130px;">
-                            <select id="dashboard-tag-filter" style="padding: 8px 30px 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%; appearance: none; outline: none; cursor: pointer; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; font-weight: 600;">
-                                <option value="all">Tags: All</option>
-                                <option value="paid">Tags: Paid</option>
-                                <option value="partial">Tags: Partial</option>
-                                <option value="pending">Tags: Due</option>
-                                <option value="chit_taken">Tags: Chit Taken</option>
-                                <option value="new_customer_month">Tags: New Customer</option>
-                                <option value="new_customer">Tags: All New Customer</option>
-                                <option value="gpay">Tags: Gpay</option>
-                                <option value="cash">Tags: Cash</option>
+                        <!-- Custom Filter Dropdown -->
+                        <div class="tag-select-wrapper" style="position: relative; display: inline-block;">
+                            <button id="filter-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 140px; text-align: left; height: 38px; outline: none;">
+                                <span id="filter-dropdown-selected-text">Filter</span>
+                                <i data-lucide="sliders-horizontal" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--primary);"></i>
+                            </button>
+                            <div id="filter-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 190px; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <!-- Items will be dynamically generated in app.js -->
+                            </div>
+                            <select id="dashboard-tag-filter" style="display: none;">
+                                <option value="all">All</option>
+                                <option value="paid">Paid</option>
+                                <option value="partial">Partial</option>
+                                <option value="pending">Due</option>
+                                <option value="chit_taken">Chit Taken</option>
+                                <option value="new_customer_month">New Customer</option>
+                                <option value="new_customer">All New Customer</option>
+                                <option value="gpay">Gpay</option>
+                                <option value="cash">Cash</option>
                             </select>
                         </div>
                         
@@ -379,8 +386,8 @@
                         <div class="member-list-wrapper">
                             <div class="member-table-header">
                                 <span style="text-align: center;">S.No</span>
-                                <span style="text-align: left; padding-left: 8px;">Name</span>
-                                <span style="text-align: left;">Chit Group</span>
+                                <span style="text-align: center; justify-content: center;">Name</span>
+                                <span style="text-align: center; justify-content: center;">Chit Group</span>
                                 <span style="text-align: center;">Scheme</span>
                                 <span style="text-align: center;"><i data-lucide="calendar" style="width: 18px; height: 18px; stroke-width: 2.5px;"></i></span>
                                 <span style="text-align: left;">Due Amount</span>
@@ -1235,20 +1242,15 @@
                     </div>
                     </div>
 
-                    <div class="bulk-actions-row">
-                        <button class="btn btn-text-link text-green" id="btn-modal-mark-all">Mark All Paid</button>
-                        <span class="divider">|</span>
-                        <button class="btn btn-text-link text-red" id="btn-modal-unmark-all">Clear All</button>
-                    </div>
                     
                     <!-- Checklist Card Table -->
                     <h4 class="modal-section-title">Scheme Installments & Payouts Card</h4>
                     <div class="scheme-card-table-wrapper" style="border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; background-color: var(--bg-surface-elevated); margin-bottom: 15px;">
                         <div class="scheme-card-table-header" style="display: grid; grid-template-columns: 0.6fr 1.1fr 0.9fr 0.9fr 0.9fr 0.6fr; gap: 8px; padding: 10px; font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); background-color: rgba(255,255,255,0.02); text-align: center; align-items: center;">
-                            <span>Month No</span>
+                            <span style="display: inline-flex; align-items: center; justify-content: center;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i></span>
                             <span>Date</span>
                             <span>Installment (₹)</span>
-                            <span>Paid Amount (₹)</span>
+                            <span>Partial Paid (₹)</span>
                             <span>Payout (₹)</span>
                             <span>Mark</span>
                         </div>

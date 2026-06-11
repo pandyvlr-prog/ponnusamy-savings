@@ -1928,13 +1928,19 @@ function setupEventListeners() {
     }
     
     // Bulk Payment Actions in Modal
-    document.getElementById('btn-modal-mark-all').addEventListener('click', () => {
-        bulkTogglePayments(true);
-    });
+    const btnMarkAll = document.getElementById('btn-modal-mark-all');
+    if (btnMarkAll) {
+        btnMarkAll.addEventListener('click', () => {
+            bulkTogglePayments(true);
+        });
+    }
     
-    document.getElementById('btn-modal-unmark-all').addEventListener('click', () => {
-        bulkTogglePayments(false);
-    });
+    const btnUnmarkAll = document.getElementById('btn-modal-unmark-all');
+    if (btnUnmarkAll) {
+        btnUnmarkAll.addEventListener('click', () => {
+            bulkTogglePayments(false);
+        });
+    }
 
     // Inline Member Profile Editor event listeners
     // Listen for customer type change to toggle date inputs in Form 2
@@ -2564,7 +2570,29 @@ function renderDashboard() {
         };
     }
 
-    // Bind dashboard tag filter select dropdown
+    // Toggle custom filter dropdown
+    const filterBtn = document.getElementById('filter-dropdown-btn');
+    const filterMenu = document.getElementById('filter-dropdown-menu');
+    if (filterBtn && filterMenu) {
+        // Remove old listeners by cloning
+        const newBtn = filterBtn.cloneNode(true);
+        filterBtn.parentNode.replaceChild(newBtn, filterBtn);
+        
+        newBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = filterMenu.style.display === 'block';
+            filterMenu.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        // Close menu on click outside
+        document.addEventListener('click', (e) => {
+            if (!newBtn.contains(e.target) && !filterMenu.contains(e.target)) {
+                filterMenu.style.display = 'none';
+            }
+        });
+    }
+
+    // Bind dashboard tag filter select dropdown (kept in sync, hidden in layout)
     const tagFilterSelect = document.getElementById('dashboard-tag-filter');
     if (tagFilterSelect) {
         const newTagSelect = tagFilterSelect.cloneNode(true);
@@ -2665,12 +2693,27 @@ function renderDashboardGroupsList() {
         if (a.startYear !== b.startYear) return a.startYear - b.startYear;
         return a.startMonth - b.startMonth;
     });
+
+    const boxColors = [
+        { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.05)' },
+        { border: '#10b981', bg: 'rgba(16, 185, 129, 0.05)' },
+        { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.05)' },
+        { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.05)' },
+        { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.05)' },
+        { border: '#ec4899', bg: 'rgba(236, 72, 153, 0.05)' },
+        { border: '#06b6d4', bg: 'rgba(6, 182, 212, 0.05)' },
+        { border: '#14b8a6', bg: 'rgba(20, 184, 166, 0.05)' }
+    ];
     
-    sortedGroups.forEach(group => {
+    sortedGroups.forEach((group, index) => {
         const metrics = getGroupMetrics(group.id);
         const card = document.createElement('div');
         card.className = 'group-card';
         card.setAttribute('data-id', group.id);
+        
+        const colorPair = boxColors[index % boxColors.length];
+        card.style.borderLeft = `5px solid ${colorPair.border}`;
+        card.style.backgroundColor = colorPair.bg;
         
         const progressPercentage = metrics.totalMembers > 0 
             ? Math.round((metrics.paidMembersForCurrentMonth / metrics.totalMembers) * 100)
@@ -2684,7 +2727,10 @@ function renderDashboardGroupsList() {
 
         card.innerHTML = `
             <div class="group-card-header">
-                <div class="group-card-title">${group.name}</div>
+                <div class="group-card-title" style="display: flex; align-items: center;">
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.72rem; font-weight: 900; margin-right: 8px; flex-shrink: 0;">${index + 1}</span>
+                    <span>${group.name}</span>
+                </div>
                 <div class="group-card-amount">₹${schemeAmount.toLocaleString('en-IN')}</div>
             </div>
             <div class="group-card-info">
@@ -2959,15 +3005,120 @@ function renderDashboardMembersList(searchQuery = '') {
         const optGpay = tagFilter.querySelector('option[value="gpay"]');
         const optCash = tagFilter.querySelector('option[value="cash"]');
         
-        if (optAll) optAll.textContent = `Tags: All (${countAll})`;
-        if (optPaid) optPaid.textContent = `Tags: Paid (${countPaid})`;
-        if (optPartial) optPartial.textContent = `Tags: Partial (${countPartial})`;
-        if (optPending) optPending.textContent = `Tags: Due (${countPending})`;
-        if (optChitTaken) optChitTaken.textContent = `Tags: Chit Taken (${countChitTaken})`;
-        if (optNewCustomerMonth) optNewCustomerMonth.textContent = `Tags: New Customer (${countNewCustomerMonth})`;
-        if (optNewCustomer) optNewCustomer.textContent = `Tags: All New Customer (${countNewCustomer})`;
-        if (optGpay) optGpay.textContent = `Tags: Gpay (${countGpay})`;
-        if (optCash) optCash.textContent = `Tags: Cash (${countCash})`;
+        if (optAll) optAll.textContent = `All (${countAll})`;
+        if (optPaid) optPaid.textContent = `Paid (${countPaid})`;
+        if (optPartial) optPartial.textContent = `Partial (${countPartial})`;
+        if (optPending) optPending.textContent = `Due (${countPending})`;
+        if (optChitTaken) optChitTaken.textContent = `Chit Taken (${countChitTaken})`;
+        if (optNewCustomerMonth) optNewCustomerMonth.textContent = `New Customer (${countNewCustomerMonth})`;
+        if (optNewCustomer) optNewCustomer.textContent = `All New Customer (${countNewCustomer})`;
+        if (optGpay) optGpay.textContent = `Gpay (${countGpay})`;
+        if (optCash) optCash.textContent = `Cash (${countCash})`;
+    }
+
+    // Dynamic rendering of custom filter dropdown items
+    const customFilterMenu = document.getElementById('filter-dropdown-menu');
+    if (customFilterMenu) {
+        const filterItems = [
+            { value: 'all', label: 'All', count: countAll },
+            { value: 'paid', label: 'Paid', count: countPaid },
+            { value: 'partial', label: 'Partial', count: countPartial },
+            { value: 'pending', label: 'Due', count: countPending },
+            { value: 'chit_taken', label: 'Chit Taken', count: countChitTaken },
+            { value: 'new_customer_month', label: 'New Customer', count: countNewCustomerMonth },
+            { value: 'new_customer', label: 'All New Customer', count: countNewCustomer },
+            { value: 'gpay', label: 'Gpay', count: countGpay },
+            { value: 'cash', label: 'Cash', count: countCash }
+        ];
+
+        customFilterMenu.innerHTML = '';
+        filterItems.forEach(item => {
+            const isActive = State.dashboardFilter === item.value;
+            const menuItem = document.createElement('div');
+            menuItem.className = `custom-dropdown-item ${isActive ? 'active' : ''}`;
+            menuItem.style.cssText = `
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                color: ${isActive ? '#ffffff' : 'var(--text-main)'};
+                background-color: ${isActive ? 'var(--primary)' : 'transparent'};
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: background-color 0.15s ease, color 0.15s ease;
+                font-weight: ${isActive ? '700' : '500'};
+            `;
+            
+            if (!isActive) {
+                menuItem.addEventListener('mouseenter', () => {
+                    menuItem.style.backgroundColor = 'var(--primary-glow)';
+                    menuItem.style.color = 'var(--primary)';
+                });
+                menuItem.addEventListener('mouseleave', () => {
+                    menuItem.style.backgroundColor = 'transparent';
+                    menuItem.style.color = 'var(--text-main)';
+                });
+            }
+
+            menuItem.innerHTML = `
+                <span>${item.label}</span>
+                <span class="count-badge" style="
+                    font-size: 0.72rem;
+                    background-color: ${isActive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface-elevated)'};
+                    color: ${isActive ? '#ffffff' : 'var(--text-secondary)'};
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-weight: 800;
+                    border: 1px solid ${isActive ? 'rgba(255,255,255,0.1)' : 'var(--border)'};
+                ">${item.count}</span>
+            `;
+
+            menuItem.addEventListener('click', () => {
+                State.dashboardFilter = item.value;
+                
+                // Update hidden select
+                const tagSelect = document.getElementById('dashboard-tag-filter');
+                if (tagSelect) {
+                    tagSelect.value = item.value;
+                }
+                
+                // Sync date filter
+                State.dashboardFilterDate = '';
+                const dSelect = document.getElementById('dashboard-date-filter');
+                if (dSelect) dSelect.value = '';
+
+                // Sync hidden pills
+                document.querySelectorAll('#dashboard-filter-pills .filter-pill').forEach(p => {
+                    if (p.getAttribute('data-dashfilter') === State.dashboardFilter) {
+                        p.classList.add('active');
+                    } else {
+                        p.classList.remove('active');
+                    }
+                });
+
+                // Update trigger button selected text
+                const selectedTextEl = document.getElementById('filter-dropdown-selected-text');
+                if (selectedTextEl) {
+                    selectedTextEl.textContent = item.label;
+                }
+
+                // Hide menu
+                customFilterMenu.style.display = 'none';
+
+                // Re-render
+                const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+                renderDashboardMembersList(searchVal);
+            });
+
+            customFilterMenu.appendChild(menuItem);
+        });
+
+        // Update trigger button text with active filter label
+        const activeItem = filterItems.find(item => item.value === State.dashboardFilter);
+        const selectedTextEl = document.getElementById('filter-dropdown-selected-text');
+        if (selectedTextEl && activeItem) {
+            selectedTextEl.textContent = activeItem.label;
+        }
     }
     
     // Update dashboard summary box for Chit Taken
@@ -3153,10 +3304,18 @@ function renderDashboardMembersList(searchQuery = '') {
             newCustomerBadgeHtml = `<span style="background-color: var(--primary); color: #fff; font-size: 0.55rem; padding: 2px 4px; border-radius: 4px; vertical-align: middle; margin-left: 6px; font-weight: 800;">NEW</span>`;
         }
 
+        const groupNameParts = item.group.name.split('-');
+        let groupNameHtml = item.group.name;
+        if (groupNameParts.length === 2) {
+            const start = groupNameParts[0].trim();
+            const end = groupNameParts[1].trim();
+            groupNameHtml = `<span style="color: #10b981; font-weight: 700;">${start}</span> - <span style="color: #ff453a; font-weight: 700;">${end}</span>`;
+        }
+
         row.innerHTML = `
             <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
             <span class="member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
-            <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; text-align: left;">${item.group.name}</span>
+            <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; text-align: center; justify-content: center; width: 100%;">${groupNameHtml}</span>
             <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
@@ -3680,7 +3839,7 @@ function renderChecklist(member, group) {
         const enteredPartialVal = payment.partialPaid !== undefined && payment.partialPaid !== null ? payment.partialPaid : '';
         const currentPaid = isPaid ? instVal : (payment.partialPaid || 0);
         const currentDue = isPaid ? 0 : (instVal - currentPaid);
-        const partialBlinkClass = (payment.partialPaid > 0 && !isPaid) ? 'blink-partial' : '';
+        const partialBlinkClass = (payment.partialPaid > 0 && !isPaid) ? 'blink-partial' : (isPaid ? 'blink-paid' : '');
 
         if (isPaid) {
             paidCount++;
@@ -3768,7 +3927,7 @@ function renderChecklist(member, group) {
                 <span style="font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap;">${monthYearStr}</span>
             </div>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
-            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
+            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${formatNumberIndian(isPaid ? instVal : enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
             ${payoutHtml}
             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div class="row-checkbox-wrapper ${isPaid ? 'paid' : ''}" style="width: 20px; height: 20px; border-radius: 40%; border: 2px solid ${isPaid ? 'var(--green-dark)' : 'var(--text-muted)'}; background-color: ${isPaid ? 'var(--green-dark)' : 'transparent'}; color: ${isPaid ? '#fff' : 'transparent'}; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all var(--transition-fast);">
