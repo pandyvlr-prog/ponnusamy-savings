@@ -698,40 +698,34 @@
                     <!-- Details Grid for Desktop (Meta details + Financials side-by-side) -->
                     <div class="details-top-grid">
                         <!-- Group Info Hero -->
-                        <div class="group-hero-card">
-                            <div class="hero-header" style="align-items: center;">
-                                <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Scheme Month</span>
-                                    <h2 id="details-duration" style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 0;">0 Months</h2>
-                                </div>
-                                <span class="status-badge active-badge"><span class="dot"></span> Active</span>
-                            </div>
-                            
-                            <div class="hero-stats-row">
-                                <div class="hero-stat-item">
-                                    <span class="label">Scheme Value</span>
-                                    <span class="value" id="details-installment-value" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">₹0</span>
-                                </div>
-
-                                <div class="hero-stat-item">
-                                    <span class="label">Group Name</span>
-                                    <span class="value" id="details-group-name" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">Group Name</span>
+                        <div class="group-hero-card" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h2 id="details-group-name" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                                        Group Name
+                                        <span class="status-badge active-badge" style="font-size: 0.65rem; padding: 2px 6px;"><span class="dot"></span> Active</span>
+                                    </h2>
+                                    <div style="display: flex; gap: 12px; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+                                        <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> <span id="details-duration" style="font-weight: 700; color: var(--primary);">0 Months</span></span>
+                                        <span style="color: var(--border-active);">|</span>
+                                        <span style="display: flex; align-items: center; gap: 4px; font-weight: 700;">Scheme: <span id="details-installment-value" style="color: var(--text-main);">₹0</span></span>
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- Month Adjuster Component -->
-                            <div class="month-selector-widget" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
-                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                                    <span class="widget-label">Current Billing Month</span>
-                                    <span class="widget-label">Month Payout: <strong id="details-month-payout" style="color: var(--primary);">₹0</strong></span>
+                            <div class="month-selector-widget" style="background: var(--bg-body); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; font-size: 0.75rem;">
+                                    <span class="widget-label" style="margin: 0;">Current Billing Month</span>
+                                    <span class="widget-label" style="margin: 0;">Payout: <strong id="details-month-payout" style="color: var(--primary);">₹0</strong></span>
                                 </div>
-                                <div class="adjuster-controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
-                                    <button class="adjuster-btn" id="btn-month-decrement" aria-label="Previous Month">
-                                        <i data-lucide="minus"></i>
+                                <div class="adjuster-controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 4px; box-shadow: var(--shadow-sm);">
+                                    <button class="adjuster-btn" id="btn-month-decrement" aria-label="Previous Month" style="width: 32px; height: 32px; padding: 0;">
+                                        <i data-lucide="minus" style="width: 16px; height: 16px;"></i>
                                     </button>
-                                    <span class="active-month-text" id="details-current-month-text">Month 1</span>
-                                    <button class="adjuster-btn" id="btn-month-increment" aria-label="Next Month">
-                                        <i data-lucide="plus"></i>
+                                    <span class="active-month-text" id="details-current-month-text" style="font-size: 0.9rem; font-weight: 800; padding: 0 10px;">Month 1</span>
+                                    <button class="adjuster-btn" id="btn-month-increment" aria-label="Next Month" style="width: 32px; height: 32px; padding: 0;">
+                                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                     </button>
                                 </div>
                             </div>

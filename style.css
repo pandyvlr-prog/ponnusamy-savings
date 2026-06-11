@@ -130,9 +130,9 @@ body {
 [data-theme="light"] body {
     background-color: #f8fafc !important;
     background-image:
-        radial-gradient(ellipse at 0% 0%, rgba(254,240,138,0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 100% 100%, rgba(219,244,230,0.8) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 0%, rgba(252,245,211,0.6) 0%, transparent 40%) !important;
+        radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(15,23,42,0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 40%) !important;
 }
 
 /* No heavy transitions on containers - theme switch is instant via CSS vars */
@@ -158,9 +158,9 @@ body {
     /* Light mode: clean white-gold luxury gradient */
     background-color: #f8fafc;
     background-image:
-        radial-gradient(ellipse at 0% 0%, rgba(254,240,138,0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 100% 100%, rgba(219,244,230,0.8) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 0%, rgba(252,245,211,0.6) 0%, transparent 40%);
+        radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(15,23,42,0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 40%);
 }
 
 /* Legacy horror-bg - kept as no-op in case any code references it */
