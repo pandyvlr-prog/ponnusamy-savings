@@ -68,6 +68,7 @@ const State = {
     tempMemberList: [], // Used during group creation
     dashboardSelectedMonth: 'current',
     dashboardFilter: 'all',
+    dashboardFilterDate: '',
     backupEmail: localStorage.getItem('ponnusamy_backup_email') || '',
     templateFilterDuration: '12'
 };
@@ -666,6 +667,16 @@ function generateUUID() {
     return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
 }
 
+// Helper to format YYYY-MM-DD input date to DD/MM/YYYY for display
+function formatInputDateToDisplay(dateStr) {
+    if (!dateStr) return '--';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
+}
+
 // Helper to calculate calendar month label based on group scheme start date
 function getMonthLabel(group, monthNum) {
     const startMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
@@ -838,7 +849,7 @@ function switchView(viewId) {
     
     if (activeScreen && targetScreen && activeScreen.id !== viewId) {
         // Slide out active
-        activeScreen.style.transform = 'translateX(-30px)';
+        activeScreen.style.transform = 'none';
         activeScreen.style.opacity = '0';
         activeScreen.classList.remove('active');
         activeScreen.style.pointerEvents = 'none';
@@ -848,7 +859,7 @@ function switchView(viewId) {
         targetScreen.style.pointerEvents = 'auto';
         // Force reflow
         targetScreen.offsetHeight;
-        targetScreen.style.transform = 'translateX(0)';
+        targetScreen.style.transform = 'none';
         targetScreen.style.opacity = '1';
         
         State.currentView = viewId;
@@ -1346,11 +1357,23 @@ function setupEventListeners() {
         const startDate = new Date(startYear, startMonth, 1);
         const endDate = new Date(startYear, startMonth + duration - 1, 1);
         const startStr = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
-        const endStr = `${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;
-        
-        document.getElementById('preview-group-months').textContent = `${State.tempGroup.duration} Months (${startStr} - ${endStr})`;
+        const endStr = `${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;        document.getElementById('preview-group-months').textContent = `${State.tempGroup.duration} Months (${startStr} - ${endStr})`;
         document.getElementById('preview-group-installment').textContent = '₹' + State.tempGroup.monthlyInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + '/mo';
         
+        // Reset inputs when loading Add Members screen
+        document.getElementById('member-mobile-input').value = '';
+        document.getElementById('member-work-input').value = '';
+        document.getElementById('member-occupation-input').value = '';
+        document.getElementById('member-place-input').value = '';
+        document.getElementById('member-address-input').value = '';
+        const defTypeCStart = document.querySelector('input[name="member-customer-type"][value="New"]');
+        if (defTypeCStart) defTypeCStart.checked = true;
+        document.getElementById('member-referred-input').value = '';
+        document.getElementById('member-dob-input').value = '';
+        document.getElementById('member-anniversary-input').value = '';
+        const mDatesContainerStart = document.getElementById('member-new-dates-container');
+        if (mDatesContainerStart) mDatesContainerStart.style.display = 'grid';
+
         renderTempMembersList();
         switchView('screen-add-members');
     });
@@ -1359,6 +1382,16 @@ function setupEventListeners() {
     const addMemberInput = document.getElementById('member-name-input');
     const addMemberBtn = document.getElementById('btn-add-member-list');
     
+    // Listen for customer type change to toggle date inputs in Form 1
+    document.querySelectorAll('input[name="member-customer-type"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const container = document.getElementById('member-new-dates-container');
+            if (container) {
+                container.style.display = (radio.value === 'Old') ? 'none' : 'grid';
+            }
+        });
+    });
+
     if (addMemberInput) {
         addMemberInput.addEventListener('input', () => {
             const val = addMemberInput.value.trim().toLowerCase();
@@ -1383,6 +1416,13 @@ function setupEventListeners() {
                 const typeInput = document.querySelector(`input[name="member-customer-type"][value="${match.customerType || 'New'}"]`);
                 if (typeInput) typeInput.checked = true;
                 document.getElementById('member-referred-input').value = match.referredBy || '';
+                document.getElementById('member-dob-input').value = match.dob || '';
+                document.getElementById('member-anniversary-input').value = match.anniversary || '';
+                
+                const container = document.getElementById('member-new-dates-container');
+                if (container) {
+                    container.style.display = (match.customerType === 'Old') ? 'none' : 'grid';
+                }
             } else {
                 document.getElementById('member-mobile-input').value = '';
                 document.getElementById('member-work-input').value = '';
@@ -1392,6 +1432,13 @@ function setupEventListeners() {
                 const defTypeC = document.querySelector('input[name="member-customer-type"][value="New"]');
                 if (defTypeC) defTypeC.checked = true;
                 document.getElementById('member-referred-input').value = '';
+                document.getElementById('member-dob-input').value = '';
+                document.getElementById('member-anniversary-input').value = '';
+                
+                const container = document.getElementById('member-new-dates-container');
+                if (container) {
+                    container.style.display = 'grid';
+                }
             }
         });
     }
@@ -1406,6 +1453,8 @@ function setupEventListeners() {
         const typeEl = document.querySelector('input[name="member-customer-type"]:checked');
         const mCustomerType = typeEl ? typeEl.value : 'New';
         const mReferredBy = document.getElementById('member-referred-input').value.trim();
+        const mDOB = mCustomerType === 'New' ? document.getElementById('member-dob-input').value : '';
+        const mAnniversary = mCustomerType === 'New' ? document.getElementById('member-anniversary-input').value : '';
 
         if (!mName) {
             showNotification('Member name is required.', 'error');
@@ -1425,7 +1474,9 @@ function setupEventListeners() {
             place: mPlace,
             address: mAddress,
             customerType: mCustomerType,
-            referredBy: mReferredBy
+            referredBy: mReferredBy,
+            dob: mDOB,
+            anniversary: mAnniversary
         });
 
         // Clear all fields
@@ -1438,6 +1489,13 @@ function setupEventListeners() {
         const defTypeC2 = document.querySelector('input[name="member-customer-type"][value="New"]');
         if (defTypeC2) defTypeC2.checked = true;
         document.getElementById('member-referred-input').value = '';
+        document.getElementById('member-dob-input').value = '';
+        document.getElementById('member-anniversary-input').value = '';
+        
+        const container = document.getElementById('member-new-dates-container');
+        if (container) {
+            container.style.display = 'grid';
+        }
 
         addMemberInput.focus();
         renderTempMembersList();
@@ -1496,6 +1554,8 @@ function setupEventListeners() {
                 address: memberData.address || '',
                 customerType: memberData.customerType || 'New',
                 referredBy: memberData.referredBy || '',
+                dob: memberData.dob || '',
+                anniversary: memberData.anniversary || '',
                 payments: {}, // monthNum -> { paid: boolean, paidAt: ISO_Date, amount: number }
                 status: 'Active'
             };
@@ -1535,6 +1595,22 @@ function setupEventListeners() {
     // Quick Add Member button
     document.getElementById('btn-details-add-member').addEventListener('click', () => {
         document.getElementById('new-member-name-input').value = '';
+        document.getElementById('new-member-mobile-input').value = '';
+        document.getElementById('new-member-place-input').value = '';
+        document.getElementById('new-member-work-input').value = '';
+        document.getElementById('new-member-occupation-input').value = '';
+        document.getElementById('new-member-address-input').value = '';
+        const defTypeNew = document.querySelector('input[name="new-member-customer-type"][value="New"]');
+        if (defTypeNew) defTypeNew.checked = true;
+        document.getElementById('new-member-referred-input').value = '';
+        document.getElementById('new-member-dob-input').value = '';
+        document.getElementById('new-member-anniversary-input').value = '';
+        
+        const qDatesContainer = document.getElementById('quick-add-member-dates-container');
+        if (qDatesContainer) {
+            qDatesContainer.style.display = '';
+        }
+        
         document.getElementById('add-member-modal-backdrop').classList.add('active');
         document.getElementById('new-member-name-input').focus();
     });
@@ -1547,6 +1623,16 @@ function setupEventListeners() {
         document.getElementById('add-member-modal-backdrop').classList.remove('active');
     });
     
+    // Listen for customer type change to toggle date inputs in Form 3
+    document.querySelectorAll('input[name="new-member-customer-type"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const container = document.getElementById('quick-add-member-dates-container');
+            if (container) {
+                container.style.display = (radio.value === 'Old') ? 'none' : '';
+            }
+        });
+    });
+
     document.getElementById('btn-save-new-member').addEventListener('click', saveMemberToExistingGroup);
     const newMemberNameInput = document.getElementById('new-member-name-input');
     if (newMemberNameInput) {
@@ -1573,6 +1659,13 @@ function setupEventListeners() {
                 const typeInputNew = document.querySelector(`input[name="new-member-customer-type"][value="${match.customerType || 'New'}"]`);
                 if (typeInputNew) typeInputNew.checked = true;
                 document.getElementById('new-member-referred-input').value = match.referredBy || '';
+                document.getElementById('new-member-dob-input').value = match.dob || '';
+                document.getElementById('new-member-anniversary-input').value = match.anniversary || '';
+                
+                const qDatesContainer = document.getElementById('quick-add-member-dates-container');
+                if (qDatesContainer) {
+                    qDatesContainer.style.display = (match.customerType === 'Old') ? 'none' : '';
+                }
             } else {
                 document.getElementById('new-member-mobile-input').value = '';
                 document.getElementById('new-member-work-input').value = '';
@@ -1582,6 +1675,13 @@ function setupEventListeners() {
                 const defTypeNew = document.querySelector('input[name="new-member-customer-type"][value="New"]');
                 if (defTypeNew) defTypeNew.checked = true;
                 document.getElementById('new-member-referred-input').value = '';
+                document.getElementById('new-member-dob-input').value = '';
+                document.getElementById('new-member-anniversary-input').value = '';
+                
+                const qDatesContainer = document.getElementById('quick-add-member-dates-container');
+                if (qDatesContainer) {
+                    qDatesContainer.style.display = '';
+                }
             }
         });
         newMemberNameInput.addEventListener('keydown', (e) => {
@@ -1837,6 +1937,16 @@ function setupEventListeners() {
     });
 
     // Inline Member Profile Editor event listeners
+    // Listen for customer type change to toggle date inputs in Form 2
+    document.querySelectorAll('input[name="edit-member-customer-type"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const editDatesContainer = document.getElementById('edit-member-new-dates-container');
+            if (editDatesContainer) {
+                editDatesContainer.style.display = (radio.value === 'Old') ? 'none' : 'grid';
+            }
+        });
+    });
+
     const btnEditProfile = document.getElementById('btn-edit-member-profile');
     if (btnEditProfile) {
         btnEditProfile.addEventListener('click', () => {
@@ -1853,6 +1963,15 @@ function setupEventListeners() {
             const typeInputEdit = document.querySelector(`input[name="edit-member-customer-type"][value="${member.customerType || 'New'}"]`);
             if (typeInputEdit) typeInputEdit.checked = true;
             document.getElementById('edit-member-referred').value = member.referredBy || '';
+            
+            // Populate DOB & Anniversary
+            document.getElementById('edit-member-dob').value = member.dob || '';
+            document.getElementById('edit-member-anniversary').value = member.anniversary || '';
+            
+            const editDatesContainer = document.getElementById('edit-member-new-dates-container');
+            if (editDatesContainer) {
+                editDatesContainer.style.display = (member.customerType === 'Old') ? 'none' : 'grid';
+            }
             
             // Toggle view
             document.getElementById('payment-modal-member-profile-card').classList.add('hidden');
@@ -1896,6 +2015,10 @@ function setupEventListeners() {
             const editTypeEl = document.querySelector('input[name="edit-member-customer-type"]:checked');
             member.customerType = editTypeEl ? editTypeEl.value : 'New';
             member.referredBy = document.getElementById('edit-member-referred').value.trim();
+            
+            // Save DOB & Anniversary if New Customer
+            member.dob = member.customerType === 'New' ? document.getElementById('edit-member-dob').value : '';
+            member.anniversary = member.customerType === 'New' ? document.getElementById('edit-member-anniversary').value : '';
 
             saveState();
             
@@ -2452,10 +2575,29 @@ function renderDashboard() {
             document.querySelectorAll('#dashboard-filter-pills .filter-pill').forEach(p => p.classList.remove('active'));
             newPill.classList.add('active');
             State.dashboardFilter = newPill.getAttribute('data-dashfilter');
+            
+            // Reset the date filter dropdown when a status pill is clicked
+            State.dashboardFilterDate = '';
+            const dSelect = document.getElementById('dashboard-date-filter');
+            if (dSelect) dSelect.value = '';
+
             const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
             renderDashboardMembersList(searchVal);
         });
     });
+
+    // Bind dashboard date filter select element
+    const dateFilterSelect = document.getElementById('dashboard-date-filter');
+    if (dateFilterSelect) {
+        const newDateSelect = dateFilterSelect.cloneNode(true);
+        dateFilterSelect.parentNode.replaceChild(newDateSelect, dateFilterSelect);
+        newDateSelect.value = State.dashboardFilterDate || '';
+        newDateSelect.addEventListener('change', () => {
+            State.dashboardFilterDate = newDateSelect.value;
+            const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+            renderDashboardMembersList(searchVal);
+        });
+    }
 
     // Render primary tables
     const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
@@ -2838,6 +2980,20 @@ function renderDashboardMembersList(searchQuery = '') {
         });
     }
 
+    // Filter by date filter dropdown if active
+    if (State.dashboardFilterDate) {
+        filteredList = filteredList.filter(item => {
+            const relMonth = item.relativeMonthNum;
+            const gp = item.group;
+            const isAccum = State.dashboardSelectedMonth === 'accumulated';
+            const payObj = isAccum ? item.member.payments[gp.currentMonth] : item.member.payments[relMonth];
+            if (!payObj || (!payObj.paid && !(payObj.partialPaid > 0))) return false;
+            
+            const customDateDay = payObj.customDate ? String(payObj.customDate) : '';
+            return customDateDay && parseInt(customDateDay, 10) === parseInt(State.dashboardFilterDate, 10);
+        });
+    }
+
     // Sort alphabetically by member name
     filteredList.sort((a, b) => a.member.name.localeCompare(b.member.name));
 
@@ -2867,9 +3023,18 @@ function renderDashboardMembersList(searchQuery = '') {
 
         let dueColor = item.dueAmount > 0 ? 'var(--red-dark)' : 'var(--text-muted)';
         let paidColor = item.paidAmount > 0 ? 'var(--green-dark)' : 'var(--text-muted)';
-        let dateColor = item.displayPaidDate !== '--' ? '#0ea5e9' : 'var(--text-muted)';
-        if (item.paidAmount > 0 && item.dueAmount > 0 && item.displayPaidDate !== '--') {
-            dateColor = '#f59e0b';
+
+        let paidDateHtml = '';
+        if (!item.isApplicable || paidDateText === 'N/A' || paidDateText === '--') {
+            paidDateHtml = `<span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem;">--</span>`;
+        } else {
+            if (item.currentMonthPaid) {
+                paidDateHtml = `<span style="display: inline-block; width: 92%; padding: 4px 2px; border-radius: 4px; background-color: #d1fae5; color: #065f46; font-weight: 800; font-size: 0.75rem; text-align: center; border: 1px solid #a7f3d0;">${paidDateText}</span>`;
+            } else if (item.paidAmount > 0) {
+                paidDateHtml = `<span style="display: inline-block; width: 92%; padding: 4px 2px; border-radius: 4px; background-color: #fef3c7; color: #92400e; font-weight: 800; font-size: 0.75rem; text-align: center; border: 1px solid #fde68a;">${paidDateText}</span>`;
+            } else {
+                paidDateHtml = `<span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem;">--</span>`;
+            }
         }
 
         if (!item.isApplicable) {
@@ -2879,7 +3044,6 @@ function renderDashboardMembersList(searchQuery = '') {
             paidDateText = 'N/A';
             dueColor = 'var(--text-muted)';
             paidColor = 'var(--text-muted)';
-            dateColor = 'var(--text-muted)';
             checkboxHtml = `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">N/A</span>`;
         } else {
             // isFuture rows are treated same as DUE — user wants to see & mark them
@@ -2936,7 +3100,7 @@ function renderDashboardMembersList(searchQuery = '') {
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
-            <span style="display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 800; color: ${dateColor}; text-align: center;">${paidDateText}</span>
+            <span style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center;">${paidDateHtml}</span>
             <div style="display: flex; justify-content: center; align-items: center;">
                 ${checkboxHtml}
             </div>
@@ -3086,10 +3250,15 @@ function renderGroupDetails(groupId) {
     const startYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
     const startDate = new Date(startYear, startMonth, 1);
     const endDate = new Date(startYear, startMonth + group.duration - 1, 1);
-    const dateRangeStr = `(${monthNames[startDate.getMonth()]} ${startDate.getFullYear()} - ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()})`;
+    const dateRangeStr = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()} - ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;
     
-    document.getElementById('details-duration').textContent = `${group.duration} Months ${dateRangeStr}`;
+    document.getElementById('details-duration').textContent = `${group.duration} Months`;
     document.getElementById('details-installment-value').textContent = '₹' + group.chitAmount.toLocaleString('en-IN');
+    
+    const periodEl = document.getElementById('details-group-period');
+    if (periodEl) {
+        periodEl.textContent = dateRangeStr;
+    }
     
     const activeMonthName = getMonthLabel(group, group.currentMonth);
     document.getElementById('details-current-month-text').textContent = `Month ${group.currentMonth} (${activeMonthName})`;
@@ -3304,6 +3473,20 @@ function openPaymentModal(memberId, filterMode = 'all', targetMonthNum = null) {
     }
     
     document.getElementById('modal-detail-address').textContent = member.address || '--';
+
+    // Populate DOB & Anniversary in read-only modal if New Customer
+    const dobVal = member.customerType === 'New' && member.dob ? formatInputDateToDisplay(member.dob) : '--';
+    const anniversaryVal = member.customerType === 'New' && member.anniversary ? formatInputDateToDisplay(member.anniversary) : '--';
+    
+    const dobRow = document.getElementById('modal-detail-dob-row');
+    const annRow = document.getElementById('modal-detail-anniversary-row');
+    if (dobRow) dobRow.style.display = (member.customerType === 'New') ? '' : 'none';
+    if (annRow) annRow.style.display = (member.customerType === 'New') ? '' : 'none';
+    
+    const dobSpan = document.getElementById('modal-detail-dob');
+    const annSpan = document.getElementById('modal-detail-anniversary');
+    if (dobSpan) dobSpan.textContent = dobVal;
+    if (annSpan) annSpan.textContent = anniversaryVal;
 
     // Show Modal
     const backdrop = document.getElementById('payment-modal-backdrop');

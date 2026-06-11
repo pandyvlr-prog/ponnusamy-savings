@@ -698,3 +698,11 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
     }
 }
 
+/* Global minimal transitions and animation disable */
+*,
+*::before,
+*::after {
+    animation: none !important;
+    transition-duration: 0.08s !important;
+}
+

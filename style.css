@@ -1,11 +1,11 @@
 /* Design System: Colors, Fonts, & Tokens */
 :root {
-    /* Glass Effect default */
-    --glass-blur: 20px;
+    /* Glass Effect - reduced for performance */
+    --glass-blur: 8px;
 
     /* Theme-independent layout tokens */
     --font-heading: 'Lora', serif;
-    --font-body: 'Lora', serif;
+    --font-body: 'Inter', 'Lora', system-ui, sans-serif;
     
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -112,6 +112,7 @@
 }
 
 /* Disable transitions during theme switch */
+/* Disable transitions during theme switch for instant theme change */
 .theme-switching, .theme-switching * { transition: none !important; }
 
 /* Global Reset & Base Styling */
@@ -120,6 +121,7 @@
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 body {
@@ -127,82 +129,41 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-main);
     overflow-x: hidden;
-    overflow-y: hidden; /* App shell handles scroll */
+    overflow-y: hidden;
     min-height: 100vh;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    /* No body transition - theme switch handled by CSS vars instantly */
 }
 
+/* No heavy transitions on containers - theme switch is instant via CSS vars */
 .app-device-shell, .metric-item, .fin-card, .dashboard-card, .modal-content, .app-header {
-    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+    /* intentionally no transition - prevents layout thrash */
 }
 
-@keyframes slowPanZoom {
-    0% { transform: scale(1) translate(0px, 0px); }
-    33% { transform: scale(1.05) translate(1%, -1%); }
-    66% { transform: scale(1.02) translate(-1%, 1%); }
-    100% { transform: scale(1) translate(0px, 0px); }
-}
-
-body::before {
-    display: none; /* Removed old dark background */
-}
-
-/* HORROR CSS BACKGROUND */
-#horror-bg {
+/* STATIC PERFORMANCE BACKGROUND - replaces expensive animated horror spheres */
+#app-bg {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: #030000;
     z-index: -2;
-    overflow: hidden;
+    pointer-events: none;
+    /* Dark mode: luxury black with subtle gold corner glows */
+    background-color: #080808;
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(184,134,11,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(212,175,55,0.06) 0%, transparent 40%);
 }
 
-[data-theme="light"] #horror-bg {
-    display: block; 
+[data-theme="light"] #app-bg {
+    /* Light mode: clean white-gold luxury gradient */
     background-color: #f8fafc;
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(254,240,138,0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(219,244,230,0.8) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 0%, rgba(252,245,211,0.6) 0%, transparent 40%);
 }
 
-[data-theme="light"] .horror-sphere {
-    background: #ffffff;
-}
-
-[data-theme="light"] .horror-fog {
-    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(255, 255, 255, 0.8) 100%);
-}
-
-/* Keep Light Mode Background Active */
-[data-theme="light"] body::before {
-    display: none;
-}
-
-.horror-sphere {
-    position: absolute;
-    border-radius: 50%;
-    background: #000000;
-    box-shadow: inset -10px -10px 40px rgba(212, 175, 55, 0.4), 
-                inset 10px 10px 20px rgba(212, 175, 55, 0.2), 
-                0 0 30px rgba(212, 175, 55, 0.3);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-}
-
-.sphere-1 { width: 300px; height: 300px; top: -100px; left: -50px; animation: floatHorror 15s infinite ease-in-out alternate, breatheHorror 4s infinite ease-in-out alternate; }
-.sphere-2 { width: 400px; height: 400px; bottom: -150px; right: -100px; animation: floatHorror2 20s infinite ease-in-out alternate, breatheHorror 5s infinite ease-in-out alternate-reverse; }
-.sphere-3 { width: 200px; height: 200px; top: 30%; right: -50px; animation: floatHorror3 18s infinite ease-in-out alternate, breatheHorror 6s infinite ease-in-out alternate; }
-.sphere-4 { width: 250px; height: 250px; bottom: 20%; left: -80px; animation: floatHorror 22s infinite ease-in-out alternate-reverse, breatheHorror 4.5s infinite ease-in-out alternate; }
-.sphere-5 { width: 150px; height: 150px; top: -50px; right: 20%; animation: floatHorror2 12s infinite ease-in-out alternate, breatheHorror 3.5s infinite ease-in-out alternate-reverse; }
-
-.horror-fog {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(30, 25, 0, 0.8) 100%);
-    pointer-events: none; z-index: 1;
-}
-
-@keyframes floatHorror { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(40px) rotate(15deg); } }
-@keyframes floatHorror2 { 0% { transform: translate(0px, 0px) rotate(0deg) scale(1); } 100% { transform: translate(-30px, 30px) rotate(-10deg) scale(1.1); } }
-@keyframes floatHorror3 { 0% { transform: translate(0px, 0px) scale(1); } 100% { transform: translate(40px, -20px) scale(1.05); } }
-@keyframes breatheHorror {
-    0% { box-shadow: inset -10px -10px 40px rgba(212, 175, 55, 0.2), inset 10px 10px 20px rgba(212, 175, 55, 0.1), 0 0 20px rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.1); }
-    100% { box-shadow: inset -15px -15px 60px rgba(212, 175, 55, 0.6), inset 15px 15px 30px rgba(212, 175, 55, 0.4), 0 0 50px rgba(212, 175, 55, 0.5); border-color: rgba(212, 175, 55, 0.6); }
-}
+/* Legacy horror-bg - kept as no-op in case any code references it */
+#horror-bg { display: none; }
 
 /* App Container Shell - Full viewport wide website dashboard */
 .app-device-shell {
@@ -232,7 +193,7 @@ body::before {
     background-color: var(--bg-primary);
 }
 
-/* Screen Transitions */
+/* Screen Transitions - opacity only, NO transform (transform causes GPU layer promotion flicker on mobile) */
 .app-screen {
     position: absolute;
     top: 0;
@@ -243,17 +204,15 @@ body::before {
     flex-direction: column;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(30px) scale(0.96);
-    transform: translateY(10px) scale(0.98);
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* NO transform, NO will-change, NO contain - these all cause mobile flicker */
+    transition: opacity 0.18s ease;
     z-index: 10;
+    background-color: var(--bg-primary);
 }
 
 .app-screen.active {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0) scale(1);
-    transform: translateY(0) scale(1);
     z-index: 20;
 }
 
@@ -393,7 +352,7 @@ body::before {
     border-radius: var(--radius-md);
     border: none;
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease, background-color 0.2s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, background-color 0.15s ease;
 }
 
 .btn:active {
@@ -2092,7 +2051,7 @@ body::before {
         /* 10-column layout: S.No | Name | Group | Scheme | Due Mo | Due Amt | Paid Amt | Paid Date | Mark | Remind */
     .member-table-header {
         display: grid !important;
-        grid-template-columns: 3% 17% 16% 9% 5% 9% 9% 9% 8% 10% 5%;
+        grid-template-columns: 3% 19% 14% 9% 5% 9% 9% 9% 8% 10% 5%;
         gap: 0;
         padding: 0;
         font-weight: 800;
@@ -2120,7 +2079,7 @@ body::before {
 
     .dashboard-member-row {
         display: grid !important;
-        grid-template-columns: 3% 17% 16% 9% 5% 9% 9% 9% 8% 10% 5%;
+        grid-template-columns: 3% 19% 14% 9% 5% 9% 9% 9% 8% 10% 5%;
         gap: 0;
         padding: 0;
         border-bottom: 2px solid #111827;
@@ -2195,7 +2154,7 @@ body::before {
     .dashboard-member-row > *:nth-child(2) { text-align: left !important; padding-left: 8px !important; }
 
     .member-table-header > *:nth-child(3) { text-align: center !important; justify-content: center !important; }
-    .dashboard-member-row > *:nth-child(3) { text-align: left !important; }
+    .dashboard-member-row > *:nth-child(3) { text-align: center !important; justify-content: center !important; }
 
     .member-table-header > *:nth-child(4),
     .dashboard-member-row > *:nth-child(4) { text-align: center !important; justify-content: center !important; }
@@ -2671,32 +2630,21 @@ html { scroll-behavior: smooth; }
 .filter-pill.text-orange-pill.active { background-color: #ea580c; color: #ffffff; border-color: #ea580c; }
 
 
-/* App Global Animations */
-@keyframes fadeUp {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-.metric-item, .fin-card {
-    animation: fadeUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-}
-
-.dashboard-member-row {
-    animation: fadeUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-}
-
-.filter-pills {
-    animation: fadeUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+/* App Global Animations - DISABLED for minimal transitions */
+.metric-item, .fin-card, .dashboard-member-row, .filter-pills {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 button:not(.filter-pill), .filter-pill, .btn {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s, box-shadow 0.2s, filter 0.2s !important;
+    transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease, opacity 0.1s ease !important;
 }
 button:not(.filter-pill):hover, .filter-pill:hover, .btn:hover {
-    transform: translateY(-2px) scale(1.02);
+    transform: none !important;
 }
 button:not(.filter-pill):active, .filter-pill:active, .btn:active {
-    transform: translateY(1px) scale(0.96) !important;
+    transform: none !important;
 }
 
 
@@ -2739,7 +2687,7 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 
 .group-hero-card {
     background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%) !important;
-    backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(8px) !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 16px !important;
     padding: 16px !important;
@@ -3030,15 +2978,15 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 
 [data-theme="light"] .app-header {
     background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 [data-theme="light"] .app-sidebar {
     background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -3050,8 +2998,8 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 .simple-modal,
 .group-card {
     background: var(--bg-surface);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -3061,15 +3009,15 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 
 .app-header {
     background: var(--bg-surface-glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .app-sidebar {
     background: var(--bg-surface-glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -3086,8 +3034,8 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     visibility: hidden;
     transform: scale(1.05);
     transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.5s;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .transition-overlay.active {
@@ -3153,3 +3101,68 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     50% { opacity: 1; text-shadow: 0 0 15px var(--primary); }
     100% { opacity: 0.5; }
 }
+
+/* === PAGINATION CONTROLS === */
+.dash-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+}
+
+.dash-pagination .btn {
+    padding: 6px 18px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    min-width: 80px;
+}
+
+.dash-pagination .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* === PERFORMANCE UTILITIES === */
+
+/* Filter pills: instant mobile tap response */
+.filter-pill {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Buttons: instant mobile tap response */
+.btn {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Dashboard member rows: contain paint and layout */
+.dashboard-member-row {
+    contain: layout;
+}
+
+/* @media prefers-reduced-motion: disable all animations for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Global minimal transitions and animation disable */
+*,
+*::before,
+*::after {
+    animation: none !important;
+    transition-duration: 0.08s !important;
+}
+
