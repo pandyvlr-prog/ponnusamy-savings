@@ -1018,7 +1018,15 @@
                 
                 <div id="gpay-note-section" style="display: none; flex-direction: column; gap: 12px;">
                     <label for="gpay-note-input" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Notes</label>
-                    <input type="text" id="gpay-note-input" list="gpay-notes-suggestions" placeholder="e.g. UPI Ref 123456" style="width: 100%; padding: 12px; font-size: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                        <input type="text" id="gpay-note-input" list="gpay-notes-suggestions" placeholder="e.g. UPI Ref 123456" style="flex: 1; min-width: 0; padding: 12px; font-size: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                        <button id="btn-add-note" type="button" title="Save note to list" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; color: var(--primary); transition: all 0.2s ease;">
+                            <i data-lucide="plus" style="width: 20px; height: 20px;"></i>
+                        </button>
+                        <button id="btn-delete-note" type="button" title="Delete note from list" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; color: #ef4444; transition: all 0.2s ease;">
+                            <i data-lucide="trash-2" style="width: 20px; height: 20px;"></i>
+                        </button>
+                    </div>
                     <datalist id="gpay-notes-suggestions">
                         <option value="P.PANDYAN - CUB"></option>
                         <option value="P.PANDYAN - HDFC"></option>

@@ -100,7 +100,8 @@ const State = {
     dashboardFilter: 'all',
     dashboardFilterDate: '',
     backupEmail: localStorage.getItem('ponnusamy_backup_email') || '',
-    templateFilterDuration: '12'
+    templateFilterDuration: '12',
+    savedNotes: []
 };
 
 // --- Initializing App ---
@@ -605,16 +606,43 @@ function ensureDefaultTemplates() {
     }
     return false;
 }
+function renderSavedNotesList() {
+    const datalist = document.getElementById('gpay-notes-suggestions');
+    if (!datalist) return;
+    datalist.innerHTML = '';
+    
+    if (!State.savedNotes) State.savedNotes = [];
+    
+    if (State.savedNotes.length === 0 && !localStorage.getItem(getStorageKey('savedNotes_init'))) {
+        State.savedNotes = [
+            "P.PANDYAN - CUB",
+            "P.PANDYAN - HDFC",
+            "P.PANDYAN - IB",
+            "PANDIAMMAL"
+        ];
+        localStorage.setItem(getStorageKey('savedNotes_init'), 'true');
+        saveState();
+    }
+    
+    State.savedNotes.forEach(note => {
+        const opt = document.createElement('option');
+        opt.value = note;
+        datalist.appendChild(opt);
+    });
+}
+
 async function loadState() {
     try {
         // Fallback Local Storage load first
         const storedGroups = localStorage.getItem(getStorageKey('groups'));
         const storedMembers = localStorage.getItem(getStorageKey('members'));
         const storedTemplates = localStorage.getItem('ponnusamy_templates');
+        const storedNotes = localStorage.getItem(getStorageKey('savedNotes'));
         
         State.groups = storedGroups ? JSON.parse(storedGroups) : [];
         State.members = storedMembers ? JSON.parse(storedMembers) : [];
         State.templates = storedTemplates ? JSON.parse(storedTemplates) : [];
+        State.savedNotes = storedNotes ? JSON.parse(storedNotes) : [];
 
         // If authenticated with Supabase, pull cloud data
         if (window.supabaseClient && window.AuthState?.isAuthenticated) {
@@ -659,6 +687,7 @@ async function loadState() {
             await saveState();
         }
         
+        renderSavedNotesList();
     } catch (e) {
         console.error('Error loading state:', e);
     }
@@ -670,6 +699,7 @@ async function saveState() {
         localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
         localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
         localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates || []));
+        localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes || []));
         
         // If authenticated with Supabase, sync to cloud
         if (window.supabaseClient && window.AuthState?.isAuthenticated && window.AuthState.currentUser?.id) {
@@ -1034,6 +1064,43 @@ function initCreateGroupForm() {
 }
 
 function setupEventListeners() {
+    // --- Note Management ---
+    const btnAddNote = document.getElementById('btn-add-note');
+    const btnDelNote = document.getElementById('btn-delete-note');
+    const noteInput = document.getElementById('gpay-note-input');
+    
+    if (btnAddNote && noteInput) {
+        btnAddNote.addEventListener('click', () => {
+            const val = noteInput.value.trim();
+            if (val && !State.savedNotes.some(n => n.toUpperCase() === val.toUpperCase())) {
+                State.savedNotes.push(val);
+                saveState();
+                renderSavedNotesList();
+                showNotification('Note added to saved list', 'success');
+            } else if (val) {
+                showNotification('Note is already in the list', 'info');
+            }
+        });
+    }
+    
+    if (btnDelNote && noteInput) {
+        btnDelNote.addEventListener('click', () => {
+            const val = noteInput.value.trim();
+            if (val) {
+                const initialLength = State.savedNotes.length;
+                State.savedNotes = State.savedNotes.filter(n => n.toUpperCase() !== val.toUpperCase());
+                if (State.savedNotes.length < initialLength) {
+                    saveState();
+                    renderSavedNotesList();
+                    noteInput.value = '';
+                    showNotification('Note deleted from list', 'info');
+                } else {
+                    showNotification('Note not found in saved list', 'error');
+                }
+            }
+        });
+    }
+
     // --- Global Document Clicks ---
     document.addEventListener('click', (e) => {
         // Handle Custom Month Dropdown Click Outside
@@ -4262,7 +4329,7 @@ function renderChecklist(member, group) {
 
         const methodTagHtml = isPaid && payment.method === 'gpay' 
             ? `<div style="font-size: 0.65rem; font-weight: 700; color: #4285F4; margin-top: 4px; text-transform: uppercase;">GPay${payment.note ? '<br><span style="color: var(--text-muted); font-size: 0.6rem; text-transform: none;">' + payment.note + '</span>' : ''}</div>`
-            : (isPaid && payment.method === 'cash' ? `<div style="font-size: 0.65rem; font-weight: 700; color: var(--green-dark); margin-top: 4px; text-transform: uppercase;">Cash</div>` : '');
+            : (isPaid && payment.method === 'cash' ? `<div style="font-size: 0.65rem; font-weight: 700; color: var(--green-dark); margin-top: 4px; text-transform: uppercase;">Cash${payment.note ? '<br><span style="color: var(--text-muted); font-size: 0.6rem; text-transform: none;">' + payment.note + '</span>' : ''}</div>` : '');
 
         const isClaimed = payment.payoutClaimed;
         
@@ -4454,6 +4521,20 @@ function sendWhatsAppReminder(memberId) {
     const currentRelativeMonth = getRelativeMonthForGroup(group, now.getFullYear(), now.getMonth());
     const effectiveLimit = Math.max(group.currentMonth || 1, currentRelativeMonth);
 
+    const fullMonths = {"Jan":"January", "Feb":"February", "Mar":"March", "Apr":"April", "May":"May", "Jun":"June", "Jul":"July", "Aug":"August", "Sep":"September", "Oct":"October", "Nov":"November", "Dec":"December"};
+    const expandMonth = (str) => {
+        const parts = str.split(' ');
+        if (parts.length === 2 && fullMonths[parts[0]]) return fullMonths[parts[0]] + ' ' + parts[1];
+        return str;
+    };
+    const getOrdinalSuffix = (i) => {
+        let j = i % 10, k = i % 100;
+        if (j == 1 && k != 11) return i + "st";
+        if (j == 2 && k != 12) return i + "nd";
+        if (j == 3 && k != 13) return i + "rd";
+        return i + "th";
+    };
+
     for (let m = 1; m <= group.duration; m++) {
         if (m <= effectiveLimit) {
             const payment = member.payments[m];
@@ -4463,8 +4544,16 @@ function sendWhatsAppReminder(memberId) {
             
             if (!payment || !payment.paid) {
                 const partial = payment ? (payment.partialPaid || 0) : 0;
-                totalDueAmount += (instVal - partial);
-                pendingMonths.push(`Month ${m} (${getMonthLabel(group, m)})`);
+                const dueAmount = instVal - partial;
+                totalDueAmount += dueAmount;
+                
+                const monthNameStr = expandMonth(getMonthLabel(group, m));
+                const startMonthLabel = expandMonth(getMonthLabel(group, 1));
+                const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
+                const schemeStr = schemeAmount >= 100000 ? (schemeAmount / 100000) + ' lakhs' : (schemeAmount / 1000) + 'k';
+                
+                const msgBlock = `${monthNameStr}\n\n${startMonthLabel} group\n${schemeStr}/${group.duration} months scheme\n${getOrdinalSuffix(m)} month due=${dueAmount}`;
+                pendingMonths.push(msgBlock);
             }
         }
     }
@@ -4475,10 +4564,7 @@ function sendWhatsAppReminder(memberId) {
     }
 
     // Format greeting
-    const greeting = `Dear ${member.name},\n\nThis is a friendly savings installment reminder for *${group.name}* (Ponnusamy Savings).\n\n*Outstanding Dues Details:*\n` +
-        `• Total Outstanding: *₹${totalDueAmount.toLocaleString('en-IN')}*\n` +
-        `• Due Cycles:\n  - ${pendingMonths.join('\n  - ')}\n\n` +
-        `Please clear your pending dues at your earliest convenience. If you have already paid, please ignore this message.\n\nThank you!`;
+    const greeting = pendingMonths.join('\n\n\n');
 
     // Format mobile number: default to India prefix 91 if length is 10 digits
     let formattedPhone = member.mobileNo.replace(/\D/g, '');
