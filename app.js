@@ -2031,9 +2031,14 @@ function setupEventListeners() {
             }
             
             // Force completely clean dashboard re-render
-            const activeDashFilterPill = document.querySelector('#dashboard-filter-pills .filter-pill.active');
-            if (activeDashFilterPill) {
-                State.dashboardFilter = activeDashFilterPill.getAttribute('data-dashfilter');
+            const tagFilter = document.getElementById('dashboard-tag-filter');
+            if (tagFilter) {
+                State.dashboardFilter = tagFilter.value;
+            } else {
+                const activeDashFilterPill = document.querySelector('#dashboard-filter-pills .filter-pill.active');
+                if (activeDashFilterPill) {
+                    State.dashboardFilter = activeDashFilterPill.getAttribute('data-dashfilter');
+                }
             }
             const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
             renderDashboardMembersList(searchVal);
@@ -2559,7 +2564,35 @@ function renderDashboard() {
         };
     }
 
-    // Bind dashboard filter pills
+    // Bind dashboard tag filter select dropdown
+    const tagFilterSelect = document.getElementById('dashboard-tag-filter');
+    if (tagFilterSelect) {
+        const newTagSelect = tagFilterSelect.cloneNode(true);
+        tagFilterSelect.parentNode.replaceChild(newTagSelect, tagFilterSelect);
+        newTagSelect.value = State.dashboardFilter || 'all';
+        newTagSelect.addEventListener('change', () => {
+            State.dashboardFilter = newTagSelect.value;
+            
+            // Reset date filter
+            State.dashboardFilterDate = '';
+            const dSelect = document.getElementById('dashboard-date-filter');
+            if (dSelect) dSelect.value = '';
+            
+            // Sync hidden pills active classes
+            document.querySelectorAll('#dashboard-filter-pills .filter-pill').forEach(p => {
+                if (p.getAttribute('data-dashfilter') === State.dashboardFilter) {
+                    p.classList.add('active');
+                } else {
+                    p.classList.remove('active');
+                }
+            });
+            
+            const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+            renderDashboardMembersList(searchVal);
+        });
+    }
+
+    // Bind dashboard filter pills (kept in sync, hidden in layout)
     const dashboardPills = document.querySelectorAll('#dashboard-filter-pills .filter-pill');
     dashboardPills.forEach(pill => {
         const newPill = pill.cloneNode(true);
@@ -2575,6 +2608,10 @@ function renderDashboard() {
             document.querySelectorAll('#dashboard-filter-pills .filter-pill').forEach(p => p.classList.remove('active'));
             newPill.classList.add('active');
             State.dashboardFilter = newPill.getAttribute('data-dashfilter');
+            
+            // Sync with tag filter select dropdown
+            const tagSel = document.getElementById('dashboard-tag-filter');
+            if (tagSel) tagSel.value = State.dashboardFilter;
             
             // Reset the date filter dropdown when a status pill is clicked
             State.dashboardFilterDate = '';
@@ -2908,6 +2945,30 @@ function renderDashboardMembersList(searchQuery = '') {
     if (dashCountNewCustomer) dashCountNewCustomer.textContent = countNewCustomer;
     if (dashCountGpay) dashCountGpay.textContent = countGpay;
     if (dashCountCash) dashCountCash.textContent = countCash;
+
+    // Update tag select option label counts dynamically
+    const tagFilter = document.getElementById('dashboard-tag-filter');
+    if (tagFilter) {
+        const optAll = tagFilter.querySelector('option[value="all"]');
+        const optPaid = tagFilter.querySelector('option[value="paid"]');
+        const optPartial = tagFilter.querySelector('option[value="partial"]');
+        const optPending = tagFilter.querySelector('option[value="pending"]');
+        const optChitTaken = tagFilter.querySelector('option[value="chit_taken"]');
+        const optNewCustomerMonth = tagFilter.querySelector('option[value="new_customer_month"]');
+        const optNewCustomer = tagFilter.querySelector('option[value="new_customer"]');
+        const optGpay = tagFilter.querySelector('option[value="gpay"]');
+        const optCash = tagFilter.querySelector('option[value="cash"]');
+        
+        if (optAll) optAll.textContent = `Tags: All (${countAll})`;
+        if (optPaid) optPaid.textContent = `Tags: Paid (${countPaid})`;
+        if (optPartial) optPartial.textContent = `Tags: Partial (${countPartial})`;
+        if (optPending) optPending.textContent = `Tags: Due (${countPending})`;
+        if (optChitTaken) optChitTaken.textContent = `Tags: Chit Taken (${countChitTaken})`;
+        if (optNewCustomerMonth) optNewCustomerMonth.textContent = `Tags: New Customer (${countNewCustomerMonth})`;
+        if (optNewCustomer) optNewCustomer.textContent = `Tags: All New Customer (${countNewCustomer})`;
+        if (optGpay) optGpay.textContent = `Tags: Gpay (${countGpay})`;
+        if (optCash) optCash.textContent = `Tags: Cash (${countCash})`;
+    }
     
     // Update dashboard summary box for Chit Taken
     const statSummaryChitTakenAmount = document.getElementById('stat-summary-chit-taken-amount');
@@ -3029,7 +3090,7 @@ function renderDashboardMembersList(searchQuery = '') {
             paidDateHtml = `<span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem;">--</span>`;
         } else {
             if (item.currentMonthPaid) {
-                paidDateHtml = `<span style="display: inline-block; width: 92%; padding: 4px 2px; border-radius: 4px; background-color: #d1fae5; color: #065f46; font-weight: 800; font-size: 0.75rem; text-align: center; border: 1px solid #a7f3d0;">${paidDateText}</span>`;
+                paidDateHtml = `<span style="display: inline-block; width: 92%; padding: 4px 2px; border-radius: 4px; background-color: #dbeafe; color: #1e3a8a; font-weight: 800; font-size: 0.75rem; text-align: center; border: 1px solid #bfdbfe;">${paidDateText}</span>`;
             } else if (item.paidAmount > 0) {
                 paidDateHtml = `<span style="display: inline-block; width: 92%; padding: 4px 2px; border-radius: 4px; background-color: #fef3c7; color: #92400e; font-weight: 800; font-size: 0.75rem; text-align: center; border: 1px solid #fde68a;">${paidDateText}</span>`;
             } else {
@@ -3095,7 +3156,7 @@ function renderDashboardMembersList(searchQuery = '') {
         row.innerHTML = `
             <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
             <span class="member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
-            <span style="font-size: 0.8rem; color: var(--text-secondary); text-align: left;">${item.group.name}</span>
+            <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; text-align: left;">${item.group.name}</span>
             <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>

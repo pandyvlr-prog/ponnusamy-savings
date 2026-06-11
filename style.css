@@ -17,6 +17,7 @@
 
     /* Dark Mode Theme Variables (Default) */
     --bg-primary: transparent;
+    --bg-body: #080808;
     --bg-surface: rgba(14, 14, 18, 0.92);
     --bg-surface-elevated: rgba(22, 22, 29, 0.98);
     --bg-surface-glass: rgba(14, 14, 18, 0.6);
@@ -57,21 +58,10 @@
 }
  
 /* Light Mode Theme Variables */
-[data-theme="light"] body::before { 
-    opacity: 1; 
-    background: 
-        radial-gradient(at 0% 0%, rgba(254, 240, 138, 0.7) 0px, transparent 50%),
-        radial-gradient(at 50% 0%, rgba(219, 244, 230, 1) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(254, 240, 138, 0.7) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(204, 251, 241, 0.8) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(252, 245, 211, 1) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(204, 251, 241, 0.8) 0px, transparent 50%);
-    background-color: #f8fafc;
-    z-index: -1;
-}
 
 [data-theme="light"] {
     --bg-primary: transparent; /* Light dark cement gray base */
+    --bg-body: #f8fafc;
     --bg-surface: rgba(255, 255, 255, 0.96); /* Clean white cards with slight glass */
     --bg-surface-elevated: rgba(255, 255, 255, 1); /* Elevated cement depth */
     --bg-surface-glass: rgba(255, 255, 255, 0.7);
@@ -126,12 +116,23 @@
 
 body {
     font-family: var(--font-body);
-    background-color: var(--bg-primary);
+    background-color: #080808 !important;
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(184,134,11,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(212,175,55,0.06) 0%, transparent 40%) !important;
     color: var(--text-main);
     overflow-x: hidden;
     overflow-y: hidden;
     min-height: 100vh;
-    /* No body transition - theme switch handled by CSS vars instantly */
+}
+
+[data-theme="light"] body {
+    background-color: #f8fafc !important;
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(254,240,138,0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(219,244,230,0.8) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 0%, rgba(252,245,211,0.6) 0%, transparent 40%) !important;
 }
 
 /* No heavy transitions on containers - theme switch is instant via CSS vars */
@@ -2126,7 +2127,8 @@ body {
 
     /* Text cells: inline with truncation */
     .dashboard-member-row > span {
-        display: block !important;
+        display: flex !important;
+        align-items: center;
         width: auto !important;
         font-size: 0.72rem !important;
         white-space: nowrap;
@@ -2150,11 +2152,11 @@ body {
     .member-table-header > *:nth-child(1),
     .dashboard-member-row > *:nth-child(1) { text-align: center !important; justify-content: center !important; }
 
-    .member-table-header > *:nth-child(2) { text-align: center !important; justify-content: center !important; }
+    .member-table-header > *:nth-child(2) { text-align: left !important; justify-content: flex-start !important; padding-left: 8px !important; }
     .dashboard-member-row > *:nth-child(2) { text-align: left !important; padding-left: 8px !important; }
 
-    .member-table-header > *:nth-child(3) { text-align: center !important; justify-content: center !important; }
-    .dashboard-member-row > *:nth-child(3) { text-align: center !important; justify-content: center !important; }
+    .member-table-header > *:nth-child(3) { text-align: left !important; justify-content: flex-start !important; }
+    .dashboard-member-row > *:nth-child(3) { text-align: left !important; justify-content: flex-start !important; }
 
     .member-table-header > *:nth-child(4),
     .dashboard-member-row > *:nth-child(4) { text-align: center !important; justify-content: center !important; }
@@ -2162,14 +2164,14 @@ body {
     .member-table-header > *:nth-child(5) { text-align: center !important; justify-content: center !important; }
     .dashboard-member-row > *:nth-child(5) { text-align: center !important; justify-content: center !important; font-size: 1.15rem !important; font-weight: 800 !important; }
 
-    .member-table-header > *:nth-child(6) { text-align: center !important; justify-content: center !important; }
+    .member-table-header > *:nth-child(6) { text-align: left !important; justify-content: flex-start !important; }
     .dashboard-member-row > *:nth-child(6) { text-align: left !important; font-size: 1.15rem !important; font-weight: 800 !important; }
 
-    .member-table-header > *:nth-child(7) { text-align: center !important; justify-content: center !important; }
+    .member-table-header > *:nth-child(7) { text-align: left !important; justify-content: flex-start !important; }
     .dashboard-member-row > *:nth-child(7) { text-align: left !important; font-size: 1.15rem !important; font-weight: 800 !important; }
 
     .member-table-header > *:nth-child(8) { text-align: center !important; justify-content: center !important; }
-    .dashboard-member-row > *:nth-child(8) { text-align: left !important; }
+    .dashboard-member-row > *:nth-child(8) { text-align: center !important; justify-content: center !important; }
 
     .member-table-header > *:nth-child(9),
     .dashboard-member-row > *:nth-child(9) { text-align: center !important; justify-content: center !important; }

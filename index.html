@@ -41,6 +41,9 @@
     </script>
 </head>
 <body>
+    <!-- Static Theme Background -->
+    <div id="app-bg"></div>
+
     <!-- Smooth Transition Overlay -->
     <div id="transition-overlay" class="transition-overlay">
         <div class="transition-content">
@@ -292,11 +295,65 @@
                     </div>
 
                     <!-- Search Filter Row -->
-                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-direction: row; gap: 10px; align-items: center; width: 100%;">
-                        <div class="search-input-wrapper" style="flex: 1;">
+                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-direction: row; gap: 10px; align-items: center; width: 100%; flex-wrap: wrap;">
+                        <div class="search-input-wrapper" style="flex: 2; min-width: 200px;">
                             <i data-lucide="search" class="search-icon"></i>
                             <input type="text" id="dashboard-member-search" placeholder="Search members by name..." style="padding: 8px 12px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%;">
                         </div>
+                        
+                        <!-- Tags Status Filter Select -->
+                        <div class="tag-select-wrapper" style="width: 140px; min-width: 130px;">
+                            <select id="dashboard-tag-filter" style="padding: 8px 30px 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%; appearance: none; outline: none; cursor: pointer; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; font-weight: 600;">
+                                <option value="all">Tags: All</option>
+                                <option value="paid">Tags: Paid</option>
+                                <option value="partial">Tags: Partial</option>
+                                <option value="pending">Tags: Due</option>
+                                <option value="chit_taken">Tags: Chit Taken</option>
+                                <option value="new_customer_month">Tags: New Customer</option>
+                                <option value="new_customer">Tags: All New Customer</option>
+                                <option value="gpay">Tags: Gpay</option>
+                                <option value="cash">Tags: Cash</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Date Wise Filter Select -->
+                        <div class="date-select-wrapper" style="width: 140px; min-width: 130px;">
+                            <select id="dashboard-date-filter" style="padding: 8px 30px 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%; appearance: none; outline: none; cursor: pointer; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; font-weight: 600;">
+                                <option value="">Date Wise</option>
+                                <option value="1">1st</option>
+                                <option value="2">2nd</option>
+                                <option value="3">3rd</option>
+                                <option value="4">4th</option>
+                                <option value="5">5th</option>
+                                <option value="6">6th</option>
+                                <option value="7">7th</option>
+                                <option value="8">8th</option>
+                                <option value="9">9th</option>
+                                <option value="10">10th</option>
+                                <option value="11">11th</option>
+                                <option value="12">12th</option>
+                                <option value="13">13th</option>
+                                <option value="14">14th</option>
+                                <option value="15">15th</option>
+                                <option value="16">16th</option>
+                                <option value="17">17th</option>
+                                <option value="18">18th</option>
+                                <option value="19">19th</option>
+                                <option value="20">20th</option>
+                                <option value="21">21st</option>
+                                <option value="22">22nd</option>
+                                <option value="23">23rd</option>
+                                <option value="24">24th</option>
+                                <option value="25">25th</option>
+                                <option value="26">26th</option>
+                                <option value="27">27th</option>
+                                <option value="28">28th</option>
+                                <option value="29">29th</option>
+                                <option value="30">30th</option>
+                                <option value="31">31st</option>
+                            </select>
+                        </div>
+                        
                         <div class="month-select-wrapper" style="width: 140px; min-width: 130px;">
                             <select id="dashboard-month-select" style="padding: 8px 30px 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%; appearance: none; outline: none; cursor: pointer; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px;">
                                 <option value="current">Current Month</option>
@@ -304,8 +361,8 @@
                         </div>
                     </div>
                     
-                    <!-- Dashboard Filter Pills -->
-                    <div class="filter-pills" id="dashboard-filter-pills" style="margin-bottom: 14px; display: flex; gap: 8px;">
+                    <!-- Dashboard Filter Pills (Hidden, kept for JS reference counters) -->
+                    <div class="filter-pills" id="dashboard-filter-pills" style="display: none; margin-bottom: 14px; gap: 8px;">
                         <button class="filter-pill active" data-dashfilter="all">All (<span id="dash-count-all">0</span>)</button>
                         <button class="filter-pill text-green-pill" data-dashfilter="paid">Paid (<span id="dash-count-paid">0</span>)</button>
                         <button class="filter-pill text-amber-pill" data-dashfilter="partial">Partial (<span id="dash-count-partial">0</span>)</button>
@@ -315,40 +372,6 @@
                         <button class="filter-pill text-teal-pill" data-dashfilter="new_customer">All New Customer (<span id="dash-count-new-customer">0</span>)</button>
                         <button class="filter-pill text-purple-pill" data-dashfilter="gpay">Gpay (<span id="dash-count-gpay">0</span>)</button>
                         <button class="filter-pill text-orange-pill" data-dashfilter="cash">Cash (<span id="dash-count-cash">0</span>)</button>
-                        <select id="dashboard-date-filter" class="filter-pill" style="padding-right: 24px; text-align: left; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%239ca3af\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 8px center; background-size: 10px; border: 1px solid var(--border); color: var(--text-secondary); background-color: var(--bg-surface-elevated); font-weight: 600; outline: none; cursor: pointer;">
-                            <option value="">Date Wise</option>
-                            <option value="1">1st</option>
-                            <option value="2">2nd</option>
-                            <option value="3">3rd</option>
-                            <option value="4">4th</option>
-                            <option value="5">5th</option>
-                            <option value="6">6th</option>
-                            <option value="7">7th</option>
-                            <option value="8">8th</option>
-                            <option value="9">9th</option>
-                            <option value="10">10th</option>
-                            <option value="11">11th</option>
-                            <option value="12">12th</option>
-                            <option value="13">13th</option>
-                            <option value="14">14th</option>
-                            <option value="15">15th</option>
-                            <option value="16">16th</option>
-                            <option value="17">17th</option>
-                            <option value="18">18th</option>
-                            <option value="19">19th</option>
-                            <option value="20">20th</option>
-                            <option value="21">21st</option>
-                            <option value="22">22nd</option>
-                            <option value="23">23rd</option>
-                            <option value="24">24th</option>
-                            <option value="25">25th</option>
-                            <option value="26">26th</option>
-                            <option value="27">27th</option>
-                            <option value="28">28th</option>
-                            <option value="29">29th</option>
-                            <option value="30">30th</option>
-                            <option value="31">31st</option>
-                        </select>
                     </div>
                     
                     <!-- Member Table Card Container -->
