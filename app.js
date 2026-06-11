@@ -2807,36 +2807,58 @@ function renderDashboard() {
             if (!dateGrid) return;
             dateGrid.innerHTML = '';
             
+            let activeMonthName = "ALL";
+            if (State.dashboardSelectedMonth === 'current' || State.dashboardSelectedMonth === 'accumulated') {
+                const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                activeMonthName = monthNames[new Date().getMonth()];
+            } else if (State.dashboardSelectedMonth) {
+                const parts = State.dashboardSelectedMonth.split('-');
+                if (parts.length === 2) {
+                    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                    activeMonthName = monthNames[parseInt(parts[1], 10)];
+                }
+            }
+            
             for (let day = 1; day <= 31; day++) {
                 const item = document.createElement('div');
                 item.style.cssText = `
                     position: relative; 
-                    width: 34px; 
-                    height: 34px; 
+                    width: 36px; 
+                    height: 38px; 
                     cursor: pointer; 
                     display: inline-flex; 
+                    flex-direction: column;
                     align-items: center; 
-                    justify-content: center;
-                    border-radius: 4px;
+                    justify-content: flex-start;
+                    border-radius: 6px;
                     transition: transform 0.1s ease;
+                    background-color: #ffffff;
+                    border: 1px solid var(--border);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    overflow: hidden;
                 `;
                 item.className = 'date-grid-item';
                 
                 const isSelected = State.dashboardFilterDate && parseInt(State.dashboardFilterDate, 10) === day;
                 if (isSelected) {
-                    item.style.boxShadow = '0 0 0 2px var(--primary)';
+                    item.style.boxShadow = '0 0 0 2px var(--primary), 0 4px 8px rgba(0,0,0,0.1)';
+                    item.style.transform = 'scale(1.05)';
                 }
                 
                 item.innerHTML = `
-                    <img src="calendar_icon.png" style="width: 100%; height: 100%; object-fit: contain;">
-                    <span style="position: absolute; bottom: 2px; left: 3px; right: 3px; height: 17px; background-color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #111827; font-family: sans-serif;">${day}</span>
+                    <div style="background: linear-gradient(180deg, #ef4444, #dc2626); color: #fff; width: 100%; text-align: center; font-size: 8px; font-weight: 800; padding: 2px 0; letter-spacing: 0.5px; line-height: 1; border-bottom: 1px solid #b91c1c;">${activeMonthName}</div>
+                    <div style="color: #111827; flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; font-family: sans-serif; margin-top: -1px;">${day}</div>
+                    <!-- Calendar rings -->
+                    <div style="position: absolute; top: -3px; left: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
+                    <div style="position: absolute; top: -3px; right: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
                 `;
                 
                 item.addEventListener('mouseenter', () => {
                     item.style.transform = 'scale(1.1)';
                 });
                 item.addEventListener('mouseleave', () => {
-                    item.style.transform = 'scale(1)';
+                    if (!isSelected) item.style.transform = 'scale(1)';
+                    else item.style.transform = 'scale(1.05)';
                 });
                 
                 item.addEventListener('click', () => {
@@ -2940,8 +2962,9 @@ function renderDashboardGroupsList() {
         
         const colorPair = boxColors[index % boxColors.length];
         card.style.border = `2px solid ${colorPair.border}`;
-        // Force the card to have a dark background blended with the tint, regardless of light/dark theme
-        card.style.background = `linear-gradient(0deg, rgba(15,23,42,0.9), rgba(15,23,42,0.9)), ${colorPair.bg}`;
+        // Adaptive background that works in both Light and Dark themes
+        card.style.backgroundColor = `var(--bg-surface-elevated)`;
+        card.style.backgroundImage = `linear-gradient(${colorPair.bg}, ${colorPair.bg})`;
         card.style.boxShadow = `0 4px 16px ${colorPair.border}30, inset 0 1px 0 rgba(255,255,255,0.05)`;
             
         const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
@@ -2956,13 +2979,13 @@ function renderDashboardGroupsList() {
 
         card.innerHTML = `
             <div class="group-card-header">
-                <div class="group-card-title" style="display: flex; align-items: center; color: #f8fafc;">
+                <div class="group-card-title" style="display: flex; align-items: center; color: var(--text-main);">
                     <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.78rem; font-weight: 900; margin-right: 10px; flex-shrink: 0; box-shadow: 0 2px 6px ${colorPair.border}80;">${index + 1}</span>
                     <span style="font-weight: 700; letter-spacing: 0.3px;">${group.name}</span>
                 </div>
-                <div class="group-card-amount" style="background: rgba(168,85,247,0.15); color: #d8b4fe; padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.4); font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(168,85,247,0.2);">₹${schemeAmount.toLocaleString('en-IN')}</div>
+                <div class="group-card-amount" style="background: rgba(168,85,247,0.15); color: var(--primary); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.4); font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(168,85,247,0.2);">₹${schemeAmount.toLocaleString('en-IN')}</div>
             </div>
-            <div class="group-card-info" style="color: #cbd5e1;">
+            <div class="group-card-info" style="color: var(--text-muted);">
                 <div class="info-item">
                     <i data-lucide="users"></i>
                     <span>${metrics.totalMembers} Members</span>
@@ -2973,9 +2996,9 @@ function renderDashboardGroupsList() {
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.74rem; font-weight: 700;">
-                <span style="color: #4ade80; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${startLabel}</span>
-                <span style="color: #64748b; font-weight: 800; font-size: 0.85rem; line-height: 1;">—</span>
-                <span style="color: #f87171; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${endLabel}</span>
+                <span style="color: #15803d; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${startLabel}</span>
+                <span style="color: var(--text-muted); font-weight: 800; font-size: 0.85rem; line-height: 1;">—</span>
+                <span style="color: #b91c1c; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${endLabel}</span>
             </div>
         `;
         
