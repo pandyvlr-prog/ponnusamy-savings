@@ -3168,12 +3168,15 @@ function renderDashboardMembersList(searchQuery = '') {
             }
 
             let paymentMethodThisMonth = null;
+            let paymentNoteThisMonth = null;
             if (isAccumulated) {
                 const paymentObj = member.payments[group.currentMonth];
                 paymentMethodThisMonth = paymentObj && paymentObj.paid ? paymentObj.method : null;
+                paymentNoteThisMonth = paymentObj && paymentObj.paid ? paymentObj.note : null;
             } else {
                 const payment = member.payments[relativeMonthNum];
                 paymentMethodThisMonth = payment && payment.paid ? payment.method : null;
+                paymentNoteThisMonth = payment && payment.paid ? payment.note : null;
             }
 
             allList.push({
@@ -3192,7 +3195,8 @@ function renderDashboardMembersList(searchQuery = '') {
                 payoutMethod,
                 payoutDate,
                 payoutMonthNum,
-                paymentMethodThisMonth
+                paymentMethodThisMonth,
+                paymentNoteThisMonth
             });
         });
     });
@@ -3200,7 +3204,11 @@ function renderDashboardMembersList(searchQuery = '') {
     // Filter by search query
     let filteredList = allList;
     if (searchQuery) {
-        filteredList = allList.filter(item => item.member.name.toLowerCase().includes(searchQuery));
+        filteredList = allList.filter(item => {
+            const matchesName = item.member.name.toLowerCase().includes(searchQuery);
+            const matchesNote = item.paymentNoteThisMonth && item.paymentNoteThisMonth.toLowerCase().includes(searchQuery);
+            return matchesName || matchesNote;
+        });
     }
 
     // Only exclude members where the selected month is outside the group's range (isApplicable = false)
@@ -3243,10 +3251,12 @@ function renderDashboardMembersList(searchQuery = '') {
         
         if (item.paymentMethodThisMonth === 'gpay') {
             countGpay++;
-            gpayMembers.push(item.member.name);
+            const label = item.paymentNoteThisMonth && item.paymentNoteThisMonth.trim() !== '' ? item.paymentNoteThisMonth.trim() : item.member.name;
+            gpayMembers.push(label);
         } else if (item.paymentMethodThisMonth === 'cash') {
             countCash++;
-            cashMembers.push(item.member.name);
+            const label = item.paymentNoteThisMonth && item.paymentNoteThisMonth.trim() !== '' ? item.paymentNoteThisMonth.trim() : item.member.name;
+            cashMembers.push(label);
         }
     });
 
