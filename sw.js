@@ -3,7 +3,7 @@
  * Cache-first strategy for static assets, network-first for API calls
  */
 
-const CACHE_VERSION = 'pms-v4';
+const CACHE_VERSION = 'pms-v5';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -18,6 +18,9 @@ const APP_SHELL = [
     '/manifest.json',
     '/logo-dark.jpg',
     '/logo-light.jpg',
+    '/target_icon.png',
+    '/avatar_icon.png',
+    '/calendar_icon.png',
 ];
 
 // External CDN resources to cache at runtime

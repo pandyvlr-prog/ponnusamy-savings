@@ -176,6 +176,9 @@
                         <button class="icon-btn text-amber" id="btn-global-refresh" title="Refresh Data" style="background: rgba(245, 158, 11, 0.1);">
                             <i data-lucide="refresh-cw"></i>
                         </button>
+                        <button class="icon-btn text-amber" id="btn-privacy-toggle" title="Toggle Privacy Mode" style="background: rgba(245, 158, 11, 0.1);">
+                            <i data-lucide="eye" id="privacy-eye-icon"></i>
+                        </button>
                         <button class="icon-btn text-amber" id="btn-global-export-pdf" title="Export Global PDF Report" style="background: rgba(245, 158, 11, 0.1);">
                             <i data-lucide="download"></i>
                         </button>
@@ -218,7 +221,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h2 class="section-title-alt" style="margin-bottom: 0;">Dashboard Summary</h2>
                             <span id="dashboard-target-collection-badge" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; padding: 7px 18px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(0,0,0,0.3); letter-spacing: 0.3px;">
-                                <i data-lucide="target" style="width: 16px; height: 16px;"></i>
+                                <img src="target_icon.png" alt="Target" style="width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; vertical-align: middle;">
                                 <span id="dashboard-target-collection-text">Target: ₹0</span>
                             </span>
                         </div>
@@ -323,9 +326,23 @@
                             </select>
                         </div>
                         
-                        <!-- Date Wise Filter Select -->
-                        <div class="date-select-wrapper" style="width: 140px; min-width: 130px;">
-                            <select id="dashboard-date-filter" style="padding: 8px 30px 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%; appearance: none; outline: none; cursor: pointer; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; font-weight: 600;">
+                        <!-- Custom Date Filter Dropdown -->
+                        <div class="date-select-wrapper" style="position: relative; display: inline-block;">
+                            <button id="date-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); cursor: pointer; width: 42px; height: 38px; outline: none; position: relative;" title="Filter by Date">
+                                <img src="calendar_icon.png" style="width: 34px; height: 34px; object-fit: contain; flex-shrink: 0;">
+                                <span id="date-dropdown-selected-number" style="position: absolute; bottom: 2px; left: 3px; right: 3px; height: 17px; background-color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #111827; font-family: 'Inter', sans-serif; border-radius: 2px;">ALL</span>
+                            </button>
+                            <div id="date-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; padding: 10px; min-width: 220px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <div style="margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: center;">
+                                    <button class="btn btn-text-link" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; border: none; background: transparent;" id="btn-clear-date-filter">
+                                        Clear Date Filter
+                                    </button>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;" id="date-dropdown-grid">
+                                    <!-- Day items will be dynamically generated in app.js -->
+                                </div>
+                            </div>
+                            <select id="dashboard-date-filter" style="display: none;">
                                 <option value="">Date Wise</option>
                                 <option value="1">1st</option>
                                 <option value="2">2nd</option>
@@ -1100,6 +1117,7 @@
                     <!-- Member Profile Details Grid (Premium Glassmorphic layout) -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" id="btn-toggle-profile-details">
+                            <img src="avatar_icon.png" alt="Profile" style="width: 18px; height: 18px; object-fit: contain; flex-shrink: 0;">
                             <h4 class="modal-section-title" style="margin-bottom: 0;">Member Profile Details</h4>
                             <i data-lucide="chevron-down" class="toggle-profile-btn" id="profile-toggle-icon" style="width: 16px; height: 16px; color: var(--text-secondary);"></i>
                         </div>

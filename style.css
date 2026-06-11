@@ -3178,3 +3178,26 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     transition-duration: 0.08s !important;
 }
 
+/* Privacy Mode styles to blur summary amounts */
+.privacy-mode-active #stat-total-collected,
+.privacy-mode-active #stat-summary-collected-cash,
+.privacy-mode-active #stat-summary-collected-gpay,
+.privacy-mode-active #stat-total-pending,
+.privacy-mode-active #stat-summary-chit-taken-amount,
+.privacy-mode-active #stat-surplus-deficit-container span {
+    filter: blur(6px) !important;
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
+/* Smooth scrolling and iOS touch momentum support */
+.member-list-scroll-wrapper,
+.modal-body,
+.scheme-card-table-wrapper,
+.dropdown-menu,
+#group-list-container {
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+}
+
+

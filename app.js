@@ -3,6 +3,22 @@
  * Offline-first Chit Fund Management Engine
  */
 
+// Prevent pinch-to-zoom (two finger zoom) and double-tap zoom on tablets/mobiles for perfect fit
+document.addEventListener('touchstart', function (event) {
+    if (event.touches.length > 1) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, { passive: false });
+
 // --- Global Input Comma Formatting Monkeypatches & Helpers ---
 const originalParseFloat = window.parseFloat;
 window.parseFloat = function(val) {
@@ -57,6 +73,20 @@ document.addEventListener('input', (e) => {
         formatInputAsYouType(e.target);
     }
 });
+
+// Sync the trigger button text for custom Date Wise filter dropdown
+function syncDateDropdownTrigger() {
+    const textEl = document.querySelector('#date-dropdown-btn #date-dropdown-selected-number');
+    if (textEl) {
+        if (State.dashboardFilterDate) {
+            textEl.textContent = State.dashboardFilterDate;
+            textEl.style.fontSize = '10px';
+        } else {
+            textEl.textContent = 'ALL';
+            textEl.style.fontSize = '8px';
+        }
+    }
+}
 
 // --- Global Application State ---
 const State = {
@@ -1725,6 +1755,33 @@ function setupEventListeners() {
             if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
         });
     }
+    // Global Privacy Mode Toggle Button
+    const btnPrivacyToggle = document.getElementById('btn-privacy-toggle');
+    if (btnPrivacyToggle) {
+        // Init state from localStorage
+        const isPrivacyActive = localStorage.getItem('pms_privacy_mode') === 'true';
+        if (isPrivacyActive) {
+            document.body.classList.add('privacy-mode-active');
+            const icon = document.getElementById('privacy-eye-icon');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye-off');
+            }
+        }
+        
+        btnPrivacyToggle.addEventListener('click', () => {
+            const isActive = document.body.classList.toggle('privacy-mode-active');
+            localStorage.setItem('pms_privacy_mode', isActive ? 'true' : 'false');
+            const icon = document.getElementById('privacy-eye-icon');
+            if (icon) {
+                if (isActive) {
+                    icon.setAttribute('data-lucide', 'eye-off');
+                } else {
+                    icon.setAttribute('data-lucide', 'eye');
+                }
+                if (window.lucide) window.lucide.createIcons();
+            }
+        });
+    }
 
     // Global PDF Export Modal Bindings
     const btnGlobalExportPdf = document.getElementById('btn-global-export-pdf');
@@ -2605,6 +2662,7 @@ function renderDashboard() {
             State.dashboardFilterDate = '';
             const dSelect = document.getElementById('dashboard-date-filter');
             if (dSelect) dSelect.value = '';
+            syncDateDropdownTrigger();
             
             // Sync hidden pills active classes
             document.querySelectorAll('#dashboard-filter-pills .filter-pill').forEach(p => {
@@ -2645,23 +2703,124 @@ function renderDashboard() {
             State.dashboardFilterDate = '';
             const dSelect = document.getElementById('dashboard-date-filter');
             if (dSelect) dSelect.value = '';
+            syncDateDropdownTrigger();
 
             const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
             renderDashboardMembersList(searchVal);
         });
     });
 
-    // Bind dashboard date filter select element
-    const dateFilterSelect = document.getElementById('dashboard-date-filter');
-    if (dateFilterSelect) {
-        const newDateSelect = dateFilterSelect.cloneNode(true);
-        dateFilterSelect.parentNode.replaceChild(newDateSelect, dateFilterSelect);
-        newDateSelect.value = State.dashboardFilterDate || '';
-        newDateSelect.addEventListener('change', () => {
-            State.dashboardFilterDate = newDateSelect.value;
-            const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
-            renderDashboardMembersList(searchVal);
+    // Bind Custom Date Filter Dropdown
+    const dateBtn = document.getElementById('date-dropdown-btn');
+    const dateMenu = document.getElementById('date-dropdown-menu');
+    const dateGrid = document.getElementById('date-dropdown-grid');
+    const clearDateBtn = document.getElementById('btn-clear-date-filter');
+    
+    if (dateBtn && dateMenu) {
+        // Remove old listeners by cloning
+        const newDateBtn = dateBtn.cloneNode(true);
+        dateBtn.parentNode.replaceChild(newDateBtn, dateBtn);
+        
+        // Keep selected day text updated
+        const updateDateDropdownTrigger = () => {
+            const textEl = newDateBtn.querySelector('#date-dropdown-selected-number');
+            if (textEl) {
+                if (State.dashboardFilterDate) {
+                    textEl.textContent = State.dashboardFilterDate;
+                    textEl.style.fontSize = '10px';
+                } else {
+                    textEl.textContent = 'ALL';
+                    textEl.style.fontSize = '8px';
+                }
+            }
+        };
+        updateDateDropdownTrigger();
+        
+        // Populate the calendar items grid
+        const renderDateDropdownMenu = () => {
+            if (!dateGrid) return;
+            dateGrid.innerHTML = '';
+            
+            for (let day = 1; day <= 31; day++) {
+                const item = document.createElement('div');
+                item.style.cssText = `
+                    position: relative; 
+                    width: 34px; 
+                    height: 34px; 
+                    cursor: pointer; 
+                    display: inline-flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    border-radius: 4px;
+                    transition: transform 0.1s ease;
+                `;
+                item.className = 'date-grid-item';
+                
+                const isSelected = State.dashboardFilterDate && parseInt(State.dashboardFilterDate, 10) === day;
+                if (isSelected) {
+                    item.style.boxShadow = '0 0 0 2px var(--primary)';
+                }
+                
+                item.innerHTML = `
+                    <img src="calendar_icon.png" style="width: 100%; height: 100%; object-fit: contain;">
+                    <span style="position: absolute; bottom: 2px; left: 3px; right: 3px; height: 17px; background-color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #111827; font-family: sans-serif;">${day}</span>
+                `;
+                
+                item.addEventListener('mouseenter', () => {
+                    item.style.transform = 'scale(1.1)';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'scale(1)';
+                });
+                
+                item.addEventListener('click', () => {
+                    State.dashboardFilterDate = day.toString();
+                    
+                    // Sync hidden select
+                    const dSelect = document.getElementById('dashboard-date-filter');
+                    if (dSelect) dSelect.value = day.toString();
+                    
+                    updateDateDropdownTrigger();
+                    dateMenu.style.display = 'none';
+                    
+                    const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+                    renderDashboardMembersList(searchVal);
+                });
+                
+                dateGrid.appendChild(item);
+            }
+        };
+        
+        newDateBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = dateMenu.style.display === 'block';
+            dateMenu.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                renderDateDropdownMenu();
+            }
         });
+        
+        // Document-level listener to close when clicking outside
+        const closeMenuListener = (e) => {
+            if (!newDateBtn.contains(e.target) && !dateMenu.contains(e.target)) {
+                dateMenu.style.display = 'none';
+            }
+        };
+        document.addEventListener('click', closeMenuListener);
+        
+        if (clearDateBtn) {
+            clearDateBtn.addEventListener('click', () => {
+                State.dashboardFilterDate = '';
+                const dSelect = document.getElementById('dashboard-date-filter');
+                if (dSelect) dSelect.value = '';
+                
+                updateDateDropdownTrigger();
+                dateMenu.style.display = 'none';
+                
+                const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+                renderDashboardMembersList(searchVal);
+            });
+        }
     }
 
     // Render primary tables
@@ -3086,6 +3245,7 @@ function renderDashboardMembersList(searchQuery = '') {
                 State.dashboardFilterDate = '';
                 const dSelect = document.getElementById('dashboard-date-filter');
                 if (dSelect) dSelect.value = '';
+                syncDateDropdownTrigger();
 
                 // Sync hidden pills
                 document.querySelectorAll('#dashboard-filter-pills .filter-pill').forEach(p => {
