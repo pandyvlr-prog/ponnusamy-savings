@@ -706,3 +706,12 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
     transition-duration: 0.08s !important;
 }
 
+/* Ensure animating elements are fully visible when animations are disabled */
+.landing-title,
+.landing-subtitle,
+.landing-btn,
+.feature-item {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
