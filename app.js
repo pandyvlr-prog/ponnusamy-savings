@@ -3413,7 +3413,13 @@ function renderDashboardMembersList(searchQuery = '') {
                         e.stopPropagation();
                         const isVisible = subMenuContainer.style.display === 'flex';
                         subMenuContainer.style.display = isVisible ? 'none' : 'flex';
-                        toggleIconSpan.querySelector('i').style.transform = isVisible ? 'rotate(90deg)' : 'rotate(0deg)';
+                        
+                        // lucide.createIcons() replaces <i> with <svg>, so we look for either
+                        const iconEl = toggleIconSpan.querySelector('svg') || toggleIconSpan.querySelector('i');
+                        if (iconEl) {
+                            iconEl.style.transform = isVisible ? 'rotate(90deg)' : 'rotate(0deg)';
+                            iconEl.style.transition = 'transform 0.2s ease';
+                        }
                     });
                 }
             }
