@@ -3000,7 +3000,7 @@ function renderDashboardGroupsList() {
                     <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.78rem; font-weight: 900; margin-right: 10px; flex-shrink: 0; box-shadow: 0 2px 6px ${colorPair.border}80;">${index + 1}</span>
                     <span style="font-weight: 700; letter-spacing: 0.3px;">${group.name}</span>
                 </div>
-                <div class="group-card-amount" style="background: rgba(168,85,247,0.15); color: var(--primary); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.4); font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(168,85,247,0.2);">₹${schemeAmount.toLocaleString('en-IN')}</div>
+                <div class="group-card-amount" style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #ffffff; padding: 4px 10px; border-radius: 8px; border: none; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(147,51,234,0.3);">₹${schemeAmount.toLocaleString('en-IN')}</div>
             </div>
             <div class="group-card-info" style="color: var(--text-muted);">
                 <div class="info-item">
@@ -3625,7 +3625,13 @@ function renderDashboardMembersList(searchQuery = '') {
         } else {
             // isFuture rows are treated same as DUE — user wants to see & mark them
             if (item.currentMonthPaid) {
-                checkboxHtml = `<span class="status-badge-pill paid"><i data-lucide="check" style="width: 10px; height: 10px;"></i> Paid</span>`;
+                let methodSuffix = '';
+                if (item.paymentMethodThisMonth === 'gpay') {
+                    methodSuffix = ` <span style="color: #60a5fa; font-weight: 800; font-size: 0.75rem;">/ G</span>`;
+                } else if (item.paymentMethodThisMonth === 'cash') {
+                    methodSuffix = ` <span style="color: #fca5a5; font-weight: 800; font-size: 0.75rem;">/ C</span>`;
+                }
+                checkboxHtml = `<span class="status-badge-pill paid" style="display: inline-flex; align-items: center; justify-content: center;"><i data-lucide="check" style="width: 10px; height: 10px; margin-right: 2px;"></i> Paid${methodSuffix}</span>`;
             } else if (item.paidAmount > 0) {
                 checkboxHtml = `<span class="status-badge-pill partial"><i data-lucide="trending-up" style="width: 10px; height: 10px;"></i> Partial</span>`;
             } else {
@@ -4128,22 +4134,28 @@ function openPaymentMethodModal(memberId, monthNum) {
     closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
 
     // Attach new listeners
+    let selectedMethod = null;
+
     newCashBtn.addEventListener('click', () => {
-        // Immediate confirm for cash
-        confirmPayment(memberId, monthNum, 'cash', '');
-        backdrop.classList.remove('active');
+        selectedMethod = 'cash';
+        noteSection.style.display = 'flex';
+        newCashBtn.style.backgroundColor = 'rgba(34, 197, 94, 0.1)';
+        newGpayBtn.style.backgroundColor = 'transparent';
+        noteInput.focus();
     });
 
     newGpayBtn.addEventListener('click', () => {
-        // Show note input section
+        selectedMethod = 'gpay';
         noteSection.style.display = 'flex';
         newGpayBtn.style.backgroundColor = 'rgba(66, 133, 244, 0.1)';
+        newCashBtn.style.backgroundColor = 'transparent';
         noteInput.focus();
     });
     
     newConfirmBtn.addEventListener('click', () => {
+        if (!selectedMethod) return;
         const noteVal = noteInput.value.trim();
-        confirmPayment(memberId, monthNum, 'gpay', noteVal);
+        confirmPayment(memberId, monthNum, selectedMethod, noteVal);
         backdrop.classList.remove('active');
     });
     
@@ -4295,7 +4307,7 @@ function renderChecklist(member, group) {
                 <span style="font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap;">📅 ${monthYearStr}</span>
             </div>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
-            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${formatNumberIndian(isPaid ? instVal : enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
+            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${isPaid ? '' : formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
             ${payoutHtml}
             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div class="row-checkbox-wrapper ${isPaid ? 'paid' : ''}" style="width: 20px; height: 20px; border-radius: 40%; border: 2px solid ${isPaid ? 'var(--green-dark)' : 'var(--text-muted)'}; background-color: ${isPaid ? 'var(--green-dark)' : 'transparent'}; color: ${isPaid ? '#fff' : 'transparent'}; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all var(--transition-fast);">
