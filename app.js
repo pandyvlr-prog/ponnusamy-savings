@@ -6338,6 +6338,19 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         });
     });
 
+    if (takenMembers.length === 0) {
+        const overlay = document.getElementById('pdf-loading-overlay');
+        if (overlay) overlay.style.display = 'none';
+        
+        const dispMonthObj = new Date(selYear, selMonth - 1, 1);
+        const dispMonthName = dispMonthObj.toLocaleString('default', { month: 'long' });
+        
+        if (typeof showNotification === 'function') {
+            showNotification(`No members have taken a chit in ${dispMonthName} ${selYear}`, 'warning');
+        }
+        return;
+    }
+
     let tableRowsHtml = '';
     takenMembers.forEach((item, index) => {
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
@@ -6450,7 +6463,10 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     
     document.getElementById('chit-pdf-month-name').textContent = `${monthName} ${selYear}`;
     const now = new Date();
-    document.getElementById('chit-pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mmGen = String(now.getMonth() + 1).padStart(2, '0');
+    const yyyyGen = now.getFullYear();
+    document.getElementById('chit-pdf-gen-date').textContent = `Generated: ${dd}/${mmGen}/${yyyyGen} ${now.toLocaleTimeString()}`;
     
     document.getElementById('chit-pdf-total-members').textContent = takenMembers.length;
     document.getElementById('chit-pdf-total-amount').textContent = `₹${formatNumberIndian(totalPayoutAmount)}`;
