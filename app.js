@@ -3777,52 +3777,9 @@ function renderDashboardMembersList(searchQuery = '') {
     }
     
     // Update dashboard summary box for Chit Taken
-    const statSummaryChitTakenAmount = document.getElementById('stat-summary-chit-taken-amount');
-    const statSummaryChitTakenCount = document.getElementById('stat-summary-chit-taken-count');
-    if (statSummaryChitTakenAmount) {
-        statSummaryChitTakenAmount.textContent = `₹${amountChitTaken.toLocaleString('en-IN')}`;
-    }
-    if (statSummaryChitTakenCount) {
-        statSummaryChitTakenCount.textContent = `(${countChitTaken})`;
-    }
-
-    const statSummaryCollectedCount = document.getElementById('stat-summary-collected-count');
-    if (statSummaryCollectedCount) {
-        statSummaryCollectedCount.textContent = `(${countPaid})`;
-    }
-
-    const statSummaryPendingCount = document.getElementById('stat-summary-pending-count');
-    if (statSummaryPendingCount) {
-        statSummaryPendingCount.textContent = `(${countPending})`;
-    }
+    // Removed old count updates because we now do synced updates later
 
     // Update Target Collection
-    let totalExpectedAmount = 0;
-    allList.filter(item => item.isApplicable).forEach(item => {
-        totalExpectedAmount += (item.dueAmount + item.paidAmount);
-    });
-    const statTargetCollection = document.getElementById('dashboard-target-collection-text');
-    if (statTargetCollection) {
-        statTargetCollection.textContent = `Target: ₹${totalExpectedAmount.toLocaleString('en-IN')}`;
-    }
-
-    // Update Surplus/Deficit calculation
-    const containerSD = document.getElementById('stat-surplus-deficit-container');
-    if (containerSD) {
-        const difference = totalExpectedAmount - amountChitTaken;
-        if (amountChitTaken === 0 && totalExpectedAmount === 0) {
-            containerSD.innerHTML = `<span style="color: #9ca3af;">--</span>`;
-            containerSD.style.backgroundColor = "transparent";
-        } else if (difference < 0) {
-            containerSD.innerHTML = `<span style="color: #ef4444;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
-            containerSD.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
-        } else if (difference >= 0) {
-            containerSD.innerHTML = `<span style="color: #22c55e;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
-            containerSD.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
-        }
-        if (window.lucide) window.lucide.createIcons();
-    }
-
     // Filter by dashboard filter status pill
     if (State.dashboardFilter && State.dashboardFilter !== 'all') {
         filteredList = filteredList.filter(item => {
@@ -3863,6 +3820,83 @@ function renderDashboardMembersList(searchQuery = '') {
 
     // Sort alphabetically by member name
     filteredList.sort((a, b) => a.member.name.localeCompare(b.member.name));
+
+    // Calculate Synced Dashboard Stats based on the FINAL filtered list
+    let syncExpectedAmount = 0;
+    let syncCollected = 0;
+    let syncCollectedCash = 0;
+    let syncCollectedGpay = 0;
+    let syncPending = 0;
+    let syncChitTaken = 0;
+    
+    let syncCountPaid = 0;
+    let syncCountPending = 0;
+    let syncCountChitTaken = 0;
+
+    filteredList.forEach(item => {
+        syncExpectedAmount += (item.dueAmount + item.paidAmount);
+        syncCollected += item.paidAmount;
+        if (item.paymentMethodThisMonth === 'cash') syncCollectedCash += item.paidAmount;
+        if (item.paymentMethodThisMonth === 'gpay') syncCollectedGpay += item.paidAmount;
+        syncPending += item.dueAmount;
+        
+        if (item.currentMonthPaid || item.paidAmount > 0) {
+            syncCountPaid++;
+        } else {
+            syncCountPending++;
+        }
+        
+        if (item.takenThisSelectedMonth) {
+            syncChitTaken += item.payoutVal;
+            syncCountChitTaken++;
+        }
+    });
+
+    // Update Dashboard DOM Elements
+    const statTargetCollection = document.getElementById('dashboard-target-collection-text');
+    if (statTargetCollection) {
+        statTargetCollection.textContent = `Target: ₹${syncExpectedAmount.toLocaleString('en-IN')}`;
+    }
+
+    const statTotalCollected = document.getElementById('stat-total-collected');
+    if (statTotalCollected) statTotalCollected.textContent = '₹' + syncCollected.toLocaleString('en-IN');
+    
+    const mCashEl = document.getElementById('stat-summary-collected-cash');
+    if (mCashEl) mCashEl.textContent = '₹' + syncCollectedCash.toLocaleString('en-IN');
+    const mGpayEl = document.getElementById('stat-summary-collected-gpay');
+    if (mGpayEl) mGpayEl.textContent = '₹' + syncCollectedGpay.toLocaleString('en-IN');
+    
+    const statTotalPending = document.getElementById('stat-total-pending');
+    if (statTotalPending) statTotalPending.textContent = '₹' + syncPending.toLocaleString('en-IN');
+    
+    const mChitTakenEl = document.getElementById('stat-summary-chit-taken-amount');
+    if (mChitTakenEl) mChitTakenEl.textContent = '₹' + syncChitTaken.toLocaleString('en-IN');
+    
+    const statSummaryCollectedCount = document.getElementById('stat-summary-collected-count');
+    if (statSummaryCollectedCount) statSummaryCollectedCount.textContent = `(${syncCountPaid})`;
+    
+    const statSummaryPendingCount = document.getElementById('stat-summary-pending-count');
+    if (statSummaryPendingCount) statSummaryPendingCount.textContent = `(${syncCountPending})`;
+    
+    const statSummaryChitTakenCount = document.getElementById('stat-summary-chit-taken-count');
+    if (statSummaryChitTakenCount) statSummaryChitTakenCount.textContent = `(${syncCountChitTaken})`;
+
+    // Update Surplus/Deficit calculation
+    const containerSD = document.getElementById('stat-surplus-deficit-container');
+    if (containerSD) {
+        const difference = syncExpectedAmount - syncChitTaken;
+        if (syncChitTaken === 0 && syncExpectedAmount === 0) {
+            containerSD.innerHTML = `<span style="color: #9ca3af;">--</span>`;
+            containerSD.style.backgroundColor = "transparent";
+        } else if (difference < 0) {
+            containerSD.innerHTML = `<span style="color: #ef4444;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+        } else if (difference >= 0) {
+            containerSD.innerHTML = `<span style="color: #22c55e;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
+        }
+        if (window.lucide) window.lucide.createIcons();
+    }
 
     // Update Badge Counter
     document.getElementById('member-total-badge').textContent = `${filteredList.length} Members`;

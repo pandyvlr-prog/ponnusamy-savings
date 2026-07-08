@@ -3,7 +3,7 @@
  * Cache-first strategy for static assets, network-first for API calls
  */
 
-const CACHE_VERSION = 'pms-v50';
+const CACHE_VERSION = 'pms-v51';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
