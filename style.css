@@ -285,8 +285,30 @@ body {
     color: var(--text-secondary);
 }
 
+#live-clock {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+}
+
+[data-theme="dark"] #live-clock {
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(192, 132, 252, 0.15));
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
 @media (max-width: 767px) {
-    .app-tagline {
+    .app-tagline:not(#live-clock) {
         display: none;
     }
 }
