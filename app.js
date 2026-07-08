@@ -5676,7 +5676,7 @@ function generatePdfReport() {
     if (overlay) overlay.style.display = 'flex';
     
     const container = document.getElementById('pdf-template-container');
-    container.style.display = 'block';
+    const htmlContent = container.outerHTML.replace('display: none;', 'display: block;');
 
     const opt = {
         margin:       [10, 5],
@@ -5686,13 +5686,11 @@ function generatePdfReport() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(container).save().then(() => {
-        container.style.display = 'none';
+    html2pdf().set(opt).from(htmlContent).save().then(() => {
         if (overlay) overlay.style.display = 'none';
         showNotification('PDF Report Generated Successfully!', 'success');
     }).catch(err => {
         console.error(err);
-        container.style.display = 'none';
         if (overlay) overlay.style.display = 'none';
         showNotification('Error generating PDF', 'error');
     });
@@ -5901,7 +5899,7 @@ function generateGlobalPdfReport(mode = 'download') {
     if (overlay) overlay.style.display = 'flex';
 
     const container = document.getElementById('global-pdf-template-container');
-    container.style.display = 'block';
+    const htmlContent = container.outerHTML.replace('display: none;', 'display: block;');
 
     const opt = {
         margin:       [10, 5],
@@ -5912,19 +5910,16 @@ function generateGlobalPdfReport(mode = 'download') {
     };
 
     if (mode === 'download') {
-        html2pdf().set(opt).from(container).save().then(() => {
-            container.style.display = 'none';
+        html2pdf().set(opt).from(htmlContent).save().then(() => {
             if (overlay) overlay.style.display = 'none';
             showNotification('Global PDF Report Downloaded!', 'success');
         }).catch(err => {
             console.error(err);
-            container.style.display = 'none';
             if (overlay) overlay.style.display = 'none';
             showNotification('Error generating PDF', 'error');
         });
     } else if (mode === 'share') {
-        html2pdf().set(opt).from(container).outputPdf('blob').then(async (blob) => {
-            container.style.display = 'none';
+        html2pdf().set(opt).from(htmlContent).outputPdf('blob').then(async (blob) => {
             if (overlay) overlay.style.display = 'none';
             
             const file = new File([blob], opt.filename, { type: 'application/pdf' });
@@ -5947,11 +5942,10 @@ function generateGlobalPdfReport(mode = 'download') {
             } else {
                 showNotification('Web Share not supported on this device/browser', 'error');
                 // Fallback to download
-                html2pdf().set(opt).from(container).save();
+                html2pdf().set(opt).from(htmlContent).save();
             }
         }).catch(err => {
             console.error(err);
-            container.style.display = 'none';
             if (overlay) overlay.style.display = 'none';
             showNotification('Error generating PDF', 'error');
         });
@@ -6217,7 +6211,7 @@ function generateYearlyPdfReport() {
     if (overlay) overlay.style.display = 'flex';
 
     const container = document.getElementById('yearly-pdf-template-container');
-    container.style.display = 'block';
+    const htmlContent = container.outerHTML.replace('display: none;', 'display: block;');
 
     const opt = {
         margin:       [10, 5],
@@ -6227,13 +6221,11 @@ function generateYearlyPdfReport() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
-    html2pdf().set(opt).from(container).save().then(() => {
-        container.style.display = 'none';
+    html2pdf().set(opt).from(htmlContent).save().then(() => {
         if (overlay) overlay.style.display = 'none';
         if(typeof showNotification === 'function') showNotification('Yearly Report Downloaded!', 'success');
     }).catch(err => {
         console.error(err);
-        container.style.display = 'none';
         if (overlay) overlay.style.display = 'none';
         if(typeof showNotification === 'function') showNotification('Error generating PDF', 'error');
     });
@@ -6506,9 +6498,6 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
 
-    const container = document.getElementById('chit-taken-pdf-template-container');
-    container.style.display = 'block';
-
     const opt = {
         margin:       [10, 5],
         filename:     `Chit_Taken_Report_${monthName}_${selYear}.pdf`,
@@ -6517,20 +6506,20 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
+    const container = document.getElementById('chit-taken-pdf-template-container');
+    const htmlContent = container.outerHTML.replace('display: none;', 'display: block;');
+
     if (mode === 'download') {
-        html2pdf().set(opt).from(container).save().then(() => {
-            container.style.display = 'none';
+        html2pdf().set(opt).from(htmlContent).save().then(() => {
             if (overlay) overlay.style.display = 'none';
             if(typeof showNotification === 'function') showNotification('Chit Taken Report Downloaded!', 'success');
         }).catch(err => {
             console.error(err);
-            container.style.display = 'none';
             if (overlay) overlay.style.display = 'none';
             if(typeof showNotification === 'function') showNotification('Error generating PDF', 'error');
         });
     } else if (mode === 'share') {
-        html2pdf().set(opt).from(container).outputPdf('blob').then(async (blob) => {
-            container.style.display = 'none';
+        html2pdf().set(opt).from(htmlContent).outputPdf('blob').then(async (blob) => {
             if (overlay) overlay.style.display = 'none';
             
             const file = new File([blob], opt.filename, { type: 'application/pdf' });
@@ -6551,7 +6540,6 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
             }
         }).catch(err => {
             console.error(err);
-            container.style.display = 'none';
             if (overlay) overlay.style.display = 'none';
             if(typeof showNotification === 'function') showNotification('Error generating PDF', 'error');
         });
