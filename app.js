@@ -6585,43 +6585,48 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
 }
 
 // ==========================================
-// WORKSPACE TOOLS: CALCULATOR & NOTEPAD
+// SIDEBAR, CALCULATOR & NOTEPAD
 // ==========================================
-function initWorkspace() {
-    const btnToggle = document.getElementById('btn-workspace-toggle');
-    const btnClose = document.getElementById('btn-workspace-close');
-    const drawer = document.getElementById('workspace-drawer');
-    const overlay = document.getElementById('workspace-drawer-overlay');
+function initSidebar() {
+    const btnToggle = document.getElementById('btn-sidebar-toggle');
+    const btnClose = document.getElementById('btn-sidebar-close');
+    const menu = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
     
-    if (!btnToggle || !drawer || !overlay) return;
+    if (!btnToggle || !menu || !overlay) return;
 
-    function openWorkspace() {
-        drawer.classList.add('show');
+    function openSidebar() {
+        menu.classList.add('show');
         overlay.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 
-    function closeWorkspace() {
-        drawer.classList.remove('show');
+    function closeSidebar() {
+        menu.classList.remove('show');
         overlay.classList.remove('show');
         document.body.style.overflow = '';
     }
 
-    btnToggle.addEventListener('click', openWorkspace);
-    btnClose.addEventListener('click', closeWorkspace);
-    overlay.addEventListener('click', closeWorkspace);
+    btnToggle.addEventListener('click', openSidebar);
+    if(btnClose) btnClose.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
 
-    // Tab Switching
-    const tabs = document.querySelectorAll('.workspace-tab');
-    const panes = document.querySelectorAll('.workspace-pane');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            panes.forEach(p => p.classList.remove('active'));
+    // Sidebar Navigation Links
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = link.dataset.target;
             
-            tab.classList.add('active');
-            document.getElementById(tab.dataset.target).classList.add('active');
+            // Highlight active link
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Switch screen
+            switchScreen(target);
+            
+            // Close sidebar
+            closeSidebar();
         });
     });
 
@@ -6725,14 +6730,25 @@ function initWorkspace() {
         });
     });
 
-    // ==========================================
-    // MULTI-NOTE APP LOGIC & CLOUD SYNC
-    // ==========================================
+    // --- Notepad Logic ---
     const notesListView = document.getElementById('notes-list-view');
     const noteEditorView = document.getElementById('note-editor-view');
-    const notesGrid = document.getElementById('notes-grid');
     const btnAddNote = document.getElementById('btn-add-note');
     const btnBackNotes = document.getElementById('btn-back-notes');
+    const btnBackDashboardNotes = document.getElementById('btn-back-to-dashboard-notes');
+    const btnBackDashboardCalc = document.getElementById('btn-back-to-dashboard-calc');
+    const notesGrid = document.getElementById('notes-grid');
+
+    if(btnBackDashboardNotes) {
+        btnBackDashboardNotes.addEventListener('click', () => {
+            switchScreen('screen-dashboard');
+        });
+    }
+    if(btnBackDashboardCalc) {
+        btnBackDashboardCalc.addEventListener('click', () => {
+            switchScreen('screen-dashboard');
+        });
+    }
     const btnDeleteNote = document.getElementById('btn-delete-note');
     const notepadTitle = document.getElementById('notepad-title');
     const notepadTextarea = document.getElementById('notepad-textarea');
@@ -6925,4 +6941,4 @@ function initWorkspace() {
 }
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
-setTimeout(initWorkspace, 1000);
+setTimeout(initSidebar, 1000);
