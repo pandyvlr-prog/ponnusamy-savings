@@ -3,11 +3,14 @@ const supabaseUrl = 'https://ypkmtmmmsjcdmnarkmhf.supabase.co';
 const supabaseAnonKey = 'sb_publishable_qtUyeCpKdqAYYQsIDKiStQ_8ZM39iIU';
 let supabaseClient = null;
 try {
-    supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-    window.supabaseClient = supabaseClient;
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        window.supabaseClient = supabaseClient;
+    } else {
+        console.warn("Supabase library not loaded. Running in offline/mock mode.");
+    }
 } catch (e) {
-    console.error("Supabase failed to load", e);
-    alert("Error: Failed to load Supabase! Please ensure you have an internet connection and are not running on file:/// with restrictions.");
+    console.error("Supabase failed to initialize", e);
 }
 
 // Simulated Authentication & Settings Logic
@@ -86,6 +89,10 @@ async function initAuth() {
 }
 
 function navigateTo(screenId) {
+    if (typeof switchView === 'function') {
+        switchView(screenId);
+        return;
+    }
     document.querySelectorAll('.app-screen').forEach(el => {
         el.classList.remove('active');
     });
@@ -212,6 +219,40 @@ function setupAuthListeners() {
             if (typeof showNotification === 'function') showNotification('Google login failed', 'error');
         }
     });
+
+    // Forgot Password Trigger
+    const forgotLink = document.getElementById('forgot-password-link');
+    if (forgotLink) {
+        forgotLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (!supabaseClient) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Database is not connected (Offline mode).', 'error');
+                } else {
+                    alert('Database is currently not connected (Offline mode).');
+                }
+                return;
+            }
+            const email = prompt("Enter your email address to receive a password reset link:");
+            if (email) {
+                try {
+                    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                        redirectTo: window.location.origin
+                    });
+                    if (error) {
+                        if (typeof showNotification === 'function') showNotification(error.message, 'error');
+                        else alert('Error: ' + error.message);
+                    } else {
+                        if (typeof showNotification === 'function') showNotification('Password reset email sent!', 'success');
+                        else alert('Password reset email sent! Check your inbox.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error sending reset link.');
+                }
+            }
+        });
+    }
 
     // Avatar Dropdown Toggle
     const btnProfile = document.getElementById('btn-profile-dropdown');

@@ -645,7 +645,7 @@ async function loadState() {
         State.savedNotes = storedNotes ? JSON.parse(storedNotes) : [];
 
         // If authenticated with Supabase, pull cloud data
-        if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+        if (window.supabaseClient && window.AuthState?.isAuthenticated && window.AuthState.currentUser?.id) {
             // Force network fetch of user_metadata silently in the background
             try {
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
@@ -928,22 +928,34 @@ function switchView(viewId) {
     const activeScreen = document.querySelector('.app-screen.active');
     const targetScreen = document.getElementById(viewId);
     
-    if (activeScreen && targetScreen && activeScreen.id !== viewId) {
-        // Slide out active
-        activeScreen.style.transform = 'none';
-        activeScreen.style.opacity = '0';
-        activeScreen.classList.remove('active');
-        activeScreen.style.pointerEvents = 'none';
+    if (targetScreen) {
+        if (activeScreen && activeScreen.id !== viewId) {
+            // Slide out active
+            activeScreen.style.transform = '';
+            activeScreen.style.opacity = '0';
+            activeScreen.classList.remove('active');
+            activeScreen.style.pointerEvents = 'none';
+        }
         
         // Slide in target
         targetScreen.classList.add('active');
         targetScreen.style.pointerEvents = 'auto';
         // Force reflow
         targetScreen.offsetHeight;
-        targetScreen.style.transform = 'none';
+        targetScreen.style.transform = '';
         targetScreen.style.opacity = '1';
         
         State.currentView = viewId;
+        
+        // Highlight active sidebar navigation link
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        sidebarLinks.forEach(link => {
+            if (link.dataset.target === viewId) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
         
         // Contextual trigger on screen load
         if (viewId === 'screen-dashboard') {
@@ -6629,6 +6641,29 @@ function initSidebar() {
             closeSidebar();
         });
     });
+
+    // Wire up Calculator and Notepad screen back buttons
+    const btnBackCalc = document.getElementById('btn-back-to-dashboard-calc');
+    if (btnBackCalc) {
+        btnBackCalc.addEventListener('click', () => {
+            if (window.AuthState && window.AuthState.isAuthenticated) {
+                switchView('screen-dashboard');
+            } else {
+                switchView('screen-landing');
+            }
+        });
+    }
+
+    const btnBackToDashboardNotes = document.getElementById('btn-back-to-dashboard-notes');
+    if (btnBackToDashboardNotes) {
+        btnBackToDashboardNotes.addEventListener('click', () => {
+            if (window.AuthState && window.AuthState.isAuthenticated) {
+                switchView('screen-dashboard');
+            } else {
+                switchView('screen-landing');
+            }
+        });
+    }
 
     // Calculator Logic
     const calcDisplay = document.getElementById('calc-display');
