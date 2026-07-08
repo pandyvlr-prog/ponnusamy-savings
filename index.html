@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=57">
+    <link rel="stylesheet" href="style.css?v=58">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -1600,7 +1600,7 @@
     </div>
     
     <script src="auth.js?v=47" defer></script>
-    <script src="app.js?v=55" defer></script>
+    <script src="app.js?v=56" defer></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
@@ -1920,46 +1920,83 @@
 
             <!-- SCREEN: NOTEPAD -->
             <section id="screen-notes" class="app-screen">
-                <header class="app-header" style="padding-bottom: 0; border-bottom: none;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <button class="icon-btn" id="btn-back-to-dashboard-notes" style="background: var(--bg-surface);">
-                            <i data-lucide="arrow-left"></i>
+                <!-- Notepad Header -->
+                <div class="notepad-screen-header">
+                    <div class="notepad-header-top">
+                        <div class="notepad-header-left">
+                            <button class="icon-btn notepad-back-btn" id="btn-back-to-dashboard-notes" title="Back">
+                                <i data-lucide="arrow-left"></i>
+                            </button>
+                            <div>
+                                <h2 class="notepad-screen-title">My Notes</h2>
+                                <p class="notepad-screen-subtitle" id="notes-count-label">0 notes</p>
+                            </div>
+                        </div>
+                        <button id="btn-notepad-add" class="notepad-new-btn">
+                            <i data-lucide="plus" style="width:16px;height:16px;"></i>
+                            New Note
                         </button>
-                        <h2 style="font-size: 1.25rem; font-weight: 700;">Google Keep Notes</h2>
                     </div>
-                </header>
-                <div class="screen-content" style="padding-top: 10px;">
+                    <!-- Search Bar -->
+                    <div class="notepad-search-bar">
+                        <i data-lucide="search" class="notepad-search-icon"></i>
+                        <input type="text" id="notes-search-input" class="notepad-search-input" placeholder="Search notes...">
+                    </div>
+                </div>
+
+                <div class="screen-content" style="padding-top: 0;">
                     <!-- Notes List View -->
                     <div id="notes-list-view" class="notes-view-container active">
-                        <div id="notes-grid" class="notes-grid">
-                            <!-- Note cards will be injected here -->
+                        <!-- Empty state -->
+                        <div id="notes-empty-state" class="notes-empty-state" style="display:none;">
+                            <div class="notes-empty-icon">
+                                <i data-lucide="notebook-pen"></i>
+                            </div>
+                            <h3>No notes yet</h3>
+                            <p>Tap "New Note" to capture your thoughts</p>
                         </div>
-                        <button id="btn-notepad-add" class="fab-btn" title="Create New Note">
-                            <i data-lucide="plus"></i>
-                        </button>
+                        <div id="notes-grid" class="notes-grid"></div>
                     </div>
 
                     <!-- Note Editor View -->
-                    <div id="note-editor-view" class="notes-view-container" style="display: none;">
-                        <div class="notepad-toolbar">
-                            <button id="btn-back-notes" class="icon-btn text-muted" title="Back to Notes"><i data-lucide="arrow-left"></i></button>
-                            <input type="text" id="notepad-title" class="notepad-title-input" placeholder="Note Title...">
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="notepad-color-picker" title="Note Color" value="#ffffff" style="width: 24px; height: 24px; border: none; border-radius: 4px; cursor: pointer; padding: 0; background: transparent;">
-                                <span class="notepad-status" id="notepad-status">Saved</span>
-                                <button id="btn-notepad-delete" class="icon-btn text-danger" title="Delete Note"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+                    <div id="note-editor-view" class="notes-view-container notepad-editor-container" style="display: none;">
+                        <!-- Editor Top Bar -->
+                        <div class="notepad-editor-topbar" id="notepad-editor-topbar">
+                            <button id="btn-back-notes" class="icon-btn notepad-back-btn" title="Back to Notes">
+                                <i data-lucide="arrow-left"></i>
+                            </button>
+                            <div class="notepad-editor-meta">
+                                <span class="notepad-status" id="notepad-status"></span>
+                                <span id="notepad-date-display" class="notepad-date"></span>
+                            </div>
+                            <div class="notepad-editor-actions">
+                                <label class="notepad-color-label" title="Note colour">
+                                    <i data-lucide="palette" style="width:16px;height:16px;"></i>
+                                    <input type="color" id="notepad-color-picker" value="#1e1e2e" style="opacity:0;position:absolute;width:0;height:0;">
+                                </label>
+                                <button id="btn-notepad-delete" class="icon-btn notepad-delete-btn" title="Delete Note">
+                                    <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="rich-text-toolbar" style="display: flex; gap: 4px; padding: 8px 16px; border-bottom: 1px solid var(--border); background: var(--bg-surface-elevated);">
-                            <button class="icon-btn rt-btn" data-cmd="bold" title="Bold"><i data-lucide="bold" style="width: 16px; height: 16px;"></i></button>
-                            <button class="icon-btn rt-btn" data-cmd="italic" title="Italic"><i data-lucide="italic" style="width: 16px; height: 16px;"></i></button>
-                            <button class="icon-btn rt-btn" data-cmd="underline" title="Underline"><i data-lucide="underline" style="width: 16px; height: 16px;"></i></button>
-                            <button class="icon-btn rt-btn" data-cmd="insertUnorderedList" title="Bullet List"><i data-lucide="list" style="width: 16px; height: 16px;"></i></button>
+
+                        <!-- Title -->
+                        <input type="text" id="notepad-title" class="notepad-title-input" placeholder="Note title...">
+
+                        <!-- Rich-text Formatting Bar -->
+                        <div class="notepad-format-bar">
+                            <button class="fmt-btn" data-cmd="bold" title="Bold"><i data-lucide="bold" style="width:14px;height:14px;"></i></button>
+                            <button class="fmt-btn" data-cmd="italic" title="Italic"><i data-lucide="italic" style="width:14px;height:14px;"></i></button>
+                            <button class="fmt-btn" data-cmd="underline" title="Underline"><i data-lucide="underline" style="width:14px;height:14px;"></i></button>
+                            <div class="fmt-divider"></div>
+                            <button class="fmt-btn" data-cmd="insertUnorderedList" title="Bullet List"><i data-lucide="list" style="width:14px;height:14px;"></i></button>
+                            <button class="fmt-btn" data-cmd="insertOrderedList" title="Numbered List"><i data-lucide="list-ordered" style="width:14px;height:14px;"></i></button>
+                            <div class="fmt-divider"></div>
+                            <button class="fmt-btn" data-cmd="strikeThrough" title="Strikethrough"><i data-lucide="strikethrough" style="width:14px;height:14px;"></i></button>
                         </div>
-                        <div id="notepad-textarea" class="notepad-textarea" contenteditable="true" placeholder="Start typing..." style="flex: 1; overflow-y: auto; padding: 16px; outline: none;"></div>
-                        <div class="notepad-footer">
-                            <span id="notepad-date-display" class="notepad-date">--</span>
-                        </div>
+
+                        <!-- Content Area -->
+                        <div id="notepad-textarea" class="notepad-content-area" contenteditable="true" placeholder="Start writing your thoughts..."></div>
                     </div>
                 </div>
             </section>

@@ -6817,51 +6817,98 @@ function initSidebar() {
         renderNotesList();
     }
 
+    // Vivid palette for auto-assigned note colours
+    const NOTE_PALETTE = [
+        '#4f46e5', // indigo
+        '#0891b2', // cyan
+        '#059669', // emerald
+        '#d97706', // amber
+        '#dc2626', // red
+        '#7c3aed', // violet
+        '#db2777', // pink
+        '#0284c7', // sky
+        '#16a34a', // green
+        '#ea580c', // orange
+    ];
+
+    let searchQuery = '';
+
     function renderNotesList() {
         notesGrid.innerHTML = '';
-        currentNotes.forEach(note => {
+        const countLabel = document.getElementById('notes-count-label');
+        const emptyState = document.getElementById('notes-empty-state');
+
+        const filtered = searchQuery
+            ? currentNotes.filter(n =>
+                (n.title || '').toLowerCase().includes(searchQuery) ||
+                (n.content || '').toLowerCase().includes(searchQuery)
+            )
+            : currentNotes;
+
+        if (countLabel) countLabel.textContent = `${currentNotes.length} note${currentNotes.length !== 1 ? 's' : ''}`;
+
+        if (emptyState) emptyState.style.display = filtered.length === 0 ? 'flex' : 'none';
+
+        filtered.forEach((note, idx) => {
             const card = document.createElement('div');
             card.className = 'note-card';
-            card.style.backgroundColor = note.color || 'var(--bg-surface-elevated)';
-            
+
+            // Use saved color or auto-assign from palette
+            const bgColor = note.color && note.color !== '#ffffff' && note.color !== '#1e1e2e'
+                ? note.color
+                : NOTE_PALETTE[idx % NOTE_PALETTE.length];
+            card.style.backgroundColor = bgColor;
+            card.style.boxShadow = `0 6px 20px ${bgColor}44`;
+
             const titleEl = document.createElement('h4');
+            titleEl.className = 'note-card-title';
             titleEl.textContent = note.title || 'Untitled Note';
-            
+
             const snippetEl = document.createElement('p');
+            snippetEl.className = 'note-card-snippet';
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = note.content || '';
-            snippetEl.textContent = tempDiv.textContent || '...';
-            
+            snippetEl.textContent = tempDiv.textContent || 'No content yet...';
+
             const dateEl = document.createElement('span');
-            dateEl.className = 'note-date';
+            dateEl.className = 'note-card-date';
             const d = new Date(note.date);
-            dateEl.textContent = `${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            dateEl.textContent = d.toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
 
             card.appendChild(titleEl);
             card.appendChild(snippetEl);
             card.appendChild(dateEl);
-            
+
             card.addEventListener('click', () => openNoteEditor(note.id));
             notesGrid.appendChild(card);
         });
+
+        // Re-init Lucide icons inside new cards
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     function openNoteEditor(id) {
         activeNoteId = id;
         const note = currentNotes.find(n => n.id === id);
-        
+
         if (note) {
             notepadTitle.value = note.title || '';
             notepadTextarea.innerHTML = note.content || '';
-            notepadColorPicker.value = note.color || '#ffffff';
-            noteEditorView.style.backgroundColor = note.color || 'var(--bg-surface)';
+            notepadColorPicker.value = note.color || '#1e1e2e';
+
+            // Apply colour as editor background
+            const editorBg = (note.color && note.color !== '#ffffff') ? note.color : '#1e1e2e';
+            noteEditorView.style.background = `linear-gradient(160deg, ${editorBg}dd 0%, ${editorBg}99 100%)`;
+
             const d = new Date(note.date);
-            notepadDateDisplay.textContent = `Last edited: ${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            notepadDateDisplay.textContent = `Edited ${d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}`;
         }
-        
+
         notepadStatus.textContent = '';
         notesListView.style.display = 'none';
         noteEditorView.style.display = 'flex';
+        // Focus at end of content
+        setTimeout(() => { notepadTitle.focus(); }, 100);
     }
 
     function closeNoteEditor() {
@@ -6921,11 +6968,12 @@ function initSidebar() {
 
     // Event Listeners
     btnAddNote.addEventListener('click', () => {
+        const palette = ['#4f46e5','#0891b2','#059669','#d97706','#7c3aed','#db2777','#dc2626','#0284c7'];
         const newNote = {
             id: 'note_' + Date.now() + '_' + Math.floor(Math.random()*1000),
             title: '',
             content: '',
-            color: '#ffffff',
+            color: palette[Math.floor(Math.random() * palette.length)],
             date: new Date().toISOString()
         };
         currentNotes.push(newNote);
@@ -6945,8 +6993,8 @@ function initSidebar() {
         }
     });
 
-    // Rich Text Toolbar
-    document.querySelectorAll('.rt-btn').forEach(btn => {
+    // Rich Text / Format Toolbar — supports both old .rt-btn and new .fmt-btn
+    document.querySelectorAll('.rt-btn, .fmt-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const cmd = btn.getAttribute('data-cmd');
@@ -6955,6 +7003,15 @@ function initSidebar() {
             handleEditorInput();
         });
     });
+
+    // Search
+    const searchInput = document.getElementById('notes-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value.toLowerCase().trim();
+            renderNotesList();
+        });
+    }
 
     notepadTitle.addEventListener('input', handleEditorInput);
     notepadTextarea.addEventListener('input', handleEditorInput);
