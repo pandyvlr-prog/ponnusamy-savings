@@ -792,9 +792,8 @@ function updateStatusBarClock() {
             h = h ? h : 12; // 0 should be 12
             
             m = m < 10 ? '0' + m : m;
-            s = s < 10 ? '0' + s : s;
             
-            clockEl.textContent = `${h}:${m}:${s} ${ampm}`;
+            clockEl.textContent = `${h}:${m} ${ampm}`;
         };
         updateClock();
         window.liveClockInterval = setInterval(updateClock, 1000);
