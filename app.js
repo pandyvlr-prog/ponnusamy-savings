@@ -1937,6 +1937,60 @@ function setupEventListeners() {
         });
     }
 
+    // Quick Dashboard Report
+    const btnQuickDashboardReport = document.getElementById('btn-quick-dashboard-report');
+    if (btnQuickDashboardReport) {
+        btnQuickDashboardReport.addEventListener('click', () => {
+            let monthKey = State.dashboardSelectedMonth || 'current';
+            
+            if (monthKey === 'accumulated') {
+                showNotification("Cannot generate a date-wise report for 'All Dues'. Please select a specific month.", "warning");
+                return;
+            }
+            
+            // If current, get the 1-indexed month key
+            if (monthKey === 'current') {
+                const today = new Date();
+                monthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+            } else {
+                // dashboardSelectedMonth uses 0-indexed month (e.g. 2026-06 for July). Convert to 1-indexed.
+                const [y, mStr] = monthKey.split('-');
+                const m1Indexed = parseInt(mStr, 10) + 1;
+                monthKey = `${y}-${String(m1Indexed).padStart(2, '0')}`;
+            }
+            
+            const dateFilterEl = document.getElementById('dashboard-date-filter');
+            const dayValue = dateFilterEl && dateFilterEl.value !== '' ? dateFilterEl.value : 'all';
+            
+            // Populate global export month select to ensure options exist (or just set the value dynamically)
+            const globalMonthSelect = document.getElementById('global-pdf-export-month-select');
+            const globalDaySelect = document.getElementById('global-pdf-export-day-select');
+            
+            if (globalMonthSelect) {
+                // Check if option exists
+                let optionExists = false;
+                for (let i = 0; i < globalMonthSelect.options.length; i++) {
+                    if (globalMonthSelect.options[i].value === monthKey) {
+                        optionExists = true;
+                        break;
+                    }
+                }
+                if (!optionExists) {
+                    const opt = document.createElement('option');
+                    opt.value = monthKey;
+                    globalMonthSelect.appendChild(opt);
+                }
+                globalMonthSelect.value = monthKey;
+            }
+            
+            if (globalDaySelect) {
+                globalDaySelect.value = dayValue;
+            }
+            
+            generateGlobalPdfReport();
+        });
+    }
+
     // PDF Export Modal Bindings
     const btnExportPdf = document.getElementById('btn-details-export-pdf');
     if (btnExportPdf) {
