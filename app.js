@@ -6067,10 +6067,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Capture install prompt for manual use only — never auto-show
+    // Handle Install Prompt globally
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
-        deferredPrompt = e; // saved for manual install button if user wants
+        deferredPrompt = e;
+        if (pwaPopup) {
+            localStorage.removeItem('pwaPromptDeclined');
+            pwaPopup.style.display = 'flex';
+            setTimeout(() => pwaPopup.classList.add('show'), 50);
+        }
     });
 
     window.addEventListener('appinstalled', () => {
