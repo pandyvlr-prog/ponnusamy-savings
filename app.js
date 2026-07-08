@@ -6623,7 +6623,7 @@ function initSidebar() {
             link.classList.add('active');
             
             // Switch screen
-            switchScreen(target);
+            switchView(target);
             
             // Close sidebar
             closeSidebar();
@@ -6741,12 +6741,12 @@ function initSidebar() {
 
     if(btnBackDashboardNotes) {
         btnBackDashboardNotes.addEventListener('click', () => {
-            switchScreen('screen-dashboard');
+            switchView('screen-dashboard');
         });
     }
     if(btnBackDashboardCalc) {
         btnBackDashboardCalc.addEventListener('click', () => {
-            switchScreen('screen-dashboard');
+            switchView('screen-dashboard');
         });
     }
     const btnDeleteNote = document.getElementById('btn-delete-note');
