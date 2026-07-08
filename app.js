@@ -974,6 +974,8 @@ function switchView(viewId) {
             renderDashboard();
         } else if (viewId === 'screen-group-details') {
             renderGroupDetails(State.selectedGroupId);
+        } else if (viewId === 'screen-pnl') {
+            renderPnLDashboard();
         }
     }
 }
@@ -6924,6 +6926,18 @@ function initSidebar() {
         });
     }
 
+    const btnBackPnl = document.getElementById('btn-back-to-dashboard-pnl');
+    if (btnBackPnl) {
+        btnBackPnl.addEventListener('click', () => {
+            if (window.AuthState && window.AuthState.isAuthenticated) {
+                switchView('screen-dashboard');
+            } else {
+                switchView('screen-landing');
+            }
+        });
+    }
+
+
     const btnBackToDashboardNotes = document.getElementById('btn-back-to-dashboard-notes');
     if (btnBackToDashboardNotes) {
         btnBackToDashboardNotes.addEventListener('click', () => {
@@ -7264,6 +7278,35 @@ function initSidebar() {
         }
     });
 
+    // Initialize Dashboard Filters (Groups List modal filters)
+    const dashboardFilterBtns = document.querySelectorAll('.filter-pill');
+    dashboardFilterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            dashboardFilterBtns.forEach(b => b.classList.remove('active'));
+            const clicked = e.currentTarget;
+            clicked.classList.add('active');
+            State.dashboardFilter = clicked.getAttribute('data-filter');
+            // Re-render dashboard list with current filter
+            renderDashboardGroupsList();
+        });
+    });
+
+    // Binding Sidebar Navigation
+    const navBtns = document.querySelectorAll('.nav-btn');
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetScreenId = e.currentTarget.getAttribute('data-target');
+            if (targetScreenId) {
+                switchView(targetScreenId);
+                
+                // If opening P&L screen, trigger render
+                if (targetScreenId === 'screen-pnl') {
+                    renderPnLDashboard();
+                }
+            }
+        });
+    });
+
     // Rich Text / Format Toolbar — supports both old .rt-btn and new .fmt-btn
     document.querySelectorAll('.rt-btn, .fmt-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -7322,3 +7365,98 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
+// --- Profit and Loss (P&L) Implementation ---
+
+function calculateGroupPnL(group) {
+    const activeMembers = State.members.filter(m => m.groupId === group.id && m.status === 'Active');
+    const memberCount = activeMembers.length;
+    let expectedCollection = 0;
+    let expectedPayout = 0;
+    
+    let realizedCollection = 0;
+    let realizedPayout = 0;
+    
+    let arrears = 0;
+
+    for (let m = 1; m <= group.duration; m++) {
+        const instAmount = group.installments && group.installments[m] !== undefined ? group.installments[m] : group.monthlyInstallment;
+        const payoutAmount = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : 0;
+        
+        expectedCollection += (instAmount * memberCount);
+        expectedPayout += payoutAmount;
+        
+        activeMembers.forEach(member => {
+            const payment = member.payments && member.payments[m] ? member.payments[m] : null;
+            
+            // Collections
+            if (payment && payment.paid) {
+                realizedCollection += instAmount;
+            } else if (m <= group.currentMonth) {
+                // Not paid, and month is past or current -> Arrears!
+                arrears += instAmount;
+            }
+            
+            // Payouts
+            if (payment && payment.payoutClaimed) {
+                realizedPayout += payoutAmount;
+            }
+        });
+    }
+
+    const expectedProfit = expectedCollection - expectedPayout;
+    const realizedProfit = realizedCollection - realizedPayout;
+
+    return {
+        expectedProfit,
+        realizedProfit,
+        arrears
+    };
+}
+
+function renderPnLDashboard() {
+    let globalExpected = 0;
+    let globalRealized = 0;
+    let globalArrears = 0;
+    
+    const tbody = document.getElementById('pnl-groups-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    if (State.groups.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">No groups available.</td></tr>';
+    } else {
+        State.groups.forEach((group, index) => {
+            const pnl = calculateGroupPnL(group);
+            
+            globalExpected += pnl.expectedProfit;
+            globalRealized += pnl.realizedProfit;
+            globalArrears += pnl.arrears;
+            
+            const expectedColor = pnl.expectedProfit >= 0 ? 'var(--text-main)' : 'var(--danger-main)';
+            const realizedColor = pnl.realizedProfit >= 0 ? '#10b981' : 'var(--danger-main)';
+            const arrearsColor = pnl.arrears > 0 ? 'var(--danger-main)' : 'var(--text-main)';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td style="font-weight: 700;">${group.name}</td>
+                <td style="text-align: center;">${group.duration}M</td>
+                <td style="text-align: right; color: ${expectedColor}; font-weight: 600;">₹${formatNumberIndian(pnl.expectedProfit)}</td>
+                <td style="text-align: right; color: ${realizedColor}; font-weight: 700;">₹${formatNumberIndian(pnl.realizedProfit)}</td>
+                <td style="text-align: right; color: ${arrearsColor}; font-weight: 600;">₹${formatNumberIndian(pnl.arrears)}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    const elExpected = document.getElementById('pnl-global-expected');
+    if (elExpected) elExpected.textContent = '₹' + formatNumberIndian(globalExpected);
+    
+    const elRealized = document.getElementById('pnl-global-realized');
+    if (elRealized) elRealized.textContent = '₹' + formatNumberIndian(globalRealized);
+    
+    const elPending = document.getElementById('pnl-global-pending');
+    if (elPending) elPending.textContent = '₹' + formatNumberIndian(globalArrears);
+}
