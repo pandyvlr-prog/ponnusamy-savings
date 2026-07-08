@@ -2814,13 +2814,33 @@ function renderDashboard() {
 
     // Bind search field logic
     const searchInput = document.getElementById('dashboard-member-search');
+    const btnClearSearch = document.getElementById('btn-clear-dashboard-search');
     if (searchInput) {
         // Remove old listeners by cloning
         const newSearch = searchInput.cloneNode(true);
         searchInput.parentNode.replaceChild(newSearch, searchInput);
+        
+        let newBtnClear = null;
+        if (btnClearSearch) {
+            newBtnClear = btnClearSearch.cloneNode(true);
+            btnClearSearch.parentNode.replaceChild(newBtnClear, btnClearSearch);
+        }
+        
         newSearch.addEventListener('input', () => {
+            if (newBtnClear) {
+                newBtnClear.style.display = newSearch.value.length > 0 ? 'flex' : 'none';
+            }
             renderDashboardMembersList(newSearch.value.toLowerCase().trim());
         });
+        
+        if (newBtnClear) {
+            newBtnClear.style.display = newSearch.value.length > 0 ? 'flex' : 'none';
+            newBtnClear.addEventListener('click', () => {
+                newSearch.value = '';
+                newBtnClear.style.display = 'none';
+                renderDashboardMembersList('');
+            });
+        }
     }
 
     // Modal life cycles for Groups view
