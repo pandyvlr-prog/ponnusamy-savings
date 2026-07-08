@@ -6193,71 +6193,218 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         return;
     }
     
-    const [selYear, selMonth] = selMonthKey.split('-');
+    const targetYear = parseInt(selYear);
+    const targetMonth = parseInt(selMonth);
     
-    document.getElementById('global-pdf-export-modal-backdrop').classList.remove('active');
+    document.getElementById('global-pdf-export-modal-backdrop')?.classList.remove('active');
 
     let takenMembers = [];
     let totalPayoutAmount = 0;
 
     State.groups.forEach(group => {
         let members = group.members || [];
-        const groupStartMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
-        const groupStartYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
+        const relativeMonthNum = getRelativeMonthForGroup(group, targetYear, targetMonth);
+        
+        // Only applicable if the selected month falls within the group's duration
+        if (relativeMonthNum < 1 || relativeMonthNum > group.duration) return;
         
         members.forEach(member => {
-            const hasTaken = typeof member.chitTakenStatus === 'boolean' ? member.chitTakenStatus : (member.chitTakenStatus === 'true');
-            if(hasTaken && member.chitTakenDate) {
-                // Check if they took it in the selected month/year
-                const td = new Date(member.chitTakenDate);
-                if(td.getFullYear() == selYear && (td.getMonth() + 1) == selMonth) {
-                    takenMembers.push({
-                        name: member.name,
-                        groupName: group.name,
-                        scheme: group.chitAmount >= 100000 ? `${group.chitAmount/100000} Lakh / ${group.duration}M` : `₹${group.chitAmount} / ${group.duration}M`,
-                        takenDate: td.toLocaleDateString(),
-                        amount: group.chitAmount
-                    });
-                    totalPayoutAmount += group.chitAmount;
+            // Check if member has taken the payout AT ALL (to match dashboard filter)
+            let hasTakenPayout = false;
+            let payoutVal = 0;
+            let payoutMethod = null;
+            let payoutDate = null;
+            
+            if (member.payments) {
+                for (let m = 1; m <= group.duration; m++) {
+                    if (member.payments[m] && member.payments[m].payoutClaimed) {
+                        hasTakenPayout = true;
+                        payoutVal = group.chitAmount;
+                        if (group.payouts && group.payouts[m] !== undefined) {
+                            payoutVal = group.payouts[m];
+                        } else {
+                            const matchedTemplate = State.schemeTemplates && State.schemeTemplates.find(t => t.chitAmount === group.chitAmount && t.duration === group.duration);
+                            if (matchedTemplate && matchedTemplate.payouts && matchedTemplate.payouts[m] !== undefined) {
+                                payoutVal = matchedTemplate.payouts[m];
+                            }
+                        }
+                        payoutMethod = member.payments[m].payoutMethod;
+                        payoutDate = member.payments[m].payoutDate;
+                        break;
+                    }
                 }
+            }
+            
+            // Only include members who have taken the chit (matches dashboard 'Chit Taken' filter logic)
+            if (hasTakenPayout) {
+                // Calculate due/paid for the selected month
+                let dueAmount = 0;
+                let paidAmount = 0;
+                let currentMonthPaid = false;
+                let displayPaidDate = '--';
+                
+                const payment = member.payments[relativeMonthNum];
+                const instVal = group.installments && group.installments[relativeMonthNum] !== undefined 
+                    ? group.installments[relativeMonthNum] 
+                    : group.monthlyInstallment;
+                
+                if (payment) {
+                    currentMonthPaid = payment.paid;
+                    if (payment.paid) {
+                        paidAmount = instVal;
+                        dueAmount = 0;
+                    } else {
+                        const partial = payment.partialPaid || 0;
+                        paidAmount = partial;
+                        dueAmount = instVal - partial;
+                    }
+                } else {
+                    dueAmount = instVal;
+                    paidAmount = 0;
+                    currentMonthPaid = false;
+                }
+                
+                const startMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
+                const startYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
+                const dateObj = new Date(startYear, startMonth + relativeMonthNum - 1, 1);
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const yyyy = dateObj.getFullYear();
+                
+                const customDateDay = payment && payment.customDate ? String(payment.customDate).padStart(2, '0') : '';
+                const partialPaid = payment ? (payment.partialPaid || 0) : 0;
+                if (currentMonthPaid) {
+                    displayPaidDate = customDateDay ? `${customDateDay}/${mm}/${yyyy}` : `Checked`;
+                } else if (partialPaid > 0) {
+                    displayPaidDate = customDateDay ? `${customDateDay}/${mm}/${yyyy}` : String(new Date().getDate()).padStart(2, '0') + `/${mm}/${yyyy}`;
+                } else {
+                    displayPaidDate = '--';
+                }
+                
+                takenMembers.push({
+                    name: member.name,
+                    groupName: group.name,
+                    chitAmount: group.chitAmount,
+                    duration: group.duration,
+                    customerType: member.customerType,
+                    relativeMonthNum,
+                    dueAmount,
+                    paidAmount,
+                    currentMonthPaid,
+                    displayPaidDate,
+                    hasTakenPayout,
+                    payoutVal,
+                    payoutMethod,
+                    payoutDate,
+                    paymentMethodThisMonth: payment && payment.paid ? payment.method : null
+                });
+                
+                totalPayoutAmount += payoutVal;
             }
         });
     });
 
     let tableRowsHtml = '';
-    takenMembers.forEach((row, index) => {
-        const rowBg = index % 2 === 0 ? '#f8fafc' : '#ffffff';
+    takenMembers.forEach((item, index) => {
+        const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+        
+        let dueAmountText = item.dueAmount > 0 ? `₹${item.dueAmount.toLocaleString('en-IN')}` : '--';
+        let paidAmountText = item.paidAmount > 0 ? `₹${item.paidAmount.toLocaleString('en-IN')}` : '--';
+        let dueColor = item.dueAmount > 0 ? '#ef4444' : '#1e293b';
+        let paidColor = item.paidAmount > 0 ? '#10b981' : '#1e293b';
+        
+        let paidDateHtml = '--';
+        if (item.displayPaidDate !== '--') {
+            paidDateHtml = `<span style="background: #eff6ff; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 11px; border: 1px solid #bfdbfe;">${item.displayPaidDate}</span>`;
+        }
+        
+        let markHtml = '';
+        if (item.currentMonthPaid) {
+            let methodSuffix = '';
+            if (item.paymentMethodThisMonth === 'gpay') {
+                methodSuffix = ` <span style="color: #60a5fa; font-weight: 800; font-size: 10px;">/ G</span>`;
+            } else if (item.paymentMethodThisMonth === 'cash') {
+                methodSuffix = ` <span style="color: #fca5a5; font-weight: 800; font-size: 10px;">/ C</span>`;
+            }
+            markHtml = `<span style="background: #ecfdf5; color: #10b981; border: 1px solid #10b981; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">✓ PAID${methodSuffix}</span>`;
+        } else if (item.paidAmount > 0) {
+            markHtml = `<span style="background: #fffbeb; color: #d97706; border: 1px solid #d97706; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">PARTIAL</span>`;
+        } else {
+            markHtml = `<span style="background: #fef2f2; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">! DUE</span>`;
+        }
+        
+        let methodLetterHtml = '';
+        if (item.payoutMethod === 'cash') {
+            methodLetterHtml = ` <span style="color: #d8b4fe; font-weight: 800;">/ C</span>`;
+        } else if (item.payoutMethod === 'gpay') {
+            methodLetterHtml = ` <span style="color: #93c5fd; font-weight: 800;">/ G</span>`;
+        }
+        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
+        
+        let schemeAmountStr = '';
+        if (item.chitAmount >= 100000) {
+            let lakhs = item.chitAmount / 100000;
+            schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + ' Lakh';
+        } else if (item.chitAmount >= 1000) {
+            let k = item.chitAmount / 1000;
+            schemeAmountStr = (k % 1 === 0 ? k : k.toFixed(1)) + 'K';
+        } else {
+            schemeAmountStr = item.chitAmount.toString();
+        }
+        const schemeText = `${schemeAmountStr} / ${item.duration}M`;
+        
+        let newCustomerBadgeHtml = '';
+        if (item.customerType === 'New') {
+            newCustomerBadgeHtml = `<span style="background-color: #d9b327; color: #fff; font-size: 9px; padding: 2px 4px; border-radius: 4px; margin-left: 6px; font-weight: 800;">NEW</span>`;
+        }
+        
+        const groupNameParts = item.groupName.split('-');
+        let groupNameHtml = item.groupName;
+        if (groupNameParts.length === 2) {
+            const start = groupNameParts[0].trim();
+            const end = groupNameParts[1].trim();
+            groupNameHtml = `<span style="color: #10b981; font-weight: 700;">${start}</span>-<span style="color: #ef4444; font-weight: 700;">${end}</span>`;
+        }
+        
         tableRowsHtml += `
-            <tr style="background-color: ${rowBg};">
-                <td style="padding: 12px 10px; color: #334155; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${index + 1}</td>
-                <td style="padding: 12px 10px; color: #0f172a; font-weight: 800; font-size: 13px; text-transform: uppercase; border: 1px solid #d1d5db;">${row.name}</td>
-                <td style="padding: 12px 10px; color: #64748b; font-size: 13px; font-weight: 600; border: 1px solid #d1d5db;">${row.groupName}</td>
-                <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">
-                    <span style="border: 1px solid #e2e8f0; background: #ffffff; padding: 4px 8px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #1e293b;">${row.scheme}</span>
+            <tr style="background-color: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 12px 6px; color: #334155; font-size: 12px; font-weight: 700; text-align: center; border-right: 1px solid #e2e8f0;">${index + 1}</td>
+                <td style="padding: 12px 6px; color: #0f172a; font-weight: 800; font-size: 12px; text-transform: uppercase; border-right: 1px solid #e2e8f0;">${item.name}${newCustomerBadgeHtml}</td>
+                <td style="padding: 12px 6px; color: #64748b; font-size: 11px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">${groupNameHtml}</td>
+                <td style="padding: 12px 6px; text-align: center; border-right: 1px solid #e2e8f0;">
+                    <span style="border: 1px solid #e2e8f0; background: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #1e293b;">${schemeText}</span>
                 </td>
-                <td style="padding: 12px 10px; color: #d97706; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${row.takenDate}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #16a34a; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(row.amount)}</td>
+                <td style="padding: 12px 6px; text-align: center; font-weight: 800; font-size: 14px; color: #d9b327; border-right: 1px solid #e2e8f0;">${item.relativeMonthNum}</td>
+                <td style="padding: 12px 6px; text-align: left; color: ${dueColor}; font-weight: 800; font-size: 13px; border-right: 1px solid #e2e8f0;">${dueAmountText}</td>
+                <td style="padding: 12px 6px; text-align: left; color: ${paidColor}; font-weight: 800; font-size: 13px; border-right: 1px solid #e2e8f0;">${paidAmountText}</td>
+                <td style="padding: 12px 6px; text-align: center; border-right: 1px solid #e2e8f0;">${paidDateHtml}</td>
+                <td style="padding: 12px 6px; text-align: center; border-right: 1px solid #e2e8f0;">${markHtml}</td>
+                <td style="padding: 12px 6px; text-align: center;">${chitTakenHtml}</td>
             </tr>
         `;
     });
 
     if(tableRowsHtml === '') {
-        tableRowsHtml = '<tr><td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">No members took chit in this month</td></tr>';
+        tableRowsHtml = '<tr><td colspan="10" style="padding: 30px; text-align: center; color: #64748b; font-weight: 600;">No members have taken chit in the applicable groups</td></tr>';
     }
 
     document.getElementById('chit-pdf-table-container').innerHTML = `
-        <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; background: white;">
+        <table style="width: 100%; border-collapse: collapse; border: 2px solid #111827; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <thead>
-                <tr style="background-color: #111827;">
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">S.No</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Name</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Chit Group</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Scheme</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Taken Date</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Payout Amount</th>
+                <tr style="background-color: #d9b327;">
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">S.No</th>
+                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Name</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Chit Group</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Scheme</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">📅</th>
+                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Due Amount</th>
+                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Paid Amount</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Paid Date</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Mark</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; text-transform: uppercase;">Chit Taken</th>
                 </tr>
             </thead>
             <tbody>
+
                 ${tableRowsHtml}
             </tbody>
         </table>
