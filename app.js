@@ -1976,7 +1976,13 @@ function setupEventListeners() {
     // Bind new generate buttons
     const btnGenerateYearlyPdf = document.getElementById('btn-generate-yearly-pdf');
     if (btnGenerateYearlyPdf) {
-        btnGenerateYearlyPdf.addEventListener('click', () => generateYearlyPdfReport());
+        btnGenerateYearlyPdf.addEventListener('click', () => {
+            const overlay = document.getElementById('pdf-loading-overlay');
+            if (overlay) overlay.style.display = 'flex';
+            setTimeout(() => {
+                generateYearlyPdfReport();
+            }, 50);
+        });
     }
     const btnGenerateChitPdf = document.getElementById('btn-generate-chit-pdf');
     if (btnGenerateChitPdf) {
@@ -2068,11 +2074,18 @@ function setupEventListeners() {
             const tagFilterEl = document.getElementById('dashboard-tag-filter');
             const activeFilter = tagFilterEl ? tagFilterEl.value : 'all';
             
-            if (activeFilter === 'chit_taken') {
-                generateChitTakenPdfReport(monthKey, mode);
-            } else {
-                generateGlobalPdfReport(mode);
-            }
+            // Show loading overlay immediately before yielding thread
+            const overlay = document.getElementById('pdf-loading-overlay');
+            if (overlay) overlay.style.display = 'flex';
+            
+            // Yield main thread to allow browser to paint UI (fixes INP issue)
+            setTimeout(() => {
+                if (activeFilter === 'chit_taken') {
+                    generateChitTakenPdfReport(monthKey, mode);
+                } else {
+                    generateGlobalPdfReport(mode);
+                }
+            }, 50);
         }
         
         if (btnQuickReportDownload) {
