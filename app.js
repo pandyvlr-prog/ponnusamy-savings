@@ -5596,20 +5596,24 @@ function generateGlobalPdfReport() {
             const payment = member.payments[relMonthNum];
             const isPaid = payment && payment.paid;
             
-            let paymentDateObj = null;
+            let dayNumber = null;
             let dateText = '--';
-            if (isPaid && payment.customDate) {
-                paymentDateObj = new Date(payment.customDate);
-                dateText = paymentDateObj.toLocaleDateString();
-            } else if (isPaid && payment.paidAt) {
-                paymentDateObj = new Date(payment.paidAt);
-                dateText = paymentDateObj.toLocaleDateString();
+            
+            if (isPaid) {
+                if (payment.customDate) {
+                    dayNumber = parseInt(payment.customDate, 10);
+                    dateText = `${String(dayNumber).padStart(2, '0')}/${String(selMonth).padStart(2, '0')}/${selYear}`;
+                } else if (payment.paidAt) {
+                    const d = new Date(payment.paidAt);
+                    dayNumber = d.getDate();
+                    dateText = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                }
             }
 
             // Filter by selected day
             if (selectedDayValue !== 'all') {
-                const targetDay = parseInt(selectedDayValue);
-                if (!paymentDateObj || paymentDateObj.getDate() !== targetDay) {
+                const targetDay = parseInt(selectedDayValue, 10);
+                if (dayNumber !== targetDay) {
                     return; // Skip this member
                 }
             }
