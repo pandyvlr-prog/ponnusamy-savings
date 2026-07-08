@@ -3147,7 +3147,7 @@ function renderDashboard() {
             const chipGroups = matchedGroups.filter(g => extractNumericAmount(g) === amt);
             let totalMembers = 0;
             chipGroups.forEach(g => {
-                totalMembers += g.members ? g.members.length : 0;
+                totalMembers += State.members.filter(m => m.groupId === g.id).length;
             });
             
             const chip = document.createElement('button');
