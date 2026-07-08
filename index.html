@@ -1931,12 +1931,36 @@
             
             <!-- NOTEPAD TAB -->
             <div id="workspace-notes" class="workspace-pane">
-                <div class="notepad-container">
-                    <div class="notepad-toolbar">
-                        <span class="notepad-status" id="notepad-status">Saved</span>
+                
+                <!-- Notes List View -->
+                <div id="notes-list-view" class="notes-view-container active">
+                    <div class="notes-header">
+                        <h4 class="notes-title">My Notes</h4>
                     </div>
-                    <textarea id="notepad-textarea" class="notepad-textarea" placeholder="Type your notes here... They will sync to the cloud automatically!"></textarea>
+                    <div id="notes-grid" class="notes-grid">
+                        <!-- Note cards will be injected here -->
+                    </div>
+                    <button id="btn-add-note" class="fab-btn" title="Create New Note">
+                        <i data-lucide="plus"></i>
+                    </button>
                 </div>
+
+                <!-- Note Editor View -->
+                <div id="note-editor-view" class="notes-view-container" style="display: none;">
+                    <div class="notepad-toolbar">
+                        <button id="btn-back-notes" class="icon-btn text-muted" title="Back to Notes"><i data-lucide="arrow-left"></i></button>
+                        <input type="text" id="notepad-title" class="notepad-title-input" placeholder="Note Title...">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <span class="notepad-status" id="notepad-status">Saved</span>
+                            <button id="btn-delete-note" class="icon-btn text-danger" title="Delete Note"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+                        </div>
+                    </div>
+                    <textarea id="notepad-textarea" class="notepad-textarea" placeholder="Start typing..."></textarea>
+                    <div class="notepad-footer">
+                        <span id="notepad-date-display" class="notepad-date">--</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

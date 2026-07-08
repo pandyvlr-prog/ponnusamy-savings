@@ -6725,36 +6725,141 @@ function initWorkspace() {
         });
     });
 
-    // Notepad Logic & Cloud Sync
+    // ==========================================
+    // MULTI-NOTE APP LOGIC & CLOUD SYNC
+    // ==========================================
+    const notesListView = document.getElementById('notes-list-view');
+    const noteEditorView = document.getElementById('note-editor-view');
+    const notesGrid = document.getElementById('notes-grid');
+    const btnAddNote = document.getElementById('btn-add-note');
+    const btnBackNotes = document.getElementById('btn-back-notes');
+    const btnDeleteNote = document.getElementById('btn-delete-note');
+    const notepadTitle = document.getElementById('notepad-title');
     const notepadTextarea = document.getElementById('notepad-textarea');
     const notepadStatus = document.getElementById('notepad-status');
+    const notepadDateDisplay = document.getElementById('notepad-date-display');
+
+    let currentNotes = [];
+    let activeNoteId = null;
     let saveTimeout = null;
 
-    // Load initial content
-    if (window.AuthState?.currentUser?.user_metadata?.notepad_content) {
-        notepadTextarea.value = window.AuthState.currentUser.user_metadata.notepad_content;
-    } else {
-        const localNotepad = localStorage.getItem('pms_workspace_notepad');
-        if (localNotepad) notepadTextarea.value = localNotepad;
+    // Load initial notes from Cloud or LocalStorage
+    function loadNotes() {
+        let rawData = null;
+        if (window.AuthState?.currentUser?.user_metadata?.notepad_content) {
+            rawData = window.AuthState.currentUser.user_metadata.notepad_content;
+        } else {
+            rawData = localStorage.getItem('pms_workspace_notepad');
+        }
+
+        if (rawData) {
+            try {
+                const parsed = JSON.parse(rawData);
+                if (Array.isArray(parsed)) {
+                    currentNotes = parsed;
+                } else {
+                    // Migrate old single string note to new format
+                    currentNotes = [{
+                        id: 'note_' + Date.now(),
+                        title: 'Migrated Note',
+                        content: String(rawData),
+                        date: new Date().toISOString()
+                    }];
+                }
+            } catch (e) {
+                // If it's not JSON, it was a plain string from the previous version
+                currentNotes = [{
+                    id: 'note_' + Date.now(),
+                    title: 'My First Note',
+                    content: String(rawData),
+                    date: new Date().toISOString()
+                }];
+            }
+        }
+        
+        // Sort notes by date descending
+        currentNotes.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderNotesList();
     }
 
-    notepadTextarea.addEventListener('input', () => {
+    function renderNotesList() {
+        notesGrid.innerHTML = '';
+        if (currentNotes.length === 0) {
+            notesGrid.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 40px 20px; font-size: 0.9rem;">No notes yet. Click the + icon to create one!</div>';
+            return;
+        }
+
+        currentNotes.forEach(note => {
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            
+            const titleEl = document.createElement('div');
+            titleEl.className = 'note-card-title';
+            titleEl.textContent = note.title || 'Untitled Note';
+            
+            const snippetEl = document.createElement('div');
+            snippetEl.className = 'note-card-snippet';
+            snippetEl.textContent = note.content || 'No content...';
+            
+            const dateEl = document.createElement('div');
+            dateEl.className = 'note-card-date';
+            const noteDate = new Date(note.date);
+            dateEl.textContent = noteDate.toLocaleDateString() + ' ' + noteDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            card.appendChild(titleEl);
+            card.appendChild(snippetEl);
+            card.appendChild(dateEl);
+            
+            card.addEventListener('click', () => openNoteEditor(note.id));
+            notesGrid.appendChild(card);
+        });
+    }
+
+    function openNoteEditor(id) {
+        activeNoteId = id;
+        const note = currentNotes.find(n => n.id === id);
+        
+        if (note) {
+            notepadTitle.value = note.title || '';
+            notepadTextarea.value = note.content || '';
+            const d = new Date(note.date);
+            notepadDateDisplay.textContent = `Last edited: ${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        }
+        
+        notepadStatus.textContent = '';
+        notesListView.style.display = 'none';
+        noteEditorView.style.display = 'flex';
+        
+        // Re-initialize lucide icons for the editor if needed
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function closeNoteEditor() {
+        activeNoteId = null;
+        noteEditorView.style.display = 'none';
+        notesListView.style.display = 'flex';
+        
+        // Sort and re-render
+        currentNotes.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderNotesList();
+    }
+
+    function saveNotesState() {
         notepadStatus.textContent = 'Saving...';
         clearTimeout(saveTimeout);
         
         saveTimeout = setTimeout(async () => {
-            const content = notepadTextarea.value;
-            localStorage.setItem('pms_workspace_notepad', content);
+            const notesStr = JSON.stringify(currentNotes);
+            localStorage.setItem('pms_workspace_notepad', notesStr);
             
             if (window.supabaseClient && window.AuthState?.isAuthenticated) {
                 try {
                     const { error } = await window.supabaseClient.auth.updateUser({
-                        data: { notepad_content: content }
+                        data: { notepad_content: notesStr }
                     });
                     if (error) throw error;
                     notepadStatus.textContent = 'Saved to Cloud';
-                    // Update the local state cache so it doesn't revert on page reload before a full auth sync
-                    window.AuthState.currentUser.user_metadata.notepad_content = content;
+                    window.AuthState.currentUser.user_metadata.notepad_content = notesStr;
                 } catch (e) {
                     console.error("Cloud sync failed:", e);
                     notepadStatus.textContent = 'Saved Locally (Cloud Failed)';
@@ -6769,7 +6874,53 @@ function initWorkspace() {
                 }
             }, 3000);
         }, 1000);
+    }
+
+    function handleEditorInput() {
+        if (!activeNoteId) return;
+        const noteIndex = currentNotes.findIndex(n => n.id === activeNoteId);
+        if (noteIndex > -1) {
+            currentNotes[noteIndex].title = notepadTitle.value;
+            currentNotes[noteIndex].content = notepadTextarea.value;
+            currentNotes[noteIndex].date = new Date().toISOString();
+            
+            const d = new Date();
+            notepadDateDisplay.textContent = `Last edited: ${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            
+            saveNotesState();
+        }
+    }
+
+    // Event Listeners
+    btnAddNote.addEventListener('click', () => {
+        const newNote = {
+            id: 'note_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+            title: '',
+            content: '',
+            date: new Date().toISOString()
+        };
+        currentNotes.push(newNote);
+        saveNotesState();
+        openNoteEditor(newNote.id);
+        notepadTitle.focus();
     });
+
+    btnBackNotes.addEventListener('click', closeNoteEditor);
+
+    btnDeleteNote.addEventListener('click', () => {
+        if (!activeNoteId) return;
+        if (confirm('Are you sure you want to delete this note?')) {
+            currentNotes = currentNotes.filter(n => n.id !== activeNoteId);
+            saveNotesState();
+            closeNoteEditor();
+        }
+    });
+
+    notepadTitle.addEventListener('input', handleEditorInput);
+    notepadTextarea.addEventListener('input', handleEditorInput);
+
+    // Initial Load
+    setTimeout(loadNotes, 500);
 }
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
