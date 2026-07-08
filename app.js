@@ -6810,26 +6810,40 @@ function initSidebar() {
     let activeNoteId = null;
     let saveTimeout = null;
 
-    // Load initial notes from Cloud or LocalStorage
+    // Load initial notes — localStorage is PRIMARY source of truth.
+    // Cloud data is only used as a one-time seed when localStorage has nothing.
     function loadNotes() {
-        let rawData = null;
-        if (window.AuthState?.currentUser?.user_metadata?.notepad_content) {
-            rawData = window.AuthState.currentUser.user_metadata.notepad_content;
-        } else {
-            rawData = localStorage.getItem('pms_workspace_notepad');
-        }
+        // Always try localStorage first
+        const localRaw = localStorage.getItem('pms_workspace_notepad');
 
-        if (rawData) {
+        if (localRaw) {
             try {
-                const parsed = JSON.parse(rawData);
+                const parsed = JSON.parse(localRaw);
                 if (Array.isArray(parsed)) {
                     currentNotes = parsed;
+                    renderNotesList();
+                    return; // done — localStorage wins
                 }
             } catch (e) {
-                console.error("Error parsing notepad data:", e);
+                console.warn('notepad localStorage parse error, falling back to cloud', e);
             }
         }
-        
+
+        // Only reach here if localStorage is empty/corrupt — try cloud as one-time seed
+        const cloudRaw = window.AuthState?.currentUser?.user_metadata?.notepad_content;
+        if (cloudRaw) {
+            try {
+                const parsed = JSON.parse(cloudRaw);
+                if (Array.isArray(parsed)) {
+                    currentNotes = parsed;
+                    // Immediately persist cloud seed into localStorage so future loads are fast
+                    localStorage.setItem('pms_workspace_notepad', cloudRaw);
+                }
+            } catch (e) {
+                console.warn('notepad cloud parse error', e);
+            }
+        }
+
         renderNotesList();
     }
 
@@ -6939,30 +6953,29 @@ function initSidebar() {
 
     function saveNotesState() {
         const payload = JSON.stringify(currentNotes);
-        localStorage.setItem('pms_workspace_notepad', payload);
-        
-        // Optimistic save to cloud if authenticated
-        if (window.AuthState?.currentUser && typeof updateProfileData === 'function') {
-            updateProfileData({ notepad_content: payload })
-                .catch(err => console.error("Cloud note save failed", err));
-        }
 
+        // IMMEDIATELY persist to localStorage — this is the source of truth
+        localStorage.setItem('pms_workspace_notepad', payload);
+
+        // Show saving indicator (debounced — purely cosmetic)
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
             notepadStatus.textContent = 'Saving...';
-            
             setTimeout(() => {
-                if (activeNoteId) {
-                    notepadStatus.textContent = 'Saved';
-                }
-                
+                notepadStatus.textContent = '✓ Saved';
                 setTimeout(() => {
                     if (notepadStatus.textContent.includes('Saved')) {
                         notepadStatus.textContent = '';
                     }
-                }, 3000);
-            }, 1000);
-        }, 500);
+                }, 2000);
+            }, 600);
+        }, 300);
+
+        // Background cloud sync — failures don't affect local state
+        if (window.AuthState?.currentUser && typeof updateProfileData === 'function') {
+            updateProfileData({ notepad_content: payload })
+                .catch(err => console.warn('Cloud note sync failed (local copy is safe):', err));
+        }
     }
 
     function handleEditorInput() {
