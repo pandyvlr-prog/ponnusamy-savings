@@ -3220,6 +3220,7 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 }
 
 /* Privacy Mode styles to blur summary amounts */
+.privacy-mode-active #dashboard-target-collection-text,
 .privacy-mode-active #stat-total-collected,
 .privacy-mode-active #stat-summary-collected-cash,
 .privacy-mode-active #stat-summary-collected-gpay,
