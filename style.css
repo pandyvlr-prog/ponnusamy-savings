@@ -1257,7 +1257,7 @@ body {
     position: absolute;
     right: 10px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) !important;
     background-color: transparent;
     border: none;
     width: 24px;
@@ -1275,7 +1275,11 @@ body {
 .btn-clear-search:hover {
     background-color: rgba(239, 68, 68, 0.1);
     color: var(--red-main);
-    transform: translateY(-50%) scale(1.05);
+    transform: translateY(-50%) scale(1.05) !important;
+}
+
+.btn-clear-search:active {
+    transform: translateY(-50%) !important;
 }
 
 .search-input-wrapper input {
