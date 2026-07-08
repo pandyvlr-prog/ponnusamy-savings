@@ -3446,6 +3446,24 @@ function renderDashboardMembersList(searchQuery = '') {
                 paymentNoteThisMonth = payment && payment.paid ? payment.note : null;
             }
 
+            let takenThisSelectedMonth = false;
+            if (isAccumulated) {
+                takenThisSelectedMonth = hasTakenPayout;
+            } else {
+                if (hasTakenPayout && payoutDate) {
+                    const parts = payoutDate.split('-');
+                    if (parts.length === 3) {
+                        const pYear = parseInt(parts[0]);
+                        const pMonth = parseInt(parts[1]) - 1;
+                        if (pYear === targetYear && pMonth === targetMonth) {
+                            takenThisSelectedMonth = true;
+                        }
+                    }
+                } else if (hasTakenPayout && !payoutDate) {
+                    takenThisSelectedMonth = true;
+                }
+            }
+
             allList.push({
                 member,
                 group,
@@ -3458,6 +3476,7 @@ function renderDashboardMembersList(searchQuery = '') {
                 isFuture,
                 relativeMonthNum,
                 hasTakenPayout,
+                takenThisSelectedMonth,
                 payoutVal,
                 payoutMethod,
                 payoutDate,
@@ -3506,7 +3525,7 @@ function renderDashboardMembersList(searchQuery = '') {
             countPending++;
         }
         
-        if (item.hasTakenPayout) {
+        if (item.takenThisSelectedMonth) {
             countChitTaken++;
             amountChitTaken += item.payoutVal;
         }
@@ -3810,7 +3829,7 @@ function renderDashboardMembersList(searchQuery = '') {
             } else if (State.dashboardFilter === 'pending') {
                 return !item.currentMonthPaid && item.paidAmount === 0;
             } else if (State.dashboardFilter === 'chit_taken') {
-                return item.hasTakenPayout;
+                return item.takenThisSelectedMonth;
             } else if (State.dashboardFilter === 'new_customer_month') {
                 return item.member.customerType === 'New' && item.relativeMonthNum === 1;
             } else if (State.dashboardFilter === 'new_customer') {
@@ -6269,9 +6288,22 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
                     }
                 }
             }
-            
-            // Only include members who have taken the chit (matches dashboard 'Chit Taken' filter logic)
-            if (hasTakenPayout) {
+            let takenThisSelectedMonth = false;
+            if (hasTakenPayout && payoutDate) {
+                const parts = payoutDate.split('-');
+                if (parts.length === 3) {
+                    const pYear = parseInt(parts[0]);
+                    const pMonth = parseInt(parts[1]) - 1;
+                    if (pYear === targetYear && pMonth === targetMonth) {
+                        takenThisSelectedMonth = true;
+                    }
+                }
+            } else if (hasTakenPayout && !payoutDate) {
+                takenThisSelectedMonth = true; // Fallback for older entries without specific dates
+            }
+
+            // Only include members who have taken the chit IN THIS SELECTED MONTH
+            if (takenThisSelectedMonth) {
                 // Calculate due/paid for the selected month
                 let dueAmount = 0;
                 let paidAmount = 0;
