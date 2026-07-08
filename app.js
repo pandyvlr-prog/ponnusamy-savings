@@ -7019,6 +7019,32 @@ function initSidebar() {
         notepadColorPicker.addEventListener('input', handleEditorInput);
     }
 
+    // WhatsApp Share
+    const btnShareWA = document.getElementById('btn-share-whatsapp');
+    if (btnShareWA) {
+        btnShareWA.addEventListener('click', () => {
+            const title = notepadTitle.value.trim();
+            // Get plain text from contenteditable
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = notepadTextarea.innerHTML;
+            const body = tempDiv.innerText || tempDiv.textContent || '';
+
+            if (!title && !body.trim()) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Note is empty — nothing to share!', 'error');
+                }
+                return;
+            }
+
+            const message = title
+                ? `*${title}*\n\n${body.trim()}`
+                : body.trim();
+
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+        });
+    }
+
     // Initial Load
     setTimeout(loadNotes, 500);
 }

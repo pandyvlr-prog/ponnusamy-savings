@@ -3852,3 +3852,38 @@ body:not([data-theme="light"]) .icon-blend-img {
 }
 .notepad-content-area li { margin-bottom: 4px; }
 
+/* ── WhatsApp Share Footer ─────────────── */
+.notepad-wa-footer {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+}
+.notepad-wa-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 24px;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    width: 100%;
+    justify-content: center;
+    letter-spacing: 0.01em;
+}
+.notepad-wa-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(37,211,102,0.5);
+}
+.notepad-wa-btn:active {
+    transform: scale(0.96);
+}
