@@ -7404,19 +7404,20 @@ function calculateGroupPnL(group) {
         });
     }
 
-    const expectedProfit = expectedCollection - expectedPayout;
-    const realizedProfit = realizedCollection - realizedPayout;
+    const netProfit = realizedCollection - realizedPayout;
 
     return {
-        expectedProfit,
-        realizedProfit,
+        realizedCollection,
+        realizedPayout,
+        netProfit,
         arrears
     };
 }
 
 function renderPnLDashboard() {
-    let globalExpected = 0;
-    let globalRealized = 0;
+    let globalCollected = 0;
+    let globalPayout = 0;
+    let globalNetProfit = 0;
     let globalArrears = 0;
     
     const tbody = document.getElementById('pnl-groups-tbody');
@@ -7430,12 +7431,14 @@ function renderPnLDashboard() {
         State.groups.forEach((group, index) => {
             const pnl = calculateGroupPnL(group);
             
-            globalExpected += pnl.expectedProfit;
-            globalRealized += pnl.realizedProfit;
+            globalCollected += pnl.realizedCollection;
+            globalPayout += pnl.realizedPayout;
+            globalNetProfit += pnl.netProfit;
             globalArrears += pnl.arrears;
             
-            const expectedColor = pnl.expectedProfit >= 0 ? 'var(--text-main)' : 'var(--danger-main)';
-            const realizedColor = pnl.realizedProfit >= 0 ? '#10b981' : 'var(--danger-main)';
+            const collectedColor = 'var(--text-main)';
+            const payoutColor = 'var(--blue-main)';
+            const netColor = pnl.netProfit >= 0 ? '#10b981' : 'var(--danger-main)';
             const arrearsColor = pnl.arrears > 0 ? 'var(--danger-main)' : 'var(--text-main)';
             
             const row = document.createElement('tr');
@@ -7443,8 +7446,9 @@ function renderPnLDashboard() {
                 <td>${index + 1}</td>
                 <td style="font-weight: 700;">${group.name}</td>
                 <td style="text-align: center;">${group.duration}M</td>
-                <td style="text-align: right; color: ${expectedColor}; font-weight: 600;">₹${formatNumberIndian(pnl.expectedProfit)}</td>
-                <td style="text-align: right; color: ${realizedColor}; font-weight: 700;">₹${formatNumberIndian(pnl.realizedProfit)}</td>
+                <td style="text-align: right; color: ${collectedColor}; font-weight: 600;">₹${formatNumberIndian(pnl.realizedCollection)}</td>
+                <td style="text-align: right; color: ${payoutColor}; font-weight: 600;">₹${formatNumberIndian(pnl.realizedPayout)}</td>
+                <td style="text-align: right; color: ${netColor}; font-weight: 700;">₹${formatNumberIndian(pnl.netProfit)}</td>
                 <td style="text-align: right; color: ${arrearsColor}; font-weight: 600;">₹${formatNumberIndian(pnl.arrears)}</td>
             `;
             tbody.appendChild(row);
@@ -7452,10 +7456,13 @@ function renderPnLDashboard() {
     }
     
     const elExpected = document.getElementById('pnl-global-expected');
-    if (elExpected) elExpected.textContent = '₹' + formatNumberIndian(globalExpected);
+    if (elExpected) elExpected.textContent = '₹' + formatNumberIndian(globalCollected);
+    
+    const elPayout = document.getElementById('pnl-global-payout');
+    if (elPayout) elPayout.textContent = '₹' + formatNumberIndian(globalPayout);
     
     const elRealized = document.getElementById('pnl-global-realized');
-    if (elRealized) elRealized.textContent = '₹' + formatNumberIndian(globalRealized);
+    if (elRealized) elRealized.textContent = '₹' + formatNumberIndian(globalNetProfit);
     
     const elPending = document.getElementById('pnl-global-pending');
     if (elPending) elPending.textContent = '₹' + formatNumberIndian(globalArrears);

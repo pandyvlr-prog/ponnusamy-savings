@@ -1864,7 +1864,7 @@
     </div>
     
     <script src="auth.js?v=47" defer></script>
-    <script src="app.js?v=68" defer></script>
+    <script src="app.js?v=69" defer></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
@@ -2202,21 +2202,31 @@
                     <!-- Global App P&L Metrics -->
                     <div class="dashboard-card" style="margin-top: 16px;">
                         <div class="metrics-grid">
-                            <!-- Expected Profit -->
+                            <!-- Total Collected -->
                             <div class="metric-item highlight" style="position: relative;">
                                 <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
                                     <i data-lucide="trending-up" style="width: 16px; height: 16px;"></i>
-                                    Expected Profit
+                                    Total Collected
                                 </span>
                                 <span class="metric-value" id="pnl-global-expected">₹0</span>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; display: block;">Overall business margin</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; display: block;">Total cash received</span>
                             </div>
                             
-                            <!-- Realized Profit -->
-                            <div class="metric-item highlight-green" style="position: relative;">
+                            <!-- Total Payout -->
+                            <div class="metric-item highlight" style="position: relative; border-left-color: var(--blue-main); background-color: rgba(59, 130, 246, 0.05);">
                                 <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
                                     <i data-lucide="wallet" style="width: 16px; height: 16px;"></i>
-                                    Realized Profit
+                                    Total Payout
+                                </span>
+                                <span class="metric-value" id="pnl-global-payout" style="color: var(--blue-main);">₹0</span>
+                                <span style="font-size: 0.8rem; color: var(--blue-main); font-weight: 600; margin-top: 4px; display: block;">Total cash paid out</span>
+                            </div>
+
+                            <!-- Net Profit -->
+                            <div class="metric-item highlight-green" style="position: relative;">
+                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+                                    Net Profit
                                 </span>
                                 <span class="metric-value text-green" id="pnl-global-realized">₹0</span>
                                 <span style="font-size: 0.8rem; color: var(--green-dark); font-weight: 600; margin-top: 4px; display: block;">Actual cash in hand</span>
@@ -2242,8 +2252,9 @@
                                     <th style="width: 50px;">S.No</th>
                                     <th>Group Name</th>
                                     <th style="text-align: center;">Duration</th>
-                                    <th style="text-align: right;">Expected Profit</th>
-                                    <th style="text-align: right;">Realized P&L</th>
+                                    <th style="text-align: right;">Total Collected</th>
+                                    <th style="text-align: right;">Total Payout</th>
+                                    <th style="text-align: right;">Net Profit</th>
                                     <th style="text-align: right;">Arrears</th>
                                 </tr>
                             </thead>
