@@ -928,6 +928,18 @@ function switchView(viewId) {
     const activeScreen = document.querySelector('.app-screen.active');
     const targetScreen = document.getElementById(viewId);
     
+    // Screens where the global top navbar should be hidden
+    const NO_HEADER_SCREENS = ['screen-landing', 'screen-login', 'screen-register'];
+    const appContainer = document.querySelector('.app-container');
+    
+    if (appContainer) {
+        if (NO_HEADER_SCREENS.includes(viewId)) {
+            appContainer.classList.add('hide-global-header');
+        } else {
+            appContainer.classList.remove('hide-global-header');
+        }
+    }
+    
     if (targetScreen) {
         if (activeScreen && activeScreen.id !== viewId) {
             // Slide out active

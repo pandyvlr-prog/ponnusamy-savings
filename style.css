@@ -251,6 +251,11 @@ body {
     flex-shrink: 0;
 }
 
+/* Hide the global app-header on unauthenticated screens */
+.app-container.hide-global-header > .app-header:first-of-type {
+    display: none !important;
+}
+
 .header-logo-section {
     display: flex;
     align-items: center;
