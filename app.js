@@ -5481,6 +5481,7 @@ function generatePdfReport() {
 
 function generateGlobalPdfReport() {
     const selectedMonthKey = document.getElementById('global-pdf-export-month-select').value;
+    const selectedDayValue = document.getElementById('global-pdf-export-day-select') ? document.getElementById('global-pdf-export-day-select').value : 'all';
     if (!selectedMonthKey) return;
     
     document.getElementById('global-pdf-export-modal-backdrop').classList.remove('active');
@@ -5541,6 +5542,24 @@ function generateGlobalPdfReport() {
             const payment = member.payments[relMonthNum];
             const isPaid = payment && payment.paid;
             
+            let paymentDateObj = null;
+            let dateText = '--';
+            if (isPaid && payment.customDate) {
+                paymentDateObj = new Date(payment.customDate);
+                dateText = paymentDateObj.toLocaleDateString();
+            } else if (isPaid && payment.paidAt) {
+                paymentDateObj = new Date(payment.paidAt);
+                dateText = paymentDateObj.toLocaleDateString();
+            }
+
+            // Filter by selected day
+            if (selectedDayValue !== 'all') {
+                const targetDay = parseInt(selectedDayValue);
+                if (!paymentDateObj || paymentDateObj.getDate() !== targetDay) {
+                    return; // Skip this member
+                }
+            }
+            
             let hasTakenChit = false;
             let chitAmountStr = '';
             let chitModeStr = '';
@@ -5559,10 +5578,6 @@ function generateGlobalPdfReport() {
             } else {
                 groupPending += installmentVal;
             }
-            
-            let dateText = '--';
-            if (isPaid && payment.customDate) dateText = new Date(payment.customDate).toLocaleDateString();
-            else if (isPaid && payment.paidAt) dateText = new Date(payment.paidAt).toLocaleDateString();
             
             allMembersFlattened.push({
                 name: member.name,
