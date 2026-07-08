@@ -6216,7 +6216,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     let totalPayoutAmount = 0;
 
     State.groups.forEach(group => {
-        let members = group.members || [];
+        const members = State.members.filter(m => m.groupId === group.id);
         const relativeMonthNum = getRelativeMonthForGroup(group, targetYear, targetMonth);
         
         // Only applicable if the selected month falls within the group's duration
