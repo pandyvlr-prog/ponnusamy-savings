@@ -6193,6 +6193,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         return;
     }
     
+    const [selYear, selMonth] = selMonthKey.split('-');
     const targetYear = parseInt(selYear);
     const targetMonth = parseInt(selMonth);
     
