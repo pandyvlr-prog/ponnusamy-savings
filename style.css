@@ -1253,6 +1253,35 @@ body {
     pointer-events: none;
 }
 
+.btn-clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: none; /* Controlled by JS */
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-clear-search:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--red-main);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.btn-clear-search:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
 .search-input-wrapper input {
     width: 100%;
     background-color: var(--bg-surface);
