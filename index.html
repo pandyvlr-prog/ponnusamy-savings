@@ -1065,61 +1065,45 @@
 
         <!-- DIALOG/MODAL: GLOBAL PDF EXPORT MONTH SELECTION -->
         <div class="modal-backdrop" id="global-pdf-export-modal-backdrop">
-            <div class="payment-modal" style="max-width: 350px;">
+            <div class="payment-modal" style="max-width: 400px;">
                 <div class="modal-header">
                     <div class="modal-header-titles">
-                        <h3 class="modal-title">Global Dashboard Report</h3>
-                        <p class="modal-subtitle">Select calendar month to generate report across all groups</p>
+                        <h3 class="modal-title">Premium Reports</h3>
+                        <p class="modal-subtitle">Generate Yearly or Chit Taken Reports</p>
                     </div>
                     <button class="icon-btn" id="btn-close-global-pdf-export-modal"><i data-lucide="x"></i></button>
                 </div>
                 <div class="modal-content">
-                    <div class="form-group">
-                        <label for="global-pdf-export-month-select">Select Calendar Month</label>
-                        <select id="global-pdf-export-month-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
-                            <!-- Options populated by JS -->
-                        </select>
+                    <div class="report-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                        <button id="tab-yearly-report" class="btn btn-secondary" style="flex: 1; border-radius: var(--radius-sm); border: 1px solid var(--primary); background-color: rgba(217, 119, 6, 0.1); color: var(--primary); font-weight: 600;">Yearly Report</button>
+                        <button id="tab-chit-report" class="btn btn-secondary" style="flex: 1; border-radius: var(--radius-sm); border: 1px solid transparent; background-color: transparent; color: var(--text-muted); font-weight: 600;">Chit Taken</button>
                     </div>
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label for="global-pdf-export-day-select">Select Day (Optional)</label>
-                        <select id="global-pdf-export-day-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
-                            <option value="all">All Days</option>
-                            <option value="1">1st</option>
-                            <option value="2">2nd</option>
-                            <option value="3">3rd</option>
-                            <option value="4">4th</option>
-                            <option value="5">5th</option>
-                            <option value="6">6th</option>
-                            <option value="7">7th</option>
-                            <option value="8">8th</option>
-                            <option value="9">9th</option>
-                            <option value="10">10th</option>
-                            <option value="11">11th</option>
-                            <option value="12">12th</option>
-                            <option value="13">13th</option>
-                            <option value="14">14th</option>
-                            <option value="15">15th</option>
-                            <option value="16">16th</option>
-                            <option value="17">17th</option>
-                            <option value="18">18th</option>
-                            <option value="19">19th</option>
-                            <option value="20">20th</option>
-                            <option value="21">21st</option>
-                            <option value="22">22nd</option>
-                            <option value="23">23rd</option>
-                            <option value="24">24th</option>
-                            <option value="25">25th</option>
-                            <option value="26">26th</option>
-                            <option value="27">27th</option>
-                            <option value="28">28th</option>
-                            <option value="29">29th</option>
-                            <option value="30">30th</option>
-                            <option value="31">31st</option>
-                        </select>
+
+                    <!-- YEARLY REPORT SECTION -->
+                    <div id="section-yearly-report" style="display: block;">
+                        <div class="form-group">
+                            <label for="yearly-pdf-export-year-select">Select Year</label>
+                            <select id="yearly-pdf-export-year-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btn-generate-yearly-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Yearly Report
+                        </button>
                     </div>
-                    <button class="btn btn-primary" id="btn-generate-global-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Global PDF
-                    </button>
+
+                    <!-- CHIT TAKEN REPORT SECTION -->
+                    <div id="section-chit-report" style="display: none;">
+                        <div class="form-group">
+                            <label for="chit-pdf-export-month-select">Select Month</label>
+                            <select id="chit-pdf-export-month-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btn-generate-chit-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Chit Taken Report
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1741,47 +1725,94 @@
         </div>
     </div>
 
-    <!-- HIDDEN PDF TEMPLATE (GLOBAL DASHBOARD) -->
-    <div id="global-pdf-template-container" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+    <!-- HIDDEN PDF TEMPLATE (YEARLY REPORT) -->
+    <div id="yearly-pdf-template-container" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
         <!-- Colored Header -->
         <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
             <div style="display: flex; align-items: center; gap: 20px;">
                 <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
                 <div>
                     <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
-                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Global Dashboard Report</p>
+                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Yearly Dashboard Report</p>
                 </div>
             </div>
             <div style="text-align: right;">
-                <h2 id="global-pdf-month-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <h2 id="yearly-pdf-year-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
                 <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
-                <p id="global-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+                <p id="yearly-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
             </div>
         </div>
 
         <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
-            
-            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Global Summary</h3>
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Yearly Summary</h3>
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Target</div>
-                    <div id="global-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Target</div>
+                    <div id="yearly-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Collected</div>
-                    <div id="global-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Collected</div>
+                    <div id="yearly-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Pending</div>
-                    <div id="global-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Pending</div>
+                    <div id="yearly-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
                     <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
-                    <div id="global-pdf-percentage" style="font-size: 24px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
+                    <div id="yearly-pdf-percentage" style="font-size: 24px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
                 </div>
             </div>
 
-            <div id="global-pdf-unified-table-container">
+            <div id="yearly-pdf-table-container">
+                <!-- Single table populated dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <div style="text-align: center; width: 200px;">
+                    <div style="border-bottom: 1px solid #94a3b8; height: 30px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; color: #475569; font-weight: 700;">Organizer Signature</div>
+                </div>
+                <div style="text-align: right; align-self: flex-end;">
+                    <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN PDF TEMPLATE (CHIT TAKEN REPORT) -->
+    <div id="chit-taken-pdf-template-container" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Colored Header -->
+        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #6366f1;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #6366f1;">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                    <p style="font-size: 15px; color: #6366f1; margin: 6px 0 0 0; font-weight: 700;">Chit Taken Report</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h2 id="chit-pdf-month-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
+                <p id="chit-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+            </div>
+        </div>
+
+        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Payout Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Members Taken</div>
+                    <div id="chit-pdf-total-members" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Payout Amount</div>
+                    <div id="chit-pdf-total-amount" style="font-size: 24px; font-weight: 800; color: #6366f1; margin-top: 6px;">₹0</div>
+                </div>
+            </div>
+
+            <div id="chit-pdf-table-container">
                 <!-- Single table populated dynamically -->
             </div>
 
