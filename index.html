@@ -1725,6 +1725,69 @@
         </div>
     </div>
 
+    <!-- HIDDEN INPUTS FOR QUICK REPORT -->
+    <div style="display: none;">
+        <select id="global-pdf-export-month-select"></select>
+        <select id="global-pdf-export-day-select"><option value="all">all</option></select>
+    </div>
+
+    <!-- HIDDEN PDF TEMPLATE (GLOBAL DASHBOARD - RESTORED FOR QUICK REPORT) -->
+    <div id="global-pdf-template-container" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Colored Header -->
+        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Global Dashboard Report</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h2 id="global-pdf-month-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
+                <p id="global-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+            </div>
+        </div>
+
+        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+            
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Global Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Target</div>
+                    <div id="global-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Collected</div>
+                    <div id="global-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Pending</div>
+                    <div id="global-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
+                    <div id="global-pdf-percentage" style="font-size: 24px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
+                </div>
+            </div>
+
+            <div id="global-pdf-unified-table-container">
+                <!-- Single table populated dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <div style="text-align: center; width: 200px;">
+                    <div style="border-bottom: 1px solid #94a3b8; height: 30px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; color: #475569; font-weight: 700;">Organizer Signature</div>
+                </div>
+                <div style="text-align: right; align-self: flex-end;">
+                    <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- HIDDEN PDF TEMPLATE (YEARLY REPORT) -->
     <div id="yearly-pdf-template-container" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
         <!-- Colored Header -->
