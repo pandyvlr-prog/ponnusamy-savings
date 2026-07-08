@@ -1278,10 +1278,6 @@ body {
     transform: translateY(-50%) scale(1.05);
 }
 
-.btn-clear-search:active {
-    transform: translateY(-50%) scale(0.95);
-}
-
 .search-input-wrapper input {
     width: 100%;
     background-color: var(--bg-surface);
