@@ -2065,7 +2065,14 @@ function setupEventListeners() {
                 globalDaySelect.value = dayValue;
             }
             
-            generateGlobalPdfReport(mode);
+            const activeFilterPill = document.querySelector('#dashboard-filter-pills .filter-pill.active');
+            const activeFilter = activeFilterPill ? activeFilterPill.dataset.filter : 'all';
+            
+            if (activeFilter === 'chit_taken') {
+                generateChitTakenPdfReport(monthKey, mode);
+            } else {
+                generateGlobalPdfReport(mode);
+            }
         }
         
         if (btnQuickReportDownload) {
@@ -6179,8 +6186,8 @@ function generateYearlyPdfReport() {
     });
 }
 
-function generateChitTakenPdfReport() {
-    const selMonthKey = document.getElementById('chit-pdf-export-month-select').value;
+function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') {
+    const selMonthKey = monthKeyOverride || document.getElementById('chit-pdf-export-month-select')?.value;
     if (!selMonthKey) {
         if(typeof showNotification === 'function') showNotification('Please select a month', 'error');
         return;
@@ -6280,14 +6287,43 @@ function generateChitTakenPdfReport() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
-    html2pdf().set(opt).from(container).save().then(() => {
-        container.style.display = 'none';
-        if (overlay) overlay.style.display = 'none';
-        if(typeof showNotification === 'function') showNotification('Chit Taken Report Downloaded!', 'success');
-    }).catch(err => {
-        console.error(err);
-        container.style.display = 'none';
-        if (overlay) overlay.style.display = 'none';
-        if(typeof showNotification === 'function') showNotification('Error generating PDF', 'error');
-    });
+    if (mode === 'download') {
+        html2pdf().set(opt).from(container).save().then(() => {
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            if(typeof showNotification === 'function') showNotification('Chit Taken Report Downloaded!', 'success');
+        }).catch(err => {
+            console.error(err);
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            if(typeof showNotification === 'function') showNotification('Error generating PDF', 'error');
+        });
+    } else if (mode === 'share') {
+        html2pdf().set(opt).from(container).outputPdf('blob').then(async (blob) => {
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            
+            const file = new File([blob], opt.filename, { type: 'application/pdf' });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: opt.filename,
+                        text: 'Here is the Chit Taken Report',
+                        files: [file]
+                    });
+                    if(typeof showNotification === 'function') showNotification('Report shared successfully!', 'success');
+                } catch (error) {
+                    console.log('Error sharing', error);
+                }
+            } else {
+                if(typeof showNotification === 'function') showNotification('Web Share API not supported in this browser', 'error');
+            }
+        }).catch(err => {
+            console.error(err);
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            if(typeof showNotification === 'function') showNotification('Error generating PDF', 'error');
+        });
+    }
 }

@@ -1074,11 +1074,6 @@
                     <button class="icon-btn" id="btn-close-global-pdf-export-modal"><i data-lucide="x"></i></button>
                 </div>
                 <div class="modal-content">
-                    <div class="report-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-                        <button id="tab-yearly-report" class="btn btn-secondary" style="flex: 1; border-radius: var(--radius-sm); border: 1px solid var(--primary); background-color: rgba(217, 119, 6, 0.1); color: var(--primary); font-weight: 600;">Yearly Report</button>
-                        <button id="tab-chit-report" class="btn btn-secondary" style="flex: 1; border-radius: var(--radius-sm); border: 1px solid transparent; background-color: transparent; color: var(--text-muted); font-weight: 600;">Chit Taken</button>
-                    </div>
-
                     <!-- YEARLY REPORT SECTION -->
                     <div id="section-yearly-report" style="display: block;">
                         <div class="form-group">
@@ -1089,19 +1084,6 @@
                         </div>
                         <button class="btn btn-primary" id="btn-generate-yearly-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
                             <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Yearly Report
-                        </button>
-                    </div>
-
-                    <!-- CHIT TAKEN REPORT SECTION -->
-                    <div id="section-chit-report" style="display: none;">
-                        <div class="form-group">
-                            <label for="chit-pdf-export-month-select">Select Month</label>
-                            <select id="chit-pdf-export-month-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
-                                <!-- Options populated by JS -->
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" id="btn-generate-chit-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Chit Taken Report
                         </button>
                     </div>
                 </div>
