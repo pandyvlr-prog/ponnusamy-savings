@@ -184,6 +184,9 @@
                         <button class="icon-btn text-amber" id="btn-global-export-pdf" title="Export Global PDF Report" style="background: rgba(245, 158, 11, 0.1);">
                             <i data-lucide="download"></i>
                         </button>
+                        <button class="icon-btn text-primary" id="btn-workspace-toggle" title="Workspace (Calculator & Notepad)" style="background: rgba(13, 138, 188, 0.1);">
+                            <i data-lucide="layout-dashboard"></i>
+                        </button>
                         <button class="theme-slider-btn" id="btn-toggle-theme-desktop" aria-label="Toggle theme" title="Toggle Light/Dark Mode">
                             <div class="theme-slider-thumb"></div>
                             <i data-lucide="sun" class="slider-icon slider-sun"></i>
@@ -1871,6 +1874,68 @@
                 <div style="text-align: right; align-self: flex-end;">
                     <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
                     <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKSPACE DRAWER (CALCULATOR & NOTEPAD) -->
+    <div id="workspace-drawer-overlay" class="workspace-overlay" style="display: none;"></div>
+    <div id="workspace-drawer" class="workspace-drawer">
+        <div class="workspace-header">
+            <h3 class="workspace-title"><i data-lucide="layout-dashboard"></i> Workspace</h3>
+            <button id="btn-workspace-close" class="icon-btn text-muted"><i data-lucide="x"></i></button>
+        </div>
+        
+        <div class="workspace-tabs">
+            <button class="workspace-tab active" data-target="workspace-calc">Calculator</button>
+            <button class="workspace-tab" data-target="workspace-notes">Notepad</button>
+        </div>
+        
+        <div class="workspace-content">
+            <!-- CALCULATOR TAB -->
+            <div id="workspace-calc" class="workspace-pane active">
+                <div class="calc-container">
+                    <div class="calc-display-wrapper">
+                        <div class="calc-history" id="calc-history"></div>
+                        <input type="text" id="calc-display" class="calc-display" value="0" readonly>
+                    </div>
+                    <div class="calc-grid">
+                        <button class="calc-btn btn-op" data-action="clear">AC</button>
+                        <button class="calc-btn btn-op" data-action="backspace"><i data-lucide="delete"></i></button>
+                        <button class="calc-btn btn-op" data-action="percent">%</button>
+                        <button class="calc-btn btn-op" data-action="divide">÷</button>
+                        
+                        <button class="calc-btn btn-num" data-num="7">7</button>
+                        <button class="calc-btn btn-num" data-num="8">8</button>
+                        <button class="calc-btn btn-num" data-num="9">9</button>
+                        <button class="calc-btn btn-op" data-action="multiply">×</button>
+                        
+                        <button class="calc-btn btn-num" data-num="4">4</button>
+                        <button class="calc-btn btn-num" data-num="5">5</button>
+                        <button class="calc-btn btn-num" data-num="6">6</button>
+                        <button class="calc-btn btn-op" data-action="subtract">-</button>
+                        
+                        <button class="calc-btn btn-num" data-num="1">1</button>
+                        <button class="calc-btn btn-num" data-num="2">2</button>
+                        <button class="calc-btn btn-num" data-num="3">3</button>
+                        <button class="calc-btn btn-op" data-action="add">+</button>
+                        
+                        <button class="calc-btn btn-num" data-num="00">00</button>
+                        <button class="calc-btn btn-num" data-num="0">0</button>
+                        <button class="calc-btn btn-num" data-num=".">.</button>
+                        <button class="calc-btn btn-equal" data-action="calculate">=</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- NOTEPAD TAB -->
+            <div id="workspace-notes" class="workspace-pane">
+                <div class="notepad-container">
+                    <div class="notepad-toolbar">
+                        <span class="notepad-status" id="notepad-status">Saved</span>
+                    </div>
+                    <textarea id="notepad-textarea" class="notepad-textarea" placeholder="Type your notes here... They will sync to the cloud automatically!"></textarea>
                 </div>
             </div>
         </div>

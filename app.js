@@ -6583,3 +6583,194 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         });
     }
 }
+
+// ==========================================
+// WORKSPACE TOOLS: CALCULATOR & NOTEPAD
+// ==========================================
+function initWorkspace() {
+    const btnToggle = document.getElementById('btn-workspace-toggle');
+    const btnClose = document.getElementById('btn-workspace-close');
+    const drawer = document.getElementById('workspace-drawer');
+    const overlay = document.getElementById('workspace-drawer-overlay');
+    
+    if (!btnToggle || !drawer || !overlay) return;
+
+    function openWorkspace() {
+        drawer.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeWorkspace() {
+        drawer.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    btnToggle.addEventListener('click', openWorkspace);
+    btnClose.addEventListener('click', closeWorkspace);
+    overlay.addEventListener('click', closeWorkspace);
+
+    // Tab Switching
+    const tabs = document.querySelectorAll('.workspace-tab');
+    const panes = document.querySelectorAll('.workspace-pane');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
+            
+            tab.classList.add('active');
+            document.getElementById(tab.dataset.target).classList.add('active');
+        });
+    });
+
+    // Calculator Logic
+    const calcDisplay = document.getElementById('calc-display');
+    const calcHistory = document.getElementById('calc-history');
+    const calcBtns = document.querySelectorAll('.calc-btn');
+    
+    let currentInput = '0';
+    let previousInput = '';
+    let operation = null;
+    let shouldResetDisplay = false;
+
+    function updateCalcDisplay() {
+        calcDisplay.value = currentInput;
+    }
+
+    function handleNum(numStr) {
+        if (currentInput === '0' || shouldResetDisplay) {
+            currentInput = numStr;
+            shouldResetDisplay = false;
+        } else {
+            currentInput += numStr;
+        }
+        updateCalcDisplay();
+    }
+
+    function calculate() {
+        if (operation === null || shouldResetDisplay) return;
+        const prev = parseFloat(previousInput);
+        const current = parseFloat(currentInput);
+        if (isNaN(prev) || isNaN(current)) return;
+
+        let result;
+        switch (operation) {
+            case 'add': result = prev + current; break;
+            case 'subtract': result = prev - current; break;
+            case 'multiply': result = prev * current; break;
+            case 'divide': result = prev / current; break;
+            default: return;
+        }
+        
+        // Remove trailing zeroes
+        currentInput = parseFloat(result.toFixed(8)).toString();
+        operation = null;
+        previousInput = '';
+        calcHistory.textContent = '';
+        shouldResetDisplay = true;
+        updateCalcDisplay();
+    }
+
+    calcBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const num = btn.dataset.num;
+            const action = btn.dataset.action;
+
+            if (num !== undefined) {
+                if (num === '.' && currentInput.includes('.')) return;
+                handleNum(num);
+            } else if (action !== undefined) {
+                switch (action) {
+                    case 'clear':
+                        currentInput = '0';
+                        previousInput = '';
+                        operation = null;
+                        calcHistory.textContent = '';
+                        updateCalcDisplay();
+                        break;
+                    case 'backspace':
+                        if (currentInput.length === 1 || (currentInput.length === 2 && currentInput.startsWith('-'))) {
+                            currentInput = '0';
+                        } else {
+                            currentInput = currentInput.slice(0, -1);
+                        }
+                        updateCalcDisplay();
+                        break;
+                    case 'percent':
+                        currentInput = (parseFloat(currentInput) / 100).toString();
+                        updateCalcDisplay();
+                        break;
+                    case 'calculate':
+                        calculate();
+                        break;
+                    default:
+                        // Operators
+                        if (operation !== null && !shouldResetDisplay) calculate();
+                        operation = action;
+                        previousInput = currentInput;
+                        shouldResetDisplay = true;
+                        
+                        let opSymbol = '';
+                        if(action === 'add') opSymbol = '+';
+                        if(action === 'subtract') opSymbol = '-';
+                        if(action === 'multiply') opSymbol = '×';
+                        if(action === 'divide') opSymbol = '÷';
+                        
+                        calcHistory.textContent = `${previousInput} ${opSymbol}`;
+                        break;
+                }
+            }
+        });
+    });
+
+    // Notepad Logic & Cloud Sync
+    const notepadTextarea = document.getElementById('notepad-textarea');
+    const notepadStatus = document.getElementById('notepad-status');
+    let saveTimeout = null;
+
+    // Load initial content
+    if (window.AuthState?.currentUser?.user_metadata?.notepad_content) {
+        notepadTextarea.value = window.AuthState.currentUser.user_metadata.notepad_content;
+    } else {
+        const localNotepad = localStorage.getItem('pms_workspace_notepad');
+        if (localNotepad) notepadTextarea.value = localNotepad;
+    }
+
+    notepadTextarea.addEventListener('input', () => {
+        notepadStatus.textContent = 'Saving...';
+        clearTimeout(saveTimeout);
+        
+        saveTimeout = setTimeout(async () => {
+            const content = notepadTextarea.value;
+            localStorage.setItem('pms_workspace_notepad', content);
+            
+            if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+                try {
+                    const { error } = await window.supabaseClient.auth.updateUser({
+                        data: { notepad_content: content }
+                    });
+                    if (error) throw error;
+                    notepadStatus.textContent = 'Saved to Cloud';
+                    // Update the local state cache so it doesn't revert on page reload before a full auth sync
+                    window.AuthState.currentUser.user_metadata.notepad_content = content;
+                } catch (e) {
+                    console.error("Cloud sync failed:", e);
+                    notepadStatus.textContent = 'Saved Locally (Cloud Failed)';
+                }
+            } else {
+                notepadStatus.textContent = 'Saved Locally';
+            }
+            
+            setTimeout(() => {
+                if (notepadStatus.textContent.includes('Saved')) {
+                    notepadStatus.textContent = '';
+                }
+            }, 3000);
+        }, 1000);
+    });
+}
+
+// Initialize on script load (delay to ensure DOM and auth are ready)
+setTimeout(initWorkspace, 1000);
