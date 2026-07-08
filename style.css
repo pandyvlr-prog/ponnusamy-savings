@@ -1272,13 +1272,13 @@ body {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-clear-search:hover {
+#btn-clear-dashboard-search:hover {
     background-color: rgba(239, 68, 68, 0.1);
     color: var(--red-main);
     transform: translateY(-50%) scale(1.05) !important;
 }
 
-.btn-clear-search:active {
+#btn-clear-dashboard-search:active {
     transform: translateY(-50%) !important;
 }
 
