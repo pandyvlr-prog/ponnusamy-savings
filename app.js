@@ -6248,7 +6248,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     
     const [selYear, selMonth] = selMonthKey.split('-');
     const targetYear = parseInt(selYear);
-    const targetMonth = parseInt(selMonth);
+    const targetMonth = parseInt(selMonth) - 1; // 0-indexed to match getRelativeMonthForGroup
     
     document.getElementById('global-pdf-export-modal-backdrop')?.classList.remove('active');
 
