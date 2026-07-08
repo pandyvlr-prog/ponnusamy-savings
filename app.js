@@ -6909,10 +6909,11 @@ function initWorkspace() {
 
     btnDeleteNote.addEventListener('click', () => {
         if (!activeNoteId) return;
-        if (confirm('Are you sure you want to delete this note?')) {
-            currentNotes = currentNotes.filter(n => n.id !== activeNoteId);
-            saveNotesState();
-            closeNoteEditor();
+        currentNotes = currentNotes.filter(n => n.id !== activeNoteId);
+        saveNotesState();
+        closeNoteEditor();
+        if (typeof showToast === 'function') {
+            showToast('Note deleted successfully', 'success');
         }
     });
 
