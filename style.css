@@ -3199,6 +3199,23 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 .dashboard-member-row {
     contain: layout;
 }
+/* --- Center Custom Dropdowns on Mobile --- */
+@media (max-width: 767px) {
+    #date-dropdown-menu,
+    #filter-dropdown-menu,
+    #custom-month-dropdown-menu {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90vw !important;
+        max-width: 340px !important;
+        z-index: 9999 !important;
+        margin-top: 0 !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+    }
+}
 
 /* @media prefers-reduced-motion: disable all animations for accessibility */
 @media (prefers-reduced-motion: reduce) {
