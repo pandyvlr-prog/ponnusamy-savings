@@ -3144,12 +3144,48 @@ function renderDashboard() {
         const sortedAmounts = Array.from(amounts).sort((a,b) => a - b);
         
         sortedAmounts.forEach(amt => {
+            const chipGroups = matchedGroups.filter(g => extractNumericAmount(g) === amt);
+            let totalMembers = 0;
+            chipGroups.forEach(g => {
+                totalMembers += g.members ? g.members.length : 0;
+            });
+            
             const chip = document.createElement('button');
             chip.className = 'wizard-chip';
-            chip.textContent = formatAmount(amt);
+            chip.style.display = 'flex';
+            chip.style.flexDirection = 'column';
+            chip.style.alignItems = 'center';
+            chip.style.gap = '4px';
+            
+            const amtText = document.createElement('span');
+            amtText.textContent = formatAmount(amt);
+            amtText.style.fontWeight = '800';
+            amtText.style.fontSize = '1.1rem';
+            
+            const metaText = document.createElement('span');
+            if (chipGroups.length > 1) {
+                metaText.textContent = `${chipGroups.length} Groups • ${totalMembers} Mbrs`;
+            } else {
+                metaText.textContent = `${totalMembers} Members`;
+            }
+            metaText.style.fontSize = '0.75rem';
+            metaText.style.fontWeight = '600';
+            metaText.style.opacity = '0.85';
+            
+            chip.appendChild(amtText);
+            chip.appendChild(metaText);
+            
             chip.onclick = () => {
                 wizardState.amount = amt;
-                renderWizardStep4();
+                if (chipGroups.length === 1) {
+                    // Bypass Step 4 and directly open the group details
+                    State.selectedGroupId = chipGroups[0].id;
+                    const modal = document.getElementById('groups-list-modal-backdrop');
+                    if (modal) modal.classList.remove('active');
+                    switchView('screen-group-details');
+                } else {
+                    renderWizardStep4();
+                }
             };
             chipsContainer.appendChild(chip);
         });
