@@ -1939,8 +1939,27 @@ function setupEventListeners() {
 
     // Quick Dashboard Report
     const btnQuickDashboardReport = document.getElementById('btn-quick-dashboard-report');
-    if (btnQuickDashboardReport) {
-        btnQuickDashboardReport.addEventListener('click', () => {
+    const quickReportMenu = document.getElementById('quick-report-dropdown-menu');
+    const btnQuickReportDownload = document.getElementById('btn-quick-report-download');
+    const btnQuickReportShare = document.getElementById('btn-quick-report-share');
+    
+    if (btnQuickDashboardReport && quickReportMenu) {
+        btnQuickDashboardReport.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = quickReportMenu.style.display === 'block';
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none'); // close others
+            quickReportMenu.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        // Close menu on click outside
+        document.addEventListener('click', (e) => {
+            if (!btnQuickDashboardReport.contains(e.target) && !quickReportMenu.contains(e.target)) {
+                quickReportMenu.style.display = 'none';
+            }
+        });
+        
+        function handleQuickReport(mode) {
+            quickReportMenu.style.display = 'none';
             let monthKey = State.dashboardSelectedMonth || 'current';
             
             if (monthKey === 'accumulated') {
@@ -1962,7 +1981,7 @@ function setupEventListeners() {
             const dateFilterEl = document.getElementById('dashboard-date-filter');
             const dayValue = dateFilterEl && dateFilterEl.value !== '' ? dateFilterEl.value : 'all';
             
-            // Populate global export month select to ensure options exist (or just set the value dynamically)
+            // Populate global export month select to ensure options exist
             const globalMonthSelect = document.getElementById('global-pdf-export-month-select');
             const globalDaySelect = document.getElementById('global-pdf-export-day-select');
             
@@ -1987,8 +2006,15 @@ function setupEventListeners() {
                 globalDaySelect.value = dayValue;
             }
             
-            generateGlobalPdfReport();
-        });
+            generateGlobalPdfReport(mode);
+        }
+        
+        if (btnQuickReportDownload) {
+            btnQuickReportDownload.addEventListener('click', () => handleQuickReport('download'));
+        }
+        if (btnQuickReportShare) {
+            btnQuickReportShare.addEventListener('click', () => handleQuickReport('share'));
+        }
     }
 
     // PDF Export Modal Bindings
@@ -5533,7 +5559,7 @@ function generatePdfReport() {
     });
 }
 
-function generateGlobalPdfReport() {
+function generateGlobalPdfReport(mode = 'download') {
     const selectedMonthKey = document.getElementById('global-pdf-export-month-select').value;
     const selectedDayValue = document.getElementById('global-pdf-export-day-select') ? document.getElementById('global-pdf-export-day-select').value : 'all';
     if (!selectedMonthKey) return;
@@ -5746,16 +5772,51 @@ function generateGlobalPdfReport() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
-    html2pdf().set(opt).from(container).save().then(() => {
-        container.style.display = 'none';
-        if (overlay) overlay.style.display = 'none';
-        showNotification('Global PDF Report Generated Successfully!', 'success');
-    }).catch(err => {
-        console.error(err);
-        container.style.display = 'none';
-        if (overlay) overlay.style.display = 'none';
-        showNotification('Error generating PDF', 'error');
-    });
+    if (mode === 'download') {
+        html2pdf().set(opt).from(container).save().then(() => {
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            showNotification('Global PDF Report Downloaded!', 'success');
+        }).catch(err => {
+            console.error(err);
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            showNotification('Error generating PDF', 'error');
+        });
+    } else if (mode === 'share') {
+        html2pdf().set(opt).from(container).outputPdf('blob').then(async (blob) => {
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            
+            const file = new File([blob], opt.filename, { type: 'application/pdf' });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: opt.filename,
+                        text: 'Here is the Global Dashboard Report',
+                        files: [file]
+                    });
+                    showNotification('Report shared successfully!', 'success');
+                } catch (error) {
+                    console.error('Error sharing', error);
+                    // AbortError is thrown when user cancels the share sheet
+                    if (error.name !== 'AbortError') {
+                        showNotification('Error sharing report.', 'error');
+                    }
+                }
+            } else {
+                showNotification('Web Share not supported on this device/browser', 'error');
+                // Fallback to download
+                html2pdf().set(opt).from(container).save();
+            }
+        }).catch(err => {
+            console.error(err);
+            container.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            showNotification('Error generating PDF', 'error');
+        });
+    }
 }
 
 

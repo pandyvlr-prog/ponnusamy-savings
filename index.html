@@ -381,10 +381,20 @@
                             </select>
                         </div>
                         
-                        <!-- Quick Report Download Button -->
-                        <button id="btn-quick-dashboard-report" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: #ffffff; cursor: pointer; width: 38px; height: 38px; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: var(--primary); transition: all 0.2s;" title="Download Report for selected Month & Date">
-                            <i data-lucide="file-down" style="width: 20px; height: 20px;"></i>
-                        </button>
+                        <!-- Quick Report Download Dropdown -->
+                        <div class="quick-report-wrapper" style="position: relative; display: inline-block;">
+                            <button id="btn-quick-dashboard-report" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: #ffffff; cursor: pointer; width: 38px; height: 38px; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: var(--primary); transition: all 0.2s;" title="Download Report for selected Month & Date">
+                                <i data-lucide="file-down" style="width: 20px; height: 20px;"></i>
+                            </button>
+                            <div id="quick-report-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 150px; padding: 6px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <button class="btn btn-text-link" id="btn-quick-report-download" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px;">
+                                    <i data-lucide="download" style="width: 16px; height: 16px; color: var(--primary);"></i> Download PDF
+                                </button>
+                                <button class="btn btn-text-link" id="btn-quick-report-share" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px; margin-top: 2px;">
+                                    <i data-lucide="share-2" style="width: 16px; height: 16px; color: var(--primary);"></i> Share PDF
+                                </button>
+                            </div>
+                        </div>
                         
                         <div class="custom-month-select-wrapper" style="position: relative; display: inline-block;">
                             <button id="custom-month-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 180px; text-align: left; height: 38px; outline: none;" title="Select Month">
