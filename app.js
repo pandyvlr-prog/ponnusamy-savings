@@ -1881,6 +1881,22 @@ function setupEventListeners() {
             if (typeof showNotification === 'function') showNotification('Data refreshed', 'info');
         });
     }
+
+    // Mobile quick-action bar — delegates to desktop button clicks
+    const mobileButtonMap = {
+        'btn-global-refresh-m': 'btn-global-refresh',
+        'btn-privacy-toggle-m': 'btn-privacy-toggle',
+        'btn-global-export-pdf-m': 'btn-global-export-pdf',
+        'btn-toggle-theme-m': 'btn-toggle-theme-desktop',
+    };
+    Object.entries(mobileButtonMap).forEach(([mobileId, desktopId]) => {
+        const mobileBtn = document.getElementById(mobileId);
+        const desktopBtn = document.getElementById(desktopId);
+        if (mobileBtn && desktopBtn) {
+            mobileBtn.addEventListener('click', () => desktopBtn.click());
+        }
+    });
+
     // Global Privacy Mode Toggle Button
     const btnPrivacyToggle = document.getElementById('btn-privacy-toggle');
     if (btnPrivacyToggle) {

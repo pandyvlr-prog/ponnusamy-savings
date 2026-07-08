@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=59">
+    <link rel="stylesheet" href="style.css?v=60">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -59,61 +59,92 @@
     <div class="app-device-shell">
         
         <main class="app-container hide-global-header">
-<!-- Header -->
                 <header class="app-header">
-                    <div class="header-logo-section">
-                        <button class="icon-btn" id="btn-sidebar-toggle" style="margin-right: 12px; color: var(--text-main);">
-                            <i data-lucide="menu"></i>
-                        </button>
-                        <img src="logo-dark.jpg" class="app-logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: 10px; margin-right: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                        <div class="header-titles">
-                            <h1 class="app-title">PMS</h1>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
-                                <span id="dashboard-current-date" style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">Loading Date...</span>
-                                <p class="app-tagline" id="live-clock">--:--:--</p>
+                    <!-- Row 1: Brand + Avatar -->
+                    <div class="app-header-row1">
+                        <!-- Left: Hamburger + Logo + Brand -->
+                        <div class="app-header-brand">
+                            <button class="icon-btn header-menu-btn" id="btn-sidebar-toggle" title="Menu">
+                                <i data-lucide="menu"></i>
+                            </button>
+                            <img src="logo-dark.jpg" class="header-logo-img" alt="PMS Logo">
+                            <div class="header-brand-text">
+                                <h1 class="app-title">PMS</h1>
+                                <div class="header-datetime">
+                                    <span id="dashboard-current-date" class="header-date">--</span>
+                                    <span id="live-clock" class="header-clock">--:--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Action chips + Avatar -->
+                        <div class="app-header-right">
+                            <!-- Action buttons — shown inline on desktop, hidden on mobile (moved to row 2) -->
+                            <div class="header-action-chips" id="header-action-chips">
+                                <button class="header-chip" id="btn-global-refresh" title="Refresh Data">
+                                    <i data-lucide="refresh-cw"></i>
+                                </button>
+                                <button class="header-chip" id="btn-privacy-toggle" title="Privacy Mode">
+                                    <i data-lucide="eye" id="privacy-eye-icon"></i>
+                                </button>
+                                <button class="header-chip" id="btn-global-export-pdf" title="Export PDF">
+                                    <i data-lucide="download"></i>
+                                </button>
+                                <button class="theme-slider-btn" id="btn-toggle-theme-desktop" aria-label="Toggle theme" title="Toggle Theme">
+                                    <div class="theme-slider-thumb"></div>
+                                    <i data-lucide="sun" class="slider-icon slider-sun"></i>
+                                    <i data-lucide="moon" class="slider-icon slider-moon"></i>
+                                </button>
+                            </div>
+
+                            <!-- Avatar — always visible -->
+                            <button class="header-avatar-btn" id="btn-profile-dropdown" title="Profile">
+                                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Avatar" id="header-avatar-img">
+                                <span class="header-avatar-ring"></span>
+                            </button>
+
+                            <!-- Profile Dropdown -->
+                            <div class="profile-dropdown" id="profile-dropdown-menu">
+                                <div class="dropdown-header">
+                                    <h4 id="dropdown-user-name">User Name</h4>
+                                    <span id="dropdown-user-email">user@example.com</span>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="btn-goto-settings">
+                                    <i data-lucide="user"></i> Profile &amp; Settings
+                                </button>
+                                <button class="dropdown-item" id="btn-dropdown-theme">
+                                    <i data-lucide="sun" id="dropdown-theme-icon"></i> <span id="dropdown-theme-text">Light Mode</span>
+                                </button>
+                                <button class="dropdown-item" id="btn-manual-install" style="color: #3b82f6;">
+                                    <i data-lucide="download"></i> Install App
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item text-danger" id="btn-sign-out">
+                                    <i data-lucide="log-out"></i> Sign Out
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="header-actions-row" style="display: flex; gap: 8px; position: relative;">
-                        <button class="icon-btn text-amber" id="btn-global-refresh" title="Refresh Data" style="background: rgba(245, 158, 11, 0.1);">
+
+                    <!-- Row 2: Quick-action bar (mobile only) -->
+                    <div class="app-header-row2" id="app-header-row2">
+                        <button class="header-quick-btn" id="btn-global-refresh-m" title="Refresh">
                             <i data-lucide="refresh-cw"></i>
+                            <span>Refresh</span>
                         </button>
-                        <button class="icon-btn text-amber" id="btn-privacy-toggle" title="Toggle Privacy Mode" style="background: rgba(245, 158, 11, 0.1);">
-                            <i data-lucide="eye" id="privacy-eye-icon"></i>
+                        <button class="header-quick-btn" id="btn-privacy-toggle-m" title="Privacy">
+                            <i data-lucide="eye" id="privacy-eye-icon-m"></i>
+                            <span>Privacy</span>
                         </button>
-                        <button class="icon-btn text-amber" id="btn-global-export-pdf" title="Export Global PDF Report" style="background: rgba(245, 158, 11, 0.1);">
+                        <button class="header-quick-btn" id="btn-global-export-pdf-m" title="Export">
                             <i data-lucide="download"></i>
+                            <span>Export</span>
                         </button>
-                        <button class="theme-slider-btn" id="btn-toggle-theme-desktop" aria-label="Toggle theme" title="Toggle Light/Dark Mode">
-                            <div class="theme-slider-thumb"></div>
-                            <i data-lucide="sun" class="slider-icon slider-sun"></i>
-                            <i data-lucide="moon" class="slider-icon slider-moon"></i>
+                        <button class="header-quick-btn" id="btn-toggle-theme-m" title="Theme">
+                            <i data-lucide="sun" id="theme-icon-m"></i>
+                            <span id="theme-label-m">Theme</span>
                         </button>
-                        <button class="avatar-btn" id="btn-profile-dropdown">
-                            <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Avatar" id="header-avatar-img">
-                        </button>
-                        
-                        <!-- Profile Dropdown -->
-                        <div class="profile-dropdown" id="profile-dropdown-menu">
-                            <div class="dropdown-header">
-                                <h4 id="dropdown-user-name">User Name</h4>
-                                <span id="dropdown-user-email">user@example.com</span>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" id="btn-goto-settings">
-                                <i data-lucide="user"></i> Profile & Settings
-                            </button>
-                            <button class="dropdown-item" id="btn-dropdown-theme">
-                                <i data-lucide="sun" id="dropdown-theme-icon"></i> <span id="dropdown-theme-text">Light Mode</span>
-                            </button>
-                            <button class="dropdown-item" id="btn-manual-install" style="color: #3b82f6;">
-                                <i data-lucide="download"></i> Install App
-                            </button>
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item text-danger" id="btn-sign-out">
-                                <i data-lucide="log-out"></i> Sign Out
-                            </button>
-                        </div>
                     </div>
                 </header>
     <div class="app-screens-wrapper">
@@ -1600,7 +1631,7 @@
     </div>
     
     <script src="auth.js?v=47" defer></script>
-    <script src="app.js?v=57" defer></script>
+    <script src="app.js?v=58" defer></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
