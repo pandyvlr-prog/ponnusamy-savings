@@ -192,6 +192,14 @@ body {
     position: relative;
     overflow: hidden;
     background-color: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.app-screens-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Screen Transitions - opacity only, NO transform (transform causes GPU layer promotion flicker on mobile) */
@@ -239,6 +247,8 @@ body {
     background: var(--bg-surface-glass);
     backdrop-filter: blur(var(--glass-blur));
     z-index: 100;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .header-logo-section {

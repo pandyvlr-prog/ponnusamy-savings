@@ -1,0 +1,110 @@
+            <!-- SCREEN: CALCULATOR -->
+            <section id="screen-calc" class="app-screen">
+                <header class="app-header" style="padding-bottom: 0; border-bottom: none;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="icon-btn" id="btn-back-to-dashboard-calc" style="background: var(--bg-surface);">
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+                        <h2 style="font-size: 1.25rem; font-weight: 700;">Calculator</h2>
+                    </div>
+                </header>
+                <div class="screen-content" style="padding-top: 10px; display: flex; justify-content: center;">
+                    <div class="calc-container" style="max-width: 400px; width: 100%;">
+                        <div class="calc-display-wrapper">
+                            <div class="calc-history" id="calc-history"></div>
+                            <input type="text" id="calc-display" class="calc-display" value="0" readonly>
+                        </div>
+                        <div class="calc-grid">
+                            <button class="calc-btn btn-op" data-action="clear">AC</button>
+                            <button class="calc-btn btn-op" data-action="backspace"><i data-lucide="delete"></i></button>
+                            <button class="calc-btn btn-op" data-action="percent">%</button>
+                            <button class="calc-btn btn-op" data-action="divide">÷</button>
+                            
+                            <button class="calc-btn btn-num" data-num="7">7</button>
+                            <button class="calc-btn btn-num" data-num="8">8</button>
+                            <button class="calc-btn btn-num" data-num="9">9</button>
+                            <button class="calc-btn btn-op" data-action="multiply">×</button>
+                            
+                            <button class="calc-btn btn-num" data-num="4">4</button>
+                            <button class="calc-btn btn-num" data-num="5">5</button>
+                            <button class="calc-btn btn-num" data-num="6">6</button>
+                            <button class="calc-btn btn-op" data-action="subtract">-</button>
+                            
+                            <button class="calc-btn btn-num" data-num="1">1</button>
+                            <button class="calc-btn btn-num" data-num="2">2</button>
+                            <button class="calc-btn btn-num" data-num="3">3</button>
+                            <button class="calc-btn btn-op" data-action="add">+</button>
+                            
+                            <button class="calc-btn btn-num" data-num="00">00</button>
+                            <button class="calc-btn btn-num" data-num="0">0</button>
+                            <button class="calc-btn btn-num" data-action="decimal">.</button>
+                            <button class="calc-btn btn-equal" data-action="calculate">=</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN: NOTEPAD -->
+            <section id="screen-notes" class="app-screen">
+                <header class="app-header" style="padding-bottom: 0; border-bottom: none;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="icon-btn" id="btn-back-to-dashboard-notes" style="background: var(--bg-surface);">
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+                        <h2 style="font-size: 1.25rem; font-weight: 700;">Google Keep Notes</h2>
+                    </div>
+                </header>
+                <div class="screen-content" style="padding-top: 10px;">
+                    <!-- Notes List View -->
+                    <div id="notes-list-view" class="notes-view-container active">
+                        <div id="notes-grid" class="notes-grid">
+                            <!-- Note cards will be injected here -->
+                        </div>
+                        <button id="btn-add-note" class="fab-btn" title="Create New Note">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+
+                    <!-- Note Editor View -->
+                    <div id="note-editor-view" class="notes-view-container" style="display: none;">
+                        <div class="notepad-toolbar">
+                            <button id="btn-back-notes" class="icon-btn text-muted" title="Back to Notes"><i data-lucide="arrow-left"></i></button>
+                            <input type="text" id="notepad-title" class="notepad-title-input" placeholder="Note Title...">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span class="notepad-status" id="notepad-status">Saved</span>
+                                <button id="btn-delete-note" class="icon-btn text-danger" title="Delete Note"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+                            </div>
+                        </div>
+                        <textarea id="notepad-textarea" class="notepad-textarea" placeholder="Start typing..."></textarea>
+                        <div class="notepad-footer">
+                            <span id="notepad-date-display" class="notepad-date">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- SIDEBAR MENU -->
+    <div id="sidebar-overlay" class="sidebar-overlay" style="display: none;"></div>
+    <div id="sidebar-menu" class="sidebar-menu">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">Menu</h3>
+            <button class="icon-btn" id="btn-sidebar-close"><i data-lucide="x"></i></button>
+        </div>
+        <div class="sidebar-content">
+            <a href="#" class="sidebar-link active" data-target="screen-dashboard">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-link" data-target="screen-calc">
+                <i data-lucide="calculator"></i> Calculator
+            </a>
+            <a href="#" class="sidebar-link" data-target="screen-notes">
+                <i data-lucide="file-text"></i> Notepad
+            </a>
+            <a href="#" class="sidebar-link" data-target="screen-settings">
+                <i data-lucide="settings"></i> Settings
+            </a>
+        </div>
+    </div>

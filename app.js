@@ -6733,27 +6733,15 @@ function initSidebar() {
     // --- Notepad Logic ---
     const notesListView = document.getElementById('notes-list-view');
     const noteEditorView = document.getElementById('note-editor-view');
-    const btnAddNote = document.getElementById('btn-add-note');
+    const btnAddNote = document.getElementById('btn-notepad-add');
     const btnBackNotes = document.getElementById('btn-back-notes');
-    const btnBackDashboardNotes = document.getElementById('btn-back-to-dashboard-notes');
-    const btnBackDashboardCalc = document.getElementById('btn-back-to-dashboard-calc');
     const notesGrid = document.getElementById('notes-grid');
-
-    if(btnBackDashboardNotes) {
-        btnBackDashboardNotes.addEventListener('click', () => {
-            switchView('screen-dashboard');
-        });
-    }
-    if(btnBackDashboardCalc) {
-        btnBackDashboardCalc.addEventListener('click', () => {
-            switchView('screen-dashboard');
-        });
-    }
-    const btnDeleteNote = document.getElementById('btn-delete-note');
+    const btnDeleteNote = document.getElementById('btn-notepad-delete');
     const notepadTitle = document.getElementById('notepad-title');
     const notepadTextarea = document.getElementById('notepad-textarea');
     const notepadStatus = document.getElementById('notepad-status');
     const notepadDateDisplay = document.getElementById('notepad-date-display');
+    const notepadColorPicker = document.getElementById('notepad-color-picker');
 
     let currentNotes = [];
     let activeNoteId = null;
@@ -6773,54 +6761,34 @@ function initSidebar() {
                 const parsed = JSON.parse(rawData);
                 if (Array.isArray(parsed)) {
                     currentNotes = parsed;
-                } else {
-                    // Migrate old single string note to new format
-                    currentNotes = [{
-                        id: 'note_' + Date.now(),
-                        title: 'Migrated Note',
-                        content: String(rawData),
-                        date: new Date().toISOString()
-                    }];
                 }
             } catch (e) {
-                // If it's not JSON, it was a plain string from the previous version
-                currentNotes = [{
-                    id: 'note_' + Date.now(),
-                    title: 'My First Note',
-                    content: String(rawData),
-                    date: new Date().toISOString()
-                }];
+                console.error("Error parsing notepad data:", e);
             }
         }
         
-        // Sort notes by date descending
-        currentNotes.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderNotesList();
     }
 
     function renderNotesList() {
         notesGrid.innerHTML = '';
-        if (currentNotes.length === 0) {
-            notesGrid.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 40px 20px; font-size: 0.9rem;">No notes yet. Click the + icon to create one!</div>';
-            return;
-        }
-
         currentNotes.forEach(note => {
             const card = document.createElement('div');
             card.className = 'note-card';
+            card.style.backgroundColor = note.color || 'var(--bg-surface-elevated)';
             
-            const titleEl = document.createElement('div');
-            titleEl.className = 'note-card-title';
+            const titleEl = document.createElement('h4');
             titleEl.textContent = note.title || 'Untitled Note';
             
-            const snippetEl = document.createElement('div');
-            snippetEl.className = 'note-card-snippet';
-            snippetEl.textContent = note.content || 'No content...';
+            const snippetEl = document.createElement('p');
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = note.content || '';
+            snippetEl.textContent = tempDiv.textContent || '...';
             
-            const dateEl = document.createElement('div');
-            dateEl.className = 'note-card-date';
-            const noteDate = new Date(note.date);
-            dateEl.textContent = noteDate.toLocaleDateString() + ' ' + noteDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const dateEl = document.createElement('span');
+            dateEl.className = 'note-date';
+            const d = new Date(note.date);
+            dateEl.textContent = `${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
 
             card.appendChild(titleEl);
             card.appendChild(snippetEl);
@@ -6837,7 +6805,9 @@ function initSidebar() {
         
         if (note) {
             notepadTitle.value = note.title || '';
-            notepadTextarea.value = note.content || '';
+            notepadTextarea.innerHTML = note.content || '';
+            notepadColorPicker.value = note.color || '#ffffff';
+            noteEditorView.style.backgroundColor = note.color || 'var(--bg-surface)';
             const d = new Date(note.date);
             notepadDateDisplay.textContent = `Last edited: ${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
         }
@@ -6845,9 +6815,6 @@ function initSidebar() {
         notepadStatus.textContent = '';
         notesListView.style.display = 'none';
         noteEditorView.style.display = 'flex';
-        
-        // Re-initialize lucide icons for the editor if needed
-        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     function closeNoteEditor() {
@@ -6861,35 +6828,31 @@ function initSidebar() {
     }
 
     function saveNotesState() {
-        notepadStatus.textContent = 'Saving...';
-        clearTimeout(saveTimeout);
+        const payload = JSON.stringify(currentNotes);
+        localStorage.setItem('pms_workspace_notepad', payload);
         
-        saveTimeout = setTimeout(async () => {
-            const notesStr = JSON.stringify(currentNotes);
-            localStorage.setItem('pms_workspace_notepad', notesStr);
-            
-            if (window.supabaseClient && window.AuthState?.isAuthenticated) {
-                try {
-                    const { error } = await window.supabaseClient.auth.updateUser({
-                        data: { notepad_content: notesStr }
-                    });
-                    if (error) throw error;
-                    notepadStatus.textContent = 'Saved to Cloud';
-                    window.AuthState.currentUser.user_metadata.notepad_content = notesStr;
-                } catch (e) {
-                    console.error("Cloud sync failed:", e);
-                    notepadStatus.textContent = 'Saved Locally (Cloud Failed)';
-                }
-            } else {
-                notepadStatus.textContent = 'Saved Locally';
-            }
+        // Optimistic save to cloud if authenticated
+        if (window.AuthState?.currentUser && typeof updateProfileData === 'function') {
+            updateProfileData({ notepad_content: payload })
+                .catch(err => console.error("Cloud note save failed", err));
+        }
+
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            notepadStatus.textContent = 'Saving...';
             
             setTimeout(() => {
-                if (notepadStatus.textContent.includes('Saved')) {
-                    notepadStatus.textContent = '';
+                if (activeNoteId) {
+                    notepadStatus.textContent = 'Saved';
                 }
-            }, 3000);
-        }, 1000);
+                
+                setTimeout(() => {
+                    if (notepadStatus.textContent.includes('Saved')) {
+                        notepadStatus.textContent = '';
+                    }
+                }, 3000);
+            }, 1000);
+        }, 500);
     }
 
     function handleEditorInput() {
@@ -6897,7 +6860,9 @@ function initSidebar() {
         const noteIndex = currentNotes.findIndex(n => n.id === activeNoteId);
         if (noteIndex > -1) {
             currentNotes[noteIndex].title = notepadTitle.value;
-            currentNotes[noteIndex].content = notepadTextarea.value;
+            currentNotes[noteIndex].content = notepadTextarea.innerHTML;
+            currentNotes[noteIndex].color = notepadColorPicker.value;
+            noteEditorView.style.backgroundColor = notepadColorPicker.value;
             currentNotes[noteIndex].date = new Date().toISOString();
             
             const d = new Date();
@@ -6913,12 +6878,12 @@ function initSidebar() {
             id: 'note_' + Date.now() + '_' + Math.floor(Math.random()*1000),
             title: '',
             content: '',
+            color: '#ffffff',
             date: new Date().toISOString()
         };
         currentNotes.push(newNote);
         saveNotesState();
         openNoteEditor(newNote.id);
-        notepadTitle.focus();
     });
 
     btnBackNotes.addEventListener('click', closeNoteEditor);
@@ -6933,8 +6898,22 @@ function initSidebar() {
         }
     });
 
+    // Rich Text Toolbar
+    document.querySelectorAll('.rt-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const cmd = btn.getAttribute('data-cmd');
+            document.execCommand(cmd, false, null);
+            notepadTextarea.focus();
+            handleEditorInput();
+        });
+    });
+
     notepadTitle.addEventListener('input', handleEditorInput);
     notepadTextarea.addEventListener('input', handleEditorInput);
+    if(notepadColorPicker) {
+        notepadColorPicker.addEventListener('input', handleEditorInput);
+    }
 
     // Initial Load
     setTimeout(loadNotes, 500);
