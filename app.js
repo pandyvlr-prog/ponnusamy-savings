@@ -767,8 +767,8 @@ function updateStatusBarClock() {
     const dateEl = document.getElementById('dashboard-current-date');
     if (dateEl) {
         const now = new Date();
-        const daysList = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const daysList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         
         const dayName = daysList[now.getDay()];
         const dateDay = now.getDate();
