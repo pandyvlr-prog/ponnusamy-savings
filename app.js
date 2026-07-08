@@ -3079,9 +3079,9 @@ function renderDashboard() {
 
     function renderWizardStep2() {
         showWizardStep(2);
-        document.getElementById('wizard-title').textContent = 'Select Amount';
+        document.getElementById('wizard-title').textContent = 'Select Duration';
         
-        const chipsContainer = document.getElementById('wizard-amount-chips');
+        const chipsContainer = document.getElementById('wizard-duration-chips');
         if (!chipsContainer) return;
         chipsContainer.innerHTML = '';
         
@@ -3097,50 +3097,12 @@ function renderDashboard() {
             return;
         }
         
-        const amounts = new Set();
-        matchedGroups.forEach(g => {
-            amounts.add(extractNumericAmount(g));
-        });
-        
-        // Sort amounts
-        const sortedAmounts = Array.from(amounts).sort((a,b) => a - b);
-        
-        sortedAmounts.forEach(amt => {
-            const chip = document.createElement('button');
-            chip.className = 'wizard-chip';
-            chip.textContent = formatAmount(amt);
-            chip.onclick = () => {
-                wizardState.amount = amt;
-                renderWizardStep3();
-            };
-            chipsContainer.appendChild(chip);
-        });
-    }
-
-    function renderWizardStep3() {
-        showWizardStep(3);
-        document.getElementById('wizard-title').textContent = 'Select Duration';
-        
-        const chipsContainer = document.getElementById('wizard-duration-chips');
-        if (!chipsContainer) return;
-        chipsContainer.innerHTML = '';
-        
-        // Filter groups
-        const matchedGroups = State.groups.filter(g => {
-            const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
-            const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
-            const amt = extractNumericAmount(g);
-            return y === wizardState.year && m === wizardState.month && amt === wizardState.amount;
-        });
-        
-        if (matchedGroups.length === 0) {
-            chipsContainer.innerHTML = '<p style="color: var(--text-secondary);">No durations found. Please go back.</p>';
-            return;
-        }
-
         const durations = new Set();
-        matchedGroups.forEach(g => durations.add(extractNumericDuration(g)));
+        matchedGroups.forEach(g => {
+            durations.add(extractNumericDuration(g));
+        });
         
+        // Sort durations
         const sortedDurations = Array.from(durations).sort((a,b) => a - b);
         
         sortedDurations.forEach(dur => {
@@ -3149,6 +3111,44 @@ function renderDashboard() {
             chip.textContent = `${dur} Months`;
             chip.onclick = () => {
                 wizardState.duration = dur;
+                renderWizardStep3();
+            };
+            chipsContainer.appendChild(chip);
+        });
+    }
+
+    function renderWizardStep3() {
+        showWizardStep(3);
+        document.getElementById('wizard-title').textContent = 'Select Scheme Amount';
+        
+        const chipsContainer = document.getElementById('wizard-amount-chips');
+        if (!chipsContainer) return;
+        chipsContainer.innerHTML = '';
+        
+        // Filter groups for chosen year, month, and duration
+        const matchedGroups = State.groups.filter(g => {
+            const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+            const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+            const dur = extractNumericDuration(g);
+            return y === wizardState.year && m === wizardState.month && dur === wizardState.duration;
+        });
+        
+        if (matchedGroups.length === 0) {
+            chipsContainer.innerHTML = '<p style="color: var(--text-secondary);">No amounts found. Please go back.</p>';
+            return;
+        }
+
+        const amounts = new Set();
+        matchedGroups.forEach(g => amounts.add(extractNumericAmount(g)));
+        
+        const sortedAmounts = Array.from(amounts).sort((a,b) => a - b);
+        
+        sortedAmounts.forEach(amt => {
+            const chip = document.createElement('button');
+            chip.className = 'wizard-chip';
+            chip.textContent = formatAmount(amt);
+            chip.onclick = () => {
+                wizardState.amount = amt;
                 renderWizardStep4();
             };
             chipsContainer.appendChild(chip);
