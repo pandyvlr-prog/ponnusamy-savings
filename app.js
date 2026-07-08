@@ -2065,8 +2065,8 @@ function setupEventListeners() {
                 globalDaySelect.value = dayValue;
             }
             
-            const activeFilterPill = document.querySelector('#dashboard-filter-pills .filter-pill.active');
-            const activeFilter = activeFilterPill ? activeFilterPill.dataset.filter : 'all';
+            const tagFilterEl = document.getElementById('dashboard-tag-filter');
+            const activeFilter = tagFilterEl ? tagFilterEl.value : 'all';
             
             if (activeFilter === 'chit_taken') {
                 generateChitTakenPdfReport(monthKey, mode);
