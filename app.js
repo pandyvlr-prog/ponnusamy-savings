@@ -3014,9 +3014,24 @@ function renderDashboard() {
     }
 
     function formatAmount(num) {
+        if (isNaN(num)) return "0";
         if (num >= 100000) return (num / 100000) + 'L';
         if (num >= 1000) return (num / 1000) + 'K';
         return num.toString();
+    }
+
+    function extractNumericAmount(g) {
+        let raw = g.chitAmount || g.amount || (g.monthlyInstallment ? parseFloat(g.monthlyInstallment) * parseInt(g.duration) : 0);
+        if (typeof raw === 'string') {
+            raw = parseFloat(raw.replace(/,/g, '').replace(/[^0-9.]/g, ''));
+        }
+        return isNaN(raw) ? 0 : raw;
+    }
+
+    function extractNumericDuration(g) {
+        let raw = g.duration;
+        if (typeof raw === 'string') raw = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+        return isNaN(raw) ? 12 : raw;
     }
 
     function renderWizardStep1() {
@@ -3076,11 +3091,15 @@ function renderDashboard() {
             const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
             return y === wizardState.year && m === wizardState.month;
         });
+
+        if (matchedGroups.length === 0) {
+            chipsContainer.innerHTML = '<p style="color: var(--text-secondary);">No groups found. Please go back.</p>';
+            return;
+        }
         
         const amounts = new Set();
         matchedGroups.forEach(g => {
-            const amt = g.chitAmount || g.amount || (g.monthlyInstallment ? g.monthlyInstallment * g.duration : 0);
-            amounts.add(amt);
+            amounts.add(extractNumericAmount(g));
         });
         
         // Sort amounts
@@ -3110,12 +3129,17 @@ function renderDashboard() {
         const matchedGroups = State.groups.filter(g => {
             const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
             const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
-            const amt = g.chitAmount || g.amount || (g.monthlyInstallment ? g.monthlyInstallment * g.duration : 0);
+            const amt = extractNumericAmount(g);
             return y === wizardState.year && m === wizardState.month && amt === wizardState.amount;
         });
         
+        if (matchedGroups.length === 0) {
+            chipsContainer.innerHTML = '<p style="color: var(--text-secondary);">No durations found. Please go back.</p>';
+            return;
+        }
+
         const durations = new Set();
-        matchedGroups.forEach(g => durations.add(g.duration));
+        matchedGroups.forEach(g => durations.add(extractNumericDuration(g)));
         
         const sortedDurations = Array.from(durations).sort((a,b) => a - b);
         
@@ -3414,12 +3438,13 @@ function renderDashboardGroupsList(filterConfig = null) {
             groupsToRender = groupsToRender.filter(g => {
                 const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
                 const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
-                const amt = g.chitAmount || g.amount || (g.monthlyInstallment ? g.monthlyInstallment * g.duration : 0);
+                const amt = extractNumericAmount(g);
+                const dur = extractNumericDuration(g);
                 
                 return y === filterConfig.year && 
                        m === filterConfig.month && 
                        amt === filterConfig.amount && 
-                       g.duration === filterConfig.duration;
+                       dur === filterConfig.duration;
             });
         }
 

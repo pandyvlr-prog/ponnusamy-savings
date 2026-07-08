@@ -4106,7 +4106,7 @@ body:not([data-theme="light"]) .icon-blend-img {
 .wizard-month-card.disabled {
     opacity: 0.4;
     pointer-events: none;
-    filter: grayscale(1);
+    
 }
 .wizard-month-top {
     background-color: #dc2626; /* Red top like calendar icon */
