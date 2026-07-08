@@ -2983,14 +2983,176 @@ function renderDashboard() {
         }
     }
 
-    // Modal life cycles for Groups view
+    // Modal life cycles for Groups view WIZARD
     const toggleToGroupsBtn = document.getElementById('btn-toggle-to-groups');
     const groupsModal = document.getElementById('groups-list-modal-backdrop');
     const closeGroupsModalBtn = document.getElementById('btn-close-groups-modal');
 
+    // Wizard state
+    let wizardState = {
+        year: new Date().getFullYear(),
+        month: null,
+        amount: null,
+        duration: null
+    };
+
+    function showWizardStep(stepNum) {
+        document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active-step'));
+        document.getElementById(`wizard-step-${stepNum}`).classList.add('active-step');
+        
+        const backBtn = document.getElementById('btn-wizard-back');
+        if (stepNum > 1) {
+            backBtn.style.display = 'block';
+            backBtn.onclick = () => {
+                if (stepNum === 2) renderWizardStep1();
+                else if (stepNum === 3) renderWizardStep2();
+                else if (stepNum === 4) renderWizardStep3();
+            };
+        } else {
+            backBtn.style.display = 'none';
+        }
+    }
+
+    function formatAmount(num) {
+        if (num >= 100000) return (num / 100000) + 'L';
+        if (num >= 1000) return (num / 1000) + 'K';
+        return num.toString();
+    }
+
+    function renderWizardStep1() {
+        showWizardStep(1);
+        document.getElementById('wizard-title').textContent = 'Select Month';
+        document.getElementById('wizard-year-display').textContent = wizardState.year;
+        
+        const grid = document.getElementById('wizard-calendar-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        
+        const mNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        
+        // Find which months have groups for the selected year
+        const activeMonths = new Set();
+        State.groups.forEach(g => {
+            const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+            const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+            if (y === wizardState.year) {
+                activeMonths.add(m);
+            }
+        });
+        
+        mNames.forEach((monthName, idx) => {
+            const card = document.createElement('div');
+            card.className = 'wizard-month-card';
+            if (!activeMonths.has(idx)) {
+                card.classList.add('disabled');
+            }
+            
+            card.innerHTML = `
+                <div class="wizard-month-top">${wizardState.year}</div>
+                <div class="wizard-month-body">${monthName}</div>
+            `;
+            
+            card.onclick = () => {
+                if (activeMonths.has(idx)) {
+                    wizardState.month = idx;
+                    renderWizardStep2();
+                }
+            };
+            grid.appendChild(card);
+        });
+    }
+
+    function renderWizardStep2() {
+        showWizardStep(2);
+        document.getElementById('wizard-title').textContent = 'Select Amount';
+        
+        const chipsContainer = document.getElementById('wizard-amount-chips');
+        if (!chipsContainer) return;
+        chipsContainer.innerHTML = '';
+        
+        // Filter groups for chosen year and month
+        const matchedGroups = State.groups.filter(g => {
+            const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+            const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+            return y === wizardState.year && m === wizardState.month;
+        });
+        
+        const amounts = new Set();
+        matchedGroups.forEach(g => {
+            const amt = g.chitAmount || g.amount || (g.monthlyInstallment ? g.monthlyInstallment * g.duration : 0);
+            amounts.add(amt);
+        });
+        
+        // Sort amounts
+        const sortedAmounts = Array.from(amounts).sort((a,b) => a - b);
+        
+        sortedAmounts.forEach(amt => {
+            const chip = document.createElement('button');
+            chip.className = 'wizard-chip';
+            chip.textContent = formatAmount(amt);
+            chip.onclick = () => {
+                wizardState.amount = amt;
+                renderWizardStep3();
+            };
+            chipsContainer.appendChild(chip);
+        });
+    }
+
+    function renderWizardStep3() {
+        showWizardStep(3);
+        document.getElementById('wizard-title').textContent = 'Select Duration';
+        
+        const chipsContainer = document.getElementById('wizard-duration-chips');
+        if (!chipsContainer) return;
+        chipsContainer.innerHTML = '';
+        
+        // Filter groups
+        const matchedGroups = State.groups.filter(g => {
+            const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+            const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+            const amt = g.chitAmount || g.amount || (g.monthlyInstallment ? g.monthlyInstallment * g.duration : 0);
+            return y === wizardState.year && m === wizardState.month && amt === wizardState.amount;
+        });
+        
+        const durations = new Set();
+        matchedGroups.forEach(g => durations.add(g.duration));
+        
+        const sortedDurations = Array.from(durations).sort((a,b) => a - b);
+        
+        sortedDurations.forEach(dur => {
+            const chip = document.createElement('button');
+            chip.className = 'wizard-chip';
+            chip.textContent = `${dur} Months`;
+            chip.onclick = () => {
+                wizardState.duration = dur;
+                renderWizardStep4();
+            };
+            chipsContainer.appendChild(chip);
+        });
+    }
+
+    function renderWizardStep4() {
+        showWizardStep(4);
+        document.getElementById('wizard-title').textContent = 'Matched Groups';
+        
+        // Use existing render logic but with filter
+        renderDashboardGroupsList({
+            year: wizardState.year,
+            month: wizardState.month,
+            amount: wizardState.amount,
+            duration: wizardState.duration
+        });
+    }
+
+    const yearPrevBtn = document.getElementById('wizard-year-prev');
+    const yearNextBtn = document.getElementById('wizard-year-next');
+    if (yearPrevBtn) yearPrevBtn.addEventListener('click', () => { wizardState.year--; renderWizardStep1(); });
+    if (yearNextBtn) yearNextBtn.addEventListener('click', () => { wizardState.year++; renderWizardStep1(); });
+
     if (toggleToGroupsBtn && groupsModal) {
         toggleToGroupsBtn.onclick = () => {
-            renderDashboardGroupsList();
+            wizardState.year = new Date().getFullYear();
+            renderWizardStep1();
             groupsModal.classList.add('active');
         };
     }
@@ -3240,30 +3402,49 @@ function renderDashboard() {
     renderDashboardMembersList(searchVal);
 }
 
-function renderDashboardGroupsList() {
-    const container = document.getElementById('group-list-container');
-    container.innerHTML = '';
-    
-    const countBadge = document.getElementById('modal-total-groups-count');
-    if (countBadge) {
-        countBadge.textContent = State.groups.length;
-    }
-    
-    if (State.groups.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state" style="padding: 20px;">
-                <h3>No Chit Groups Yet</h3>
-                <p>Click "+" below to create your first savings group.</p>
-            </div>
-        `;
-        return;
-    }
-    
-    // Sort groups chronologically (May 2026, Jun 2026, etc)
-    const sortedGroups = [...State.groups].sort((a, b) => {
-        if (a.startYear !== b.startYear) return a.startYear - b.startYear;
-        return a.startMonth - b.startMonth;
-    });
+function renderDashboardGroupsList(filterConfig = null) {
+        const container = document.getElementById('group-list-container');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        let groupsToRender = [...State.groups];
+
+        // If filterConfig is provided, apply the wizard filters
+        if (filterConfig) {
+            groupsToRender = groupsToRender.filter(g => {
+                const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+                const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+                const amt = g.chitAmount || g.amount || (g.monthlyInstallment ? g.monthlyInstallment * g.duration : 0);
+                
+                return y === filterConfig.year && 
+                       m === filterConfig.month && 
+                       amt === filterConfig.amount && 
+                       g.duration === filterConfig.duration;
+            });
+        }
+
+        const countBadge = document.getElementById('modal-total-groups-count');
+        if (countBadge) {
+            countBadge.textContent = groupsToRender.length;
+            // Update title based on whether it's all groups or filtered
+            document.getElementById('wizard-title').innerHTML = filterConfig ? `Groups (${groupsToRender.length})` : `Chit Groups`;
+        }
+        
+        if (groupsToRender.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 20px;">
+                    <h3>No Chit Groups Found</h3>
+                    <p>No groups match your selection.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort groups chronologically
+        const sortedGroups = groupsToRender.sort((a, b) => {
+            if (a.startYear !== b.startYear) return a.startYear - b.startYear;
+            return a.startMonth - b.startMonth;
+        });
 
     const boxColors = [
         { border: '#3b82f6', bg: 'rgba(59,130,246,0.07)' },

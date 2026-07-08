@@ -4060,3 +4060,98 @@ body:not([data-theme="light"]) .icon-blend-img {
 .notepad-wa-btn:active {
     transform: scale(0.96);
 }
+
+/* ── Chit Groups Wizard ────────────────── */
+.wizard-step {
+    display: none;
+    animation: fadeIn 0.2s ease;
+}
+.wizard-step.active-step {
+    display: block;
+}
+.wizard-year-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.wizard-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 0 10px 10px;
+}
+@media (max-width: 500px) {
+    .wizard-calendar-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+.wizard-month-card {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+.wizard-month-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.wizard-month-card.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+.wizard-month-top {
+    background-color: #dc2626; /* Red top like calendar icon */
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.wizard-month-body {
+    padding: 10px 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+    background-color: white;
+}
+[data-theme="dark"] .wizard-month-body {
+    background-color: #1e293b;
+    color: #f1f5f9;
+}
+
+.wizard-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px;
+}
+.wizard-chip {
+    padding: 10px 24px;
+    border-radius: 12px;
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.15s, background 0.15s;
+    font-family: 'Inter', sans-serif;
+}
+.wizard-chip:hover {
+    transform: translateY(-2px);
+    background: var(--bg-surface-glass);
+    border-color: var(--primary);
+    color: var(--primary);
+}

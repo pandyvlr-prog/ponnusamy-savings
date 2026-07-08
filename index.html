@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=60">
+    <link rel="stylesheet" href="style.css?v=61">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -479,19 +479,57 @@
                         </div>
                     </div>
 
-                    <!-- Groups Drawer Backdrop (Modal to view groups list) -->
+                    <!-- Groups Drawer Backdrop (Modal to view groups list wizard) -->
                     <div class="modal-backdrop" id="groups-list-modal-backdrop">
                         <div class="simple-modal" style="width: calc(100% - 40px); max-width: 600px; margin: auto;">
                             <div class="modal-header">
-                                <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">Chit Groups <span id="modal-total-groups-count" style="font-size: 0.75rem; background-color: var(--primary); color: white; padding: 2px 8px; border-radius: 12px;">0</span></h3>
+                                <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                                    <button class="icon-btn" id="btn-wizard-back" type="button" style="display: none;">
+                                        <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
+                                    </button>
+                                    <span id="wizard-title">Chit Groups</span>
+                                </h3>
                                 <button class="icon-btn" id="btn-close-groups-modal" type="button">
                                     <i data-lucide="x"></i>
                                 </button>
                             </div>
-                            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
-                                <div class="group-list" id="group-list-container">
-                                    <!-- Dynamic group lists -->
+                            <div class="modal-body" style="max-height: 450px; overflow-y: auto;">
+                                
+                                <!-- Step 1: Calendar View -->
+                                <div id="wizard-step-1" class="wizard-step active-step">
+                                    <div class="wizard-year-header">
+                                        <button class="icon-btn" id="wizard-year-prev"><i data-lucide="chevron-left"></i></button>
+                                        <h3 id="wizard-year-display" style="color: #dc2626; font-size: 1.5rem; font-weight: 800; font-family: var(--font-heading);">2026</h3>
+                                        <button class="icon-btn" id="wizard-year-next"><i data-lucide="chevron-right"></i></button>
+                                    </div>
+                                    <div class="wizard-calendar-grid" id="wizard-calendar-grid">
+                                        <!-- Months injected via JS -->
+                                    </div>
                                 </div>
+
+                                <!-- Step 2: Amount View -->
+                                <div id="wizard-step-2" class="wizard-step" style="display: none;">
+                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Total Scheme Amount</h4>
+                                    <div class="wizard-chips-container" id="wizard-amount-chips">
+                                        <!-- Amounts injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Duration View -->
+                                <div id="wizard-step-3" class="wizard-step" style="display: none;">
+                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Duration</h4>
+                                    <div class="wizard-chips-container" id="wizard-duration-chips">
+                                        <!-- Durations injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 4: Group List View -->
+                                <div id="wizard-step-4" class="wizard-step" style="display: none;">
+                                    <div class="group-list" id="group-list-container">
+                                        <!-- Dynamic group lists -->
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -1631,7 +1669,7 @@
     </div>
     
     <script src="auth.js?v=47" defer></script>
-    <script src="app.js?v=59" defer></script>
+    <script src="app.js?v=60" defer></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
