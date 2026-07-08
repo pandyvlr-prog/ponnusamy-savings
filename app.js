@@ -3689,7 +3689,11 @@ function renderDashboardMembersList(searchQuery = '') {
                         if (tagSelect) tagSelect.value = item.value;
                         
                         const searchInput = document.getElementById('dashboard-member-search');
-                        if (searchInput) searchInput.value = name;
+                        if (searchInput) {
+                            searchInput.value = name;
+                            const btnClear = document.getElementById('btn-clear-dashboard-search');
+                            if (btnClear) btnClear.style.display = 'flex';
+                        }
                         
                         customFilterMenu.style.display = 'none';
                         renderDashboardMembersList(name.toLowerCase());
