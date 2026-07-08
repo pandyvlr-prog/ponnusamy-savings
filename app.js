@@ -38,8 +38,11 @@ window.parseInt = function(val, radix) {
 
 function formatNumberIndian(val) {
     if (val === undefined || val === null || val === '') return '';
-    const num = parseInt(val.toString().replace(/[^\d]/g, ''), 10);
-    return isNaN(num) ? '' : num.toLocaleString('en-IN');
+    const valStr = val.toString().trim();
+    const isNegative = valStr.startsWith('-');
+    const num = parseInt(valStr.replace(/[^\d]/g, ''), 10);
+    if (isNaN(num)) return '';
+    return isNegative ? '-' + num.toLocaleString('en-IN') : num.toLocaleString('en-IN');
 }
 
 function formatInputAsYouType(input) {
@@ -7462,7 +7465,20 @@ function renderPnLDashboard() {
     if (elPayout) elPayout.textContent = '₹' + formatNumberIndian(globalPayout);
     
     const elRealized = document.getElementById('pnl-global-realized');
-    if (elRealized) elRealized.textContent = '₹' + formatNumberIndian(globalNetProfit);
+    if (elRealized) {
+        elRealized.textContent = '₹' + formatNumberIndian(globalNetProfit);
+        if (globalNetProfit < 0) {
+            elRealized.classList.remove('text-green');
+            elRealized.style.color = 'var(--danger-main)';
+            elRealized.parentElement.classList.remove('highlight-green');
+            elRealized.parentElement.classList.add('highlight-red');
+        } else {
+            elRealized.classList.add('text-green');
+            elRealized.style.color = '';
+            elRealized.parentElement.classList.remove('highlight-red');
+            elRealized.parentElement.classList.add('highlight-green');
+        }
+    }
     
     const elPending = document.getElementById('pnl-global-pending');
     if (elPending) elPending.textContent = '₹' + formatNumberIndian(globalArrears);
