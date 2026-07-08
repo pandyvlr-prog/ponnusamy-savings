@@ -3045,9 +3045,22 @@ function renderDashboard() {
         
         const mNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         
+        // Find which months have groups for the selected year
+        const activeMonths = new Set();
+        State.groups.forEach(g => {
+            const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+            const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+            if (y === wizardState.year) {
+                activeMonths.add(m);
+            }
+        });
+        
         mNames.forEach((monthName, idx) => {
             const card = document.createElement('div');
             card.className = 'wizard-month-card';
+            if (!activeMonths.has(idx)) {
+                card.classList.add('disabled');
+            }
             
             card.innerHTML = `
                 <div class="wizard-month-top">${wizardState.year}</div>
@@ -3055,8 +3068,10 @@ function renderDashboard() {
             `;
             
             card.onclick = () => {
-                wizardState.month = idx;
-                renderWizardStep2();
+                if (activeMonths.has(idx)) {
+                    wizardState.month = idx;
+                    renderWizardStep2();
+                }
             };
             grid.appendChild(card);
         });
