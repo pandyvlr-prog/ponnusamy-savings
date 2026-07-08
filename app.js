@@ -777,6 +777,28 @@ function updateStatusBarClock() {
         
         dateEl.textContent = `${dayName}, ${dateDay} ${monthName} ${yearVal}`;
     }
+    
+    // Live clock replacing tagline
+    const clockEl = document.getElementById('live-clock');
+    if (clockEl && !window.liveClockInterval) {
+        const updateClock = () => {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let s = now.getSeconds();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            
+            h = h % 12;
+            h = h ? h : 12; // 0 should be 12
+            
+            m = m < 10 ? '0' + m : m;
+            s = s < 10 ? '0' + s : s;
+            
+            clockEl.textContent = `${h}:${m}:${s} ${ampm}`;
+        };
+        updateClock();
+        window.liveClockInterval = setInterval(updateClock, 1000);
+    }
 }
 
 // --- Theme Utility ---
