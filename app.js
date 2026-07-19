@@ -3655,6 +3655,7 @@ function renderDashboardMembersList(searchQuery = '') {
             let isFuture = false;
             let rangeTotalGpay = 0;
             let rangeTotalCash = 0;
+            let paymentNoteThisMonth = null;
 
             if (hasDateRange) {
                 for (let m = 1; m <= group.duration; m++) {
@@ -3670,6 +3671,10 @@ function renderDashboardMembersList(searchQuery = '') {
                             currentMonthPaid = true;
                             if (payment.method === 'gpay') rangeTotalGpay += instVal;
                             if (payment.method === 'cash') rangeTotalCash += instVal;
+                            if (payment.note) {
+                                if (!paymentNoteThisMonth) paymentNoteThisMonth = payment.note;
+                                else if (!paymentNoteThisMonth.includes(payment.note)) paymentNoteThisMonth += ' ' + payment.note;
+                            }
                         }
                     }
                 }
@@ -3788,7 +3793,6 @@ function renderDashboardMembersList(searchQuery = '') {
             }
 
             let paymentMethodThisMonth = null;
-            let paymentNoteThisMonth = null;
             if (hasDateRange) {
                 if (rangeTotalGpay > 0 && rangeTotalCash === 0) paymentMethodThisMonth = 'gpay';
                 else if (rangeTotalCash > 0 && rangeTotalGpay === 0) paymentMethodThisMonth = 'cash';
