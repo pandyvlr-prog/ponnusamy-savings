@@ -3635,6 +3635,10 @@ function renderDashboardMembersList(searchQuery = '') {
     const isAccumulated = selMonth === 'accumulated';
     const { year: targetYear, month: targetMonth } = getTargetCalendarYearMonth(selMonth);
 
+    const hasDateRange = State.dashboardDateRangeFrom && State.dashboardDateRangeTo;
+    const rangeFromTs = hasDateRange ? new Date(State.dashboardDateRangeFrom + 'T00:00:00').getTime() : 0;
+    const rangeToTs = hasDateRange ? new Date(State.dashboardDateRangeTo + 'T23:59:59').getTime() : 0;
+
     // Collect all members from all groups (e.g. if deviation in multiple groups, show double items)
     const allList = [];
     State.groups.forEach(group => {
@@ -3649,8 +3653,28 @@ function renderDashboardMembersList(searchQuery = '') {
             let displayPaidDate = '--';
             let isApplicable = true;
             let isFuture = false;
+            let rangeTotalGpay = 0;
+            let rangeTotalCash = 0;
 
-            if (isAccumulated) {
+            if (hasDateRange) {
+                for (let m = 1; m <= group.duration; m++) {
+                    const payment = member.payments[m];
+                    if (payment && payment.paid) {
+                        let payTs = null;
+                        if (payment.paidAt) {
+                            payTs = new Date(payment.paidAt).getTime();
+                        }
+                        if (payTs && payTs >= rangeFromTs && payTs <= rangeToTs) {
+                            const instVal = group.installments && group.installments[m] !== undefined ? group.installments[m] : group.monthlyInstallment;
+                            paidAmount += instVal;
+                            currentMonthPaid = true;
+                            if (payment.method === 'gpay') rangeTotalGpay += instVal;
+                            if (payment.method === 'cash') rangeTotalCash += instVal;
+                        }
+                    }
+                }
+                displayPaidDate = In Range;
+            } else if (isAccumulated) {
                 // Accumulative up to currentMonth
                 for (let m = 1; m <= group.duration; m++) {
                     if (m <= group.currentMonth) {
@@ -3765,7 +3789,11 @@ function renderDashboardMembersList(searchQuery = '') {
 
             let paymentMethodThisMonth = null;
             let paymentNoteThisMonth = null;
-            if (isAccumulated) {
+            if (hasDateRange) {
+                if (rangeTotalGpay > 0 && rangeTotalCash === 0) paymentMethodThisMonth = 'gpay';
+                else if (rangeTotalCash > 0 && rangeTotalGpay === 0) paymentMethodThisMonth = 'cash';
+                else if (rangeTotalGpay > 0 || rangeTotalCash > 0) paymentMethodThisMonth = 'mixed';
+            } else if (isAccumulated) {
                 const paymentObj = member.payments[group.currentMonth];
                 paymentMethodThisMonth = paymentObj && paymentObj.paid ? paymentObj.method : null;
                 paymentNoteThisMonth = paymentObj && paymentObj.paid ? paymentObj.note : null;
@@ -3811,7 +3839,9 @@ function renderDashboardMembersList(searchQuery = '') {
                 payoutDate,
                 payoutMonthNum,
                 paymentMethodThisMonth,
-                paymentNoteThisMonth
+                paymentNoteThisMonth,
+                rangeTotalGpay,
+                rangeTotalCash
             });
         });
     });
@@ -4139,9 +4169,9 @@ function renderDashboardMembersList(searchQuery = '') {
             } else if (State.dashboardFilter === 'new_customer') {
                 return item.member.customerType === 'New';
             } else if (State.dashboardFilter === 'gpay') {
-                return item.paymentMethodThisMonth === 'gpay';
+                return item.paymentMethodThisMonth === 'gpay' || item.paymentMethodThisMonth === 'mixed';
             } else if (State.dashboardFilter === 'cash') {
-                return item.paymentMethodThisMonth === 'cash';
+                return item.paymentMethodThisMonth === 'cash' || item.paymentMethodThisMonth === 'mixed';
             }
             return true;
         });
@@ -4490,9 +4520,23 @@ function renderDashboardMembersList(searchQuery = '') {
         if (hasActiveFilter && filteredList.length > 0) {
             let totalPaid = 0, totalGpay = 0, totalCash = 0;
             filteredList.forEach(item => {
-                totalPaid += item.paidAmount;
-                if (item.paymentMethodThisMonth === 'gpay') totalGpay += item.paidAmount;
-                if (item.paymentMethodThisMonth === 'cash') totalCash += item.paidAmount;
+                if (State.dashboardDateRangeFrom && State.dashboardDateRangeTo) {
+                    if (State.dashboardFilter === 'gpay') {
+                        totalPaid += item.rangeTotalGpay;
+                        totalGpay += item.rangeTotalGpay;
+                    } else if (State.dashboardFilter === 'cash') {
+                        totalPaid += item.rangeTotalCash;
+                        totalCash += item.rangeTotalCash;
+                    } else {
+                        totalPaid += item.paidAmount;
+                        totalGpay += item.rangeTotalGpay;
+                        totalCash += item.rangeTotalCash;
+                    }
+                } else {
+                    totalPaid += item.paidAmount;
+                    if (item.paymentMethodThisMonth === 'gpay') totalGpay += item.paidAmount;
+                    if (item.paymentMethodThisMonth === 'cash') totalCash += item.paidAmount;
+                }
             });
             summaryEl.style.display = 'flex';
             const countEl = document.getElementById('filter-summary-count');
