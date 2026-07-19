@@ -3630,7 +3630,7 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     left: 50%;
     transform: translateX(-50%) translateY(150%);
     width: 92%;
-    max-width: 420px;
+    max-width: 360px;
     background: linear-gradient(145deg, rgba(15,23,42,0.97) 0%, rgba(30,41,59,0.97) 100%);
     border: 1px solid rgba(99, 102, 241, 0.35);
     border-radius: 24px;
@@ -4154,7 +4154,7 @@ body:not([data-theme="light"]) .icon-blend-img {
 }
 .sidebar-content {
     flex: 1;
-    padding: 20px 0;
+    padding: 16px 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -5422,9 +5422,12 @@ body.hide-navigation .bottom-nav {
 .calc-premium-container {
     position: relative;
     width: 100%;
-    max-width: 420px;
+    max-width: 360px;
     border-radius: 32px;
     z-index: 1;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
 
 .calc-premium-glow {
@@ -5520,7 +5523,7 @@ body.hide-navigation .bottom-nav {
     color: var(--text-main);
     font-size: 1.45rem;
     font-weight: 500;
-    padding: 20px 0;
+    padding: 16px 0;
     border-radius: 16px;
     cursor: pointer;
     display: flex;
@@ -6012,6 +6015,8 @@ body.hide-navigation .bottom-nav {
 
 /* Calculator Modal */
 .calc-modal-overlay {
+    align-items: center;
+    justify-content: center;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.5);
@@ -6029,14 +6034,18 @@ body.hide-navigation .bottom-nav {
     opacity: 1;
     visibility: visible;
 }
+.calc-modal-overlay.show .calc-premium-container {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
 .calc-modal-close {
     position: absolute;
-    top: -40px; right: 0;
+    top: 20px; right: 20px; z-index: 10;
     background: transparent;
     border: none;
     color: #fff;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 50%;
     width: 32px; height: 32px;
     display: flex; align-items: center; justify-content: center;
