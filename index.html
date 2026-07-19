@@ -486,6 +486,12 @@
                                 <option value="current">Current Month</option>
                             </select>
                         </div>
+
+                        <!-- Dedicated Custom Date Range Button -->
+                        <button id="btn-open-date-range" title="Custom Date Range Filter" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
+                            <i data-lucide="calendar-range" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                            <span id="btn-date-range-label">Date Range</span>
+                        </button>
                     </div>
                     
                     <!-- Dashboard Filter Pills (Hidden, kept for JS reference counters) -->
@@ -1134,7 +1140,7 @@
         </div>
 
         <!-- DIALOG/MODAL: PAYMENT METHOD SELECTION -->
-        <div class="modal-backdrop" id="payment-method-modal-backdrop" style="z-index: 2000;">
+        <div class="modal-backdrop" id="payment-method-modal-backdrop" style="z-index: 20000000 !important;">
             <div class="payment-modal" style="max-width: 400px; padding: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="font-size: 1.2rem; color: var(--text-main); margin: 0;">Select Payment Method</h3>
