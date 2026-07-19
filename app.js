@@ -3673,7 +3673,7 @@ function renderDashboardMembersList(searchQuery = '') {
                         }
                     }
                 }
-                displayPaidDate = In Range;
+                displayPaidDate = 'In Range';
             } else if (isAccumulated) {
                 // Accumulative up to currentMonth
                 for (let m = 1; m <= group.duration; m++) {
