@@ -4476,9 +4476,7 @@ body:not([data-theme="light"]) .icon-blend-img {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
-@media (max-width: 520px) {
-    .pnl-metric-grid { grid-template-columns: 1fr; }
-}
+
 
 .pnl-metric-card {
     position: relative;
@@ -6058,3 +6056,317 @@ body.hide-navigation .bottom-nav {
 [data-theme='light'] .pnl-table td, [data-theme='light'] .pnl-table th { border-right: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15); }
 [data-theme='light'] .pnl-table { border: 1px solid #000; }
 
+/* Premium Dashboard Card styling */
+.dashboard-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+[data-theme='light'] .dashboard-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.95) 100%);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1);
+}
+
+/* Elevate the Dashboard Summary value boxes */
+.metric-item {
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.metric-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+}
+
+.metric-item.highlight-green {
+    background: linear-gradient(145deg, #065f46 0%, #047857 100%) !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+.metric-item.highlight-green .metric-label, .metric-item.highlight-green .metric-value, .metric-item.highlight-green svg {
+    color: #ffffff !important;
+}
+
+.metric-item.highlight-red {
+    background: linear-gradient(145deg, #991b1b 0%, #b91c1c 100%) !important;
+    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+}
+.metric-item.highlight-red .metric-label, .metric-item.highlight-red .metric-value, .metric-item.highlight-red svg {
+    color: #ffffff !important;
+}
+
+.metric-item.highlight-purple {
+    background: linear-gradient(145deg, #5b21b6 0%, #7c3aed 100%) !important;
+    border: 1px solid rgba(139, 92, 246, 0.4) !important;
+}
+.metric-item.highlight-purple .metric-label, .metric-item.highlight-purple .metric-value, .metric-item.highlight-purple svg {
+    color: #ffffff !important;
+}
+
+/* Premium PnL Table Header */
+.pnl-table th {
+    background: linear-gradient(135deg, #2d2a26 0%, #8b6b14 100%) !important;
+    color: #FFF !important;
+    font-weight: 900 !important;
+    border-bottom: 3px solid #000 !important;
+    border-right: 1px solid rgba(0,0,0,0.2) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 14px 10px !important;
+}
+[data-theme='light'] .pnl-table th {
+    background: linear-gradient(135deg, #1A1714 0%, #B8860B 100%) !important;
+    color: #FFF !important;
+    border-bottom: 3px solid #000 !important;
+    border-right: 1px solid rgba(0,0,0,0.2) !important;
+}
+
+/* ==========================================================================
+   MOBILE REDESIGN & RESPONSIVENESS OVERHAUL
+   ========================================================================== */
+
+/* 1. Prevent Horizontal Scrolling Globally */
+html, body, .app-device-shell {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* 2. Profit & Loss Mobile Cards Redesign */
+@media (max-width: 768px) {
+    /* Remove the scroll constraint */
+    .pnl-table-scroll {
+        overflow-x: visible !important;
+        padding-bottom: 20px;
+    }
+
+    /* Hide the traditional table header */
+    .pnl-table thead {
+        display: none;
+    }
+
+    /* Convert Table to Block */
+    .pnl-table, .pnl-table tbody, .pnl-table tr, .pnl-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Style Rows as Cards */
+    .pnl-table tr {
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 12px 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    [data-theme='light'] .pnl-table tr {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    /* Style Cells as Rows inside the Card */
+    .pnl-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        text-align: right !important;
+    }
+
+    [data-theme='light'] .pnl-table td {
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .pnl-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Add Labels before values using data-label attribute */
+    .pnl-table td::before {
+        content: attr(data-label);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 800;
+        color: var(--text-secondary);
+        text-align: left;
+        margin-right: 15px;
+    }
+
+    /* Hide the # column on mobile */
+    .pnl-table td.pnl-td-num {
+        display: none;
+    }
+
+    /* Emphasize the Group Name */
+    .pnl-table td.pnl-td-name {
+        justify-content: center;
+        border-bottom: 2px solid rgba(255,255,255,0.1);
+        padding-bottom: 12px;
+        margin-bottom: 8px;
+    }
+    
+    [data-theme='light'] .pnl-table td.pnl-td-name {
+        border-bottom: 2px solid rgba(0,0,0,0.08);
+    }
+
+    .pnl-table td.pnl-td-name::before {
+        display: none; /* Hide 'Group Name' label */
+    }
+}
+
+/* ==========================================================================
+   MOBILE UI FIXES FOR OVERFLOW AND ALIGNMENT
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    /* 1. Dashboard Summary Grid - 1 column for very small screens */
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* 2. Fix Dashboard Target Badge wrapping on very small screens */
+    #dashboard-target-collection-badge {
+        font-size: 0.9rem !important;
+        padding: 5px 12px !important;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    /* 3. Fix PnL Table Card Text Overflow */
+    .pnl-table td {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    
+    .pnl-table td.pnl-td-name {
+        flex-direction: column;
+        align-items: center;
+        text-align: center !important;
+        padding: 12px 4px !important;
+        line-height: 1.4;
+    }
+    
+    .pnl-table td.pnl-td-name span {
+        white-space: normal !important;
+    }
+    
+    /* Make the entire row correctly box-sized */
+    .pnl-table tr {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Ensure scroll wrapper has correct padding */
+    .pnl-table-scroll {
+        padding: 0 12px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+    }
+}
+
+/* ==========================================================================
+   ULTRA PREMIUM P&L MOBILE CARD REDESIGN
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Override previous card styles */
+    .pnl-table, .pnl-table tbody {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    
+    /* The New Grid Card */
+    .pnl-table tr {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-areas: 
+            "header header"
+            "dur coll"
+            "pay net"
+            "arr arr" !important;
+        gap: 12px 16px !important;
+        padding: 18px 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Grid Area Assignments */
+    .pnl-table td.pnl-td-name { 
+        grid-area: header !important; 
+        padding: 0 0 12px 0 !important; 
+        border-bottom: 1px solid rgba(255,255,255,0.1) !important; 
+        align-items: flex-start !important; 
+        text-align: left !important;
+    }
+    [data-theme='light'] .pnl-table td.pnl-td-name { border-bottom: 1px solid rgba(0,0,0,0.1) !important; }
+    
+    .pnl-table td:nth-child(3) { grid-area: dur !important; }
+    .pnl-table td:nth-child(4) { grid-area: coll !important; }
+    .pnl-table td:nth-child(5) { grid-area: pay !important; }
+    .pnl-table td:nth-child(6) { grid-area: net !important; }
+    .pnl-table td:nth-child(7) { 
+        grid-area: arr !important; 
+        border-top: 1px dashed rgba(255,255,255,0.1) !important; 
+        padding-top: 12px !important; 
+    }
+    [data-theme='light'] .pnl-table td:nth-child(7) { border-top: 1px dashed rgba(0,0,0,0.1) !important; }
+
+    /* Redesign Data Cells (Column Flow) */
+    .pnl-table td:not(.pnl-td-num) {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+        gap: 6px !important;
+        text-align: left !important;
+    }
+
+    /* Small Premium Labels */
+    .pnl-table td::before {
+        font-size: 0.75rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        margin-right: 0 !important;
+        opacity: 0.6 !important;
+        font-weight: 600 !important;
+        color: inherit !important;
+    }
+    
+    /* Big Bold Values */
+    .pnl-table td:not(.pnl-td-name):not(.pnl-td-num) {
+        font-size: 1.15rem !important;
+        font-weight: 800 !important;
+    }
+    
+    /* Make Group Name prominent */
+    .pnl-table td.pnl-td-name span {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Forced Desktop View Styles */
+body.is-forced-desktop #btn-toggle-mobile-desktop {
+    display: inline-flex !important;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px rgba(99,102,241,0.5);
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(99,102,241,0); }
+    100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}

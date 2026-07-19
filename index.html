@@ -91,6 +91,10 @@
                 <i data-lucide="bar-chart-2"></i>
                 <span>P&L</span>
             </button>
+                        <button class="bottom-nav-item" id="btn-bottom-calc">
+                <i data-lucide="calculator"></i>
+                <span>Calc</span>
+            </button>
             <button class="bottom-nav-item" data-target="screen-notes">
                 <i data-lucide="file-text"></i>
                 <span>Notes</span>
@@ -133,6 +137,9 @@
                                 </button>
                                 <button class="header-chip" id="btn-global-export-pdf" title="Export PDF">
                                     <i data-lucide="download"></i>
+                                </button>
+                                                                <button class="header-chip" id="btn-toggle-mobile-desktop" title="Return to Mobile" style="display: none;">
+                                    <i data-lucide="smartphone"></i>
                                 </button>
                                 <button class="theme-slider-btn" id="btn-toggle-theme-desktop" aria-label="Toggle theme" title="Toggle Theme">
                                     <div class="theme-slider-thumb"></div>
@@ -189,6 +196,10 @@
                             <i data-lucide="sun" id="theme-icon-m"></i>
                             <span id="theme-label-m">Theme</span>
                         </button>
+                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
+                            <i data-lucide="monitor" id="desktop-icon-m"></i>
+                            <span id="desktop-label-m">Rotate</span>
+                        </button>
                     </div>
                 </header>
     <div class="app-screens-wrapper">
@@ -203,6 +214,10 @@
                     <div class="landing-header-right">
                         <button class="btn btn-text nav-login" id="nav-login-btn">Login</button>
                         <button class="btn btn-primary nav-get-started" id="nav-get-started-btn">Get Started</button>
+                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
+                            <i data-lucide="monitor" id="desktop-icon-m"></i>
+                            <span id="desktop-label-m">Rotate</span>
+                        </button>
                     </div>
                 </header>
                 <div class="landing-container">
@@ -841,6 +856,10 @@
                         <button class="icon-btn text-amber" id="btn-details-add-member" title="Add new member to group">
                             <i data-lucide="user-plus"></i>
                         </button>
+                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
+                            <i data-lucide="monitor" id="desktop-icon-m"></i>
+                            <span id="desktop-label-m">Rotate</span>
+                        </button>
                     </div>
                 </header>
                 
@@ -1094,7 +1113,144 @@
                     </div>
                 </div>
             </section>
-    </div>
+  
+    <section id="screen-pnl" class="app-screen">
+                <div class="screen-content pnl-screen-content">
+                    <div class="pnl-hero">
+                        <div class="pnl-hero-glow pnl-hero-glow-1"></div>
+                        <div class="pnl-hero-glow pnl-hero-glow-2"></div>
+                        <div class="pnl-hero-glow pnl-hero-glow-3"></div>
+
+                        <div class="pnl-hero-topbar">
+                            <div>
+                                <p class="pnl-hero-eyebrow">Business Analytics</p>
+                                <h1 class="pnl-hero-title">Profit &amp; Loss</h1>
+                            </div>
+                            <span class="pnl-live-badge">
+                                <i data-lucide="activity" style="width:14px;height:14px;"></i>
+                                Live Summary
+                            </span>
+                        </div>
+
+                        <div class="pnl-metric-grid">
+                            <div class="pnl-metric-card pnl-card-green">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="trending-up"></i></div>
+                                <span class="pnl-card-label">Total Collected</span>
+                                <span class="pnl-card-value" id="pnl-global-expected">₹0</span>
+                                <span class="pnl-card-foot">Cash received from members</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-purple">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="wallet"></i></div>
+                                <span class="pnl-card-label">Total Payout</span>
+                                <span class="pnl-card-value" id="pnl-global-payout">₹0</span>
+                                <span class="pnl-card-foot">Chit amounts disbursed</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-green" id="pnl-global-realized-card">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="piggy-bank"></i></div>
+                                <span class="pnl-card-label"><span id="pnl-global-title">Net Profit</span></span>
+                                <span class="pnl-card-value" id="pnl-global-realized">₹0</span>
+                                <span class="pnl-card-foot">Actual cash in hand</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-red">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="alert-circle"></i></div>
+                                <span class="pnl-card-label">Pending Arrears</span>
+                                <span class="pnl-card-value" id="pnl-global-pending">₹0</span>
+                                <span class="pnl-card-foot">Outstanding member dues</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pnl-table-zone">
+                        <div class="pnl-toolbar">
+                            <div class="pnl-toolbar-left">
+                                <i data-lucide="layers" style="width:18px;height:18px;color:var(--primary);"></i>
+                                <span class="pnl-toolbar-title">Group Breakdown</span>
+                            </div>
+                            <span class="pnl-toolbar-hint">Per-group margins &amp; arrears</span>
+                        </div>
+
+                        <div class="pnl-table-scroll">
+                            <table class="pnl-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Group Name</th>
+                                        <th class="pnl-th-center">Duration</th>
+                                        <th class="pnl-th-right">Collected</th>
+                                        <th class="pnl-th-right">Payout</th>
+                                        <th class="pnl-th-right">Net</th>
+                                        <th class="pnl-th-right">Arrears</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pnl-groups-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    <section id="screen-notes" class="app-screen notes-screen-prm">
+                <div id="notes-list-view" class="notes-list-prm">
+                    <div class="notes-header-prm">
+                        <div class="notes-header-text">
+                            <h1>My Workspace</h1>
+                            <p id="notes-count-label">0 Notes</p>
+                        </div>
+                        <button id="btn-notepad-add" class="notes-btn-primary">
+                            <i data-lucide="plus"></i> New Note
+                        </button>
+                    </div>
+                    <div class="notes-search-prm">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="notes-search-input" placeholder="Search notes...">
+                    </div>
+                    <div class="notes-grid-prm" id="notes-grid"></div>
+                    <div id="notes-empty-state" class="notes-empty-prm" style="display:none;">
+                        <i data-lucide="notebook-pen"></i>
+                        <h3>Your workspace is empty</h3>
+                        <p>Create a note to start organizing your thoughts.</p>
+                    </div>
+                </div>
+
+                <div id="note-editor-view" class="notes-editor-prm" style="display: none;">
+                    <div class="editor-topbar-prm">
+                        <button id="btn-back-notes" class="editor-btn-icon"><i data-lucide="arrow-left"></i></button>
+                        <div class="editor-status-prm">
+                            <span id="notepad-status"></span>
+                            <span id="notepad-date-display"></span>
+                        </div>
+                        <div class="editor-actions-prm">
+                            <label class="editor-color-picker">
+                                <i data-lucide="palette"></i>
+                                <input type="color" id="notepad-color-picker" value="#1e1e2e">
+                            </label>
+                            <button id="btn-notepad-delete" class="editor-btn-icon"><i data-lucide="trash-2"></i></button>
+                            <button id="btn-share-whatsapp" class="editor-btn-icon"><i data-lucide="share-2"></i></button>
+                        </div>
+                    </div>
+                    <input type="text" id="notepad-title" class="editor-title-prm" placeholder="Note Title...">
+                    <div class="editor-toolbar-prm">
+                        <button class="fmt-btn" data-cmd="bold"><i data-lucide="bold"></i></button>
+                        <button class="fmt-btn" data-cmd="italic"><i data-lucide="italic"></i></button>
+                        <button class="fmt-btn" data-cmd="underline"><i data-lucide="underline"></i></button>
+                        <div class="fmt-divider"></div>
+                        <button class="fmt-btn" data-cmd="insertUnorderedList"><i data-lucide="list"></i></button>
+                        <button class="fmt-btn" data-cmd="insertOrderedList"><i data-lucide="list-ordered"></i></button>
+                    </div>
+                    <div id="notepad-textarea" class="editor-content-prm" contenteditable="true" data-placeholder="Start writing..."></div>
+                </div>
+
+
+    
+
+            </section>
+  </div>
 </main>
         
         <!-- DIALOG/MODAL: CHANGE PASSWORD -->
@@ -2201,143 +2357,9 @@
 
                 <!-- SCREEN: CALCULATOR -->
             <!-- CALCULATOR MODAL OVERLAY -->
-            <section id="screen-pnl" class="app-screen">
-                <div class="screen-content pnl-screen-content">
-                    <div class="pnl-hero">
-                        <div class="pnl-hero-glow pnl-hero-glow-1"></div>
-                        <div class="pnl-hero-glow pnl-hero-glow-2"></div>
-                        <div class="pnl-hero-glow pnl-hero-glow-3"></div>
-
-                        <div class="pnl-hero-topbar">
-                            <div>
-                                <p class="pnl-hero-eyebrow">Business Analytics</p>
-                                <h1 class="pnl-hero-title">Profit &amp; Loss</h1>
-                            </div>
-                            <span class="pnl-live-badge">
-                                <i data-lucide="activity" style="width:14px;height:14px;"></i>
-                                Live Summary
-                            </span>
-                        </div>
-
-                        <div class="pnl-metric-grid">
-                            <div class="pnl-metric-card pnl-card-green">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="trending-up"></i></div>
-                                <span class="pnl-card-label">Total Collected</span>
-                                <span class="pnl-card-value" id="pnl-global-expected">₹0</span>
-                                <span class="pnl-card-foot">Cash received from members</span>
-                            </div>
-
-                            <div class="pnl-metric-card pnl-card-purple">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="wallet"></i></div>
-                                <span class="pnl-card-label">Total Payout</span>
-                                <span class="pnl-card-value" id="pnl-global-payout">₹0</span>
-                                <span class="pnl-card-foot">Chit amounts disbursed</span>
-                            </div>
-
-                            <div class="pnl-metric-card pnl-card-green" id="pnl-global-realized-card">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="piggy-bank"></i></div>
-                                <span class="pnl-card-label"><span id="pnl-global-title">Net Profit</span></span>
-                                <span class="pnl-card-value" id="pnl-global-realized">₹0</span>
-                                <span class="pnl-card-foot">Actual cash in hand</span>
-                            </div>
-
-                            <div class="pnl-metric-card pnl-card-red">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="alert-circle"></i></div>
-                                <span class="pnl-card-label">Pending Arrears</span>
-                                <span class="pnl-card-value" id="pnl-global-pending">₹0</span>
-                                <span class="pnl-card-foot">Outstanding member dues</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pnl-table-zone">
-                        <div class="pnl-toolbar">
-                            <div class="pnl-toolbar-left">
-                                <i data-lucide="layers" style="width:18px;height:18px;color:var(--primary);"></i>
-                                <span class="pnl-toolbar-title">Group Breakdown</span>
-                            </div>
-                            <span class="pnl-toolbar-hint">Per-group margins &amp; arrears</span>
-                        </div>
-
-                        <div class="pnl-table-scroll">
-                            <table class="pnl-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Group Name</th>
-                                        <th class="pnl-th-center">Duration</th>
-                                        <th class="pnl-th-right">Collected</th>
-                                        <th class="pnl-th-right">Payout</th>
-                                        <th class="pnl-th-right">Net</th>
-                                        <th class="pnl-th-right">Arrears</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pnl-groups-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            
     <!-- SCREEN: NOTEPAD (REDESIGNED) -->
-            <section id="screen-notes" class="app-screen notes-screen-prm">
-                <div id="notes-list-view" class="notes-list-prm">
-                    <div class="notes-header-prm">
-                        <div class="notes-header-text">
-                            <h1>My Workspace</h1>
-                            <p id="notes-count-label">0 Notes</p>
-                        </div>
-                        <button id="btn-notepad-add" class="notes-btn-primary">
-                            <i data-lucide="plus"></i> New Note
-                        </button>
-                    </div>
-                    <div class="notes-search-prm">
-                        <i data-lucide="search"></i>
-                        <input type="text" id="notes-search-input" placeholder="Search notes...">
-                    </div>
-                    <div class="notes-grid-prm" id="notes-grid"></div>
-                    <div id="notes-empty-state" class="notes-empty-prm" style="display:none;">
-                        <i data-lucide="notebook-pen"></i>
-                        <h3>Your workspace is empty</h3>
-                        <p>Create a note to start organizing your thoughts.</p>
-                    </div>
-                </div>
-
-                <div id="note-editor-view" class="notes-editor-prm" style="display: none;">
-                    <div class="editor-topbar-prm">
-                        <button id="btn-back-notes" class="editor-btn-icon"><i data-lucide="arrow-left"></i></button>
-                        <div class="editor-status-prm">
-                            <span id="notepad-status"></span>
-                            <span id="notepad-date-display"></span>
-                        </div>
-                        <div class="editor-actions-prm">
-                            <label class="editor-color-picker">
-                                <i data-lucide="palette"></i>
-                                <input type="color" id="notepad-color-picker" value="#1e1e2e">
-                            </label>
-                            <button id="btn-notepad-delete" class="editor-btn-icon"><i data-lucide="trash-2"></i></button>
-                            <button id="btn-share-whatsapp" class="editor-btn-icon"><i data-lucide="share-2"></i></button>
-                        </div>
-                    </div>
-                    <input type="text" id="notepad-title" class="editor-title-prm" placeholder="Note Title...">
-                    <div class="editor-toolbar-prm">
-                        <button class="fmt-btn" data-cmd="bold"><i data-lucide="bold"></i></button>
-                        <button class="fmt-btn" data-cmd="italic"><i data-lucide="italic"></i></button>
-                        <button class="fmt-btn" data-cmd="underline"><i data-lucide="underline"></i></button>
-                        <div class="fmt-divider"></div>
-                        <button class="fmt-btn" data-cmd="insertUnorderedList"><i data-lucide="list"></i></button>
-                        <button class="fmt-btn" data-cmd="insertOrderedList"><i data-lucide="list-ordered"></i></button>
-                    </div>
-                    <div id="notepad-textarea" class="editor-content-prm" contenteditable="true" data-placeholder="Start writing..."></div>
-                </div>
-
-
-    
-
-            </section>
+            
 
 
         </div>

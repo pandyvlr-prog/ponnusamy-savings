@@ -945,6 +945,7 @@ function switchView(viewId) {
     const appContainer = document.querySelector('.app-container');
     
     if (appContainer) {
+        // Force show header on PnL and Notes
         if (NO_HEADER_SCREENS.includes(viewId)) {
             appContainer.classList.add('hide-global-header');
             document.body.classList.add('hide-navigation');
@@ -7087,6 +7088,7 @@ function initSidebar() {
 
     // Calculator Modal Logic
     const btnGlobalCalc = document.getElementById('btn-global-calc');
+    const btnBottomCalc = document.getElementById('btn-bottom-calc');
     const calcModalOverlay = document.getElementById('calc-modal-overlay');
     const btnCloseCalcModal = document.getElementById('btn-close-calc-modal');
 
@@ -7128,6 +7130,13 @@ function initSidebar() {
 
     if (btnGlobalCalc) {
         btnGlobalCalc.addEventListener('click', () => {
+            if (calcModalOverlay) calcModalOverlay.classList.add('show');
+        });
+    }
+    
+    if (btnBottomCalc) {
+        btnBottomCalc.addEventListener('click', (e) => {
+            e.preventDefault();
             if (calcModalOverlay) calcModalOverlay.classList.add('show');
         });
     }
@@ -7736,13 +7745,13 @@ function renderPnLDashboard() {
             
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="pnl-td-num">${index + 1}</td>
-                <td class="pnl-td-name">${groupNameHtml}</td>
-                <td class="pnl-td-center">${group.duration}M</td>
-                <td class="pnl-td-right pnl-val-green">₹${formatNumberIndian(pnl.realizedCollection)}</td>
-                <td class="pnl-td-right pnl-val-purple">₹${formatNumberIndian(pnl.realizedPayout)}</td>
-                <td class="pnl-td-right ${netClass}">₹${formatNumberIndian(pnl.netProfit)}</td>
-                <td class="pnl-td-right ${arrearsClass}">₹${formatNumberIndian(pnl.arrears)}</td>
+                <td class="pnl-td-num" data-label="#">${index + 1}</td>
+                <td class="pnl-td-name" data-label="Group Name">${groupNameHtml}</td>
+                <td class="pnl-td-center" data-label="Duration">${group.duration}M</td>
+                <td class="pnl-td-right pnl-val-green" data-label="Collected">₹${formatNumberIndian(pnl.realizedCollection)}</td>
+                <td class="pnl-td-right pnl-val-purple" data-label="Payout">₹${formatNumberIndian(pnl.realizedPayout)}</td>
+                <td class="pnl-td-right ${netClass}" data-label="Net">₹${formatNumberIndian(pnl.netProfit)}</td>
+                <td class="pnl-td-right ${arrearsClass}" data-label="Arrears">₹${formatNumberIndian(pnl.arrears)}</td>
             `;
             tbody.appendChild(row);
         });
@@ -7779,3 +7788,25 @@ function renderPnLDashboard() {
 
     if (window.lucide) window.lucide.createIcons();
 }
+
+        // Desktop Rotate View Logic (Mobile & Forced Desktop)
+    const btnToggleDesktopM = document.getElementById('btn-toggle-desktop-m');
+    const btnToggleMobileDesktop = document.getElementById('btn-toggle-mobile-desktop');
+    let isDesktopViewForced = false;
+    
+    function toggleDesktopView(e) {
+        if (e) e.preventDefault();
+        isDesktopViewForced = !isDesktopViewForced;
+        const viewport = document.querySelector('meta[name="viewport"]');
+        
+        if (isDesktopViewForced) {
+            document.body.classList.add('is-forced-desktop');
+            if (viewport) viewport.setAttribute('content', 'width=1024, initial-scale=1.0');
+        } else {
+            document.body.classList.remove('is-forced-desktop');
+            if (viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        }
+    }
+
+    if (btnToggleDesktopM) btnToggleDesktopM.addEventListener('click', toggleDesktopView);
+    if (btnToggleMobileDesktop) btnToggleMobileDesktop.addEventListener('click', toggleDesktopView);
