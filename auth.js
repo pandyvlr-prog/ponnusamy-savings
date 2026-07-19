@@ -57,6 +57,14 @@ async function initAuth() {
         console.error(err);
         navigateTo('screen-landing');
     }
+    
+    // Hide initial loading overlay for a corporate feel
+    setTimeout(() => {
+        const overlay = document.getElementById('transition-overlay');
+        if (overlay && overlay.classList.contains('active')) {
+            overlay.classList.remove('active');
+        }
+    }, 400);
 
     // Listen for auth changes (like returning from Google login redirect)
     supabaseClient.auth.onAuthStateChange(async (event, session) => {

@@ -30,30 +30,25 @@
     <!-- html2pdf.js for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
+<script>
+(function() {
+var theme = localStorage.getItem('ponnusamy_theme') || 'dark';
+document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
 </head>
 <body>
     <!-- Static Theme Background -->
     <div id="app-bg"></div>
 
     <!-- Smooth Transition Overlay -->
-    <div id="transition-overlay" class="transition-overlay">
+    <div id="transition-overlay" class="transition-overlay active">
         <div class="transition-content">
-            <div class="transition-logo-wrapper">
-                <i data-lucide="shield-check" style="width: 48px; height: 48px; color: var(--accent);"></i>
-            </div>
-            <h2 class="transition-title">PMS VAULT</h2>
-            <p class="transition-text">SECURING CONNECTION...</p>
+            <img src="logo-light.png" alt="PMS Logo" style="height: 60px; object-fit: contain; margin-bottom: 24px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));">
+            <div style="width: 32px; height: 32px; border: 3px solid rgba(212, 175, 55, 0.2); border-top-color: #d4af37; border-radius: 50%;" class="spin-anim"></div>
         </div>
     </div>
-    <!-- Dark Theme Animated Horror Background -->
-    <div id="horror-bg">
-        <div class="horror-sphere sphere-1"></div>
-        <div class="horror-sphere sphere-2"></div>
-        <div class="horror-sphere sphere-3"></div>
-        <div class="horror-sphere sphere-4"></div>
-        <div class="horror-sphere sphere-5"></div>
-        <div class="horror-fog"></div>
-    </div>
+    
 
     <!-- App Shell Wrapper (Centered Mockup Frame on Desktop, Full Screen on Mobile) -->
     <div class="app-device-shell">
