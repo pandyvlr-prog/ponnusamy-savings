@@ -102,6 +102,8 @@ const State = {
     dashboardSelectedMonth: 'current',
     dashboardFilter: 'all',
     dashboardFilterDate: '',
+    dashboardDateRangeFrom: '',
+    dashboardDateRangeTo: '',
     backupEmail: localStorage.getItem('ponnusamy_backup_email') || '',
     templateFilterDuration: '12',
     savedNotes: []
@@ -2915,6 +2917,32 @@ function populateDashboardMonthDropdown() {
         allMonths.forEach(item => {
             customMenu.appendChild(createCustomOption(item.value, item.label));
         });
+
+        // Add Custom Date Range option at the bottom
+        const dividerEnd = document.createElement('div');
+        dividerEnd.className = 'dropdown-divider';
+        customMenu.appendChild(dividerEnd);
+        const customRangeBtn = document.createElement('button');
+        customRangeBtn.className = 'dropdown-item';
+        customRangeBtn.style.cssText = 'color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 8px;';
+        const hasActiveRange = State.dashboardDateRangeFrom && State.dashboardDateRangeTo;
+        customRangeBtn.innerHTML = `<i data-lucide="calendar-range" style="width:14px; height:14px;"></i> ${hasActiveRange ? 'Custom Range (Active)' : 'Custom Date Range...'}`;
+        if (hasActiveRange) {
+            customRangeBtn.style.backgroundColor = 'var(--primary-glow)';
+        }
+        customRangeBtn.addEventListener('click', () => {
+            customMenu.style.display = 'none';
+            const modal = document.getElementById('custom-date-range-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                if (window.lucide) window.lucide.createIcons();
+                const fromInput = document.getElementById('date-range-from');
+                const toInput = document.getElementById('date-range-to');
+                if (fromInput && State.dashboardDateRangeFrom) fromInput.value = State.dashboardDateRangeFrom;
+                if (toInput && State.dashboardDateRangeTo) toInput.value = State.dashboardDateRangeTo;
+            }
+        });
+        customMenu.appendChild(customRangeBtn);
     }
 }
 
@@ -2980,17 +3008,22 @@ function renderDashboard() {
             btnClearSearch.parentNode.replaceChild(newBtnClear, btnClearSearch);
         }
         
+        const syncClearBtn = () => {
+            const currentVal = document.getElementById('dashboard-member-search')?.value || '';
+            const clearBtn = document.getElementById('btn-clear-dashboard-search');
+            if (clearBtn) clearBtn.style.display = currentVal.length > 0 ? 'flex' : 'none';
+        };
+
         newSearch.addEventListener('input', () => {
-            if (newBtnClear) {
-                newBtnClear.style.display = newSearch.value.length > 0 ? 'flex' : 'none';
-            }
+            syncClearBtn();
             renderDashboardMembersList(newSearch.value.toLowerCase().trim());
         });
         
         if (newBtnClear) {
-            newBtnClear.style.display = newSearch.value.length > 0 ? 'flex' : 'none';
+            syncClearBtn();
             newBtnClear.addEventListener('click', () => {
-                newSearch.value = '';
+                const currentSearch = document.getElementById('dashboard-member-search');
+                if (currentSearch) currentSearch.value = '';
                 newBtnClear.style.display = 'none';
                 renderDashboardMembersList('');
             });
@@ -3998,6 +4031,7 @@ function renderDashboardMembersList(searchQuery = '') {
                         const searchInput = document.getElementById('dashboard-member-search');
                         if (searchInput) {
                             searchInput.value = name;
+                            searchInput.dispatchEvent(new Event('input'));
                             const btnClear = document.getElementById('btn-clear-dashboard-search');
                             if (btnClear) btnClear.style.display = 'flex';
                         }
@@ -4124,6 +4158,31 @@ function renderDashboardMembersList(searchQuery = '') {
             
             const customDateDay = payObj.customDate ? String(payObj.customDate) : '';
             return customDateDay && parseInt(customDateDay, 10) === parseInt(State.dashboardFilterDate, 10);
+        });
+    }
+
+    // Filter by custom date range if active
+    if (State.dashboardDateRangeFrom && State.dashboardDateRangeTo) {
+        const fromTs = new Date(State.dashboardDateRangeFrom + 'T00:00:00').getTime();
+        const toTs = new Date(State.dashboardDateRangeTo + 'T23:59:59').getTime();
+        filteredList = filteredList.filter(item => {
+            // Check across all months for payments within the range
+            let matches = false;
+            const allPayments = item.member.payments;
+            if (!allPayments) return false;
+            Object.values(allPayments).forEach(pay => {
+                if (!pay || !pay.paid) return;
+                let payTs = null;
+                if (pay.paidAt) {
+                    payTs = new Date(pay.paidAt).getTime();
+                } else if (pay.customDate) {
+                    // customDate is just a day number; use paidAt's month/year context
+                    // We'll use paidAt if available, otherwise skip
+                    return;
+                }
+                if (payTs && payTs >= fromTs && payTs <= toTs) matches = true;
+            });
+            return matches;
         });
     }
 
@@ -4423,6 +4482,32 @@ function renderDashboardMembersList(searchQuery = '') {
 
         listContainer.appendChild(row);
     });
+
+    // Update Filtered Summary Footer
+    const summaryEl = document.getElementById('dashboard-filtered-summary');
+    const hasActiveFilter = searchQuery || (State.dashboardFilter && State.dashboardFilter !== 'all') || State.dashboardFilterDate || (State.dashboardDateRangeFrom && State.dashboardDateRangeTo);
+    if (summaryEl) {
+        if (hasActiveFilter && filteredList.length > 0) {
+            let totalPaid = 0, totalGpay = 0, totalCash = 0;
+            filteredList.forEach(item => {
+                totalPaid += item.paidAmount;
+                if (item.paymentMethodThisMonth === 'gpay') totalGpay += item.paidAmount;
+                if (item.paymentMethodThisMonth === 'cash') totalCash += item.paidAmount;
+            });
+            summaryEl.style.display = 'flex';
+            const countEl = document.getElementById('filter-summary-count');
+            const paidEl = document.getElementById('filter-summary-paid');
+            const gpayEl = document.getElementById('filter-summary-gpay');
+            const cashEl = document.getElementById('filter-summary-cash');
+            if (countEl) countEl.textContent = filteredList.length;
+            if (paidEl) paidEl.textContent = '\u20b9' + totalPaid.toLocaleString('en-IN');
+            if (gpayEl) gpayEl.textContent = '\u20b9' + totalGpay.toLocaleString('en-IN');
+            if (cashEl) cashEl.textContent = '\u20b9' + totalCash.toLocaleString('en-IN');
+        } else {
+            summaryEl.style.display = 'none';
+        }
+    }
+
     lucide.createIcons();
 }
 
@@ -6966,6 +7051,67 @@ function initSidebar() {
     if (btnCloseCalcModal) {
         btnCloseCalcModal.addEventListener('click', () => {
             if (calcModalOverlay) calcModalOverlay.classList.remove('show');
+        });
+    }
+
+    // Custom Date Range Modal Logic
+    const dateRangeModal = document.getElementById('custom-date-range-modal');
+    const btnCloseDateRange = document.getElementById('btn-close-date-range-modal');
+    const btnApplyDateRange = document.getElementById('btn-apply-date-range');
+    const btnClearDateRange = document.getElementById('btn-clear-date-range');
+    const fromInput = document.getElementById('date-range-from');
+    const toInput = document.getElementById('date-range-to');
+
+    const closeDateRangeModal = () => {
+        if (dateRangeModal) dateRangeModal.style.display = 'none';
+    };
+
+    if (btnCloseDateRange) btnCloseDateRange.addEventListener('click', closeDateRangeModal);
+    if (dateRangeModal) {
+        dateRangeModal.addEventListener('click', (e) => {
+            if (e.target === dateRangeModal) closeDateRangeModal();
+        });
+    }
+
+    if (btnApplyDateRange) {
+        btnApplyDateRange.addEventListener('click', () => {
+            const from = fromInput ? fromInput.value : '';
+            const to = toInput ? toInput.value : '';
+            if (!from || !to) {
+                if (typeof showNotification === 'function') showNotification('Please select both From and To dates', 'error');
+                return;
+            }
+            if (new Date(from) > new Date(to)) {
+                if (typeof showNotification === 'function') showNotification('From date must be before To date', 'error');
+                return;
+            }
+            State.dashboardDateRangeFrom = from;
+            State.dashboardDateRangeTo = to;
+            // Update the month dropdown button label
+            const customMonthText = document.getElementById('custom-month-dropdown-text');
+            if (customMonthText) {
+                const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+                customMonthText.textContent = `${fmtDate(from)} - ${fmtDate(to)}`;
+            }
+            closeDateRangeModal();
+            populateDashboardMonthDropdown();
+            const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+            renderDashboardMembersList(searchVal);
+        });
+    }
+
+    if (btnClearDateRange) {
+        btnClearDateRange.addEventListener('click', () => {
+            State.dashboardDateRangeFrom = '';
+            State.dashboardDateRangeTo = '';
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            const customMonthText = document.getElementById('custom-month-dropdown-text');
+            if (customMonthText) customMonthText.textContent = 'Current Month';
+            closeDateRangeModal();
+            populateDashboardMonthDropdown();
+            const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
+            renderDashboardMembersList(searchVal);
         });
     }
 

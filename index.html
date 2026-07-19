@@ -98,6 +98,46 @@
         </nav>
 
         
+        <aside id="desktop-sidebar" class="desktop-sidebar">
+            <div class="desktop-sidebar-logo">
+                <img src="logo-dark.jpg" alt="Logo">
+                <h2>PMS Vault</h2>
+            </div>
+            <div class="desktop-sidebar-links">
+                <button class="sidebar-nav-item active" data-target="screen-dashboard">
+                    <i data-lucide="layout-dashboard"></i> Home
+                </button>
+                <button class="sidebar-nav-item" data-target="screen-pnl">
+                    <i data-lucide="bar-chart-2"></i> Profit & Loss
+                </button>
+                <button class="sidebar-nav-item" data-target="screen-notes">
+                    <i data-lucide="file-text"></i> Notepad
+                </button>
+            </div>
+            <div class="desktop-sidebar-footer">
+                <button class="sidebar-nav-item" id="btn-desktop-settings">
+                    <i data-lucide="settings"></i> Settings
+                </button>
+            </div>
+        </aside>
+
+        <!-- BOTTOM NAVIGATION (MOBILE) -->
+        <nav id="bottom-nav" class="bottom-nav">
+            <button class="bottom-nav-item active" data-target="screen-dashboard">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Home</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-pnl">
+                <i data-lucide="bar-chart-2"></i>
+                <span>P&L</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-notes">
+                <i data-lucide="file-text"></i>
+                <span>Notes</span>
+            </button>
+        </nav>
+
+        
         <main class="app-container hide-global-header">
                 <header class="app-header">
                     <!-- Row 1: Brand + Avatar -->
@@ -119,6 +159,9 @@
                         <div class="app-header-right">
                             <!-- Action buttons — shown inline on desktop, hidden on mobile (moved to row 2) -->
                             <div class="header-action-chips" id="header-action-chips">
+                                <button class="header-chip" id="btn-global-calc" title="Calculator">
+                                    <i data-lucide="calculator"></i>
+                                </button>
                                 <button class="header-chip" id="btn-global-calc" title="Calculator">
                                     <i data-lucide="calculator"></i>
                                 </button>
@@ -516,6 +559,15 @@
                             </div>
                             <div id="dashboard-members-container" style="display: flex; flex-direction: column;">
                                 <!-- Dynamic list of members loaded via JS -->
+                            </div>
+                            <div id="dashboard-filtered-summary" style="display: none; align-items: center; justify-content: space-between; padding: 12px 16px; margin-top: 4px; border-top: 2px solid var(--primary); background: var(--bg-surface-elevated); border-radius: 0 0 12px 12px; gap: 8px; flex-wrap: wrap;">
+                                <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;"><i data-lucide="filter" style="width: 13px; height: 13px; color: var(--primary);"></i> Filtered Result</span>
+                                <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Members: <strong id="filter-summary-count" style="color: var(--text-main);">0</strong></span>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Total Paid: <strong id="filter-summary-paid" style="color: #10b981;">&#8377;0</strong></span>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Gpay: <strong id="filter-summary-gpay" style="color: #3b82f6;">&#8377;0</strong></span>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Cash: <strong id="filter-summary-cash" style="color: #f59e0b;">&#8377;0</strong></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2405,7 +2457,36 @@
 
             <!-- PROFIT AND LOSS SCREEN -->
             
+<!-- Custom Date Range Modal -->
+<div id="custom-date-range-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-surface-elevated); border:1px solid var(--border); border-radius:20px; padding:28px 24px; width:calc(100% - 48px); max-width:360px; box-shadow:0 24px 64px rgba(0,0,0,0.25);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i data-lucide="calendar-range" style="width:20px; height:20px; color:var(--primary);"></i>
+                <h3 style="font-size:1rem; font-weight:800; color:var(--text-main); margin:0;">Custom Date Range</h3>
+            </div>
+            <button id="btn-close-date-range-modal" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary);">
+                <i data-lucide="x" style="width:16px; height:16px;"></i>
+            </button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; display:block;">From Date</label>
+                <input type="date" id="date-range-from" style="width:100%; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); font-size:0.9rem; font-weight:600; outline:none; box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; display:block;">To Date</label>
+                <input type="date" id="date-range-to" style="width:100%; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); font-size:0.9rem; font-weight:600; outline:none; box-sizing:border-box;">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button id="btn-apply-date-range" style="flex:1; padding:11px; border-radius:10px; background:var(--primary-gradient); border:none; color:#000; font-weight:800; font-size:0.9rem; cursor:pointer;">Apply Filter</button>
+            <button id="btn-clear-date-range" style="flex:1; padding:11px; border-radius:10px; background:var(--bg-surface); border:1px solid var(--border); color:var(--text-secondary); font-weight:700; font-size:0.9rem; cursor:pointer;">Clear</button>
+        </div>
+    </div>
+</div>
 </body>
+</html>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
 
