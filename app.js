@@ -3658,14 +3658,14 @@ function renderDashboardMembersList(searchQuery = '') {
             let paymentNoteThisMonth = null;
 
             if (hasDateRange) {
+                const gStartMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
+                const gStartYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
                 for (let m = 1; m <= group.duration; m++) {
                     const payment = member.payments[m];
                     if (payment && payment.paid) {
-                        let payTs = null;
-                        if (payment.paidAt) {
-                            payTs = new Date(payment.paidAt).getTime();
-                        }
-                        if (payTs && payTs >= rangeFromTs && payTs <= rangeToTs) {
+                        const instDateObj = new Date(gStartYear, gStartMonth + m - 1, 1);
+                        const instMonthTs = instDateObj.getTime();
+                        if (instMonthTs >= rangeFromTs && instMonthTs <= rangeToTs) {
                             const instVal = group.installments && group.installments[m] !== undefined ? group.installments[m] : group.monthlyInstallment;
                             paidAmount += instVal;
                             currentMonthPaid = true;
