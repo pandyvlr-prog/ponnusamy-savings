@@ -7201,6 +7201,37 @@ function initSidebar() {
         });
     }
 
+    const btnResetDash = document.getElementById('btn-reset-dashboard-filters');
+    if (btnResetDash) {
+        btnResetDash.addEventListener('click', () => {
+            const icon = btnResetDash.querySelector('i');
+            if (icon) {
+                icon.style.transform = 'rotate(-180deg)';
+                setTimeout(() => icon.style.transform = 'rotate(0deg)', 300);
+            }
+            const searchInput = document.getElementById('dashboard-member-search');
+            if (searchInput) searchInput.value = '';
+            State.dashboardFilter = 'all';
+            const tagSelect = document.getElementById('dashboard-tag-filter');
+            if (tagSelect) tagSelect.value = 'all';
+            const selectedTextEl = document.getElementById('filter-dropdown-selected-text');
+            if (selectedTextEl) selectedTextEl.textContent = 'All';
+            State.dashboardFilterDate = '';
+            const dSelect = document.getElementById('dashboard-date-filter');
+            if (dSelect) dSelect.value = '';
+            State.dashboardDateRangeFrom = '';
+            State.dashboardDateRangeTo = '';
+            if (window._syncDateRangeBtn) window._syncDateRangeBtn();
+            State.dashboardSelectedMonth = 'current';
+            const monthSelect = document.getElementById('dashboard-month-select');
+            if (monthSelect) monthSelect.value = 'current';
+            const customMonthText = document.getElementById('custom-month-dropdown-text');
+            if (customMonthText) customMonthText.textContent = 'Current Month';
+            populateDashboardMonthDropdown();
+            renderDashboardMembersList();
+        });
+    }
+
     // Calculator Logic
     const calcDisplay = document.getElementById('calc-display');
     const calcHistory = document.getElementById('calc-history');
