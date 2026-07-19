@@ -7042,6 +7042,42 @@ function initSidebar() {
     const calcModalOverlay = document.getElementById('calc-modal-overlay');
     const btnCloseCalcModal = document.getElementById('btn-close-calc-modal');
 
+    // Dedicated Date Range Button
+    const btnOpenDateRange = document.getElementById('btn-open-date-range');
+    if (btnOpenDateRange) {
+        btnOpenDateRange.addEventListener('click', () => {
+            const modal = document.getElementById('custom-date-range-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                if (window.lucide) window.lucide.createIcons();
+                const fromInput = document.getElementById('date-range-from');
+                const toInput = document.getElementById('date-range-to');
+                if (fromInput && State.dashboardDateRangeFrom) fromInput.value = State.dashboardDateRangeFrom;
+                if (toInput && State.dashboardDateRangeTo) toInput.value = State.dashboardDateRangeTo;
+            }
+        });
+        // Sync button label and highlight state
+        const syncDateRangeBtn = () => {
+            const labelEl = document.getElementById('btn-date-range-label');
+            if (labelEl) {
+                if (State.dashboardDateRangeFrom && State.dashboardDateRangeTo) {
+                    const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
+                    labelEl.textContent = `${fmtDate(State.dashboardDateRangeFrom)} – ${fmtDate(State.dashboardDateRangeTo)}`;
+                    btnOpenDateRange.style.backgroundColor = 'var(--primary-glow)';
+                    btnOpenDateRange.style.color = 'var(--primary)';
+                    btnOpenDateRange.style.borderColor = 'var(--primary)';
+                } else {
+                    labelEl.textContent = 'Date Range';
+                    btnOpenDateRange.style.backgroundColor = 'var(--bg-surface)';
+                    btnOpenDateRange.style.color = 'var(--text-secondary)';
+                    btnOpenDateRange.style.borderColor = 'var(--border)';
+                }
+            }
+        };
+        syncDateRangeBtn();
+        window._syncDateRangeBtn = syncDateRangeBtn;
+    }
+
     if (btnGlobalCalc) {
         btnGlobalCalc.addEventListener('click', () => {
             if (calcModalOverlay) calcModalOverlay.classList.add('show');
@@ -7095,6 +7131,7 @@ function initSidebar() {
             }
             closeDateRangeModal();
             populateDashboardMonthDropdown();
+            if (window._syncDateRangeBtn) window._syncDateRangeBtn();
             const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
             renderDashboardMembersList(searchVal);
         });
@@ -7110,6 +7147,7 @@ function initSidebar() {
             if (customMonthText) customMonthText.textContent = 'Current Month';
             closeDateRangeModal();
             populateDashboardMonthDropdown();
+            if (window._syncDateRangeBtn) window._syncDateRangeBtn();
             const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
             renderDashboardMembersList(searchVal);
         });
