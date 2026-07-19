@@ -58,15 +58,53 @@
     <!-- App Shell Wrapper (Centered Mockup Frame on Desktop, Full Screen on Mobile) -->
     <div class="app-device-shell">
         
+        <aside id="desktop-sidebar" class="desktop-sidebar">
+            <div class="desktop-sidebar-logo">
+                <img src="logo-dark.jpg" alt="Logo">
+                <h2>PMS Vault</h2>
+            </div>
+            <div class="desktop-sidebar-links">
+                <button class="sidebar-nav-item active" data-target="screen-dashboard">
+                    <i data-lucide="layout-dashboard"></i> Home
+                </button>
+                <button class="sidebar-nav-item" data-target="screen-pnl">
+                    <i data-lucide="bar-chart-2"></i> Profit & Loss
+                </button>
+                <button class="sidebar-nav-item" data-target="screen-notes">
+                    <i data-lucide="file-text"></i> Notepad
+                </button>
+            </div>
+            <div class="desktop-sidebar-footer">
+                <button class="sidebar-nav-item" id="btn-desktop-settings">
+                    <i data-lucide="settings"></i> Settings
+                </button>
+            </div>
+        </aside>
+
+        <!-- BOTTOM NAVIGATION (MOBILE) -->
+        <nav id="bottom-nav" class="bottom-nav">
+            <button class="bottom-nav-item active" data-target="screen-dashboard">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Home</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-pnl">
+                <i data-lucide="bar-chart-2"></i>
+                <span>P&L</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-notes">
+                <i data-lucide="file-text"></i>
+                <span>Notes</span>
+            </button>
+        </nav>
+
+        
         <main class="app-container hide-global-header">
                 <header class="app-header">
                     <!-- Row 1: Brand + Avatar -->
                     <div class="app-header-row1">
                         <!-- Left: Hamburger + Logo + Brand -->
                         <div class="app-header-brand">
-                            <button class="icon-btn header-menu-btn" id="btn-sidebar-toggle" title="Menu">
-                                <i data-lucide="menu"></i>
-                            </button>
+
                             <img src="logo-dark.jpg" class="header-logo-img" alt="PMS Logo">
                             <div class="header-brand-text">
                                 <h1 class="app-title">PMS</h1>
@@ -81,6 +119,9 @@
                         <div class="app-header-right">
                             <!-- Action buttons — shown inline on desktop, hidden on mobile (moved to row 2) -->
                             <div class="header-action-chips" id="header-action-chips">
+                                <button class="header-chip" id="btn-global-calc" title="Calculator">
+                                    <i data-lucide="calculator"></i>
+                                </button>
                                 <button class="header-chip" id="btn-global-refresh" title="Refresh Data">
                                     <i data-lucide="refresh-cw"></i>
                                 </button>
@@ -2137,226 +2178,189 @@
     </div>
 
                 <!-- SCREEN: CALCULATOR -->
-            <section id="screen-calc" class="app-screen">
-                <header class="app-header" style="padding-bottom: 0; border-bottom: none;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <button class="icon-btn" id="btn-back-to-dashboard-calc" style="background: var(--bg-surface);">
-                            <i data-lucide="arrow-left"></i>
-                        </button>
-                        <h2 style="font-size: 1.25rem; font-weight: 700;">Calculator</h2>
-                    </div>
-                </header>
-                <div class="screen-content" style="padding-top: 10px; display: flex; justify-content: center;">
-                    <div class="calc-container" style="max-width: 400px; width: 100%;">
-                        <div class="calc-display-wrapper">
-                            <div class="calc-history" id="calc-history"></div>
-                            <input type="text" id="calc-display" class="calc-display" value="0" readonly>
+            <!-- CALCULATOR MODAL OVERLAY -->
+            <div id="calc-modal-overlay" class="calc-modal-overlay">
+                <div class="calc-premium-container">
+                    <button class="calc-modal-close" id="btn-close-calc-modal"><i data-lucide="x"></i></button>
+                    <div class="calc-premium-glow"></div>
+                    <div class="calc-premium-glass">
+                        <div class="calc-premium-header">
+                            <i data-lucide="calculator"></i>
+                            <span>Premium Calculator</span>
                         </div>
-                        <div class="calc-grid">
-                            <button class="calc-btn btn-op" data-action="clear">AC</button>
-                            <button class="calc-btn btn-op" data-action="backspace"><i data-lucide="delete"></i></button>
-                            <button class="calc-btn btn-op" data-action="percent">%</button>
-                            <button class="calc-btn btn-op" data-action="divide">÷</button>
-                            
-                            <button class="calc-btn btn-num" data-num="7">7</button>
-                            <button class="calc-btn btn-num" data-num="8">8</button>
-                            <button class="calc-btn btn-num" data-num="9">9</button>
-                            <button class="calc-btn btn-op" data-action="multiply">×</button>
-                            
-                            <button class="calc-btn btn-num" data-num="4">4</button>
-                            <button class="calc-btn btn-num" data-num="5">5</button>
-                            <button class="calc-btn btn-num" data-num="6">6</button>
-                            <button class="calc-btn btn-op" data-action="subtract">-</button>
-                            
-                            <button class="calc-btn btn-num" data-num="1">1</button>
-                            <button class="calc-btn btn-num" data-num="2">2</button>
-                            <button class="calc-btn btn-num" data-num="3">3</button>
-                            <button class="calc-btn btn-op" data-action="add">+</button>
-                            
-                            <button class="calc-btn btn-num" data-num="00">00</button>
-                            <button class="calc-btn btn-num" data-num="0">0</button>
-                            <button class="calc-btn btn-num" data-action="decimal">.</button>
-                            <button class="calc-btn btn-equal" data-action="calculate">=</button>
+                        <div class="calc-premium-display">
+                            <div class="calc-premium-history" id="calc-history"></div>
+                            <input type="text" id="calc-display" class="calc-premium-input" value="0" readonly>
+                        </div>
+                        <div class="calc-premium-keypad">
+                            <button class="calc-btn-prm btn-clear" data-action="clear">AC</button>
+                            <button class="calc-btn-prm btn-fn" data-action="backspace"><i data-lucide="delete"></i></button>
+                            <button class="calc-btn-prm btn-fn" data-action="percent">%</button>
+                            <button class="calc-btn-prm btn-op" data-action="divide">÷</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="7">7</button>
+                            <button class="calc-btn-prm btn-num" data-num="8">8</button>
+                            <button class="calc-btn-prm btn-num" data-num="9">9</button>
+                            <button class="calc-btn-prm btn-op" data-action="multiply">×</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="4">4</button>
+                            <button class="calc-btn-prm btn-num" data-num="5">5</button>
+                            <button class="calc-btn-prm btn-num" data-num="6">6</button>
+                            <button class="calc-btn-prm btn-op" data-action="subtract">−</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="1">1</button>
+                            <button class="calc-btn-prm btn-num" data-num="2">2</button>
+                            <button class="calc-btn-prm btn-num" data-num="3">3</button>
+                            <button class="calc-btn-prm btn-op" data-action="add">+</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="00">00</button>
+                            <button class="calc-btn-prm btn-num" data-num="0">0</button>
+                            <button class="calc-btn-prm btn-num" data-num=".">.</button>
+                            <button class="calc-btn-prm btn-equal" data-action="calculate">=</button>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- ------------------------------------------- -->
-    <!-- PROFIT AND LOSS SCREEN                      -->
-            <!-- ------------------------------------------- -->
-            <!-- PROFIT AND LOSS SCREEN                      -->
-            <!-- ------------------------------------------- -->
+            <!-- PROFIT AND LOSS SCREEN -->
             <section id="screen-pnl" class="app-screen">
-                <header class="screen-header" style="display: flex; align-items: center; gap: 12px;">
-                    <button class="icon-btn" id="btn-back-to-dashboard-pnl" style="background: var(--bg-surface); flex-shrink: 0;" title="Back to Dashboard">
-                        <i data-lucide="arrow-left"></i>
-                    </button>
-                    <div class="header-left">
-                        <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">Profit & Loss Report</h1>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Overview of your business margins and arrears</p>
-                    </div>
-                </header>
-        
-                <div class="screen-content">
-                    <!-- Global App P&L Metrics -->
-                    <div class="dashboard-card" style="margin-top: 16px;">
-                        <div class="metrics-grid">
-                            <!-- Total Collected -->
-                            <div class="metric-item highlight" style="position: relative;">
-                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
-                                    <i data-lucide="trending-up" style="width: 16px; height: 16px;"></i>
-                                    Total Collected
-                                </span>
-                                <span class="metric-value" id="pnl-global-expected">₹0</span>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; display: block;">Total cash received</span>
+                <div class="screen-content pnl-screen-content">
+                    <div class="pnl-hero">
+                        <div class="pnl-hero-glow pnl-hero-glow-1"></div>
+                        <div class="pnl-hero-glow pnl-hero-glow-2"></div>
+                        <div class="pnl-hero-glow pnl-hero-glow-3"></div>
+
+                        <div class="pnl-hero-topbar">
+                            <div>
+                                <p class="pnl-hero-eyebrow">Business Analytics</p>
+                                <h1 class="pnl-hero-title">Profit &amp; Loss</h1>
                             </div>
-                            
-                            <!-- Total Payout -->
-                            <div class="metric-item highlight" style="position: relative; border-left-color: var(--blue-main); background-color: rgba(59, 130, 246, 0.05);">
-                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
-                                    <i data-lucide="wallet" style="width: 16px; height: 16px;"></i>
-                                    Total Payout
-                                </span>
-                                <span class="metric-value" id="pnl-global-payout" style="color: var(--blue-main);">₹0</span>
-                                <span style="font-size: 0.8rem; color: var(--blue-main); font-weight: 600; margin-top: 4px; display: block;">Total cash paid out</span>
+                            <span class="pnl-live-badge">
+                                <i data-lucide="activity" style="width:14px;height:14px;"></i>
+                                Live Summary
+                            </span>
+                        </div>
+
+                        <div class="pnl-metric-grid">
+                            <div class="pnl-metric-card pnl-card-green">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="trending-up"></i></div>
+                                <span class="pnl-card-label">Total Collected</span>
+                                <span class="pnl-card-value" id="pnl-global-expected">₹0</span>
+                                <span class="pnl-card-foot">Cash received from members</span>
                             </div>
 
-                            <!-- Net Profit -->
-                            <div class="metric-item highlight-green" style="position: relative;">
-                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
-                                    <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
-                                    Net Profit
-                                </span>
-                                <span class="metric-value text-green" id="pnl-global-realized">₹0</span>
-                                <span style="font-size: 0.8rem; color: var(--green-dark); font-weight: 600; margin-top: 4px; display: block;">Actual cash in hand</span>
+                            <div class="pnl-metric-card pnl-card-purple">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="wallet"></i></div>
+                                <span class="pnl-card-label">Total Payout</span>
+                                <span class="pnl-card-value" id="pnl-global-payout">₹0</span>
+                                <span class="pnl-card-foot">Chit amounts disbursed</span>
                             </div>
 
-                            <!-- Arrears -->
-                            <div class="metric-item highlight-red" style="position: relative;">
-                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
-                                    <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
-                                    Pending Arrears
-                                </span>
-                                <span class="metric-value text-red" id="pnl-global-pending">₹0</span>
-                                <span style="font-size: 0.8rem; color: var(--red-dark); font-weight: 600; margin-top: 4px; display: block;">Money owed to you</span>
+                            <div class="pnl-metric-card pnl-card-green" id="pnl-global-realized-card">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="piggy-bank"></i></div>
+                                <span class="pnl-card-label"><span id="pnl-global-title">Net Profit</span></span>
+                                <span class="pnl-card-value" id="pnl-global-realized">₹0</span>
+                                <span class="pnl-card-foot">Actual cash in hand</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-red">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="alert-circle"></i></div>
+                                <span class="pnl-card-label">Pending Arrears</span>
+                                <span class="pnl-card-value" id="pnl-global-pending">₹0</span>
+                                <span class="pnl-card-foot">Outstanding member dues</span>
                             </div>
                         </div>
                     </div>
-            
-                    <!-- Groups P&L Table -->
-                    <div class="table-container" style="margin-top: 24px;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px;">S.No</th>
-                                    <th>Group Name</th>
-                                    <th style="text-align: center;">Duration</th>
-                                    <th style="text-align: right;">Total Collected</th>
-                                    <th style="text-align: right;">Total Payout</th>
-                                    <th style="text-align: right;">Net Profit</th>
-                                    <th style="text-align: right;">Arrears</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pnl-groups-tbody">
-                                <!-- Rows injected by JS -->
-                            </tbody>
-                        </table>
+
+                    <div class="pnl-table-zone">
+                        <div class="pnl-toolbar">
+                            <div class="pnl-toolbar-left">
+                                <i data-lucide="layers" style="width:18px;height:18px;color:var(--primary);"></i>
+                                <span class="pnl-toolbar-title">Group Breakdown</span>
+                            </div>
+                            <span class="pnl-toolbar-hint">Per-group margins &amp; arrears</span>
+                        </div>
+
+                        <div class="pnl-table-scroll">
+                            <table class="pnl-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Group Name</th>
+                                        <th class="pnl-th-center">Duration</th>
+                                        <th class="pnl-th-right">Collected</th>
+                                        <th class="pnl-th-right">Payout</th>
+                                        <th class="pnl-th-right">Net</th>
+                                        <th class="pnl-th-right">Arrears</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pnl-groups-tbody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </section>
-    <!-- SCREEN: NOTEPAD -->
-            <section id="screen-notes" class="app-screen">
-                <!-- Notepad Header -->
-                <div class="notepad-screen-header">
-                    <div class="notepad-header-top">
-                        <div class="notepad-header-left">
-                            <button class="icon-btn notepad-back-btn" id="btn-back-to-dashboard-notes" title="Back">
-                                <i data-lucide="arrow-left"></i>
-                            </button>
-                            <div>
-                                <h2 class="notepad-screen-title">My Notes</h2>
-                                <p class="notepad-screen-subtitle" id="notes-count-label">0 notes</p>
-                            </div>
+    <!-- SCREEN: NOTEPAD (REDESIGNED) -->
+            <section id="screen-notes" class="app-screen notes-screen-prm">
+                <div id="notes-list-view" class="notes-list-prm">
+                    <div class="notes-header-prm">
+                        <div class="notes-header-text">
+                            <h1>My Workspace</h1>
+                            <p id="notes-count-label">0 Notes</p>
                         </div>
-                        <button id="btn-notepad-add" class="notepad-new-btn">
-                            <i data-lucide="plus" style="width:16px;height:16px;"></i>
-                            New Note
+                        <button id="btn-notepad-add" class="notes-btn-primary">
+                            <i data-lucide="plus"></i> New Note
                         </button>
                     </div>
-                    <!-- Search Bar -->
-                    <div class="notepad-search-bar">
-                        <i data-lucide="search" class="notepad-search-icon"></i>
-                        <input type="text" id="notes-search-input" class="notepad-search-input" placeholder="Search notes...">
+                    <div class="notes-search-prm">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="notes-search-input" placeholder="Search notes...">
+                    </div>
+                    <div class="notes-grid-prm" id="notes-grid"></div>
+                    <div id="notes-empty-state" class="notes-empty-prm" style="display:none;">
+                        <i data-lucide="notebook-pen"></i>
+                        <h3>Your workspace is empty</h3>
+                        <p>Create a note to start organizing your thoughts.</p>
                     </div>
                 </div>
 
-                <div class="screen-content" style="padding-top: 0;">
-                    <!-- Notes List View -->
-                    <div id="notes-list-view" class="notes-view-container active">
-                        <!-- Empty state -->
-                        <div id="notes-empty-state" class="notes-empty-state" style="display:none;">
-                            <div class="notes-empty-icon">
-                                <i data-lucide="notebook-pen"></i>
-                            </div>
-                            <h3>No notes yet</h3>
-                            <p>Tap "New Note" to capture your thoughts</p>
+                <div id="note-editor-view" class="notes-editor-prm" style="display: none;">
+                    <div class="editor-topbar-prm">
+                        <button id="btn-back-notes" class="editor-btn-icon"><i data-lucide="arrow-left"></i></button>
+                        <div class="editor-status-prm">
+                            <span id="notepad-status"></span>
+                            <span id="notepad-date-display"></span>
                         </div>
-                        <div id="notes-grid" class="notes-grid"></div>
-                    </div>
-
-                    <!-- Note Editor View -->
-                    <div id="note-editor-view" class="notes-view-container notepad-editor-container" style="display: none;">
-                        <!-- Editor Top Bar -->
-                        <div class="notepad-editor-topbar" id="notepad-editor-topbar">
-                            <button id="btn-back-notes" class="icon-btn notepad-back-btn" title="Back to Notes">
-                                <i data-lucide="arrow-left"></i>
-                            </button>
-                            <div class="notepad-editor-meta">
-                                <span class="notepad-status" id="notepad-status"></span>
-                                <span id="notepad-date-display" class="notepad-date"></span>
-                            </div>
-                            <div class="notepad-editor-actions">
-                                <label class="notepad-color-label" title="Note colour">
-                                    <i data-lucide="palette" style="width:16px;height:16px;"></i>
-                                    <input type="color" id="notepad-color-picker" value="#1e1e2e" style="opacity:0;position:absolute;width:0;height:0;">
-                                </label>
-                                <button id="btn-notepad-delete" class="icon-btn notepad-delete-btn" title="Delete Note">
-                                    <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Title -->
-                        <input type="text" id="notepad-title" class="notepad-title-input" placeholder="Note title...">
-
-                        <!-- Rich-text Formatting Bar -->
-                        <div class="notepad-format-bar">
-                            <button class="fmt-btn" data-cmd="bold" title="Bold"><i data-lucide="bold" style="width:14px;height:14px;"></i></button>
-                            <button class="fmt-btn" data-cmd="italic" title="Italic"><i data-lucide="italic" style="width:14px;height:14px;"></i></button>
-                            <button class="fmt-btn" data-cmd="underline" title="Underline"><i data-lucide="underline" style="width:14px;height:14px;"></i></button>
-                            <div class="fmt-divider"></div>
-                            <button class="fmt-btn" data-cmd="insertUnorderedList" title="Bullet List"><i data-lucide="list" style="width:14px;height:14px;"></i></button>
-                            <button class="fmt-btn" data-cmd="insertOrderedList" title="Numbered List"><i data-lucide="list-ordered" style="width:14px;height:14px;"></i></button>
-                            <div class="fmt-divider"></div>
-                            <button class="fmt-btn" data-cmd="strikeThrough" title="Strikethrough"><i data-lucide="strikethrough" style="width:14px;height:14px;"></i></button>
-                        </div>
-
-                        <!-- Content Area -->
-                        <div id="notepad-textarea" class="notepad-content-area" contenteditable="true" placeholder="Start writing your thoughts..."></div>
-
-                        <!-- WhatsApp Share Footer -->
-                        <div class="notepad-wa-footer">
-                            <button id="btn-share-whatsapp" class="notepad-wa-btn" title="Share on WhatsApp">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                </svg>
-                                <span>Share on WhatsApp</span>
-                            </button>
+                        <div class="editor-actions-prm">
+                            <label class="editor-color-picker">
+                                <i data-lucide="palette"></i>
+                                <input type="color" id="notepad-color-picker" value="#1e1e2e">
+                            </label>
+                            <button id="btn-notepad-delete" class="editor-btn-icon"><i data-lucide="trash-2"></i></button>
+                            <button id="btn-share-whatsapp" class="editor-btn-icon"><i data-lucide="share-2"></i></button>
                         </div>
                     </div>
+                    <input type="text" id="notepad-title" class="editor-title-prm" placeholder="Note Title...">
+                    <div class="editor-toolbar-prm">
+                        <button class="fmt-btn" data-cmd="bold"><i data-lucide="bold"></i></button>
+                        <button class="fmt-btn" data-cmd="italic"><i data-lucide="italic"></i></button>
+                        <button class="fmt-btn" data-cmd="underline"><i data-lucide="underline"></i></button>
+                        <div class="fmt-divider"></div>
+                        <button class="fmt-btn" data-cmd="insertUnorderedList"><i data-lucide="list"></i></button>
+                        <button class="fmt-btn" data-cmd="insertOrderedList"><i data-lucide="list-ordered"></i></button>
+                    </div>
+                    <div id="notepad-textarea" class="editor-content-prm" contenteditable="true" data-placeholder="Start writing..."></div>
                 </div>
+
+
+    
+
             </section>
+
 
         </div>
     </div>
@@ -2374,9 +2378,6 @@
             </a>
             <a href="#" class="sidebar-link" data-target="screen-pnl">
                 <i data-lucide="bar-chart-2"></i> Profit & Loss
-            </a>
-            <a href="#" class="sidebar-link" data-target="screen-calc">
-                <i data-lucide="calculator"></i> Calculator
             </a>
             <a href="#" class="sidebar-link" data-target="screen-notes">
                 <i data-lucide="file-text"></i> Notepad

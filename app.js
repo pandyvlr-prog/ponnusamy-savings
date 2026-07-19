@@ -128,6 +128,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update live clock in status bar
     updateStatusBarClock();
     setInterval(updateStatusBarClock, 60000);
+
+    // Set time-based greeting on dashboard
+    const greetEl = document.getElementById('db-greeting-text');
+    if (greetEl) {
+        const h = new Date().getHours();
+        greetEl.textContent = h < 12 ? 'Good morning 👋' : h < 17 ? 'Good afternoon 👋' : 'Good evening 👋';
+    }
     
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -938,8 +945,10 @@ function switchView(viewId) {
     if (appContainer) {
         if (NO_HEADER_SCREENS.includes(viewId)) {
             appContainer.classList.add('hide-global-header');
+            document.body.classList.add('hide-navigation');
         } else {
             appContainer.classList.remove('hide-global-header');
+            document.body.classList.remove('hide-navigation');
         }
     }
     
@@ -962,9 +971,9 @@ function switchView(viewId) {
         
         State.currentView = viewId;
         
-        // Highlight active sidebar navigation link
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
-        sidebarLinks.forEach(link => {
+        // Highlight active navigation links (Sidebar & Bottom Nav)
+        const allNavLinks = document.querySelectorAll('.sidebar-link, .bottom-nav-item, .sidebar-nav-item');
+        allNavLinks.forEach(link => {
             if (link.dataset.target === viewId) {
                 link.classList.add('active');
             } else {
@@ -3794,6 +3803,7 @@ function renderDashboardMembersList(searchQuery = '') {
     let countPartial = 0;
     let countPending = 0;
     let countChitTaken = 0;
+    let countChitNotTaken = 0;
     let amountChitTaken = 0;
     let countNewCustomerMonth = 0;
     let countNewCustomer = 0;
@@ -3812,8 +3822,13 @@ function renderDashboardMembersList(searchQuery = '') {
             countPending++;
         }
         
-        if (item.takenThisSelectedMonth) {
+        if (item.hasTakenPayout) {
             countChitTaken++;
+        } else {
+            countChitNotTaken++;
+        }
+        
+        if (item.takenThisSelectedMonth) {
             amountChitTaken += item.payoutVal;
         }
 
@@ -3839,6 +3854,7 @@ function renderDashboardMembersList(searchQuery = '') {
     const dashCountPartial = document.getElementById('dash-count-partial');
     const dashCountPending = document.getElementById('dash-count-pending');
     const dashCountChitTaken = document.getElementById('dash-count-chit-taken');
+    const dashCountChitNotTaken = document.getElementById('dash-count-chit-not-taken');
     const dashCountNewCustomerMonth = document.getElementById('dash-count-new-customer-month');
     const dashCountNewCustomer = document.getElementById('dash-count-new-customer');
     const dashCountGpay = document.getElementById('dash-count-gpay');
@@ -3849,6 +3865,7 @@ function renderDashboardMembersList(searchQuery = '') {
     if (dashCountPartial) dashCountPartial.textContent = countPartial;
     if (dashCountPending) dashCountPending.textContent = countPending;
     if (dashCountChitTaken) dashCountChitTaken.textContent = countChitTaken;
+    if (dashCountChitNotTaken) dashCountChitNotTaken.textContent = countChitNotTaken;
     if (dashCountNewCustomerMonth) dashCountNewCustomerMonth.textContent = countNewCustomerMonth;
     if (dashCountNewCustomer) dashCountNewCustomer.textContent = countNewCustomer;
     if (dashCountGpay) dashCountGpay.textContent = countGpay;
@@ -3862,6 +3879,7 @@ function renderDashboardMembersList(searchQuery = '') {
         const optPartial = tagFilter.querySelector('option[value="partial"]');
         const optPending = tagFilter.querySelector('option[value="pending"]');
         const optChitTaken = tagFilter.querySelector('option[value="chit_taken"]');
+        const optChitNotTaken = tagFilter.querySelector('option[value="chit_not_taken"]');
         const optNewCustomerMonth = tagFilter.querySelector('option[value="new_customer_month"]');
         const optNewCustomer = tagFilter.querySelector('option[value="new_customer"]');
         const optGpay = tagFilter.querySelector('option[value="gpay"]');
@@ -3872,6 +3890,7 @@ function renderDashboardMembersList(searchQuery = '') {
         if (optPartial) optPartial.textContent = `Partial (${countPartial})`;
         if (optPending) optPending.textContent = `Due (${countPending})`;
         if (optChitTaken) optChitTaken.textContent = `Chit Taken (${countChitTaken})`;
+        if (optChitNotTaken) optChitNotTaken.textContent = `Chit Not Taken (${countChitNotTaken})`;
         if (optNewCustomerMonth) optNewCustomerMonth.textContent = `New Customer (${countNewCustomerMonth})`;
         if (optNewCustomer) optNewCustomer.textContent = `All New Customer (${countNewCustomer})`;
         if (optGpay) optGpay.textContent = `Gpay (${countGpay})`;
@@ -3887,6 +3906,7 @@ function renderDashboardMembersList(searchQuery = '') {
             { value: 'partial', label: 'Partial', count: countPartial },
             { value: 'pending', label: 'Due', count: countPending },
             { value: 'chit_taken', label: 'Chit Taken', count: countChitTaken },
+            { value: 'chit_not_taken', label: 'Chit Not Taken', count: countChitNotTaken },
             { value: 'new_customer_month', label: 'New Customer', count: countNewCustomerMonth },
             { value: 'new_customer', label: 'All New Customer', count: countNewCustomer },
             { value: 'gpay', label: 'Gpay', count: countGpay, subItems: gpayMembers },
@@ -4077,7 +4097,9 @@ function renderDashboardMembersList(searchQuery = '') {
             } else if (State.dashboardFilter === 'pending') {
                 return !item.currentMonthPaid && item.paidAmount === 0;
             } else if (State.dashboardFilter === 'chit_taken') {
-                return item.takenThisSelectedMonth;
+                return item.hasTakenPayout;
+            } else if (State.dashboardFilter === 'chit_not_taken') {
+                return !item.hasTakenPayout;
             } else if (State.dashboardFilter === 'new_customer_month') {
                 return item.member.customerType === 'New' && item.relativeMonthNum === 1;
             } else if (State.dashboardFilter === 'new_customer') {
@@ -4176,11 +4198,13 @@ function renderDashboardMembersList(searchQuery = '') {
             containerSD.innerHTML = `<span style="color: #9ca3af;">--</span>`;
             containerSD.style.backgroundColor = "transparent";
         } else if (difference < 0) {
-            containerSD.innerHTML = `<span style="color: #ef4444;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
-            containerSD.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+            containerSD.innerHTML = `<span style="color: #ffffff; font-weight: 900;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.style.backgroundColor = "#ef4444"; // Solid Red
+            containerSD.style.borderTop = "none";
         } else if (difference >= 0) {
-            containerSD.innerHTML = `<span style="color: #22c55e;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
-            containerSD.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
+            containerSD.innerHTML = `<span style="color: #ffffff; font-weight: 900;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.style.backgroundColor = "#22c55e"; // Solid Green
+            containerSD.style.borderTop = "none";
         }
         if (window.lucide) window.lucide.createIcons();
     }
@@ -4301,13 +4325,13 @@ function renderDashboardMembersList(searchQuery = '') {
         if (groupNameParts.length === 2) {
             const start = groupNameParts[0].trim();
             const end = groupNameParts[1].trim();
-            groupNameHtml = `<span style="color: #10b981; font-weight: 700;">${start}</span> - <span style="color: #ff453a; font-weight: 700;">${end}</span>`;
+            groupNameHtml = `<span style="color: var(--green-dark) !important; font-weight: 900 !important; font-size: 0.95rem !important;">${start}</span> - <span style="color: var(--red-dark) !important; font-weight: 900 !important; font-size: 0.95rem !important;">${end}</span>`;
         }
 
         row.innerHTML = `
             <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
             <span class="member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
-            <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; text-align: center; justify-content: center; width: 100%;">${groupNameHtml}</span>
+            <span style="font-size: 0.95rem; color: var(--text-main); font-weight: 800; text-align: center; justify-content: center; width: 100%;">${groupNameHtml}</span>
             <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
             <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
             <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
@@ -6759,7 +6783,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         if (groupNameParts.length === 2) {
             const start = groupNameParts[0].trim();
             const end = groupNameParts[1].trim();
-            groupNameHtml = `<span style="color: #10b981; font-weight: 700;">${start}</span>-<span style="color: #ef4444; font-weight: 700;">${end}</span>`;
+            groupNameHtml = `<span style="color: var(--green-dark); font-weight: 800;">${start}</span>-<span style="color: var(--red-dark); font-weight: 800;">${end}</span>`;
         }
         
         tableRowsHtml += `
@@ -6880,23 +6904,21 @@ function initSidebar() {
     const menu = document.getElementById('sidebar-menu');
     const overlay = document.getElementById('sidebar-overlay');
     
-    if (!btnToggle || !menu || !overlay) return;
-
     function openSidebar() {
-        menu.classList.add('show');
-        overlay.classList.add('show');
+        if(menu) menu.classList.add('show');
+        if(overlay) overlay.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 
     function closeSidebar() {
-        menu.classList.remove('show');
-        overlay.classList.remove('show');
+        if(menu) menu.classList.remove('show');
+        if(overlay) overlay.classList.remove('show');
         document.body.style.overflow = '';
     }
 
-    btnToggle.addEventListener('click', openSidebar);
+    if(btnToggle) btnToggle.addEventListener('click', openSidebar);
     if(btnClose) btnClose.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
+    if(overlay) overlay.addEventListener('click', closeSidebar);
 
     // Sidebar Navigation Links
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -6917,45 +6939,40 @@ function initSidebar() {
         });
     });
 
-    // Wire up Calculator and Notepad screen back buttons
-    const btnBackCalc = document.getElementById('btn-back-to-dashboard-calc');
-    if (btnBackCalc) {
-        btnBackCalc.addEventListener('click', () => {
-            if (window.AuthState && window.AuthState.isAuthenticated) {
-                switchView('screen-dashboard');
-            } else {
-                switchView('screen-landing');
+    // Bottom Navigation & Desktop Sidebar Links
+    const allNavItems = document.querySelectorAll('.bottom-nav-item, .sidebar-nav-item');
+    allNavItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = item.dataset.target;
+            if (target) {
+                switchView(target);
             }
+        });
+    });
+
+
+    // Calculator Modal Logic
+    const btnGlobalCalc = document.getElementById('btn-global-calc');
+    const calcModalOverlay = document.getElementById('calc-modal-overlay');
+    const btnCloseCalcModal = document.getElementById('btn-close-calc-modal');
+
+    if (btnGlobalCalc) {
+        btnGlobalCalc.addEventListener('click', () => {
+            if (calcModalOverlay) calcModalOverlay.classList.add('show');
         });
     }
 
-    const btnBackPnl = document.getElementById('btn-back-to-dashboard-pnl');
-    if (btnBackPnl) {
-        btnBackPnl.addEventListener('click', () => {
-            if (window.AuthState && window.AuthState.isAuthenticated) {
-                switchView('screen-dashboard');
-            } else {
-                switchView('screen-landing');
-            }
-        });
-    }
-
-
-    const btnBackToDashboardNotes = document.getElementById('btn-back-to-dashboard-notes');
-    if (btnBackToDashboardNotes) {
-        btnBackToDashboardNotes.addEventListener('click', () => {
-            if (window.AuthState && window.AuthState.isAuthenticated) {
-                switchView('screen-dashboard');
-            } else {
-                switchView('screen-landing');
-            }
+    if (btnCloseCalcModal) {
+        btnCloseCalcModal.addEventListener('click', () => {
+            if (calcModalOverlay) calcModalOverlay.classList.remove('show');
         });
     }
 
     // Calculator Logic
     const calcDisplay = document.getElementById('calc-display');
     const calcHistory = document.getElementById('calc-history');
-    const calcBtns = document.querySelectorAll('.calc-btn');
+    const calcBtns = document.querySelectorAll('.calc-btn-prm');
     
     let currentInput = '0';
     let previousInput = '';
@@ -7140,33 +7157,37 @@ function initSidebar() {
 
         filtered.forEach((note, idx) => {
             const card = document.createElement('div');
-            card.className = 'note-card';
+            card.className = 'note-card-prm';
 
             // Use saved color or auto-assign from palette
             const bgColor = note.color && note.color !== '#ffffff' && note.color !== '#1e1e2e'
                 ? note.color
                 : NOTE_PALETTE[idx % NOTE_PALETTE.length];
-            card.style.backgroundColor = bgColor;
-            card.style.boxShadow = `0 6px 20px ${bgColor}44`;
+            card.style.setProperty('--note-color', bgColor);
 
             const titleEl = document.createElement('h4');
             titleEl.className = 'note-card-title';
             titleEl.textContent = note.title || 'Untitled Note';
 
             const snippetEl = document.createElement('p');
-            snippetEl.className = 'note-card-snippet';
+            snippetEl.className = 'note-card-preview';
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = note.content || '';
             snippetEl.textContent = tempDiv.textContent || 'No content yet...';
+            
+            const footerEl = document.createElement('div');
+            footerEl.className = 'note-card-footer';
 
             const dateEl = document.createElement('span');
             dateEl.className = 'note-card-date';
             const d = new Date(note.date);
             dateEl.textContent = d.toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
+            
+            footerEl.appendChild(dateEl);
 
             card.appendChild(titleEl);
             card.appendChild(snippetEl);
-            card.appendChild(dateEl);
+            card.appendChild(footerEl);
 
             card.addEventListener('click', () => openNoteEditor(note.id));
             notesGrid.appendChild(card);
@@ -7185,9 +7206,10 @@ function initSidebar() {
             notepadTextarea.innerHTML = note.content || '';
             notepadColorPicker.value = note.color || '#1e1e2e';
 
-            // Apply colour as editor background
-            const editorBg = (note.color && note.color !== '#ffffff') ? note.color : '#1e1e2e';
-            noteEditorView.style.background = `linear-gradient(160deg, ${editorBg}dd 0%, ${editorBg}99 100%)`;
+            const editorBg = (note.color && note.color !== '#ffffff') ? note.color : null;
+            if (editorBg) {
+                noteEditorView.style.setProperty('--note-editor-accent', editorBg);
+            }
 
             const d = new Date(note.date);
             notepadDateDisplay.textContent = `Edited ${d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}`;
@@ -7244,7 +7266,6 @@ function initSidebar() {
             currentNotes[noteIndex].title = notepadTitle.value;
             currentNotes[noteIndex].content = notepadTextarea.innerHTML;
             currentNotes[noteIndex].color = notepadColorPicker.value;
-            noteEditorView.style.backgroundColor = notepadColorPicker.value;
             currentNotes[noteIndex].date = new Date().toISOString();
             
             const d = new Date();
@@ -7429,7 +7450,7 @@ function renderPnLDashboard() {
     tbody.innerHTML = '';
     
     if (State.groups.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">No groups available.</td></tr>';
+        tbody.innerHTML = '<tr class="pnl-empty-row"><td colspan="7">No groups available yet. Create a chit group to see P&amp;L data.</td></tr>';
     } else {
         State.groups.forEach((group, index) => {
             const pnl = calculateGroupPnL(group);
@@ -7439,20 +7460,26 @@ function renderPnLDashboard() {
             globalNetProfit += pnl.netProfit;
             globalArrears += pnl.arrears;
             
-            const collectedColor = 'var(--text-main)';
-            const payoutColor = 'var(--blue-main)';
-            const netColor = pnl.netProfit >= 0 ? '#10b981' : 'var(--danger-main)';
-            const arrearsColor = pnl.arrears > 0 ? 'var(--danger-main)' : 'var(--text-main)';
+            const groupNameParts = group.name.split('-');
+            let groupNameHtml = group.name;
+            if (groupNameParts.length === 2) {
+                const start = groupNameParts[0].trim();
+                const end = groupNameParts[1].trim();
+                groupNameHtml = `<span class="pnl-val-green">${start}</span> - <span class="pnl-val-red">${end}</span>`;
+            }
+            
+            const netClass = pnl.netProfit >= 0 ? 'pnl-val-green' : 'pnl-val-red';
+            const arrearsClass = pnl.arrears > 0 ? 'pnl-val-red' : 'pnl-val-muted';
             
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${index + 1}</td>
-                <td style="font-weight: 700;">${group.name}</td>
-                <td style="text-align: center;">${group.duration}M</td>
-                <td style="text-align: right; color: ${collectedColor}; font-weight: 600;">₹${formatNumberIndian(pnl.realizedCollection)}</td>
-                <td style="text-align: right; color: ${payoutColor}; font-weight: 600;">₹${formatNumberIndian(pnl.realizedPayout)}</td>
-                <td style="text-align: right; color: ${netColor}; font-weight: 700;">₹${formatNumberIndian(pnl.netProfit)}</td>
-                <td style="text-align: right; color: ${arrearsColor}; font-weight: 600;">₹${formatNumberIndian(pnl.arrears)}</td>
+                <td class="pnl-td-num">${index + 1}</td>
+                <td class="pnl-td-name">${groupNameHtml}</td>
+                <td class="pnl-td-center">${group.duration}M</td>
+                <td class="pnl-td-right pnl-val-green">₹${formatNumberIndian(pnl.realizedCollection)}</td>
+                <td class="pnl-td-right pnl-val-purple">₹${formatNumberIndian(pnl.realizedPayout)}</td>
+                <td class="pnl-td-right ${netClass}">₹${formatNumberIndian(pnl.netProfit)}</td>
+                <td class="pnl-td-right ${arrearsClass}">₹${formatNumberIndian(pnl.arrears)}</td>
             `;
             tbody.appendChild(row);
         });
@@ -7465,21 +7492,27 @@ function renderPnLDashboard() {
     if (elPayout) elPayout.textContent = '₹' + formatNumberIndian(globalPayout);
     
     const elRealized = document.getElementById('pnl-global-realized');
+    const elRealizedCard = document.getElementById('pnl-global-realized-card');
+    const elTitle = document.getElementById('pnl-global-title');
     if (elRealized) {
         elRealized.textContent = '₹' + formatNumberIndian(globalNetProfit);
         if (globalNetProfit < 0) {
-            elRealized.classList.remove('text-green');
-            elRealized.style.color = 'var(--danger-main)';
-            elRealized.parentElement.classList.remove('highlight-green');
-            elRealized.parentElement.classList.add('highlight-red');
+            if (elTitle) elTitle.textContent = 'Net Loss';
+            if (elRealizedCard) {
+                elRealizedCard.classList.remove('pnl-card-green');
+                elRealizedCard.classList.add('pnl-card-red');
+            }
         } else {
-            elRealized.classList.add('text-green');
-            elRealized.style.color = '';
-            elRealized.parentElement.classList.remove('highlight-red');
-            elRealized.parentElement.classList.add('highlight-green');
+            if (elTitle) elTitle.textContent = 'Net Profit';
+            if (elRealizedCard) {
+                elRealizedCard.classList.remove('pnl-card-red');
+                elRealizedCard.classList.add('pnl-card-green');
+            }
         }
     }
     
     const elPending = document.getElementById('pnl-global-pending');
     if (elPending) elPending.textContent = '₹' + formatNumberIndian(globalArrears);
+
+    if (window.lucide) window.lucide.createIcons();
 }
