@@ -43,9 +43,15 @@ document.documentElement.setAttribute('data-theme', theme);
 
     <!-- Smooth Transition Overlay -->
     <div id="transition-overlay" class="transition-overlay active">
-        <div class="transition-content">
-            <img src="logo-light.png" alt="PMS Logo" style="height: 60px; object-fit: contain; margin-bottom: 24px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));">
-            <div style="width: 32px; height: 32px; border: 3px solid rgba(212, 175, 55, 0.2); border-top-color: #d4af37; border-radius: 50%;" class="spin-anim"></div>
+        <div class="transition-content premium-loader-content">
+            <div class="premium-loader-logo">
+                <img src="logo-light.png" alt="PMS Logo">
+                <div class="premium-loader-glow"></div>
+            </div>
+            <div class="premium-loader-bar">
+                <div class="premium-loader-progress"></div>
+            </div>
+            <div class="premium-loader-text">INITIALIZING WORKSPACE</div>
         </div>
     </div>
     
@@ -305,7 +311,7 @@ document.documentElement.setAttribute('data-theme', theme);
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h2 class="section-title-alt" style="margin-bottom: 0; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37, #fce07e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; letter-spacing: -0.3px;"><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: #d4af37; -webkit-text-fill-color: initial; flex-shrink: 0;"></i>Dashboard Summary</h2>
                             <span id="dashboard-target-collection-badge" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; padding: 7px 18px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(0,0,0,0.3); letter-spacing: 0.3px;">
-                                <img src="target_icon.png" alt="Target" class="icon-blend-img" style="width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; vertical-align: middle;">
+                                <i data-lucide="target" style="width: 24px; height: 24px; color: #ffffff; flex-shrink: 0; vertical-align: middle;"></i>
                                 <span id="dashboard-target-collection-text">Target: ₹0</span>
                             </span>
                         </div>
