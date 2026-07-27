@@ -1,4 +1,4 @@
-﻿// --- Settings Operations: Backup, Restore & Reset ---
+// --- Settings Operations: Backup, Restore & Reset ---
 
 // 1. Export Data to JSON
 function exportBackup() {

@@ -1,4 +1,4 @@
-﻿// --- Global Application State ---
+// --- Global Application State ---
 const State = {
     groups: [],
     members: [],

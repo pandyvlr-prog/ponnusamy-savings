@@ -1,4 +1,4 @@
-﻿// --- Status Bar Clock Utility & Date display ---
+// --- Status Bar Clock Utility & Date display ---
 function updateStatusBarClock() {
     const timeEl = document.getElementById('live-status-time');
     if (timeEl) {
@@ -305,8 +305,6 @@ document.getElementById('btn-confirm-payout').addEventListener('click', () => {
     document.getElementById('payout-method-modal-backdrop').classList.remove('active');
 });
 
-
-// Ripple Effect for Buttons
 function createRipple(event) {
     const button = event.currentTarget;
     const circle = document.createElement("span");
@@ -328,7 +326,7 @@ function createRipple(event) {
     circle.style.top = (clientY - rect.top - radius) + "px";
     circle.classList.add("ripple-span");
 
-    const existing = button.querySelector(.ripple-span);
+    const existing = button.querySelector('.ripple-span');
     if (existing) {
         existing.remove();
     }
@@ -338,7 +336,7 @@ function createRipple(event) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll(.btn, .sidebar-nav-item, .fab-btn, .settings-card).forEach(btn => {
+    document.querySelectorAll('.btn, .sidebar-nav-item, .fab-btn, .settings-card').forEach(btn => {
         btn.addEventListener('mousedown', createRipple);
         btn.addEventListener('touchstart', createRipple, {passive: true});
     });

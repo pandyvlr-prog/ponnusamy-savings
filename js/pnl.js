@@ -1,4 +1,4 @@
-﻿// --- Profit and Loss (P&L) Implementation ---
+// --- Profit and Loss (P&L) Implementation ---
 
 function calculateGroupPnL(group) {
     const activeMembers = State.members.filter(m => m.groupId === group.id && m.status === 'Active');
@@ -84,10 +84,10 @@ function renderPnLDashboard() {
                 <td class="pnl-td-num" data-label="#">${index + 1}</td>
                 <td class="pnl-td-name" data-label="Group Name">${groupNameHtml}</td>
                 <td class="pnl-td-center" data-label="Duration">${group.duration}M</td>
-                <td class="pnl-td-right pnl-val-green" data-label="Collected">â‚¹${formatNumberIndian(pnl.realizedCollection)}</td>
-                <td class="pnl-td-right pnl-val-purple" data-label="Payout">â‚¹${formatNumberIndian(pnl.realizedPayout)}</td>
-                <td class="pnl-td-right ${netClass}" data-label="Net">â‚¹${formatNumberIndian(pnl.netProfit)}</td>
-                <td class="pnl-td-right ${arrearsClass}" data-label="Arrears">â‚¹${formatNumberIndian(pnl.arrears)}</td>
+                <td class="pnl-td-right pnl-val-green" data-label="Collected">₹${formatNumberIndian(pnl.realizedCollection)}</td>
+                <td class="pnl-td-right pnl-val-purple" data-label="Payout">₹${formatNumberIndian(pnl.realizedPayout)}</td>
+                <td class="pnl-td-right ${netClass}" data-label="Net">₹${formatNumberIndian(pnl.netProfit)}</td>
+                <td class="pnl-td-right ${arrearsClass}" data-label="Arrears">₹${formatNumberIndian(pnl.arrears)}</td>
             `;
                         row.style.cursor = 'pointer';
             row.onclick = () => openPnLMonthDrawer(group.id);
@@ -97,16 +97,16 @@ function renderPnLDashboard() {
     }
     
     const elExpected = document.getElementById('pnl-global-expected');
-    if (elExpected) elExpected.textContent = 'â‚¹' + formatNumberIndian(globalCollected);
+    if (elExpected) elExpected.textContent = '₹' + formatNumberIndian(globalCollected);
     
     const elPayout = document.getElementById('pnl-global-payout');
-    if (elPayout) elPayout.textContent = 'â‚¹' + formatNumberIndian(globalPayout);
+    if (elPayout) elPayout.textContent = '₹' + formatNumberIndian(globalPayout);
     
     const elRealized = document.getElementById('pnl-global-realized');
     const elRealizedCard = document.getElementById('pnl-global-realized-card');
     const elTitle = document.getElementById('pnl-global-title');
     if (elRealized) {
-        elRealized.textContent = 'â‚¹' + formatNumberIndian(globalNetProfit);
+        elRealized.textContent = '₹' + formatNumberIndian(globalNetProfit);
         if (globalNetProfit < 0) {
             if (elTitle) elTitle.textContent = 'Net Loss';
             if (elRealizedCard) {
@@ -123,7 +123,7 @@ function renderPnLDashboard() {
     }
     
     const elPending = document.getElementById('pnl-global-pending');
-    if (elPending) elPending.textContent = 'â‚¹' + formatNumberIndian(globalArrears);
+    if (elPending) elPending.textContent = '₹' + formatNumberIndian(globalArrears);
 
     if (window.lucide) window.lucide.createIcons();
 }
@@ -280,3 +280,6 @@ function closePnLMonthDrawer() {
     backdrop.style.opacity = '0';
     const drawer = document.getElementById('pnl-month-drawer');
     if (drawer) drawer.style.transform = 'scale(0.88) translateY(40px)';
+    setTimeout(function() { const el = document.getElementById('pnl-drawer-backdrop'); if (el) el.remove(); }, 320);
+}
+// Ripple Effect for Buttons

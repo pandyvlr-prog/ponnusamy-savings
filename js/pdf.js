@@ -1,4 +1,4 @@
-﻿// --- PDF Generation Logic ---
+// --- PDF Generation Logic ---
 function generatePdfReport() {
     const group = State.groups.find(g => g.id === State.selectedGroupId);
     if (!group) return;
@@ -84,7 +84,7 @@ function generatePdfReport() {
             <td style="padding: 12px; color: #0f172a; font-weight: 700; border: 1px solid #d1d5db;">${member.name}</td>
             <td style="padding: 12px; text-align: center; border: 1px solid #d1d5db;">${chitStatusText}</td>
             <td style="padding: 12px; color: #475569; font-size: 11px; border: 1px solid #d1d5db;">${datePaidText}</td>
-            <td style="padding: 12px; text-align: right; color: #0f172a; font-weight: 600; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(installmentVal)}</td>
+            <td style="padding: 12px; text-align: right; color: #0f172a; font-weight: 600; border: 1px solid #d1d5db;">₹${formatNumberIndian(installmentVal)}</td>
             <td style="padding: 12px; text-align: center; border: 1px solid #d1d5db;">
                 <span style="background-color: ${statusBg}; color: ${statusColor}; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800;">${statusText}</span>
             </td>
@@ -98,7 +98,7 @@ function generatePdfReport() {
         tr.innerHTML = `
             <td style="padding: 8px; color: #991b1b; font-weight: 700;">${member.name}</td>
             <td style="padding: 8px; color: #991b1b;">${member.mobileNo || '--'}</td>
-            <td style="padding: 8px; text-align: right; color: #991b1b; font-weight: 800;">â‚¹${formatNumberIndian(installmentVal)}</td>
+            <td style="padding: 8px; text-align: right; color: #991b1b; font-weight: 800;">₹${formatNumberIndian(installmentVal)}</td>
         `;
         defaultersBody.appendChild(tr);
     });
@@ -114,9 +114,9 @@ function generatePdfReport() {
     const now = new Date();
     document.getElementById('pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     
-    document.getElementById('pdf-target-collection').textContent = `â‚¹${formatNumberIndian(targetCollection)}`;
-    document.getElementById('pdf-total-collected').textContent = `â‚¹${formatNumberIndian(collected)}`;
-    document.getElementById('pdf-total-pending').textContent = `â‚¹${formatNumberIndian(pending)}`;
+    document.getElementById('pdf-target-collection').textContent = `₹${formatNumberIndian(targetCollection)}`;
+    document.getElementById('pdf-total-collected').textContent = `₹${formatNumberIndian(collected)}`;
+    document.getElementById('pdf-total-pending').textContent = `₹${formatNumberIndian(pending)}`;
 
     const percentage = targetCollection > 0 ? ((collected / targetCollection) * 100).toFixed(1) : 0;
     document.getElementById('pdf-collection-percentage').textContent = `${percentage}%`;
@@ -243,7 +243,7 @@ function generateGlobalPdfReport(mode = 'download') {
                 if (member.payments[i] && member.payments[i].payoutClaimed) {
                     hasTakenChit = true;
                     const payoutVal = group.payouts && group.payouts[i] !== undefined ? group.payouts[i] : 0;
-                    chitAmountStr = `â‚¹${formatNumberIndian(payoutVal)}`;
+                    chitAmountStr = `₹${formatNumberIndian(payoutVal)}`;
                     chitModeStr = member.payments[i].paymentMode ? member.payments[i].paymentMode.substring(0,1).toUpperCase() : 'C'; // e.g., 'G' for Gpay
                     break;
                 }
@@ -292,8 +292,8 @@ function generateGlobalPdfReport(mode = 'download') {
         if (row.paidAmount > 0 && row.dueAmount > 0 && row.paidDate !== '--') {
             rowDateColor = '#d97706';
         }
-        let rowDueText = row.dueAmount === 0 ? '--' : `â‚¹${formatNumberIndian(row.dueAmount)}`;
-        let rowPaidText = row.paidAmount === 0 ? '--' : `â‚¹${formatNumberIndian(row.paidAmount)}`;
+        let rowDueText = row.dueAmount === 0 ? '--' : `₹${formatNumberIndian(row.dueAmount)}`;
+        let rowPaidText = row.paidAmount === 0 ? '--' : `₹${formatNumberIndian(row.paidAmount)}`;
 
         tableRowsHtml += `
             <tr style="background-color: ${rowBg};">
@@ -343,9 +343,9 @@ function generateGlobalPdfReport(mode = 'download') {
     const now = new Date();
     document.getElementById('global-pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     
-    document.getElementById('global-pdf-target').textContent = `â‚¹${formatNumberIndian(globalTarget)}`;
-    document.getElementById('global-pdf-collected').textContent = `â‚¹${formatNumberIndian(globalCollected)}`;
-    document.getElementById('global-pdf-pending').textContent = `â‚¹${formatNumberIndian(globalPending)}`;
+    document.getElementById('global-pdf-target').textContent = `₹${formatNumberIndian(globalTarget)}`;
+    document.getElementById('global-pdf-collected').textContent = `₹${formatNumberIndian(globalCollected)}`;
+    document.getElementById('global-pdf-pending').textContent = `₹${formatNumberIndian(globalPending)}`;
 
     const globalPercentage = globalTarget > 0 ? ((globalCollected / globalTarget) * 100).toFixed(1) : 0;
     document.getElementById('global-pdf-percentage').textContent = `${globalPercentage}%`;
@@ -621,9 +621,9 @@ function generateYearlyPdfReport() {
             <tr style="background-color: ${rowBg};">
                 <td style="padding: 12px 10px; color: #334155; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${i}</td>
                 <td style="padding: 12px 10px; color: #0f172a; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">${monthNames[i-1]}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #334155; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.target)}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #16a34a; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.collected)}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #dc2626; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.pending)}</td>
+                <td style="padding: 12px 10px; text-align: right; color: #334155; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.target)}</td>
+                <td style="padding: 12px 10px; text-align: right; color: #16a34a; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.collected)}</td>
+                <td style="padding: 12px 10px; text-align: right; color: #dc2626; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.pending)}</td>
                 <td style="padding: 12px 10px; text-align: center; color: #d97706; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">${colRate}%</td>
             </tr>
         `;
@@ -655,9 +655,9 @@ function generateYearlyPdfReport() {
     const now = new Date();
     document.getElementById('yearly-pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     
-    document.getElementById('yearly-pdf-target').textContent = `â‚¹${formatNumberIndian(totalTarget)}`;
-    document.getElementById('yearly-pdf-collected').textContent = `â‚¹${formatNumberIndian(totalCollected)}`;
-    document.getElementById('yearly-pdf-pending').textContent = `â‚¹${formatNumberIndian(totalPending)}`;
+    document.getElementById('yearly-pdf-target').textContent = `₹${formatNumberIndian(totalTarget)}`;
+    document.getElementById('yearly-pdf-collected').textContent = `₹${formatNumberIndian(totalCollected)}`;
+    document.getElementById('yearly-pdf-pending').textContent = `₹${formatNumberIndian(totalPending)}`;
 
     const percentage = totalTarget > 0 ? ((totalCollected / totalTarget) * 100).toFixed(1) : 0;
     document.getElementById('yearly-pdf-percentage').textContent = `${percentage}%`;
@@ -834,8 +834,8 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     takenMembers.forEach((item, index) => {
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
         
-        let dueAmountText = item.dueAmount > 0 ? `â‚¹${item.dueAmount.toLocaleString('en-IN')}` : '--';
-        let paidAmountText = item.paidAmount > 0 ? `â‚¹${item.paidAmount.toLocaleString('en-IN')}` : '--';
+        let dueAmountText = item.dueAmount > 0 ? `₹${item.dueAmount.toLocaleString('en-IN')}` : '--';
+        let paidAmountText = item.paidAmount > 0 ? `₹${item.paidAmount.toLocaleString('en-IN')}` : '--';
         let dueColor = item.dueAmount > 0 ? '#ef4444' : '#1e293b';
         let paidColor = item.paidAmount > 0 ? '#10b981' : '#1e293b';
         
@@ -852,7 +852,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
             } else if (item.paymentMethodThisMonth === 'cash') {
                 methodSuffix = ` <span style="color: #fca5a5; font-weight: 800; font-size: 10px;">/ C</span>`;
             }
-            markHtml = `<span style="background: #ecfdf5; color: #10b981; border: 1px solid #10b981; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">âœ“ PAID${methodSuffix}</span>`;
+            markHtml = `<span style="background: #ecfdf5; color: #10b981; border: 1px solid #10b981; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">✓ PAID${methodSuffix}</span>`;
         } else if (item.paidAmount > 0) {
             markHtml = `<span style="background: #fffbeb; color: #d97706; border: 1px solid #d97706; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">PARTIAL</span>`;
         } else {
@@ -865,7 +865,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         } else if (item.payoutMethod === 'gpay') {
             methodLetterHtml = ` <span style="color: #93c5fd; font-weight: 800;">/ G</span>`;
         }
-        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">â‚¹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
+        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
         
         let schemeAmountStr = '';
         if (item.chitAmount >= 100000) {
@@ -922,7 +922,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
                     <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Name</th>
                     <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Chit Group</th>
                     <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Scheme</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">ðŸ“…</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">📅</th>
                     <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Due Amount</th>
                     <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Paid Amount</th>
                     <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Paid Date</th>
@@ -948,7 +948,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     document.getElementById('chit-pdf-gen-date').textContent = `Generated: ${dd}/${mmGen}/${yyyyGen} ${now.toLocaleTimeString()}`;
     
     document.getElementById('chit-pdf-total-members').textContent = takenMembers.length;
-    document.getElementById('chit-pdf-total-amount').textContent = `â‚¹${formatNumberIndian(totalPayoutAmount)}`;
+    document.getElementById('chit-pdf-total-amount').textContent = `₹${formatNumberIndian(totalPayoutAmount)}`;
 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
@@ -1084,7 +1084,7 @@ function initSidebar() {
             if (labelEl) {
                 if (State.dashboardDateRangeFrom && State.dashboardDateRangeTo) {
                     const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
-                    labelEl.textContent = `${fmtDate(State.dashboardDateRangeFrom)} â€“ ${fmtDate(State.dashboardDateRangeTo)}`;
+                    labelEl.textContent = `${fmtDate(State.dashboardDateRangeFrom)} – ${fmtDate(State.dashboardDateRangeTo)}`;
                     btnOpenDateRange.style.backgroundColor = 'var(--primary-glow)';
                     btnOpenDateRange.style.color = 'var(--primary)';
                     btnOpenDateRange.style.borderColor = 'var(--primary)';
@@ -1303,8 +1303,8 @@ function initSidebar() {
                         let opSymbol = '';
                         if(action === 'add') opSymbol = '+';
                         if(action === 'subtract') opSymbol = '-';
-                        if(action === 'multiply') opSymbol = 'Ã—';
-                        if(action === 'divide') opSymbol = 'Ã·';
+                        if(action === 'multiply') opSymbol = '×';
+                        if(action === 'divide') opSymbol = '÷';
                         
                         calcHistory.textContent = `${previousInput} ${opSymbol}`;
                         break;
@@ -1330,7 +1330,7 @@ function initSidebar() {
     let activeNoteId = null;
     let saveTimeout = null;
 
-    // Load initial notes â€” localStorage is PRIMARY source of truth.
+    // Load initial notes — localStorage is PRIMARY source of truth.
     // Cloud data is only used as a one-time seed when localStorage has nothing.
     function loadNotes() {
         // Always try localStorage first
@@ -1342,14 +1342,14 @@ function initSidebar() {
                 if (Array.isArray(parsed)) {
                     currentNotes = parsed;
                     renderNotesList();
-                    return; // done â€” localStorage wins
+                    return; // done — localStorage wins
                 }
             } catch (e) {
                 console.warn('notepad localStorage parse error, falling back to cloud', e);
             }
         }
 
-        // Only reach here if localStorage is empty/corrupt â€” try cloud as one-time seed
+        // Only reach here if localStorage is empty/corrupt — try cloud as one-time seed
         const cloudRaw = window.AuthState?.currentUser?.user_metadata?.notepad_content;
         if (cloudRaw) {
             try {
@@ -1479,15 +1479,15 @@ function initSidebar() {
     function saveNotesState() {
         const payload = JSON.stringify(currentNotes);
 
-        // IMMEDIATELY persist to localStorage â€” this is the source of truth
+        // IMMEDIATELY persist to localStorage — this is the source of truth
         localStorage.setItem('pms_workspace_notepad', payload);
 
-        // Show saving indicator (debounced â€” purely cosmetic)
+        // Show saving indicator (debounced — purely cosmetic)
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
             notepadStatus.textContent = 'Saving...';
             setTimeout(() => {
-                notepadStatus.textContent = 'âœ“ Saved';
+                notepadStatus.textContent = '✓ Saved';
                 setTimeout(() => {
                     if (notepadStatus.textContent.includes('Saved')) {
                         notepadStatus.textContent = '';
@@ -1496,7 +1496,7 @@ function initSidebar() {
             }, 600);
         }, 300);
 
-        // Background cloud sync â€” failures don't affect local state
+        // Background cloud sync — failures don't affect local state
         if (window.AuthState?.currentUser && typeof updateProfileData === 'function') {
             updateProfileData({ notepad_content: payload })
                 .catch(err => console.warn('Cloud note sync failed (local copy is safe):', err));
@@ -1575,7 +1575,7 @@ function initSidebar() {
         });
     });
 
-    // Rich Text / Format Toolbar â€” supports both old .rt-btn and new .fmt-btn
+    // Rich Text / Format Toolbar — supports both old .rt-btn and new .fmt-btn
     document.querySelectorAll('.rt-btn, .fmt-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1613,7 +1613,7 @@ function initSidebar() {
 
             if (!title && !body.trim()) {
                 if (typeof showNotification === 'function') {
-                    showNotification('Note is empty â€” nothing to share!', 'error');
+                    showNotification('Note is empty — nothing to share!', 'error');
                 }
                 return;
             }

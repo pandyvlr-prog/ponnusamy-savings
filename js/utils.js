@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Ponnusamy Savings - Core Application Logic
  * Offline-first Chit Fund Management Engine
  */
