@@ -3447,7 +3447,6 @@ html { scroll-behavior: smooth; }
 
 /* App Global Animations - DISABLED for minimal transitions */
 .metric-item, .fin-card, .dashboard-member-row, .filter-pills {
-    animation: none !important;
     opacity: 1 !important;
     transform: none !important;
 }
@@ -3807,7 +3806,6 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
     
     /* Disable aggressive glowing box shadows that cause lag */
     .progress-fill {
-        animation: none !important;
         box-shadow: none !important;
     }
     
@@ -4056,7 +4054,6 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 *,
 *::before,
 *::after {
-    animation: none !important;
     transition-duration: 0.08s !important;
 }
 
