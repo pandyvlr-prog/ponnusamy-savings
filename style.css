@@ -1193,7 +1193,8 @@ body {
     padding: 16px 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 12px;
     min-height: 125px;
     gap: 6px;
     box-shadow: var(--shadow-md); /* Enhanced Elevation */
@@ -1267,8 +1268,9 @@ body {
 .highlight-green .metric-value,
 .highlight-red .metric-value,
 .highlight-purple .metric-value {
-    font-weight: 900 !important;
+    font-weight: 800 !important;
     font-size: 1.65rem !important;
+    font-family: 'Montserrat', sans-serif !important;
     color: #FFFFFF !important;
 }
 
