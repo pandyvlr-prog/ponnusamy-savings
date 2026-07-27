@@ -28,7 +28,7 @@
     --primary-hover: #FFC000;
     --primary-glow: rgba(255, 215, 0, 0.4);
     --primary-gradient: linear-gradient(135deg, #FFE873 0%, #FFD700 100%);
-    --title-gradient: linear-gradient(to right, #FFFFFF, #FFD700);
+    --title-gradient: linear-gradient(135deg, #ffffff, #93c5fd);
     
     --accent: #5E6AD2;
     --accent-glow: rgba(94, 106, 210, 0.2);
@@ -73,7 +73,7 @@
     --primary-hover: #996515;
     --primary-glow: rgba(184, 134, 11, 0.35);
     --primary-gradient: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-    --title-gradient: linear-gradient(to right, #1A1714, #B8860B);
+    --title-gradient: linear-gradient(135deg, #1e3a8a, #4338ca);
     
     --accent: #4351b5;
     --accent-glow: rgba(67, 81, 181, 0.1);
@@ -4446,16 +4446,11 @@ body:not([data-theme="light"]) .icon-blend-img {
     font-size: 1.55rem;
     font-weight: 900;
     margin: 0;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFD700 100%);
+    background: var(--title-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1.1;
-}
-[data-theme='light'] .pnl-hero-title {
-    background: linear-gradient(135deg, #1A1714 0%, #B8860B 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
 }
 
 .pnl-live-badge {
