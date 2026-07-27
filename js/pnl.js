@@ -22,8 +22,16 @@ function calculateGroupPnL(group) {
             const payment = member.payments && member.payments[m] ? member.payments[m] : null;
             
             // Collections
-            if (payment && payment.paid) {
-                realizedCollection += instAmount;
+            if (payment) {
+                if (payment.paid) {
+                    realizedCollection += instAmount;
+                } else {
+                    const partial = payment.partialPaid || 0;
+                    realizedCollection += partial;
+                    if (m <= group.currentMonth) {
+                        arrears += (instAmount - partial);
+                    }
+                }
             } else if (m <= group.currentMonth) {
                 // Not paid, and month is past or current -> Arrears!
                 arrears += instAmount;
@@ -168,20 +176,39 @@ function openPnLMonthDrawer(groupId) {
 
     for (let m = 1; m <= group.duration; m++) {
         let monthCollected = 0, monthPayout = 0, paidCount = 0;
-        let isFuture = true, monthArrears = 0;
+        let monthArrears = 0;
+        const isCurrentOrPast = m <= group.currentMonth;
+        
         const instAmountVal = (group.installments && group.installments[m] !== undefined) ? group.installments[m] : (group.monthlyInstallment || baseInstAmount);
         const payoutVal = (group.payouts && group.payouts[m] !== undefined) ? group.payouts[m] : group.chitAmount;
 
         activeMembers.forEach(member => {
-            const paid = member.payments && member.payments[m] && member.payments[m].paid;
-            if (paid) { monthCollected += instAmountVal; paidCount++; isFuture = false; }
-            if (member.payoutMonth === m) { monthPayout = payoutVal; isFuture = false; }
+            const payment = member.payments && member.payments[m] ? member.payments[m] : null;
+            if (payment) {
+                if (payment.paid) { 
+                    monthCollected += instAmountVal; 
+                    paidCount++; 
+                } else {
+                    const partial = payment.partialPaid || 0;
+                    monthCollected += partial;
+                    if (isCurrentOrPast) {
+                        monthArrears += (instAmountVal - partial);
+                    }
+                }
+                if (payment.payoutClaimed) { monthPayout += payoutVal; }
+            } else if (isCurrentOrPast) {
+                monthArrears += instAmountVal;
+            }
         });
 
-        if (!isFuture) { monthArrears = (memberCount - paidCount) * instAmountVal; totalArrears += monthArrears; }
+        if (isCurrentOrPast) {
+            totalArrears += monthArrears;
+        }
+        
         totalCollected += monthCollected;
         totalPayout += monthPayout;
 
+        const isFuture = !isCurrentOrPast && paidCount === 0 && monthPayout === 0;
         const rowOpacity = isFuture ? '0.4' : '1';
         const monthColor = isFuture ? '#888' : (paidCount === memberCount ? '#10b981' : (paidCount > 0 ? '#f59e0b' : '#ef4444'));
         rowsHtml += '<tr style="border-bottom:1px solid rgba(128,128,128,0.15);opacity:' + rowOpacity + ';">' +
