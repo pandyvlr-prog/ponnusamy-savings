@@ -7962,9 +7962,10 @@ function createRipple(event) {
         clientY = event.touches[0].clientY;
     }
 
-    circle.style.width = circle.style.height = ${diameter}px;
-    circle.style.left = ${clientX - rect.left - radius}px;
-    circle.style.top = ${clientY - rect.top - radius}px;
+    circle.style.width = diameter + "px";
+    circle.style.height = diameter + "px";
+    circle.style.left = (clientX - rect.left - radius) + "px";
+    circle.style.top = (clientY - rect.top - radius) + "px";
     circle.classList.add("ripple-span");
 
     const existing = button.querySelector('.ripple-span');
