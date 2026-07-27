@@ -550,6 +550,13 @@ async function loadState() {
                 State.groups = data.groups_data || [];
                 State.members = data.members_data || [];
                 State.templates = data.templates_data || [];
+                State.savedNotes = data.notes_data || [];
+                
+                // Restore Workspace Notepad
+                if (data.workspace_notepad) {
+                    localStorage.setItem('pms_workspace_notepad', JSON.stringify(data.workspace_notepad));
+                    if (typeof loadNotes === 'function') loadNotes(); // Refresh UI if function exists
+                }
                 
                 // Sync backup email from user metadata
                 if (window.AuthState?.currentUser?.user_metadata?.backupEmail !== undefined) {
@@ -561,6 +568,7 @@ async function loadState() {
                 localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
                 localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
                 localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates));
+                localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
             } else if (error && error.code === 'PGRST116') {
                 // No cloud data yet (row not found). Let's push our local data!
                 await saveState(); 
@@ -589,6 +597,21 @@ async function saveState() {
         
         // If authenticated with Supabase, sync to cloud
         if (window.supabaseClient && window.AuthState?.isAuthenticated && window.AuthState.currentUser?.id) {
+            let workspaceNotepadData = [];
+            try {
+                const storedNotepad = localStorage.getItem('pms_workspace_notepad');
+                if (storedNotepad) workspaceNotepadData = JSON.parse(storedNotepad);
+            } catch (e) {}
+
+            const cloudIcon = document.getElementById('cloud-sync-icon');
+            const cloudBtn = document.getElementById('cloud-sync-status-btn');
+            if (cloudIcon) {
+                cloudIcon.setAttribute('data-lucide', 'refresh-cw');
+                cloudIcon.classList.add('lucide-spin');
+                if (cloudBtn) cloudBtn.style.color = '#f59e0b'; // Amber for syncing
+                if (window.lucide) window.lucide.createIcons({ icons: { 'refresh-cw': window.lucide.icons.RefreshCw }, nameAttr: 'data-lucide', attrs: { class: 'lucide-spin' } });
+            }
+
             const { error } = await window.supabaseClient
                 .from('user_data')
                 .upsert({
@@ -596,11 +619,26 @@ async function saveState() {
                     groups_data: State.groups,
                     members_data: State.members,
                     templates_data: State.templates,
+                    notes_data: State.savedNotes,
+                    workspace_notepad: workspaceNotepadData,
                     updated_at: new Date().toISOString()
                 });
                 
             if (error) {
                 console.error("Supabase save error:", error);
+                if (cloudIcon) {
+                    cloudIcon.setAttribute('data-lucide', 'cloud-off');
+                    cloudIcon.classList.remove('lucide-spin');
+                    if (cloudBtn) cloudBtn.style.color = '#ef4444'; // Red for offline/error
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            } else {
+                if (cloudIcon) {
+                    cloudIcon.setAttribute('data-lucide', 'cloud-check');
+                    cloudIcon.classList.remove('lucide-spin');
+                    if (cloudBtn) cloudBtn.style.color = '#10b981'; // Green for success
+                    if (window.lucide) window.lucide.createIcons();
+                }
             }
         }
     } catch (e) {

@@ -118,8 +118,11 @@ document.documentElement.setAttribute('data-theme', theme);
 
                         <!-- Right: Action chips + Avatar -->
                         <div class="app-header-right">
-                            <!-- Action buttons — shown inline on desktop, hidden on mobile (moved to row 2) -->
+                            <!-- Action buttons -->
                             <div class="header-action-chips" id="header-action-chips">
+                                <button class="header-chip" id="cloud-sync-status-btn" title="Cloud Sync Status" style="color: #10b981;">
+                                    <i data-lucide="cloud-check" id="cloud-sync-icon"></i>
+                                </button>
                                 <button class="header-chip" id="btn-global-calc" title="Calculator">
                                     <i data-lucide="calculator"></i>
                                 </button>

@@ -1496,10 +1496,9 @@ function initSidebar() {
             }, 600);
         }, 300);
 
-        // Background cloud sync — failures don't affect local state
-        if (window.AuthState?.currentUser && typeof updateProfileData === 'function') {
-            updateProfileData({ notepad_content: payload })
-                .catch(err => console.warn('Cloud note sync failed (local copy is safe):', err));
+        // Background cloud sync 
+        if (typeof saveState === 'function') {
+            saveState().catch(err => console.warn('Cloud note sync failed:', err));
         }
     }
 
