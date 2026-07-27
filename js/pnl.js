@@ -280,19 +280,3 @@ function closePnLMonthDrawer() {
     backdrop.style.opacity = '0';
     const drawer = document.getElementById('pnl-month-drawer');
     if (drawer) drawer.style.transform = 'scale(0.88) translateY(40px)';
-    setTimeout(function() { const el = document.getElementById('pnl-drawer-backdrop'); if (el) el.remove(); }, 320);
-}
-// Ripple Effect for Buttons
-function createRipple(event) {
-    const button = event.currentTarget;
-    const circle = document.createElement("span");
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
-
-    const rect = button.getBoundingClientRect();
-    let clientX = event.clientX;
-    let clientY = event.clientY;
-
-    if (event.touches && event.touches.length > 0) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;

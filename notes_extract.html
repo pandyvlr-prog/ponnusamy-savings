@@ -1,0 +1,54 @@
+﻿<!-- SCREEN: NOTEPAD (REDESIGNED) -->
+            <section id="screen-notes" class="app-screen notes-screen-prm">
+                <div id="notes-list-view" class="notes-list-prm">
+                    <div class="notes-header-prm">
+                        <div class="notes-header-text">
+                            <h1>My Workspace</h1>
+                            <p id="notes-count-label">0 Notes</p>
+                        </div>
+                        <button id="btn-notepad-add" class="notes-btn-primary">
+                            <i data-lucide="plus"></i> New Note
+                        </button>
+                    </div>
+                    <div class="notes-search-prm">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="notes-search-input" placeholder="Search notes...">
+                    </div>
+                    <div class="notes-grid-prm" id="notes-grid"></div>
+                    <div id="notes-empty-state" class="notes-empty-prm" style="display:none;">
+                        <i data-lucide="notebook-pen"></i>
+                        <h3>Your workspace is empty</h3>
+                        <p>Create a note to start organizing your thoughts.</p>
+                    </div>
+                </div>
+
+                <div id="note-editor-view" class="notes-editor-prm" style="display: none;">
+                    <div class="editor-topbar-prm">
+                        <button id="btn-back-notes" class="editor-btn-icon"><i data-lucide="arrow-left"></i></button>
+                        <div class="editor-status-prm">
+                            <span id="notepad-status"></span>
+                            <span id="notepad-date-display"></span>
+                        </div>
+                        <div class="editor-actions-prm">
+                            <label class="editor-color-picker">
+                                <i data-lucide="palette"></i>
+                                <input type="color" id="notepad-color-picker" value="#1e1e2e">
+                            </label>
+                            <button id="btn-notepad-delete" class="editor-btn-icon"><i data-lucide="trash-2"></i></button>
+                            <button id="btn-share-whatsapp" class="editor-btn-icon"><i data-lucide="share-2"></i></button>
+                        </div>
+                    </div>
+                    <input type="text" id="notepad-title" class="editor-title-prm" placeholder="Note Title...">
+                    <div class="editor-toolbar-prm">
+                        <button class="fmt-btn" data-cmd="bold"><i data-lucide="bold"></i></button>
+                        <button class="fmt-btn" data-cmd="italic"><i data-lucide="italic"></i></button>
+                        <button class="fmt-btn" data-cmd="underline"><i data-lucide="underline"></i></button>
+                        <div class="fmt-divider"></div>
+                        <button class="fmt-btn" data-cmd="insertUnorderedList"><i data-lucide="list"></i></button>
+                        <button class="fmt-btn" data-cmd="insertOrderedList"><i data-lucide="list-ordered"></i></button>
+                    </div>
+                    <div id="notepad-textarea" class="editor-content-prm" contenteditable="true" data-placeholder="Start writing..."></div>
+                </div>
+
+
+    

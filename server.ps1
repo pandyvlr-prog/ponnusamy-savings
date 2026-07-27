@@ -16,26 +16,31 @@ try {
         if ($path -eq "/") { $path = "/index.html" }
         $fullPath = Join-Path (Get-Location) $path
 
-        if (Test-Path $fullPath -PathType Leaf) {
-            $extension = [System.IO.Path]::GetExtension($fullPath)
-            $contentType = "text/plain"
-            switch ($extension) {
-                ".html" { $contentType = "text/html" }
-                ".css"  { $contentType = "text/css" }
-                ".js"   { $contentType = "application/javascript" }
-                ".png"  { $contentType = "image/png" }
-                ".jpg"  { $contentType = "image/jpeg" }
+        try {
+            if (Test-Path $fullPath -PathType Leaf) {
+                $extension = [System.IO.Path]::GetExtension($fullPath)
+                $contentType = "text/plain"
+                switch ($extension) {
+                    ".html" { $contentType = "text/html" }
+                    ".css"  { $contentType = "text/css" }
+                    ".js"   { $contentType = "application/javascript" }
+                    ".png"  { $contentType = "image/png" }
+                    ".jpg"  { $contentType = "image/jpeg" }
+                }
+                $response.ContentType = $contentType
+                $bytes = [File]::ReadAllBytes($fullPath)
+                $response.ContentLength64 = $bytes.Length
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+                Write-Host "200 OK: $path"
+            } else {
+                $response.StatusCode = 404
+                Write-Host "404 Not Found: $path"
             }
-            $response.ContentType = $contentType
-            $bytes = [File]::ReadAllBytes($fullPath)
-            $response.ContentLength64 = $bytes.Length
-            $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            Write-Host "200 OK: $path"
-        } else {
-            $response.StatusCode = 404
-            Write-Host "404 Not Found: $path"
+        } catch {
+            Write-Host "Client disconnected prematurely: $($_.Exception.Message)"
+        } finally {
+            $response.Close()
         }
-        $response.Close()
     }
 } finally {
     $listener.Stop()

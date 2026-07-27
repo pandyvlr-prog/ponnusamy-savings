@@ -42,7 +42,7 @@ async function initAuth() {
                 id: activeUser.id, // Ensure ID is passed down!
                 name: activeUser.user_metadata?.full_name || activeUser.email.split('@')[0],
                 email: activeUser.email,
-                avatar: activeUser.user_metadata?.avatar_url || null,
+                avatar: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture || null,
                 user_metadata: activeUser.user_metadata || {}
             };
             navigateTo('screen-dashboard');
@@ -78,7 +78,7 @@ async function initAuth() {
                 id: activeUser.id, // Ensure ID is passed down!
                 name: activeUser.user_metadata?.full_name || activeUser.email.split('@')[0],
                 email: activeUser.email,
-                avatar: activeUser.user_metadata?.avatar_url || null,
+                avatar: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture || null,
                 user_metadata: activeUser.user_metadata || {}
             };
             navigateTo('screen-dashboard');
@@ -124,13 +124,20 @@ function updateProfileUI() {
     document.getElementById('settings-input-email').value = AuthState.currentUser.email;
     
     // Avatars
-    const avatarUrl = AuthState.currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(AuthState.currentUser.name)}&background=0D8ABC&color=fff&size=80`;
+    const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(AuthState.currentUser.name)}&background=0D8ABC&color=fff&size=80`;
+    const avatarUrl = AuthState.currentUser.avatar || fallbackUrl;
     
     const headerAvatar = document.getElementById('header-avatar-img');
     const settingsAvatar = document.getElementById('settings-avatar-img');
     
-    if (headerAvatar) headerAvatar.src = avatarUrl;
-    if (settingsAvatar) settingsAvatar.src = avatarUrl;
+    if (headerAvatar) {
+        headerAvatar.src = avatarUrl;
+        headerAvatar.onerror = function() { this.onerror = null; this.src = fallbackUrl; };
+    }
+    if (settingsAvatar) {
+        settingsAvatar.src = avatarUrl;
+        settingsAvatar.onerror = function() { this.onerror = null; this.src = fallbackUrl; };
+    }
 }
 
 function triggerVaultTransition(callback) {

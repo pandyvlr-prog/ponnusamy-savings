@@ -4817,27 +4817,3 @@ async function deleteGroup() {
         switchView('screen-dashboard');
     }
 }
-
-    }
-
-    circle.style.width = diameter + "px";
-    circle.style.height = diameter + "px";
-    circle.style.left = (clientX - rect.left - radius) + "px";
-    circle.style.top = (clientY - rect.top - radius) + "px";
-    circle.classList.add("ripple-span");
-
-    const existing = button.querySelector('.ripple-span');
-    if (existing) {
-        existing.remove();
-    }
-    button.appendChild(circle);
-    
-    setTimeout(() => circle.remove(), 600);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.btn, .sidebar-nav-item, .fab-btn, .settings-card').forEach(btn => {
-        btn.addEventListener('mousedown', createRipple);
-        btn.addEventListener('touchstart', createRipple, {passive: true});
-    });
-});

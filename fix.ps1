@@ -1,21 +1,22 @@
-$html = Get-Content index.html -Raw
+﻿$appJs = Get-Content app.js -Raw
 
-# 1. Find the header block
-$startPattern = '(?s)<!-- Header -->\s*<header class="app-header">.*?</header>'
-$headerMatch = [regex]::Match($html, $startPattern)
-$headerContent = $headerMatch.Value
+$regex1 = "if \(\!localStorage.getItem\('pwaPromptDeclined'\)\) \{ pwaPopup\.style\.display = 'flex';\s*setTimeout\(\(\) => pwaPopup\.classList\.add\('show'\), 50\);\s*\}\s*\}\);\s*\}\s*\}\);"
+$fixed1 = "localStorage.removeItem('pwaPromptDeclined');
+              pwaPopup.style.display = 'flex';
+              setTimeout(() => pwaPopup.classList.add('show'), 50);
+          }
+      });"
 
-# 2. Remove the header from its current location
-$html = $html -replace $startPattern, ''
+$appJs = $appJs -replace $regex1, $fixed1
 
-# 3. Find <main class="app-container"> and insert the header right after it
-$mainPattern = '(?s)<main class="app-container">\s*'
-$replacement = "<main class=`"app-container`">`r`n$headerContent`r`n    <div class=`"app-screens-wrapper`">`r`n"
-$html = $html -replace $mainPattern, $replacement
+$regex2 = "if \(pwaPopup\) \{\s*pwaPopup\.style\.display = 'flex';\s*setTimeout\(\(\) => pwaPopup\.classList\.add\('show'\), 50\);\s*\}\s*\}\);\s*\}\s*\}\);\s*\}"
+$fixed2 = "if (pwaPopup) {
+                  pwaPopup.style.display = 'flex';
+                  setTimeout(() => pwaPopup.classList.add('show'), 50);
+              }
+          });
+      }"
 
-# 4. Insert closing div for app-screens-wrapper right before </main>
-$mainClosePattern = '(?s)\s*</main>'
-$replacementClose = "`r`n    </div>`r`n</main>"
-$html = $html -replace $mainClosePattern, $replacementClose
+$appJs = $appJs -replace $regex2, $fixed2
 
-Set-Content index.html $html
+Set-Content app.js -Value $appJs -Encoding utf8
