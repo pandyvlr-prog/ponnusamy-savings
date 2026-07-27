@@ -4396,11 +4396,22 @@ function togglePayoutClaim(memberId, monthNum) {
     const isClaimed = member.payments[monthNum].payoutClaimed;
     
     if (isClaimed) {
-        member.payments[monthNum].payoutClaimed = false;
-        member.payments[monthNum].payoutMethod = null;
-        member.payments[monthNum].payoutNote = null;
-        saveState();
-        renderChecklist(member, group);
+        let wasClaimedOriginally = false;
+        if (typeof originalStateSnapshot !== 'undefined' && originalStateSnapshot) {
+            try {
+                const parsed = JSON.parse(originalStateSnapshot);
+                const origMember = parsed.members.find(m => m.id === memberId);
+                if (origMember && origMember.payments[monthNum] && origMember.payments[monthNum].payoutClaimed) {
+                    wasClaimedOriginally = true;
+                }
+            } catch(e) {}
+        }
+        
+        if (wasClaimedOriginally) {
+            openEditCancelModal(memberId, monthNum, 'payout');
+        } else {
+            unmarkPayout(memberId, monthNum);
+        }
     } else {
         // Check if any other month is already claimed
         let alreadyClaimedMonth = null;
@@ -4476,20 +4487,48 @@ function unmarkPayment(memberId, monthNum) {
     renderChecklist(member, group);
 }
 
+function unmarkPayout(memberId, monthNum) {
+    const member = State.members.find(m => m.id === memberId);
+    if (!member) return;
+    const group = State.groups.find(g => g.id === member.groupId);
+    if (!group) return;
+
+    member.payments[monthNum].payoutClaimed = false;
+    member.payments[monthNum].payoutMethod = null;
+    member.payments[monthNum].payoutNote = null;
+    member.payments[monthNum].payoutDate = null;
+    saveState();
+    renderChecklist(member, group);
+}
+
 let pendingEditCancelMemberId = null;
 let pendingEditCancelMonthNum = null;
 
-function openEditCancelModal(memberId, monthNum) {
+function openEditCancelModal(memberId, monthNum, type = 'payment') {
     pendingEditCancelMemberId = memberId;
     pendingEditCancelMonthNum = monthNum;
     
     const backdrop = document.getElementById('edit-cancel-modal-backdrop');
     if (!backdrop) return;
     
+    const title = backdrop.querySelector('.modal-title');
+    const desc = backdrop.querySelector('.modal-body p');
     const btnEdit = document.getElementById('btn-action-edit-payment');
     const btnUnmark = document.getElementById('btn-action-unmark-payment');
     const btnCancel = document.getElementById('btn-action-cancel-edit');
     const btnClose = document.getElementById('btn-close-edit-cancel');
+    
+    if (type === 'payout') {
+        if (title) title.textContent = 'Payout Options';
+        if (desc) desc.textContent = 'Do you want to edit this payout or unmark it?';
+        btnEdit.textContent = 'Edit Payout';
+        btnUnmark.textContent = 'Unmark Payout';
+    } else {
+        if (title) title.textContent = 'Payment Options';
+        if (desc) desc.textContent = 'Do you want to edit this payment or unmark it?';
+        btnEdit.textContent = 'Edit Payment';
+        btnUnmark.textContent = 'Unmark Payment';
+    }
     
     const cleanup = () => {
         backdrop.classList.remove('active');
@@ -4508,12 +4547,33 @@ function openEditCancelModal(memberId, monthNum) {
     
     newBtnEdit.addEventListener('click', () => {
         cleanup();
-        openPaymentMethodModal(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+        if (type === 'payout') {
+            pendingPayoutMemberId = pendingEditCancelMemberId;
+            pendingPayoutMonthNum = pendingEditCancelMonthNum;
+            const member = State.members.find(m => m.id === pendingPayoutMemberId);
+            const payoutMethod = member.payments[pendingPayoutMonthNum].payoutMethod || 'cash';
+            const payoutNote = member.payments[pendingPayoutMonthNum].payoutNote || '';
+            
+            document.querySelector(`input[name="payout-method"][value="${payoutMethod}"]`).checked = true;
+            document.getElementById('payout-note-input').value = payoutNote;
+            if (payoutMethod === 'gpay') {
+                document.getElementById('payout-gpay-note-wrapper').classList.remove('hidden');
+            } else {
+                document.getElementById('payout-gpay-note-wrapper').classList.add('hidden');
+            }
+            document.getElementById('payout-method-modal-backdrop').classList.add('active');
+        } else {
+            openPaymentMethodModal(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+        }
     });
     
     newBtnUnmark.addEventListener('click', () => {
         cleanup();
-        unmarkPayment(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+        if (type === 'payout') {
+            unmarkPayout(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+        } else {
+            unmarkPayment(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+        }
     });
     
     newBtnCancel.addEventListener('click', cleanup);
