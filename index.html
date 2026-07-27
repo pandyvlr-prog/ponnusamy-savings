@@ -53,19 +53,20 @@ document.documentElement.setAttribute('data-theme', theme);
             align-items: center;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
         }
         #transition-overlay.active {
             opacity: 1;
             visibility: visible;
         }
+        
         .premium-loader-container {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
         }
         
         /* The glowing animated outer rings */
@@ -76,15 +77,16 @@ document.documentElement.setAttribute('data-theme', theme);
             border-radius: 50%;
             border: 2px solid transparent;
             border-top-color: #d4af37;
-            border-bottom-color: rgba(212, 175, 55, 0.3);
-            animation: spinRing 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            border-bottom-color: rgba(212, 175, 55, 0.4);
+            animation: spinRing 2.5s linear infinite;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
         }
         .premium-ring:nth-child(2) {
-            width: 85%;
-            height: 85%;
-            border-top-color: rgba(212, 175, 55, 0.5);
-            border-bottom-color: #fce07e;
+            width: 80%;
+            height: 80%;
+            border: 2px solid transparent;
+            border-right-color: rgba(212, 175, 55, 0.6);
+            border-left-color: #fce07e;
             animation: spinRingReverse 3s linear infinite;
         }
         
@@ -96,8 +98,18 @@ document.documentElement.setAttribute('data-theme', theme);
             border-radius: 50%; /* Make it a perfect circle */
             border: 2px solid #d4af37;
             z-index: 10;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8);
-            animation: pulseGlow 2s infinite alternate;
+            animation: logoFloatAndBreathe 3s ease-in-out infinite;
+        }
+        
+        /* Animated gold glow container behind the logo */
+        .logo-glow-wrapper {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.2);
+            z-index: 5;
+            animation: pulseGlow 2.5s ease-in-out infinite;
         }
         
         @keyframes spinRing {
@@ -109,14 +121,19 @@ document.documentElement.setAttribute('data-theme', theme);
             100% { transform: rotate(0deg); }
         }
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-            100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.6), inset 0 0 10px rgba(212, 175, 55, 0.3); }
+            0%, 100% { box-shadow: 0 0 15px 5px rgba(212, 175, 55, 0.2); }
+            50% { box-shadow: 0 0 35px 15px rgba(212, 175, 55, 0.5); }
+        }
+        @keyframes logoFloatAndBreathe {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-4px) scale(1.04); }
         }
     </style>
     <div id="transition-overlay" class="transition-overlay active">
         <div class="premium-loader-container">
             <div class="premium-ring"></div>
             <div class="premium-ring"></div>
+            <div class="logo-glow-wrapper"></div>
             <img src="logo-dark.jpg" alt="PMS Logo" class="premium-loader-logo">
         </div>
     </div>
