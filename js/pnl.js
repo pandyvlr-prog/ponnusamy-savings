@@ -194,11 +194,12 @@ function openPnLMonthDrawer(groupId) {
             '</tr>';
     }
 
-    rowsHtml += '<tr style="border-top:2px solid rgba(255,215,0,0.3);background:rgba(255,215,0,0.06);">' +
-        '<td colspan="3" style="padding:14px 16px;font-weight:900;text-align:left;font-size:0.9rem;letter-spacing:0.05em;">TOTAL</td>' +
-        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#10b981;">&#8377;' + formatNumberIndian(totalCollected) + '</td>' +
-        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#9333ea;">&#8377;' + formatNumberIndian(totalPayout) + '</td>' +
-        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#ef4444;">' + (totalArrears > 0 ? '&#8377;' + formatNumberIndian(totalArrears) : '&mdash;') + '</td>' +
+    const goldGradient = 'linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%)';
+    rowsHtml += '<tr style="background:' + goldGradient + '; color: #1a1400;">' +
+        '<td colspan="3" style="padding:14px 16px;font-weight:900;text-align:left;font-size:0.9rem;letter-spacing:0.05em;border-top:2px solid #a07a00;border-bottom-left-radius:18px;">TOTAL</td>' +
+        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#064e3b;border-top:2px solid #a07a00;">&#8377;' + formatNumberIndian(totalCollected) + '</td>' +
+        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#4c1d95;border-top:2px solid #a07a00;">&#8377;' + formatNumberIndian(totalPayout) + '</td>' +
+        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#7f1d1d;border-top:2px solid #a07a00;border-bottom-right-radius:18px;">' + (totalArrears > 0 ? '&#8377;' + formatNumberIndian(totalArrears) : '&mdash;') + '</td>' +
         '</tr>';
 
     const isDark = document.body.getAttribute('data-theme') !== 'light';
@@ -240,19 +241,19 @@ function openPnLMonthDrawer(groupId) {
 
     drawerEl.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid ' + borderColor + ';flex-shrink:0;">' +
-            '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:' + textMain + ';font-family:inherit;">' + group.name + ' <span style="font-size:0.95rem;font-weight:500;color:' + textMuted + ';">(' + group.duration + ' M)</span></h3>' +
+            '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:' + textMain + ';font-family:inherit;">' + group.name + ' <span style="font-size:0.75rem;font-weight:800;color:#b45309;background-color:#fef3c7;border:1px solid #fcd34d;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;letter-spacing:0.05em;">' + group.duration + ' M</span></h3>' +
             '<button id="pnl-drawer-close-x" style="width:34px;height:34px;border-radius:50%;background:rgba(128,128,128,0.15);border:1px solid ' + borderColor + ';cursor:pointer;color:' + textMain + ';display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1;font-family:sans-serif;" title="Close">&#215;</button>' +
         '</div>' +
         '<div style="overflow-y:auto;overflow-x:auto;flex:1;">' +
             '<table style="width:100%;border-collapse:collapse;min-width:500px;color:' + textMain + ';">' +
                 '<thead>' +
-                    '<tr style="background:' + thBg + ';">' +
-                        '<th style="padding:11px 16px;text-align:left;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:' + textMuted + ';border-bottom:2px solid ' + borderColor + ';white-space:nowrap;position:sticky;top:0;background:' + thBg + ';">Month</th>' +
-                        '<th style="padding:11px 16px;text-align:right;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:' + textMuted + ';border-bottom:2px solid ' + borderColor + ';white-space:nowrap;position:sticky;top:0;background:' + thBg + ';">Inst.</th>' +
-                        '<th style="padding:11px 16px;text-align:right;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:' + textMuted + ';border-bottom:2px solid ' + borderColor + ';white-space:nowrap;position:sticky;top:0;background:' + thBg + ';">Paid</th>' +
-                        '<th style="padding:11px 16px;text-align:right;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:' + textMuted + ';border-bottom:2px solid ' + borderColor + ';white-space:nowrap;position:sticky;top:0;background:' + thBg + ';">Collected</th>' +
-                        '<th style="padding:11px 16px;text-align:right;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:' + textMuted + ';border-bottom:2px solid ' + borderColor + ';white-space:nowrap;position:sticky;top:0;background:' + thBg + ';">Payout</th>' +
-                        '<th style="padding:11px 16px;text-align:right;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:' + textMuted + ';border-bottom:2px solid ' + borderColor + ';white-space:nowrap;position:sticky;top:0;background:' + thBg + ';">Arrears</th>' +
+                    '<tr style="background:' + goldGradient + ';">' +
+                        '<th style="padding:12px 16px;text-align:left;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#1a1400;border-bottom:2px solid #a07a00;white-space:nowrap;position:sticky;top:0;background:' + goldGradient + ';z-index:10;">Month</th>' +
+                        '<th style="padding:12px 16px;text-align:right;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#1a1400;border-bottom:2px solid #a07a00;white-space:nowrap;position:sticky;top:0;background:' + goldGradient + ';z-index:10;">Inst.</th>' +
+                        '<th style="padding:12px 16px;text-align:right;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#1a1400;border-bottom:2px solid #a07a00;white-space:nowrap;position:sticky;top:0;background:' + goldGradient + ';z-index:10;">Paid</th>' +
+                        '<th style="padding:12px 16px;text-align:right;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#1a1400;border-bottom:2px solid #a07a00;white-space:nowrap;position:sticky;top:0;background:' + goldGradient + ';z-index:10;">Collected</th>' +
+                        '<th style="padding:12px 16px;text-align:right;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#1a1400;border-bottom:2px solid #a07a00;white-space:nowrap;position:sticky;top:0;background:' + goldGradient + ';z-index:10;">Payout</th>' +
+                        '<th style="padding:12px 16px;text-align:right;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#1a1400;border-bottom:2px solid #a07a00;white-space:nowrap;position:sticky;top:0;background:' + goldGradient + ';z-index:10;">Arrears</th>' +
                     '</tr>' +
                 '</thead>' +
                 '<tbody>' + rowsHtml + '</tbody>' +
