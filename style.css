@@ -94,7 +94,7 @@
     --text-secondary: #4A453F; /* Warm dark grey */
     --text-muted: #7A746D; /* Warm muted grey */
     
-    --border: #B0AAA3; /* Cement border â€” visible but not harsh */
+    --border: #B0AAA3; /* Cement border Ã¢â‚¬â€ visible but not harsh */
     --border-active: rgba(184, 134, 11, 0.55);
     --border-glow: rgba(184, 134, 11, 0.25);
     --border-table: #1A1714; /* Solid black cement separator in Light Mode */
@@ -262,9 +262,9 @@ body {
 }
 
 /* Header Configurations */
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   APP HEADER â€” TWO-ROW MOBILE NAVBAR
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+   APP HEADER Ã¢â‚¬â€ TWO-ROW MOBILE NAVBAR
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .app-header {
     display: flex !important;
     visibility: visible !important;
@@ -288,7 +288,7 @@ body {
     z-index: 10;
 }
 
-/* â”€â”€ Row 1 â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Row 1 Ã¢â€â‚¬Ã¢â€â‚¬ */
 .app-header-row1 {
     display: flex;
     align-items: center;
@@ -400,7 +400,7 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* Avatar button â€” ALWAYS visible & prominent */
+/* Avatar button Ã¢â‚¬â€ ALWAYS visible & prominent */
 .header-avatar-btn {
     position: relative;
     width: 44px;
@@ -443,7 +443,7 @@ body {
     50% { transform: scale(1.12); opacity: 0; }
 }
 
-/* â”€â”€ Row 2: Mobile quick-action bar â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Row 2: Mobile quick-action bar Ã¢â€â‚¬Ã¢â€â‚¬ */
 .app-header-row2 {
     display: none; /* shown only on mobile via media query */
     align-items: center;
@@ -479,7 +479,7 @@ body {
     display: none !important;
 }
 
-/* â”€â”€ Desktop adjustments to unify header and sidebar â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Desktop adjustments to unify header and sidebar Ã¢â€â‚¬Ã¢â€â‚¬ */
 @media (min-width: 768px) {
     /* Hide duplicated logo and title in header since they are already in sidebar */
     .app-header .header-logo-img,
@@ -494,7 +494,7 @@ body {
     }
 }
 
-/* â”€â”€ Mobile overrides â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Mobile overrides Ã¢â€â‚¬Ã¢â€â‚¬ */
 @media (max-width: 767px) {
     .header-action-chips { display: none; } /* moved to Row 2 */
     .app-header-row2 { display: flex; }
@@ -744,9 +744,9 @@ body {
     stroke-width: 2.5px;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   PREMIUM DASHBOARD REDESIGN â€” Hero Zone & Metric Cards
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+   PREMIUM DASHBOARD REDESIGN Ã¢â‚¬â€ Hero Zone & Metric Cards
+   Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 
 /* Hero / Stats zone */
 .db-hero {
@@ -999,7 +999,7 @@ body {
     color: #fff;
 }
 
-/* â”€â”€â”€ TABLE ZONE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TABLE ZONE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .db-table-zone {
     padding: 20px 20px 80px 20px;
 }
@@ -2592,7 +2592,7 @@ body {
 @media (min-width: 768px) {
     /* Center alignment for screen container content */
     .screen-content {
-        max-width: 1200px;
+        max-width: 100%;
         margin: 0 auto;
         padding: 24px 20px 80px 20px;
         width: 100%;
@@ -2600,8 +2600,8 @@ body {
     
     /* Expand headers on desktop to align with content */
     .app-header, .screen-header {
-        padding-left: calc((100% - 1200px) / 2 + 20px);
-        padding-right: calc((100% - 1200px) / 2 + 20px);
+        padding-left: 20px;
+        padding-right: 20px;
         padding-top: 20px;
         padding-bottom: 20px;
     }
@@ -4181,9 +4181,9 @@ body:not([data-theme="light"]) .icon-blend-img {
     border-right: 4px solid var(--primary);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   CALCULATOR â€” REDESIGNED
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+   CALCULATOR Ã¢â‚¬â€ REDESIGNED
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .calc-screen {
     display: flex;
     flex-direction: column;
@@ -4378,9 +4378,9 @@ body:not([data-theme="light"]) .icon-blend-img {
     transform: scale(0.96);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   PROFIT & LOSS â€” REDESIGNED
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+   PROFIT & LOSS Ã¢â‚¬â€ REDESIGNED
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .pnl-screen-content {
     padding: 0 !important;
 }
@@ -4652,9 +4652,9 @@ body:not([data-theme="light"]) .icon-blend-img {
     font-weight: 600;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   NOTEPAD â€” REDESIGNED
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+   NOTEPAD Ã¢â‚¬â€ REDESIGNED
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .notes-screen {
     display: flex;
     flex-direction: column;
@@ -5096,7 +5096,7 @@ body:not([data-theme="light"]) .icon-blend-img {
 .notepad-wa-btn,
 .fmt-divider { /* migrated to notes-* classes */ }
 
-/* â”€â”€ Chit Groups Wizard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Chit Groups Wizard Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .wizard-step {
     display: none;
     animation: fadeIn 0.2s ease;
@@ -5210,14 +5210,14 @@ body:not([data-theme="light"]) .icon-blend-img {
 }
 
 /* =====================================================
-   UNIFIED SIDEBAR â€” no floating card, flush panel
+   UNIFIED SIDEBAR Ã¢â‚¬â€ no floating card, flush panel
    ===================================================== */
 .desktop-sidebar {
     display: flex;
     flex-direction: column;
-    width: 260px;
-    min-width: 260px;
-    /* Seamless with app shell â€” no margin, no border-radius */
+    width: 76px;
+    min-width: 76px;
+    /* Seamless with app shell Ã¢â‚¬â€ no margin, no border-radius */
     background: var(--bg-surface);
     border-right: 1px solid var(--border);
     height: 100vh;
@@ -5250,14 +5250,15 @@ body:not([data-theme="light"]) .icon-blend-img {
 .desktop-sidebar-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 28px 24px 24px;
+    justify-content: center;
+    padding: 24px 0 16px;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--border);
+    width: 100%;
 }
 .desktop-sidebar-logo img {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
@@ -5273,27 +5274,26 @@ body:not([data-theme="light"]) .icon-blend-img {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 16px 12px;
+    gap: 8px;
+    padding: 16px 0;
+    width: 100%;
+    align-items: center;
 }
 
 .sidebar-nav-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 13px 18px;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     border-radius: var(--radius-lg);
     background: transparent;
     border: none;
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 600;
     cursor: pointer;
     transition: var(--transition-fast);
-    font-family: var(--font-body);
     position: relative;
-    text-align: left;
 }
 
 .sidebar-nav-item:hover {
@@ -5325,8 +5325,11 @@ body:not([data-theme="light"]) .icon-blend-img {
 }
 
 .desktop-sidebar-footer {
-    padding: 12px 12px 20px;
+    padding: 12px 0 20px;
     border-top: 1px solid var(--border);
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 /* Mobile Adjustments */
@@ -5405,7 +5408,7 @@ body.hide-navigation .bottom-nav {
 
 
 /* ==========================================================================
-   PREMIUM CALCULATOR â€” NEW REDESIGN
+   PREMIUM CALCULATOR Ã¢â‚¬â€ NEW REDESIGN
    ========================================================================== */
 
 .calc-screen-prm {
@@ -5548,7 +5551,7 @@ body.hide-navigation .bottom-nav {
 
 .calc-btn-prm i { width: 22px; height: 22px; pointer-events: none; }
 
-/* ---- function (AC, %, âŒ«) ---- */
+/* ---- function (AC, %, Ã¢Å’Â«) ---- */
 .calc-btn-prm.btn-fn {
     color: var(--text-secondary);
 }
@@ -5597,7 +5600,7 @@ body.hide-navigation .bottom-nav {
 }
 
 /* ==========================================================================
-   PREMIUM NOTEPAD â€” NEW REDESIGN
+   PREMIUM NOTEPAD Ã¢â‚¬â€ NEW REDESIGN
    ========================================================================== */
 
 .notes-screen-prm {
@@ -6183,190 +6186,142 @@ html, body, .app-device-shell {
         border-bottom: 1px solid rgba(0,0,0,0.05);
     }
 
-    .pnl-table td:last-child {
-        border-bottom: none;
-    }
+   
 
-    /* Add Labels before values using data-label attribute */
-    .pnl-table td::before {
-        content: attr(data-label);
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-weight: 800;
-        color: var(--text-secondary);
-        text-align: left;
-        margin-right: 15px;
-    }
 
-    /* Hide the # column on mobile */
-    .pnl-table td.pnl-td-num {
-        display: none;
-    }
-
-    /* Emphasize the Group Name */
-    .pnl-table td.pnl-td-name {
-        justify-content: center;
-        border-bottom: 2px solid rgba(255,255,255,0.1);
-        padding-bottom: 12px;
-        margin-bottom: 8px;
-    }
-    
-    [data-theme='light'] .pnl-table td.pnl-td-name {
-        border-bottom: 2px solid rgba(0,0,0,0.08);
-    }
-
-    .pnl-table td.pnl-td-name::before {
-        display: none; /* Hide 'Group Name' label */
-    }
+/* ====================================================
+   P&L Month Drawer Modal - DISPLAY BASED (RELIABLE)
+   ==================================================== */
+.pnl-drawer-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
-
-/* ==========================================================================
-   MOBILE UI FIXES FOR OVERFLOW AND ALIGNMENT
-   ========================================================================== */
-
-@media (max-width: 480px) {
-    /* 1. Dashboard Summary Grid - 1 column for very small screens */
-    .metrics-grid {
-        grid-template-columns: 1fr !important;
-    }
-    
-    /* 2. Fix Dashboard Target Badge wrapping on very small screens */
-    #dashboard-target-collection-badge {
-        font-size: 0.9rem !important;
-        padding: 5px 12px !important;
-        white-space: normal;
-        text-align: center;
-    }
+.pnl-drawer-backdrop.pnl-backdrop-open {
+    opacity: 1;
 }
-
-@media (max-width: 768px) {
-    /* 3. Fix PnL Table Card Text Overflow */
-    .pnl-table td {
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-    }
-    
-    .pnl-table td.pnl-td-name {
-        flex-direction: column;
-        align-items: center;
-        text-align: center !important;
-        padding: 12px 4px !important;
-        line-height: 1.4;
-    }
-    
-    .pnl-table td.pnl-td-name span {
-        white-space: normal !important;
-    }
-    
-    /* Make the entire row correctly box-sized */
-    .pnl-table tr {
-        box-sizing: border-box !important;
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-    
-    /* Ensure scroll wrapper has correct padding */
-    .pnl-table-scroll {
-        padding: 0 12px !important;
-        box-sizing: border-box !important;
-        width: 100% !important;
-    }
+.pnl-month-drawer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 95%;
+    max-width: 760px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    transform: scale(0.92) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
 }
-
-/* ==========================================================================
-   ULTRA PREMIUM P&L MOBILE CARD REDESIGN
-   ========================================================================== */
-@media (max-width: 768px) {
-    /* Override previous card styles */
-    .pnl-table, .pnl-table tbody {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 16px !important;
-    }
-    
-    /* The New Grid Card */
-    .pnl-table tr {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        grid-template-areas: 
-            "header header"
-            "dur coll"
-            "pay net"
-            "arr arr" !important;
-        gap: 12px 16px !important;
-        padding: 18px 20px !important;
-        margin-bottom: 0 !important;
-    }
-
-    /* Grid Area Assignments */
-    .pnl-table td.pnl-td-name { 
-        grid-area: header !important; 
-        padding: 0 0 12px 0 !important; 
-        border-bottom: 1px solid rgba(255,255,255,0.1) !important; 
-        align-items: flex-start !important; 
-        text-align: left !important;
-    }
-    [data-theme='light'] .pnl-table td.pnl-td-name { border-bottom: 1px solid rgba(0,0,0,0.1) !important; }
-    
-    .pnl-table td:nth-child(3) { grid-area: dur !important; }
-    .pnl-table td:nth-child(4) { grid-area: coll !important; }
-    .pnl-table td:nth-child(5) { grid-area: pay !important; }
-    .pnl-table td:nth-child(6) { grid-area: net !important; }
-    .pnl-table td:nth-child(7) { 
-        grid-area: arr !important; 
-        border-top: 1px dashed rgba(255,255,255,0.1) !important; 
-        padding-top: 12px !important; 
-    }
-    [data-theme='light'] .pnl-table td:nth-child(7) { border-top: 1px dashed rgba(0,0,0,0.1) !important; }
-
-    /* Redesign Data Cells (Column Flow) */
-    .pnl-table td:not(.pnl-td-num) {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        border-bottom: none !important;
-        padding: 0 !important;
-        gap: 6px !important;
-        text-align: left !important;
-    }
-
-    /* Small Premium Labels */
-    .pnl-table td::before {
-        font-size: 0.75rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        margin-right: 0 !important;
-        opacity: 0.6 !important;
-        font-weight: 600 !important;
-        color: inherit !important;
-    }
-    
-    /* Big Bold Values */
-    .pnl-table td:not(.pnl-td-name):not(.pnl-td-num) {
-        font-size: 1.15rem !important;
-        font-weight: 800 !important;
-    }
-    
-    /* Make Group Name prominent */
-    .pnl-table td.pnl-td-name span {
-        font-size: 1.1rem !important;
-    }
+.pnl-drawer-backdrop.pnl-backdrop-open .pnl-month-drawer {
+    transform: scale(1) translateY(0);
 }
-
-/* Forced Desktop View Styles */
-body.is-forced-desktop #btn-toggle-mobile-desktop {
-    display: inline-flex !important;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    box-shadow: 0 0 10px rgba(99,102,241,0.5);
-    animation: pulse-ring 2s infinite;
+.pnl-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 18px 18px 0 0;
+    flex-shrink: 0;
 }
-
-@keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(99,102,241,0); }
-    100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+.pnl-drawer-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+    font-family: var(--font-heading);
 }
+.pnl-drawer-close-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(128,128,128,0.15);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-main);
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+    outline: none;
+}
+.pnl-drawer-close-btn:hover {
+    background: rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+.pnl-drawer-close-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.pnl-drawer-content {
+    overflow-y: auto;
+    overflow-x: auto;
+    flex: 1;
+}
+.pnl-drawer-month-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 520px;
+}
+.pnl-drawer-month-table thead th {
+    padding: 12px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: right;
+    background: rgba(255, 215, 0, 0.08);
+    border-bottom: 2px solid var(--border);
+    color: var(--text-muted);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.pnl-drawer-month-table thead th:first-child {
+    text-align: left;
+    padding-left: 22px;
+}
+.pnl-drawer-month-table tbody td {
+    padding: 13px 16px;
+    font-size: 0.9rem;
+    text-align: right;
+    border-bottom: 1px solid rgba(128,128,128,0.12);
+    white-space: nowrap;
+    color: var(--text-main);
+}
+.pnl-drawer-month-table tbody td:first-child {
+    text-align: left;
+    padding-left: 22px;
+    font-weight: 700;
+}
+.pnl-drawer-month-table tbody tr:hover {
+    background: rgba(255,215,0,0.04);
+}
+.pnl-drawer-month-table .dm-paid td:first-child { color: #10b981; }
+.pnl-drawer-month-table .dm-partial td:first-child { color: #f59e0b; }
+.pnl-drawer-month-table .dm-unpaid td:first-child { color: #ef4444; }
+.pnl-drawer-month-table .dm-future { opacity: 0.4; }
+.pnl-drawer-totals-row td {
+    font-weight: 900 !important;
+    border-top: 2px solid var(--border) !important;
+    border-bottom: none !important;
+    background: rgba(255,215,0,0.05);
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+}
+.pnl-row-hover { cursor: pointer; }
+.pnl-row-hover:hover { background: rgba(255,215,0,0.05) !important; }

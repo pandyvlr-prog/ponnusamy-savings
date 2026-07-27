@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=61">
+    <link rel="stylesheet" href="style.css?v=130">
     <link rel="stylesheet" href="auth.css">
 
     <!-- html2pdf.js for PDF Generation -->
@@ -56,22 +56,21 @@ document.documentElement.setAttribute('data-theme', theme);
         <aside id="desktop-sidebar" class="desktop-sidebar">
             <div class="desktop-sidebar-logo">
                 <img src="logo-dark.jpg" alt="Logo">
-                <h2>PMS Vault</h2>
             </div>
             <div class="desktop-sidebar-links">
-                <button class="sidebar-nav-item active" data-target="screen-dashboard">
-                    <i data-lucide="layout-dashboard"></i> Home
+                <button class="sidebar-nav-item active" data-target="screen-dashboard" title="Home">
+                    <i data-lucide="home"></i>
                 </button>
-                <button class="sidebar-nav-item" data-target="screen-pnl">
-                    <i data-lucide="bar-chart-2"></i> Profit & Loss
+                <button class="sidebar-nav-item" data-target="screen-pnl" title="Profit & Loss">
+                    <i data-lucide="trending-up"></i>
                 </button>
-                <button class="sidebar-nav-item" data-target="screen-notes">
-                    <i data-lucide="file-text"></i> Notepad
+                <button class="sidebar-nav-item" data-target="screen-notes" title="Notepad">
+                    <i data-lucide="file-text"></i>
                 </button>
             </div>
             <div class="desktop-sidebar-footer">
-                <button class="sidebar-nav-item" id="btn-desktop-settings">
-                    <i data-lucide="settings"></i> Settings
+                <button class="sidebar-nav-item" data-target="screen-settings" title="Settings">
+                    <i data-lucide="settings"></i>
                 </button>
             </div>
         </aside>
@@ -145,7 +144,7 @@ document.documentElement.setAttribute('data-theme', theme);
 
                             <!-- Avatar — always visible -->
                             <button class="header-avatar-btn" id="btn-profile-dropdown" title="Profile">
-                                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Avatar" id="header-avatar-img">
+                                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Avatar" id="header-avatar-img" referrerpolicy="no-referrer">
                                 <span class="header-avatar-ring"></span>
                             </button>
 
@@ -958,7 +957,7 @@ document.documentElement.setAttribute('data-theme', theme);
                         <div class="settings-card profile-settings-card">
                             <div class="settings-card-header" style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px;">
                                 <div class="settings-avatar-large">
-                                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=80" alt="Avatar" id="settings-avatar-img">
+                                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=80" alt="Avatar" id="settings-avatar-img" referrerpolicy="no-referrer">
                                     <label class="avatar-edit-btn" for="settings-avatar-input" style="cursor: pointer;">
                                         <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
                                         <input type="file" id="settings-avatar-input" accept="image/*" style="display: none;">
@@ -1188,8 +1187,7 @@ document.documentElement.setAttribute('data-theme', theme);
                             </table>
                         </div>
                     </div>
-                </div>
-            </section>
+                    </section>
     <section id="screen-notes" class="app-screen notes-screen-prm">
                 <div id="notes-list-view" class="notes-list-prm">
                     <div class="notes-header-prm">
@@ -2077,8 +2075,8 @@ document.documentElement.setAttribute('data-theme', theme);
 
     </div>
     
-    <script src="auth.js?v=47" defer></script>
-    <script src="app.js?v=70" defer></script>
+    <script src="auth.js?v=110" defer></script>
+    <script src="app.js?v=135" defer></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
     <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
@@ -2472,10 +2470,43 @@ document.documentElement.setAttribute('data-theme', theme);
         </div>
     </div>
 </div>
+
+<!-- P&L Month Drawer Modal -->
+<div class="pnl-drawer-backdrop" id="pnl-drawer-backdrop" onclick="closePnLMonthDrawer()" style="display:none;">
+    <div class="pnl-month-drawer" id="pnl-month-drawer" onclick="event.stopPropagation()">
+        <div class="pnl-drawer-header">
+            <h3 id="pnl-drawer-title">Group Name</h3>
+            <button class="pnl-drawer-close-btn" onclick="closePnLMonthDrawer()" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="pnl-drawer-content">
+            <table class="pnl-drawer-month-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Inst.</th>
+                        <th>Paid</th>
+                        <th>Collected</th>
+                        <th>Payout</th>
+                        <th>Arrears</th>
+                    </tr>
+                </thead>
+                <tbody id="pnl-drawer-tbody">
+                    <!-- Rows injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+                </div>
+            
 </body>
 </html>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
+
+
 
 
 
