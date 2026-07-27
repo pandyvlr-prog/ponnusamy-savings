@@ -49,11 +49,13 @@ document.documentElement.setAttribute('data-theme', theme);
             background: radial-gradient(circle at center, #1a1a24 0%, #08080b 100%);
             z-index: 2147483647 !important; /* Max Z-index */
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
+            transition: opacity 0.4s ease-out, visibility 0.4s;
+            will-change: opacity;
         }
         #transition-overlay.active {
             opacity: 1;
@@ -65,77 +67,128 @@ document.documentElement.setAttribute('data-theme', theme);
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 30px;
         }
         
         /* The glowing animated outer rings */
         .premium-ring {
             position: absolute;
-            width: 100%;
-            height: 100%;
             border-radius: 50%;
             border: 2px solid transparent;
-            border-top-color: #d4af37;
-            border-bottom-color: rgba(212, 175, 55, 0.4);
-            animation: spinRing 2.5s linear infinite;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+            will-change: transform;
+            transform: translateZ(0); /* GPU acceleration */
         }
+        
+        /* Ring 1: Clockwise, 3s */
+        .premium-ring:nth-child(1) {
+            width: 100%; height: 100%;
+            border-top-color: #d4af37;
+            border-bottom-color: rgba(212, 175, 55, 0.2);
+            animation: spinRing 3s linear infinite;
+        }
+        
+        /* Ring 2: Counter-Clockwise, 5s */
         .premium-ring:nth-child(2) {
-            width: 80%;
-            height: 80%;
-            border: 2px solid transparent;
-            border-right-color: rgba(212, 175, 55, 0.6);
-            border-left-color: #fce07e;
-            animation: spinRingReverse 3s linear infinite;
+            width: 85%; height: 85%;
+            border-right-color: rgba(212, 175, 55, 0.8);
+            border-left-color: rgba(212, 175, 55, 0.1);
+            animation: spinRingReverse 5s linear infinite;
+        }
+        
+        /* Ring 3: Clockwise, 7s */
+        .premium-ring:nth-child(3) {
+            width: 70%; height: 70%;
+            border-top-color: #fce07e;
+            border-bottom-color: transparent;
+            animation: spinRing 7s linear infinite;
+        }
+        
+        /* Ring 4: Counter-Clockwise, 10s */
+        .premium-ring:nth-child(4) {
+            width: 55%; height: 55%;
+            border-left-color: rgba(255, 255, 255, 0.6);
+            border-right-color: transparent;
+            animation: spinRingReverse 10s linear infinite;
         }
         
         /* The logo in the center */
         .premium-loader-logo {
-            width: 75px;
-            height: 75px;
-            object-fit: cover; /* fill the circle */
-            border-radius: 50%; /* Make it a perfect circle */
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
             border: 2px solid #d4af37;
             z-index: 10;
-            animation: logoFloatAndBreathe 3s ease-in-out infinite;
+            will-change: transform;
+            animation: logoFloatAndBreathe 2.5s ease-in-out infinite;
         }
         
         /* Animated gold glow container behind the logo */
         .logo-glow-wrapper {
             position: absolute;
-            width: 75px;
-            height: 75px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            background: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.1);
             z-index: 5;
+            will-change: transform, opacity;
             animation: pulseGlow 2.5s ease-in-out infinite;
         }
         
+        /* Loading Text */
+        .premium-loading-text {
+            color: #d4af37;
+            font-family: var(--font-heading), sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0;
+            will-change: transform, opacity;
+            animation: typeText 2s steps(40, end) infinite alternate, pulseText 2s infinite ease-in-out;
+            text-transform: uppercase;
+        }
+        
         @keyframes spinRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg) translateZ(0); }
+            100% { transform: rotate(360deg) translateZ(0); }
         }
         @keyframes spinRingReverse {
-            0% { transform: rotate(360deg); }
-            100% { transform: rotate(0deg); }
+            0% { transform: rotate(360deg) translateZ(0); }
+            100% { transform: rotate(0deg) translateZ(0); }
         }
         @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 15px 5px rgba(212, 175, 55, 0.2); }
-            50% { box-shadow: 0 0 35px 15px rgba(212, 175, 55, 0.5); }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px 2px rgba(212, 175, 55, 0.2); }
+            50% { transform: scale(1.1); box-shadow: 0 0 25px 10px rgba(212, 175, 55, 0.5); }
         }
         @keyframes logoFloatAndBreathe {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-4px) scale(1.04); }
+            0%, 100% { transform: translateY(0) scale(1) translateZ(0); }
+            50% { transform: translateY(-4px) scale(1.04) translateZ(0); }
+        }
+        @keyframes typeText {
+            0% { width: 0; opacity: 0; }
+            20% { opacity: 1; }
+            100% { width: 100%; opacity: 1; }
+        }
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.7; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
         }
     </style>
     <div id="transition-overlay" class="transition-overlay active">
         <div class="premium-loader-container">
             <div class="premium-ring"></div>
             <div class="premium-ring"></div>
+            <div class="premium-ring"></div>
+            <div class="premium-ring"></div>
             <div class="logo-glow-wrapper"></div>
             <img src="logo-dark.jpg" alt="PMS Logo" class="premium-loader-logo">
         </div>
+        <div class="premium-loading-text">Initializing</div>
     </div>
     
 
