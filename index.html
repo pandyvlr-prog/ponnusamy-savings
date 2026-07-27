@@ -2504,6 +2504,57 @@ document.documentElement.setAttribute('data-theme', theme);
                 </div>
             
     <!-- Global Save/Discard Banner -->
+    <style>
+        .save-discard-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            z-index: 9999;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .save-discard-banner.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .banner-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .banner-icon {
+            color: var(--blue-main);
+            width: 24px;
+            height: 24px;
+        }
+
+        .banner-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    </style>
     <div id="save-discard-banner" class="save-discard-banner">
         <div class="banner-content">
             <i data-lucide="alert-circle" class="banner-icon"></i>
