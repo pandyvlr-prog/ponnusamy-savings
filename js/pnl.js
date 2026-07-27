@@ -202,11 +202,11 @@ function openPnLMonthDrawer(groupId) {
         '</tr>';
 
     const isDark = document.body.getAttribute('data-theme') !== 'light';
-    const surfaceBg = isDark ? '#12122a' : '#ffffff';
+    const surfaceBg = isDark ? '#111111' : '#FAFAFA';
     const borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)';
     const textMain = isDark ? '#f0f0f0' : '#111111';
     const textMuted = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-    const thBg = isDark ? '#232330' : '#f5f5f5';
+    const thBg = isDark ? '#1c170d' : '#f8f4ec';
 
     const backdropEl = document.createElement('div');
     backdropEl.id = 'pnl-drawer-backdrop';
