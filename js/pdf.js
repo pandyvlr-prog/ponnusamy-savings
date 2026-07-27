@@ -419,6 +419,15 @@ if ('serviceWorker' in navigator) {
             console.log('SW registration failed: ', err);
         });
     });
+    
+    // Auto-reload to immediately apply updates when a new SW activates
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
