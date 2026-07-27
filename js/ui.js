@@ -305,39 +305,7 @@ document.getElementById('btn-confirm-payout').addEventListener('click', () => {
     document.getElementById('payout-method-modal-backdrop').classList.remove('active');
 });
 
-function createRipple(event) {
-    const button = event.currentTarget;
-    const circle = document.createElement("span");
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
 
-    const rect = button.getBoundingClientRect();
-    let clientX = event.clientX;
-    let clientY = event.clientY;
-
-    if (event.touches && event.touches.length > 0) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
-    }
-
-    circle.style.width = diameter + "px";
-    circle.style.height = diameter + "px";
-    circle.style.left = (clientX - rect.left - radius) + "px";
-    circle.style.top = (clientY - rect.top - radius) + "px";
-    circle.classList.add("ripple-span");
-
-    const existing = button.querySelector('.ripple-span');
-    if (existing) {
-        existing.remove();
-    }
-    button.appendChild(circle);
-    
-    setTimeout(() => circle.remove(), 600);
-}
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.btn, .sidebar-nav-item, .fab-btn, .settings-card').forEach(btn => {
-        btn.addEventListener('mousedown', createRipple);
-        btn.addEventListener('touchstart', createRipple, {passive: true});
-    });
 });
