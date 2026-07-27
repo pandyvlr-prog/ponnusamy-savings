@@ -4360,7 +4360,9 @@ function sendWhatsAppReminder(memberId) {
     if (formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
 
     if (totalDueAmount <= 0) {
-        window.open(`https://api.whatsapp.com/send/?phone=${formattedPhone}`, '_blank');
+        const noDuesMsg = `Hello ${baseMember.name},\n\nYou have no pending dues for ${currentMonthName}. Thank you for your prompt payments!`;
+        const waUrl = `https://api.whatsapp.com/send/?phone=${formattedPhone}&text=${encodeURIComponent(noDuesMsg)}`;
+        window.open(waUrl, '_blank');
         return;
     }
 

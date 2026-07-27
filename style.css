@@ -6112,18 +6112,19 @@ body.hide-navigation .bottom-nav {
 
 /* Premium PnL Table Header */
 .pnl-table th {
-    background: linear-gradient(135deg, #2d2a26 0%, #8b6b14 100%) !important;
-    color: #FFF !important;
+    background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%) !important;
+    color: #1a1400 !important;
     font-weight: 900 !important;
     border-bottom: 3px solid #000 !important;
     border-right: 1px solid rgba(0,0,0,0.2) !important;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-family: var(--font-heading);
+    letter-spacing: 0.5px;
     padding: 14px 10px !important;
 }
 [data-theme='light'] .pnl-table th {
-    background: linear-gradient(135deg, #1A1714 0%, #B8860B 100%) !important;
-    color: #FFF !important;
+    background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%) !important;
+    color: #1a1400 !important;
     border-bottom: 3px solid #000 !important;
     border-right: 1px solid rgba(0,0,0,0.2) !important;
 }

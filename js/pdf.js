@@ -522,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function initAppearanceSettings() {
-    const savedFont = localStorage.getItem('pms_font_family') || "'Lora', serif";
+    const savedFont = localStorage.getItem('pms_font_family') || "'Montserrat', sans-serif";
     const savedSize = localStorage.getItem('pms_font_size') || "16";
 
     document.documentElement.style.setProperty('--font-body', savedFont);
