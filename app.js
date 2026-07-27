@@ -14,8 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     
     // Initial Render
-    renderDashboard();
+    const lastScreen = localStorage.getItem('pms_last_active_screen');
+    const lastGroup = localStorage.getItem('pms_last_active_group');
     
+    if (lastScreen && document.getElementById(lastScreen)) {
+        if (lastScreen === 'screen-group-details' && lastGroup) {
+            State.selectedGroupId = lastGroup;
+        }
+        switchView(lastScreen);
+    } else {
+        renderDashboard();
+    }
     // Update live clock in status bar
     updateStatusBarClock();
     setInterval(updateStatusBarClock, 60000);
