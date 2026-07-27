@@ -2503,6 +2503,34 @@ document.documentElement.setAttribute('data-theme', theme);
 </div>
                 </div>
             
+    <!-- Global Save/Discard Banner -->
+    <div id="save-discard-banner" class="save-discard-banner">
+        <div class="banner-content">
+            <i data-lucide="alert-circle" class="banner-icon"></i>
+            <span class="banner-text">Unsaved Changes</span>
+        </div>
+        <div class="banner-actions">
+            <button id="btn-discard-changes" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; padding: 8px 16px;">Discard</button>
+            <button id="btn-save-changes" class="btn btn-primary" style="padding: 8px 16px;">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Edit/Cancel Confirmation Modal -->
+    <div id="edit-cancel-modal-backdrop" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 320px; text-align: center;">
+            <div class="modal-header">
+                <h3 class="modal-title">Payment Options</h3>
+                <button class="btn-close-modal" id="btn-close-edit-cancel">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 24px 16px; display: flex; flex-direction: column; gap: 12px;">
+                <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 0.95rem;">Do you want to edit this payment or unmark it?</p>
+                <button id="btn-action-edit-payment" class="btn btn-outline" style="width: 100%; border-color: var(--blue-main); color: var(--blue-main);">Edit Payment</button>
+                <button id="btn-action-unmark-payment" class="btn btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444;">Unmark Payment</button>
+                <button id="btn-action-cancel-edit" class="btn btn-secondary" style="width: 100%; margin-top: 8px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
 </html>

@@ -4438,17 +4438,90 @@ function toggleMonthlyPayment(memberId, monthNum) {
         // Instead of marking paid immediately, open the Payment Method Selection Modal
         openPaymentMethodModal(memberId, monthNum);
     } else {
-        // If it is already paid, just unmark it
-        member.payments[monthNum].paid = false;
-        member.payments[monthNum].paidAt = null;
-        member.payments[monthNum].method = null;
-        member.payments[monthNum].note = null;
-        member.payments[monthNum].customDate = '';
+        // If it is already paid, determine if it was paid in the original state
+        let wasPaidOriginally = false;
+        if (typeof originalStateSnapshot !== 'undefined' && originalStateSnapshot) {
+            try {
+                const parsed = JSON.parse(originalStateSnapshot);
+                const origMember = parsed.members.find(m => m.id === memberId);
+                if (origMember && origMember.payments[monthNum] && origMember.payments[monthNum].paid) {
+                    wasPaidOriginally = true;
+                }
+            } catch(e) {}
+        }
         
-        saveState();
-        renderChecklist(member, group);
+        if (wasPaidOriginally) {
+            // Show Edit / Cancel Alert
+            openEditCancelModal(memberId, monthNum);
+        } else {
+            // It was just paid in this session (unsaved), just unmark it
+            unmarkPayment(memberId, monthNum);
+        }
     }
 }
+
+function unmarkPayment(memberId, monthNum) {
+    const member = State.members.find(m => m.id === memberId);
+    if (!member) return;
+    const group = State.groups.find(g => g.id === member.groupId);
+    if (!group) return;
+
+    member.payments[monthNum].paid = false;
+    member.payments[monthNum].paidAt = null;
+    member.payments[monthNum].method = null;
+    member.payments[monthNum].note = null;
+    member.payments[monthNum].customDate = '';
+    
+    saveState();
+    renderChecklist(member, group);
+}
+
+let pendingEditCancelMemberId = null;
+let pendingEditCancelMonthNum = null;
+
+function openEditCancelModal(memberId, monthNum) {
+    pendingEditCancelMemberId = memberId;
+    pendingEditCancelMonthNum = monthNum;
+    
+    const backdrop = document.getElementById('edit-cancel-modal-backdrop');
+    if (!backdrop) return;
+    
+    const btnEdit = document.getElementById('btn-action-edit-payment');
+    const btnUnmark = document.getElementById('btn-action-unmark-payment');
+    const btnCancel = document.getElementById('btn-action-cancel-edit');
+    const btnClose = document.getElementById('btn-close-edit-cancel');
+    
+    const cleanup = () => {
+        backdrop.classList.remove('active');
+    };
+    
+    const cloneNodeAndReplace = (node) => {
+        const newNode = node.cloneNode(true);
+        node.parentNode.replaceChild(newNode, node);
+        return newNode;
+    };
+    
+    const newBtnEdit = cloneNodeAndReplace(btnEdit);
+    const newBtnUnmark = cloneNodeAndReplace(btnUnmark);
+    const newBtnCancel = cloneNodeAndReplace(btnCancel);
+    const newBtnClose = cloneNodeAndReplace(btnClose);
+    
+    newBtnEdit.addEventListener('click', () => {
+        cleanup();
+        openPaymentMethodModal(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+    });
+    
+    newBtnUnmark.addEventListener('click', () => {
+        cleanup();
+        unmarkPayment(pendingEditCancelMemberId, pendingEditCancelMonthNum);
+    });
+    
+    newBtnCancel.addEventListener('click', cleanup);
+    newBtnClose.addEventListener('click', cleanup);
+    
+    backdrop.classList.add('active');
+}
+
 
 // Bulk mark all or clear all
 function bulkTogglePayments(markPaid) {

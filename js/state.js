@@ -16,6 +16,8 @@ const State = {
     savedNotes: []
 };
 
+let originalStateSnapshot = null;
+
 // --- State Management & Storage ---
 function getStorageKey(key) {
     if (typeof AuthState !== 'undefined' && AuthState.currentUser && AuthState.currentUser.email) {
@@ -571,23 +573,25 @@ async function loadState() {
                 localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
             } else if (error && error.code === 'PGRST116') {
                 // No cloud data yet (row not found). Let's push our local data!
-                await saveState(); 
+                await commitState(true); 
             } else if (error) {
                 console.error("Supabase load error:", error);
             }
         }
         
         if (ensureDefaultTemplates()) {
-            await saveState();
+            await commitState(true);
         }
         
         renderSavedNotesList();
+        
+        originalStateSnapshot = JSON.stringify(State);
     } catch (e) {
         console.error('Error loading state:', e);
     }
 }
 
-async function saveState() {
+async function commitState(skipBanner = false) {
     try {
         // Always save locally first for speed and offline fallback
         localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
@@ -641,10 +645,67 @@ async function saveState() {
                 }
             }
         }
+        
+        originalStateSnapshot = JSON.stringify(State);
+        if (!skipBanner) hideSaveDiscardBanner();
+        
     } catch (e) {
         console.error('Error saving state:', e);
     }
 }
+
+async function saveState() {
+    if (!originalStateSnapshot) {
+        return commitState(true);
+    }
+    const currentStr = JSON.stringify(State);
+    if (currentStr !== originalStateSnapshot) {
+        showSaveDiscardBanner();
+    } else {
+        hideSaveDiscardBanner();
+    }
+}
+
+function discardState() {
+    if (originalStateSnapshot) {
+        const parsed = JSON.parse(originalStateSnapshot);
+        // Only update data, retain view state
+        State.groups = parsed.groups || [];
+        State.members = parsed.members || [];
+        State.templates = parsed.templates || [];
+        State.savedNotes = parsed.savedNotes || [];
+    }
+    hideSaveDiscardBanner();
+    
+    // Re-render
+    if (typeof renderDashboard === 'function') renderDashboard();
+    if (typeof renderGroupDetails === 'function' && State.selectedGroupId) {
+        renderGroupDetails();
+        const member = State.members.find(m => m.id === State.selectedMemberId);
+        const group = State.groups.find(g => g.id === State.selectedGroupId);
+        if (member && group && typeof renderChecklist === 'function') {
+            renderChecklist(member, group);
+        }
+    }
+}
+
+function showSaveDiscardBanner() {
+    const banner = document.getElementById('save-discard-banner');
+    if (banner) banner.classList.add('visible');
+}
+
+function hideSaveDiscardBanner() {
+    const banner = document.getElementById('save-discard-banner');
+    if (banner) banner.classList.remove('visible');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnSave = document.getElementById('btn-save-changes');
+    const btnDiscard = document.getElementById('btn-discard-changes');
+    if (btnSave) btnSave.addEventListener('click', () => commitState());
+    if (btnDiscard) btnDiscard.addEventListener('click', () => discardState());
+});
+
 
 // Helper to generate Unique IDs
 function generateUUID() {
