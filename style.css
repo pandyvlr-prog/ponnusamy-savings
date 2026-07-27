@@ -232,6 +232,7 @@ body {
     transition: opacity 0.18s ease;
     z-index: 10;
     background-color: var(--bg-primary);
+    overflow: hidden; /* CRITICAL: Prevent screen contents from stretching screen bounds */
 }
 
 .app-screen.active {

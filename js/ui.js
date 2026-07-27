@@ -183,6 +183,15 @@ function switchView(viewId) {
     const NO_HEADER_SCREENS = ['screen-landing', 'screen-login', 'screen-register'];
     const appContainer = document.querySelector('.app-container');
     
+    // Set state for CSS wall rules
+    if (viewId === 'screen-landing') {
+        document.body.setAttribute('data-app-state', 'landing');
+    } else if (viewId === 'screen-login' || viewId === 'screen-register') {
+        document.body.setAttribute('data-app-state', 'login');
+    } else {
+        document.body.setAttribute('data-app-state', 'dashboard');
+    }
+    
     if (appContainer) {
         // Force show header on PnL and Notes
         if (NO_HEADER_SCREENS.includes(viewId)) {

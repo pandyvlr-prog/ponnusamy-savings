@@ -35,9 +35,28 @@
 var theme = localStorage.getItem('ponnusamy_theme') || 'dark';
 document.documentElement.setAttribute('data-theme', theme);
 })();
-</script>
+<style id="wall-css">
+/* Hard State Walls to prevent screen bleeding and flickering */
+body:not([data-app-state="dashboard"]) #desktop-sidebar,
+body:not([data-app-state="dashboard"]) #bottom-nav,
+body:not([data-app-state="dashboard"]) .app-header {
+    display: none !important;
+}
+
+/* Initially hide everything to prevent FOUC until JS determines state */
+body[data-app-state="loading"] .app-device-shell {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Ensure only the active screen shows in landing/login states */
+body[data-app-state="landing"] .app-screen:not(#screen-landing),
+body[data-app-state="login"] .app-screen:not(#screen-login) {
+    display: none !important;
+}
+</style>
 </head>
-<body>
+<body data-app-state="loading">
     <!-- Static Theme Background -->
     <div id="app-bg"></div>
 

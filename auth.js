@@ -97,6 +97,14 @@ async function initAuth() {
 }
 
 function navigateTo(screenId) {
+    if (screenId === 'screen-landing') {
+        document.body.setAttribute('data-app-state', 'landing');
+    } else if (screenId === 'screen-login' || screenId === 'screen-register') {
+        document.body.setAttribute('data-app-state', 'login');
+    } else {
+        document.body.setAttribute('data-app-state', 'dashboard');
+    }
+
     if (typeof switchView === 'function') {
         switchView(screenId);
         return;

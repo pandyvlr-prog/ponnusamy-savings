@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         switchView(lastScreen);
     } else {
-        renderDashboard();
+        switchView('screen-dashboard');
     }
     // Update live clock in status bar
     updateStatusBarClock();
