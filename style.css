@@ -73,7 +73,7 @@
     --primary-hover: #996515;
     --primary-glow: rgba(184, 134, 11, 0.35);
     --primary-gradient: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-    --title-gradient: linear-gradient(135deg, #1e3a8a, #4338ca);
+    --title-gradient: linear-gradient(135deg, #000000, #222222);
     
     --accent: #4351b5;
     --accent-glow: rgba(67, 81, 181, 0.1);
@@ -4435,8 +4435,8 @@ body:not([data-theme="light"]) .icon-blend-img {
 }
 .pnl-hero-eyebrow {
     font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
+    font-weight: 800;
+    color: var(--text-main);
     margin: 0 0 4px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
