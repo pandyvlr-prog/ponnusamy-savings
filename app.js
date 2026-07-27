@@ -3392,9 +3392,9 @@ function renderDashboardMembersList(searchQuery = '') {
             if (item.currentMonthPaid) {
                 let methodSuffix = '';
                 if (item.paymentMethodThisMonth === 'gpay') {
-                    methodSuffix = ` <span style="color: #60a5fa; font-weight: 800; font-size: 0.75rem;">/ G</span>`;
+                    methodSuffix = ` <span style="color: #1d4ed8; font-weight: 900; font-size: 0.8rem; text-shadow: 0 1px 2px rgba(255,255,255,0.4);">/ G</span>`;
                 } else if (item.paymentMethodThisMonth === 'cash') {
-                    methodSuffix = ` <span style="color: #fca5a5; font-weight: 800; font-size: 0.75rem;">/ C</span>`;
+                    methodSuffix = ` <span style="color: #b91c1c; font-weight: 900; font-size: 0.8rem; text-shadow: 0 1px 2px rgba(255,255,255,0.4);">/ C</span>`;
                 }
                 checkboxHtml = `<span class="status-badge-pill paid" style="display: inline-flex; align-items: center; justify-content: center;"><i data-lucide="check" style="width: 10px; height: 10px; margin-right: 2px;"></i> Paid${methodSuffix}</span>`;
             } else if (item.paidAmount > 0) {
@@ -3425,9 +3425,9 @@ function renderDashboardMembersList(searchQuery = '') {
 
         let methodLetterHtml = '';
         if (item.payoutMethod === 'cash') {
-            methodLetterHtml = ` <span style="color: #d8b4fe; font-weight: 800;">/ C</span>`;
+            methodLetterHtml = ` <span style="color: #4c1d95; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.4);">/ C</span>`;
         } else if (item.payoutMethod === 'gpay') {
-            methodLetterHtml = ` <span style="color: #93c5fd; font-weight: 800;">/ G</span>`;
+            methodLetterHtml = ` <span style="color: #1e3a8a; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.4);">/ G</span>`;
         }
 
         let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill chit-taken-badge" style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; border: none; box-shadow: 0 2px 6px rgba(147, 51, 234, 0.4); cursor: pointer; letter-spacing: 0.03em;"><i data-lucide="check-circle" style="width: 10px; height: 10px; color: #fff;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
@@ -4259,20 +4259,17 @@ function renderChecklist(member, group) {
 }
 
 function sendWhatsAppReminder(memberId) {
-    const member = State.members.find(m => m.id === memberId);
-    if (!member) return;
-    
-    const group = State.groups.find(g => g.id === member.groupId);
-    if (!group) return;
+    const baseMember = State.members.find(m => m.id === memberId);
+    if (!baseMember) return;
 
-    if (!member.mobileNo || member.mobileNo.trim() === '') {
+    if (!baseMember.mobileNo || baseMember.mobileNo.trim() === '') {
         showNotification('Please add a mobile number for this member to send reminders.', 'error');
         // Automatically click edit profile details button to slide open form
         const btnEdit = document.getElementById('btn-edit-member-profile');
         if (btnEdit) {
             // If payment modal is not already open, open it first
             if (!document.getElementById('payment-modal-backdrop').classList.contains('active')) {
-                openPaymentModal(member.id);
+                openPaymentModal(baseMember.id);
             }
             setTimeout(() => {
                 btnEdit.click();
@@ -4285,13 +4282,21 @@ function sendWhatsAppReminder(memberId) {
         return;
     }
 
-    // Calculate dues
-    let pendingMonths = [];
+    const basePhoneRaw = baseMember.mobileNo.replace(/\D/g, '');
+    const baseName = baseMember.name.trim().toLowerCase();
+    
+    const matchedMembers = State.members.filter(m => {
+        const phoneMatch = basePhoneRaw !== '' && m.mobileNo && m.mobileNo.replace(/\D/g, '') === basePhoneRaw;
+        const nameMatch = m.name.trim().toLowerCase() === baseName;
+        return phoneMatch || nameMatch;
+    });
+
     let totalDueAmount = 0;
+    const groupBlocks = [];
 
     const now = new Date();
-    const currentRelativeMonth = getRelativeMonthForGroup(group, now.getFullYear(), now.getMonth());
-    const effectiveLimit = Math.max(group.currentMonth || 1, currentRelativeMonth);
+    // Use the current month for the header
+    const currentMonthName = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
     const fullMonths = {"Jan":"January", "Feb":"February", "Mar":"March", "Apr":"April", "May":"May", "Jun":"June", "Jul":"July", "Aug":"August", "Sep":"September", "Oct":"October", "Nov":"November", "Dec":"December"};
     const expandMonth = (str) => {
@@ -4307,46 +4312,61 @@ function sendWhatsAppReminder(memberId) {
         return i + "th";
     };
 
-    for (let m = 1; m <= group.duration; m++) {
-        if (m <= effectiveLimit) {
-            const payment = member.payments[m];
-            const instVal = group.installments && group.installments[m] !== undefined 
-                ? group.installments[m] 
-                : group.monthlyInstallment;
-            
-            if (!payment || !payment.paid) {
-                const partial = payment ? (payment.partialPaid || 0) : 0;
-                const dueAmount = instVal - partial;
-                totalDueAmount += dueAmount;
+    for (const member of matchedMembers) {
+        const group = State.groups.find(g => g.id === member.groupId);
+        if (!group) continue;
+
+        const currentRelativeMonth = getRelativeMonthForGroup(group, now.getFullYear(), now.getMonth());
+        const effectiveLimit = Math.max(group.currentMonth || 1, currentRelativeMonth);
+
+        let groupPendingText = [];
+        let groupHasDues = false;
+
+        for (let m = 1; m <= group.duration; m++) {
+            if (m <= effectiveLimit) {
+                const payment = member.payments[m];
+                const instVal = group.installments && group.installments[m] !== undefined 
+                    ? group.installments[m] 
+                    : group.monthlyInstallment;
                 
-                const monthNameStr = expandMonth(getMonthLabel(group, m));
-                const startMonthLabel = expandMonth(getMonthLabel(group, 1));
-                const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
-                const schemeStr = schemeAmount >= 100000 ? (schemeAmount / 100000) + ' lakhs' : (schemeAmount / 1000) + 'k';
-                
-                const msgBlock = `${monthNameStr}\n\n${startMonthLabel} group\n${schemeStr}/${group.duration} months scheme\n${getOrdinalSuffix(m)} month due=${dueAmount}`;
-                pendingMonths.push(msgBlock);
+                if (!payment || !payment.paid) {
+                    const partial = payment ? (payment.partialPaid || 0) : 0;
+                    const dueAmount = instVal - partial;
+                    totalDueAmount += dueAmount;
+                    
+                    groupPendingText.push(`${getOrdinalSuffix(m)} month due=${dueAmount}`);
+                    groupHasDues = true;
+                }
             }
+        }
+
+        if (groupHasDues) {
+            const startMonthLabel = expandMonth(getMonthLabel(group, 1));
+            const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
+            
+            let schemeLine = '';
+            if (schemeAmount === 100000) {
+                schemeLine = 'One lakh scheme';
+            } else {
+                const schemeStr = schemeAmount >= 100000 ? (schemeAmount / 100000) + ' lakhs' : (schemeAmount / 1000) + 'k';
+                schemeLine = `${schemeStr}/${group.duration} months scheme`;
+            }
+            
+            groupBlocks.push(`${startMonthLabel} group\n${schemeLine}\n${groupPendingText.join('\n')}`);
         }
     }
 
+    let formattedPhone = basePhoneRaw;
+    if (formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
+
     if (totalDueAmount <= 0) {
-        let formattedPhone = member.mobileNo.replace(/\D/g, '');
-        if (formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
-        window.open(`https://wa.me/${formattedPhone}`, '_blank');
+        window.open(`https://api.whatsapp.com/send/?phone=${formattedPhone}`, '_blank');
         return;
     }
 
-    // Format greeting
-    const greeting = pendingMonths.join('\n\n\n');
+    const greeting = `${currentMonthName}\n\n${groupBlocks.join('\n\n')}\n\nTotal=${totalDueAmount}`;
 
-    // Format mobile number: default to India prefix 91 if length is 10 digits
-    let formattedPhone = member.mobileNo.replace(/\D/g, '');
-    if (formattedPhone.length === 10) {
-        formattedPhone = '91' + formattedPhone;
-    }
-
-    const waUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(greeting)}`;
+    const waUrl = `https://api.whatsapp.com/send/?phone=${formattedPhone}&text=${encodeURIComponent(greeting)}`;
     window.open(waUrl, '_blank');
 }
 

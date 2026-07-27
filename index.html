@@ -15,7 +15,7 @@
     <!-- Google Fonts: Outfit (Brand/Headlines) & Inter (Body UI) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -126,7 +126,7 @@ document.documentElement.setAttribute('data-theme', theme);
                                     <i data-lucide="eye" id="privacy-eye-icon"></i>
                                 </button>
                                 <button class="header-chip" id="btn-global-export-pdf" title="Export PDF">
-                                    <i data-lucide="download"></i>
+                                    <i data-lucide="download" style="color: var(--primary);"></i>
                                 </button>
                                                                 <button class="header-chip" id="btn-toggle-mobile-desktop" title="Return to Mobile" style="display: none;">
                                     <i data-lucide="smartphone"></i>
@@ -294,7 +294,7 @@ document.documentElement.setAttribute('data-theme', theme);
                 
                 <div class="screen-content">
                     <!-- Metrics Dashboard Card -->
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" style="border: 2px solid var(--border-active); border-radius: 16px; overflow: hidden; border-color: #000000;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h2 class="section-title-alt" style="margin-bottom: 0; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37, #fce07e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; letter-spacing: -0.3px;"><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: #d4af37; -webkit-text-fill-color: initial; flex-shrink: 0;"></i>Dashboard Summary</h2>
                             <span id="dashboard-target-collection-badge" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; padding: 7px 18px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(0,0,0,0.3); letter-spacing: 0.3px;">
@@ -311,7 +311,7 @@ document.documentElement.setAttribute('data-theme', theme);
                                 <span class="metric-value text-green" id="stat-total-collected">₹0</span>
                                 <span id="stat-summary-collected-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--green-dark);">(0)</span>
                                 <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(48,209,88,0.2); padding-top: 8px;">
-                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.5); border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 0 12px rgba(245, 158, 11, 0.1); backdrop-filter: blur(4px);">
+                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%); border: 1px solid #7c2d12; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
                                         <div style="display: flex; align-items: center; gap: 6px; color: #fcd34d !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
                                             <!-- Cash Banknote SVG Logo -->
                                             <svg width="20" height="14" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
@@ -326,7 +326,7 @@ document.documentElement.setAttribute('data-theme', theme);
                                         </div>
                                         <span id="stat-summary-collected-cash" style="font-size: 1.25rem; font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
                                     </div>
-                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, rgba(66, 133, 244, 0.25) 0%, rgba(66, 133, 244, 0.05) 100%); border: 1px solid rgba(66, 133, 244, 0.5); border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 0 12px rgba(66, 133, 244, 0.1); backdrop-filter: blur(4px);">
+                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%); border: 1px solid #1e3a8a; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
                                         <div style="display: flex; align-items: center; gap: 6px; color: #bfdbfe !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
                                             <!-- GPay SVG Logo -->
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
