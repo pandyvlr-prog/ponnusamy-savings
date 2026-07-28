@@ -5005,3 +5005,349 @@ async function deleteGroup() {
     }
 }
 
+
+/* ============================================================
+   INSTALLMENT CARDS MODULE
+   ============================================================ */
+(function InstallmentCardsModule() {
+    const STORAGE_KEY = 'pms_installment_cards';
+    let currentTenure = null;
+
+    // ── helpers ──────────────────────────────────────────────
+    function loadData() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+        catch { return {}; }
+    }
+    function saveData(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // Generate a simple unique id
+    function uid() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    // ── view transitions ─────────────────────────────────────
+    function showNotesListOnly() {
+        const notesListView = document.getElementById('notes-list-view');
+        const icView = document.getElementById('installment-cards-view');
+        if (notesListView) notesListView.style.display = '';
+        if (icView) icView.style.display = 'none';
+    }
+
+    function openInstallmentCards() {
+        const notesListView = document.getElementById('notes-list-view');
+        const icView = document.getElementById('installment-cards-view');
+        const tenureSelector = document.getElementById('ic-tenure-selector');
+        const cardsGridView = document.getElementById('ic-cards-grid-view');
+        const titleEl = document.getElementById('ic-topbar-title');
+        if (notesListView) notesListView.style.display = 'none';
+        if (icView) icView.style.display = 'flex';
+        if (tenureSelector) tenureSelector.style.display = 'flex';
+        if (cardsGridView) cardsGridView.style.display = 'none';
+        if (titleEl) titleEl.textContent = 'Installment Cards';
+        currentTenure = null;
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    function openTenureCards(tenure) {
+        currentTenure = tenure;
+        const tenureSelector = document.getElementById('ic-tenure-selector');
+        const cardsGridView = document.getElementById('ic-cards-grid-view');
+        const label = document.getElementById('ic-grid-tenure-label');
+        const titleEl = document.getElementById('ic-topbar-title');
+        if (tenureSelector) tenureSelector.style.display = 'none';
+        if (cardsGridView) cardsGridView.style.display = 'flex';
+        if (label) label.textContent = tenure + ' Scheme';
+        if (titleEl) titleEl.textContent = tenure + ' Cards';
+        renderCards();
+    }
+
+    function backToTenure() {
+        const tenureSelector = document.getElementById('ic-tenure-selector');
+        const cardsGridView = document.getElementById('ic-cards-grid-view');
+        const titleEl = document.getElementById('ic-topbar-title');
+        if (tenureSelector) tenureSelector.style.display = 'flex';
+        if (cardsGridView) cardsGridView.style.display = 'none';
+        if (titleEl) titleEl.textContent = 'Installment Cards';
+        currentTenure = null;
+    }
+
+    // ── render ───────────────────────────────────────────────
+    function renderCards() {
+        const list = document.getElementById('ic-cards-list');
+        if (!list) return;
+        const data = loadData();
+        const cards = (data[currentTenure] || []);
+        list.innerHTML = '';
+
+        if (cards.length === 0) {
+            list.innerHTML = `<div class="ic-empty-state">
+                <i data-lucide="image-off"></i>
+                <p>No cards yet. Upload your first card image!</p>
+            </div>`;
+            if (window.lucide) window.lucide.createIcons();
+            return;
+        }
+
+        cards.forEach(function(card) {
+            const item = document.createElement('div');
+            item.className = 'ic-card-item';
+            item.dataset.cardId = card.id;
+
+            const hasImage = !!card.imageData;
+            item.innerHTML = `
+                <div class="ic-card-image-area">
+                    ${hasImage
+                        ? `<img src="${card.imageData}" alt="${card.label || 'Card'}" loading="lazy">
+                           <button class="ic-change-photo-btn" title="Change Photo"><i data-lucide="camera"></i></button>`
+                        : `<div class="ic-upload-placeholder">
+                               <i data-lucide="upload-cloud"></i>
+                               <span>Tap to upload card photo</span>
+                           </div>`
+                    }
+                </div>
+                <div class="ic-card-footer">
+                    <input class="ic-card-label-input" type="text" value="${card.label || ''}" placeholder="e.g. 50K, 1L, 2L..." maxlength="30">
+                    <div class="ic-card-actions">
+                        <button class="ic-share-btn" title="Share to WhatsApp"><i data-lucide="share-2"></i></button>
+                        <button class="ic-delete-btn" title="Delete Card"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </div>`;
+            list.appendChild(item);
+
+            // file input for this card
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            item.appendChild(fileInput);
+
+            // Upload placeholder click
+            const placeholder = item.querySelector('.ic-upload-placeholder');
+            if (placeholder) {
+                placeholder.addEventListener('click', function() { fileInput.click(); });
+            }
+
+            // Change photo btn click
+            const changeBtn = item.querySelector('.ic-change-photo-btn');
+            if (changeBtn) {
+                changeBtn.addEventListener('click', function(e) { e.stopPropagation(); fileInput.click(); });
+            }
+
+            // File chosen
+            fileInput.addEventListener('change', function() {
+                const file = fileInput.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const d = loadData();
+                    const idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
+                    if (idx > -1) {
+                        d[currentTenure][idx].imageData = ev.target.result;
+                        saveData(d);
+                        renderCards();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Label save on blur
+            const labelInput = item.querySelector('.ic-card-label-input');
+            labelInput.addEventListener('blur', function() {
+                const d = loadData();
+                const idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
+                if (idx > -1) {
+                    d[currentTenure][idx].label = labelInput.value.trim();
+                    saveData(d);
+                }
+            });
+
+            // Share individual card
+            const shareBtn = item.querySelector('.ic-share-btn');
+            shareBtn.addEventListener('click', function() {
+                shareCard(card);
+            });
+
+            // Delete card
+            const deleteBtn = item.querySelector('.ic-delete-btn');
+            deleteBtn.addEventListener('click', function() {
+                if (!confirm('Delete this card?')) return;
+                const d = loadData();
+                d[currentTenure] = (d[currentTenure] || []).filter(function(c) { return c.id !== card.id; });
+                saveData(d);
+                renderCards();
+            });
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    // ── share helpers ─────────────────────────────────────────
+    function dataURLtoFile(dataUrl, filename) {
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) u8arr[n] = bstr.charCodeAt(n);
+        return new File([u8arr], filename, { type: mime });
+    }
+
+    async function shareImageFile(file, title) {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({ title: title, files: [file] });
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    alert('Could not share. Try downloading and sharing manually.');
+                }
+            }
+        } else {
+            // Fallback: open image in new tab so user can manually share
+            const url = URL.createObjectURL(file);
+            window.open(url, '_blank');
+            setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
+            if (typeof showNotification === 'function') {
+                showNotification('Web Share not supported. Image opened in new tab.', 'info');
+            }
+        }
+    }
+
+    function shareCard(card) {
+        if (!card.imageData) {
+            alert('Please upload a card image first before sharing.');
+            return;
+        }
+        const label = card.label || 'card';
+        const file = dataURLtoFile(card.imageData, label + '.jpg');
+        shareImageFile(file, (currentTenure || '') + ' ' + label + ' Installment Card');
+    }
+
+    async function shareAllCards() {
+        const d = loadData();
+        const cards = (d[currentTenure] || []).filter(function(c) { return !!c.imageData; });
+        if (cards.length === 0) {
+            alert('No card images uploaded yet. Please upload at least one card image.');
+            return;
+        }
+
+        if (cards.length === 1) {
+            shareCard(cards[0]);
+            return;
+        }
+
+        // Combine all card images into one tall canvas
+        if (typeof showNotification === 'function') showNotification('Preparing images...', 'info');
+
+        const imgs = await Promise.all(cards.map(function(c) {
+            return new Promise(function(resolve) {
+                const img = new Image();
+                img.onload = function() { resolve(img); };
+                img.onerror = function() { resolve(null); };
+                img.src = c.imageData;
+            });
+        }));
+
+        const validImgs = imgs.filter(Boolean);
+        if (validImgs.length === 0) {
+            alert('Could not load card images.');
+            return;
+        }
+
+        const GAP = 16;
+        const maxW = Math.max.apply(null, validImgs.map(function(i) { return i.naturalWidth; }));
+        const totalH = validImgs.reduce(function(acc, img) {
+            return acc + Math.round(img.naturalHeight * (maxW / img.naturalWidth)) + GAP;
+        }, GAP);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = maxW;
+        canvas.height = totalH;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#0f0f0f';
+        ctx.fillRect(0, 0, maxW, totalH);
+
+        let y = GAP;
+        validImgs.forEach(function(img) {
+            const drawW = maxW;
+            const drawH = Math.round(img.naturalHeight * (maxW / img.naturalWidth));
+            ctx.drawImage(img, 0, y, drawW, drawH);
+            y += drawH + GAP;
+        });
+
+        canvas.toBlob(async function(blob) {
+            const filename = (currentTenure || 'All') + '_Installment_Cards.jpg';
+            const file = new File([blob], filename, { type: 'image/jpeg' });
+            await shareImageFile(file, currentTenure + ' Installment Cards');
+        }, 'image/jpeg', 0.92);
+    }
+
+    // ── add new card ─────────────────────────────────────────
+    function addNewCardSlot(file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const d = loadData();
+            if (!d[currentTenure]) d[currentTenure] = [];
+            d[currentTenure].push({
+                id: uid(),
+                label: '',
+                imageData: ev.target.result
+            });
+            saveData(d);
+            renderCards();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ── init ─────────────────────────────────────────────────
+    function init() {
+        // Entry banner click
+        const banner = document.getElementById('installment-entry-banner');
+        const openBtn = document.getElementById('btn-open-installment-cards');
+        if (banner) banner.addEventListener('click', openInstallmentCards);
+        if (openBtn) openBtn.addEventListener('click', function(e) { e.stopPropagation(); openInstallmentCards(); });
+
+        // Back button (exit to notes list)
+        const backBtn = document.getElementById('btn-ic-back');
+        if (backBtn) backBtn.addEventListener('click', showNotesListOnly);
+
+        // Back to tenure selector
+        const backTenureBtn = document.getElementById('btn-ic-back-tenure');
+        if (backTenureBtn) backTenureBtn.addEventListener('click', backToTenure);
+
+        // Tenure slide buttons
+        document.querySelectorAll('.ic-tenure-slide').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                openTenureCards(btn.dataset.tenure);
+            });
+        });
+
+        // Add new card button
+        const addCardBtn = document.getElementById('btn-ic-add-card');
+        const addCardInput = document.getElementById('ic-add-card-file-input');
+        if (addCardBtn && addCardInput) {
+            addCardBtn.addEventListener('click', function() { addCardInput.click(); });
+            addCardInput.addEventListener('change', function() {
+                if (addCardInput.files[0]) {
+                    addNewCardSlot(addCardInput.files[0]);
+                    addCardInput.value = '';
+                }
+            });
+        }
+
+        // Share all button
+        const shareAllBtn = document.getElementById('btn-ic-share-all');
+        if (shareAllBtn) shareAllBtn.addEventListener('click', shareAllCards);
+    }
+
+    // Run after DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+/* ============================================================
+   END INSTALLMENT CARDS MODULE
+   ============================================================ */
