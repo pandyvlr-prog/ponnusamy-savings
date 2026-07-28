@@ -5007,12 +5007,18 @@ async function deleteGroup() {
 
 
 /* ============================================================
-   INSTALLMENT CARDS MODULE  (v2 - standalone screen)
+   INSTALLMENT CARDS MODULE v3
+   - Auto-sort by amount (25K < 50K < 1L < 2L)
+   - 3x3 grid layout
+   - Save button per card
+   - Share All = separate images (not combined)
+   - Premium light/dark theme support
    ============================================================ */
 (function InstallmentCardsModule() {
-    const STORAGE_KEY = 'pms_installment_cards';
-    let currentTenure = null;
+    var STORAGE_KEY = 'pms_installment_cards';
+    var currentTenure = null;
 
+    /* ── storage ──────────────────────────────────────────── */
     function loadData() {
         try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
         catch (e) { return {}; }
@@ -5024,190 +5030,246 @@ async function deleteGroup() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     }
 
+    /* ── amount parser for auto-sort ────────────────────────
+       Supports: 25K, 50k, 1L, 1.5l, 2L, 25000, 1,00,000
+    ─────────────────────────────────────────────────────── */
+    function parseAmount(label) {
+        if (!label) return Infinity;
+        var s = label.replace(/,/g, '').replace(/\s+/g, '').toLowerCase().trim();
+        var m;
+        m = s.match(/^(\d+\.?\d*)(l|lakh|lac)$/);
+        if (m) return parseFloat(m[1]) * 100000;
+        m = s.match(/^(\d+\.?\d*)(k|thousand)$/);
+        if (m) return parseFloat(m[1]) * 1000;
+        var n = parseFloat(s);
+        return isNaN(n) ? Infinity : n;
+    }
+
+    /* ── view transitions ───────────────────────────────── */
     function showTenureSelector() {
-        var tenureSelector = document.getElementById('ic-tenure-selector');
-        var cardsGridView  = document.getElementById('ic-cards-grid-view');
-        if (tenureSelector) tenureSelector.style.display = 'flex';
-        if (cardsGridView)  cardsGridView.style.display  = 'none';
+        var ts = document.getElementById('ic-tenure-selector');
+        var cv = document.getElementById('ic-cards-grid-view');
+        if (ts) ts.style.display = 'flex';
+        if (cv) cv.style.display = 'none';
         currentTenure = null;
         if (window.lucide) window.lucide.createIcons();
     }
 
     function openTenureCards(tenure) {
         currentTenure = tenure;
-        var tenureSelector = document.getElementById('ic-tenure-selector');
-        var cardsGridView  = document.getElementById('ic-cards-grid-view');
-        var label          = document.getElementById('ic-grid-tenure-label');
-        if (tenureSelector) tenureSelector.style.display = 'none';
-        if (cardsGridView)  cardsGridView.style.display  = 'flex';
-        cardsGridView.style.flexDirection = 'column';
-        if (label)          label.textContent = tenure + ' Scheme';
+        var ts    = document.getElementById('ic-tenure-selector');
+        var cv    = document.getElementById('ic-cards-grid-view');
+        var label = document.getElementById('ic-grid-tenure-label');
+        if (ts) ts.style.display = 'none';
+        if (cv) { cv.style.display = 'flex'; cv.style.flexDirection = 'column'; }
+        if (label) label.textContent = tenure + ' Scheme';
         renderCards();
-        if (window.lucide) window.lucide.createIcons();
     }
 
+    /* ── render grid ────────────────────────────────────── */
     function renderCards() {
-        var list = document.getElementById('ic-cards-list');
-        if (!list) return;
-        var data  = loadData();
-        var cards = (data[currentTenure] || []);
-        list.innerHTML = '';
+        var grid = document.getElementById('ic-cards-list');
+        if (!grid) return;
+        var d     = loadData();
+        var cards = (d[currentTenure] || []).slice();
+
+        /* Sort ascending by amount */
+        cards.sort(function(a, b) { return parseAmount(a.label) - parseAmount(b.label); });
+
+        grid.innerHTML = '';
 
         if (cards.length === 0) {
-            list.innerHTML = '<div class="ic-empty-state"><i data-lucide="image-off"></i><p>No cards yet. Tap "Upload New Card" to add your first card photo!</p></div>';
+            grid.innerHTML = '<div class="ics-empty">'
+                + '<i data-lucide="image-off"></i>'
+                + '<p>No cards yet</p>'
+                + '<small>Tap "Upload New Card" to add your first card photo</small>'
+                + '</div>';
             if (window.lucide) window.lucide.createIcons();
             return;
         }
 
         cards.forEach(function(card) {
-            var item = document.createElement('div');
-            item.style.cssText = 'background:var(--bg-surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:box-shadow 0.25s,transform 0.25s;position:relative;';
-            item.dataset.cardId = card.id;
-            var hasImage = !!card.imageData;
-            var imgAreaStyle = 'width:100%;min-height:180px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:16px 16px 0 0;';
-            var imgHTML = hasImage
-                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy" style="width:100%;height:auto;display:block;object-fit:contain;max-height:360px;"><button class="ic-change-photo-btn" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:8px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);" title="Change Photo"><i data-lucide="camera" style="width:15px;height:15px;"></i></button>'
-                : '<div class="ic-upload-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 20px;cursor:pointer;width:100%;"><i data-lucide="upload-cloud" style="width:44px;height:44px;color:#6366f1;opacity:0.7;"></i><span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Tap to upload card photo</span></div>';
-            item.innerHTML = '<div style="' + imgAreaStyle + '">' + imgHTML + '</div>'
-                + '<div style="display:flex;align-items:center;padding:12px 14px;border-top:1px solid var(--border);gap:10px;">'
-                + '<input class="ic-card-label-input" type="text" value="' + (card.label || '') + '" placeholder="e.g. 50K, 1L, 2L..." maxlength="30" style="flex:1;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text-main);font-size:1rem;font-weight:800;outline:none;padding:4px 6px;min-width:0;">'
-                + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
-                + '<button class="ic-share-btn" title="Share to WhatsApp" style="width:38px;height:38px;border-radius:10px;border:1px solid rgba(37,211,102,0.4);background:rgba(37,211,102,0.12);color:#25d366;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="share-2" style="width:16px;height:16px;"></i></button>'
-                + '<button class="ic-delete-btn" title="Delete Card" style="width:34px;height:34px;border-radius:8px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.08);color:#ef4444;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>'
-                + '</div></div>';
-            list.appendChild(item);
+            var el = document.createElement('div');
+            el.className = 'ics-card';
+            el.dataset.cardId = card.id;
 
-            var fileInput = document.createElement('input');
-            fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
-            item.appendChild(fileInput);
+            var hasImg = !!card.imageData;
+            var imgHTML = hasImg
+                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy">'
+                  + '<button class="ics-change-btn" title="Change photo"><i data-lucide="camera"></i></button>'
+                : '<div class="ics-upload-ph">'
+                  + '<i data-lucide="upload-cloud"></i>'
+                  + '<span>Tap to upload</span>'
+                  + '</div>';
 
-            var placeholder = item.querySelector('.ic-upload-placeholder');
-            if (placeholder) placeholder.addEventListener('click', function() { fileInput.click(); });
-            var changeBtn = item.querySelector('.ic-change-photo-btn');
-            if (changeBtn) changeBtn.addEventListener('click', function(e) { e.stopPropagation(); fileInput.click(); });
+            el.innerHTML =
+                '<div class="ics-card-img-area">' + imgHTML + '</div>'
+                + '<div class="ics-card-footer">'
+                +   '<div class="ics-label-row">'
+                +     '<input class="ics-label-input" type="text" value="' + (card.label || '') + '" placeholder="e.g. 50K" maxlength="20">'
+                +     '<button class="ics-save-btn" title="Save label"><i data-lucide="check"></i></button>'
+                +   '</div>'
+                +   '<div class="ics-actions-row">'
+                +     '<button class="ics-card-share-btn" title="Share"><i data-lucide="share-2"></i> Share</button>'
+                +     '<button class="ics-card-delete-btn" title="Delete"><i data-lucide="trash-2"></i></button>'
+                +   '</div>'
+                + '</div>';
 
-            fileInput.addEventListener('change', function() {
-                var file = fileInput.files[0];
-                if (!file) return;
-                var reader = new FileReader();
-                reader.onload = function(ev) {
-                    var d = loadData();
-                    var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                    if (idx > -1) { d[currentTenure][idx].imageData = ev.target.result; saveData(d); renderCards(); }
+            grid.appendChild(el);
+
+            /* File input for this card */
+            var fi = document.createElement('input');
+            fi.type = 'file'; fi.accept = 'image/*'; fi.style.display = 'none';
+            el.appendChild(fi);
+
+            /* Upload placeholder click */
+            var ph = el.querySelector('.ics-upload-ph');
+            if (ph) ph.addEventListener('click', function() { fi.click(); });
+
+            /* Change button click */
+            var cb = el.querySelector('.ics-change-btn');
+            if (cb) cb.addEventListener('click', function(e) { e.stopPropagation(); fi.click(); });
+
+            /* File chosen handler */
+            fi.addEventListener('change', function() {
+                var f = fi.files[0]; if (!f) return;
+                var rd = new FileReader();
+                rd.onload = function(ev) {
+                    var data = loadData();
+                    var idx = (data[currentTenure]||[]).findIndex(function(c) { return c.id === card.id; });
+                    if (idx > -1) { data[currentTenure][idx].imageData = ev.target.result; saveData(data); renderCards(); }
                 };
-                reader.readAsDataURL(file);
+                rd.readAsDataURL(f);
             });
 
-            var labelInput = item.querySelector('.ic-card-label-input');
-            labelInput.addEventListener('blur', function() {
-                var d = loadData();
-                var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                if (idx > -1) { d[currentTenure][idx].label = labelInput.value.trim(); saveData(d); }
+            /* Save button */
+            var saveBtn = el.querySelector('.ics-save-btn');
+            var inp     = el.querySelector('.ics-label-input');
+            function doSave() {
+                var data = loadData();
+                var idx = (data[currentTenure]||[]).findIndex(function(c) { return c.id === card.id; });
+                if (idx > -1) {
+                    data[currentTenure][idx].label = inp.value.trim();
+                    saveData(data);
+                    saveBtn.classList.add('saved');
+                    setTimeout(function() { saveBtn.classList.remove('saved'); }, 1200);
+                    /* Re-render to re-sort */
+                    renderCards();
+                }
+            }
+            saveBtn.addEventListener('click', doSave);
+            inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); doSave(); } });
+
+            /* Share individual card */
+            el.querySelector('.ics-card-share-btn').addEventListener('click', function() {
+                shareCard(card);
             });
 
-            item.querySelector('.ic-share-btn').addEventListener('click', function() { shareCard(card); });
-            item.querySelector('.ic-delete-btn').addEventListener('click', function() {
+            /* Delete card */
+            el.querySelector('.ics-card-delete-btn').addEventListener('click', function() {
                 if (!confirm('Delete this card?')) return;
-                var d = loadData();
-                d[currentTenure] = (d[currentTenure] || []).filter(function(c) { return c.id !== card.id; });
-                saveData(d); renderCards();
+                var data = loadData();
+                data[currentTenure] = (data[currentTenure]||[]).filter(function(c) { return c.id !== card.id; });
+                saveData(data); renderCards();
             });
         });
 
         if (window.lucide) window.lucide.createIcons();
     }
 
+    /* ── sharing helpers ────────────────────────────────── */
     function dataURLtoFile(dataUrl, filename) {
-        var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        while (n--) u8arr[n] = bstr.charCodeAt(n);
-        return new File([u8arr], filename, { type: mime });
+        var arr  = dataUrl.split(',');
+        var mime = arr[0].match(/:(.*?);/)[1];
+        var bstr = atob(arr[1]);
+        var n    = bstr.length;
+        var u8   = new Uint8Array(n);
+        while (n--) u8[n] = bstr.charCodeAt(n);
+        return new File([u8], filename, { type: mime });
     }
 
-    async function shareImageFile(file, title) {
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try { await navigator.share({ title: title, files: [file] }); }
+    async function shareFiles(files, title) {
+        var arr = Array.isArray(files) ? files : [files];
+        if (navigator.canShare && navigator.canShare({ files: arr })) {
+            try { await navigator.share({ title: title, files: arr }); }
             catch (err) { if (err.name !== 'AbortError') alert('Could not share. Please try again.'); }
         } else {
-            var url = URL.createObjectURL(file);
-            window.open(url, '_blank');
-            setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
-            if (typeof showNotification === 'function') showNotification('Opened in new tab - save and share manually.', 'info');
+            /* Fallback: open each image in a new tab */
+            arr.forEach(function(f) {
+                var url = URL.createObjectURL(f);
+                window.open(url, '_blank');
+                setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
+            });
+            if (typeof showNotification === 'function')
+                showNotification('Opened ' + arr.length + ' image(s) in new tabs — save and share manually.', 'info');
         }
     }
 
     function shareCard(card) {
         if (!card.imageData) { alert('Please upload a card image first.'); return; }
-        shareImageFile(dataURLtoFile(card.imageData, (card.label || 'card') + '.jpg'), (currentTenure || '') + ' ' + (card.label || 'card') + ' Installment Card');
+        var label = card.label || 'card';
+        shareFiles(dataURLtoFile(card.imageData, label + '.jpg'), (currentTenure||'') + ' ' + label + ' Installment Card');
     }
 
     async function shareAllCards() {
-        var d = loadData();
-        var cards = (d[currentTenure] || []).filter(function(c) { return !!c.imageData; });
+        var d     = loadData();
+        var cards = (d[currentTenure]||[]).filter(function(c) { return !!c.imageData; });
+        /* Sort by amount before sharing */
+        cards.sort(function(a, b) { return parseAmount(a.label) - parseAmount(b.label); });
+
         if (!cards.length) { alert('No card images uploaded yet.'); return; }
-        if (cards.length === 1) { shareCard(cards[0]); return; }
-        if (typeof showNotification === 'function') showNotification('Preparing images...', 'info');
-        var imgs = await Promise.all(cards.map(function(c) {
-            return new Promise(function(resolve) {
-                var img = new Image();
-                img.onload = function() { resolve(img); }; img.onerror = function() { resolve(null); };
-                img.src = c.imageData;
-            });
-        }));
-        var validImgs = imgs.filter(Boolean);
-        if (!validImgs.length) { alert('Could not load images.'); return; }
-        var GAP = 16;
-        var maxW = Math.max.apply(null, validImgs.map(function(i) { return i.naturalWidth; }));
-        var totalH = validImgs.reduce(function(acc, img) { return acc + Math.round(img.naturalHeight * (maxW / img.naturalWidth)) + GAP; }, GAP);
-        var canvas = document.createElement('canvas');
-        canvas.width = maxW; canvas.height = totalH;
-        var ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#0f0f0f'; ctx.fillRect(0, 0, maxW, totalH);
-        var y = GAP;
-        validImgs.forEach(function(img) {
-            var drawH = Math.round(img.naturalHeight * (maxW / img.naturalWidth));
-            ctx.drawImage(img, 0, y, maxW, drawH); y += drawH + GAP;
+
+        if (typeof showNotification === 'function') showNotification('Preparing ' + cards.length + ' images...', 'info');
+
+        var files = cards.map(function(c, i) {
+            return dataURLtoFile(c.imageData, ((c.label || ('card_' + (i + 1))) + '.jpg').replace(/\s+/g, '_'));
         });
-        canvas.toBlob(async function(blob) {
-            var file = new File([blob], (currentTenure || 'All') + '_Cards.jpg', { type: 'image/jpeg' });
-            await shareImageFile(file, currentTenure + ' Installment Cards');
-        }, 'image/jpeg', 0.92);
+
+        await shareFiles(files, currentTenure + ' Installment Cards - All');
     }
 
-    function addNewCardSlot(file) {
-        var reader = new FileReader();
-        reader.onload = function(ev) {
+    /* ── add new card ───────────────────────────────────── */
+    function addNewCard(file) {
+        var rd = new FileReader();
+        rd.onload = function(ev) {
             var d = loadData();
             if (!d[currentTenure]) d[currentTenure] = [];
             d[currentTenure].push({ id: uid(), label: '', imageData: ev.target.result });
-            saveData(d); renderCards();
+            saveData(d);
+            renderCards();
         };
-        reader.readAsDataURL(file);
+        rd.readAsDataURL(file);
     }
 
+    /* ── init ───────────────────────────────────────────── */
     function init() {
-        // Reset to tenure selector every time screen-cards is opened
+        /* Reset to tenure selector when navigating to screen-cards */
         document.addEventListener('click', function(e) {
             if (e.target.closest('[data-target="screen-cards"]')) {
                 setTimeout(showTenureSelector, 60);
             }
         });
 
-        var backTenureBtn = document.getElementById('btn-ic-back-tenure');
-        if (backTenureBtn) backTenureBtn.addEventListener('click', showTenureSelector);
-
-        document.querySelectorAll('.ic-tenure-slide').forEach(function(btn) {
+        /* Tenure buttons */
+        document.querySelectorAll('.ics-tenure-btn').forEach(function(btn) {
             btn.addEventListener('click', function() { openTenureCards(btn.dataset.tenure); });
         });
 
-        var addCardBtn   = document.getElementById('btn-ic-add-card');
-        var addCardInput = document.getElementById('ic-add-card-file-input');
-        if (addCardBtn && addCardInput) {
-            addCardBtn.addEventListener('click', function() { addCardInput.click(); });
-            addCardInput.addEventListener('change', function() {
-                if (addCardInput.files[0]) { addNewCardSlot(addCardInput.files[0]); addCardInput.value = ''; }
+        /* Back to tenure selector */
+        var backBtn = document.getElementById('btn-ic-back-tenure');
+        if (backBtn) backBtn.addEventListener('click', showTenureSelector);
+
+        /* Add new card */
+        var addBtn   = document.getElementById('btn-ic-add-card');
+        var addInput = document.getElementById('ic-add-card-file-input');
+        if (addBtn && addInput) {
+            addBtn.addEventListener('click', function() { addInput.click(); });
+            addInput.addEventListener('change', function() {
+                if (addInput.files[0]) { addNewCard(addInput.files[0]); addInput.value = ''; }
             });
         }
 
+        /* Share All */
         var shareAllBtn = document.getElementById('btn-ic-share-all');
         if (shareAllBtn) shareAllBtn.addEventListener('click', shareAllCards);
     }
@@ -5215,5 +5277,5 @@ async function deleteGroup() {
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
 })();
 /* ============================================================
-   END INSTALLMENT CARDS MODULE
+   END INSTALLMENT CARDS MODULE v3
    ============================================================ */
