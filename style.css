@@ -6759,3 +6759,23 @@ html, body, .app-device-shell {
         font-size: 1.15rem !important;
     }
 }
+@media (max-width: 767px) {
+    .search-filter-section {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        overflow: visible !important;
+    }
+    .search-filter-section > .search-input-wrapper {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        order: -1;
+    }
+    .search-filter-section > div,
+    .search-filter-section > button {
+        flex: 1 1 auto;
+    }
+    #dashboard-member-search {
+        padding: 12px 36px !important;
+        font-size: 1rem !important;
+    }
+}
