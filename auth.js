@@ -22,6 +22,20 @@ const AuthState = {
 window.AuthState = AuthState;
 
 async function initAuth() {
+    function navigateToLastScreen() {
+        const lastScreen = localStorage.getItem('pms_last_active_screen');
+        const isAuthScreen = ['screen-landing', 'screen-login', 'screen-register'].includes(lastScreen);
+        let targetScreen = 'screen-dashboard';
+        if (lastScreen && !isAuthScreen && document.getElementById(lastScreen)) {
+            targetScreen = lastScreen;
+            if (targetScreen === 'screen-group-details') {
+                const lastGroup = localStorage.getItem('pms_last_active_group');
+                if (lastGroup && typeof State !== 'undefined') State.selectedGroupId = lastGroup;
+            }
+        }
+        navigateTo(targetScreen);
+    }
+
     if (!supabaseClient) {
         AuthState.isAuthenticated = false;
         navigateTo('screen-landing');
@@ -38,7 +52,7 @@ async function initAuth() {
                 AuthState.isAuthenticated = true;
                 AuthState.currentUser = JSON.parse(cachedSession);
                 // navigateTo('screen-dashboard') triggers switchView which triggers renderDashboard
-                navigateTo('screen-dashboard');
+                navigateToLastScreen();
                 updateProfileUI();
                 usedCache = true;
             } catch(e) {}
@@ -65,7 +79,7 @@ async function initAuth() {
 
             // [PHASE 1] Only navigate if we didn't use cache, otherwise we just update profile silently
             if (!usedCache) {
-                navigateTo('screen-dashboard');
+                navigateToLastScreen();
             }
             updateProfileUI();
             
@@ -109,7 +123,7 @@ async function initAuth() {
             // [PHASE 1] Save session to cache
             localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
 
-            navigateTo('screen-dashboard');
+            navigateToLastScreen();
             updateProfileUI();
             if (typeof loadState === 'function') await loadState();
             // [PHASE 1] Removed duplicate renderDashboard() call.
