@@ -1,4 +1,4 @@
-﻿// --- Initializing App ---
+// --- Initializing App ---
 document.addEventListener('DOMContentLoaded', () => {
     // [PHASE 4] Debounce lucide.createIcons to prevent main thread freezing
     if (typeof lucide !== 'undefined' && typeof window.lucideOriginalCreateIcons === 'undefined') {
@@ -412,7 +412,7 @@ function setupEventListeners() {
             const monthlyInstallment = totalSchemeAmount / duration;
             const formattedMonthly = monthlyInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 });
             const formattedTotal = totalSchemeAmount.toLocaleString('en-IN');
-            summaryText.innerHTML = `Total Scheme Value = <strong>â‚¹${formattedTotal}</strong>. Each member pays <strong>â‚¹${formattedMonthly} / month</strong> over ${duration} months.`;
+            summaryText.innerHTML = `Total Scheme Value = <strong>₹${formattedTotal}</strong>. Each member pays <strong>₹${formattedMonthly} / month</strong> over ${duration} months.`;
         } else {
             summaryText.textContent = 'Please enter a valid amount and duration to calculate the installment.';
         }
@@ -472,11 +472,11 @@ function setupEventListeners() {
                 <div class="month-card-header">Month ${m}</div>
                 <div class="month-card-inputs">
                     <div class="month-input-group">
-                        <label>Installment (â‚¹)</label>
+                        <label>Installment (₹)</label>
                         <input type="text" inputmode="numeric" class="schedule-inst-input amount-input" data-month="${m}" value="${formatNumberIndian(defaultInstallment)}" required>
                     </div>
                     <div class="month-input-group">
-                        <label>Payout (â‚¹)</label>
+                        <label>Payout (₹)</label>
                         <input type="text" inputmode="numeric" class="schedule-payout-input amount-input" data-month="${m}" value="${formatNumberIndian(defaultPayout)}" required>
                     </div>
                 </div>
@@ -581,14 +581,14 @@ function setupEventListeners() {
         
         // Render Group details preview on Screen 3
         document.getElementById('preview-group-name').textContent = State.tempGroup.name;
-        document.getElementById('preview-group-pool').textContent = 'â‚¹' + State.tempGroup.chitAmount.toLocaleString('en-IN') + ' (total)';
+        document.getElementById('preview-group-pool').textContent = '₹' + State.tempGroup.chitAmount.toLocaleString('en-IN') + ' (total)';
         
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const startDate = new Date(startYear, startMonth, 1);
         const endDate = new Date(startYear, startMonth + duration - 1, 1);
         const startStr = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
         const endStr = `${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;        document.getElementById('preview-group-months').textContent = `${State.tempGroup.duration} Months (${startStr} - ${endStr})`;
-        document.getElementById('preview-group-installment').textContent = 'â‚¹' + State.tempGroup.monthlyInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + '/mo';
+        document.getElementById('preview-group-installment').textContent = '₹' + State.tempGroup.monthlyInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + '/mo';
         
         // Reset inputs when loading Add Members screen
         document.getElementById('member-mobile-input').value = '';
@@ -1555,7 +1555,7 @@ function setupEventListeners() {
             
             row.innerHTML = `
                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <strong style="color: var(--primary); font-size: 1rem; font-weight: 800;">â‚¹${parseFloat(t.amount).toLocaleString('en-IN')}</strong>
+                    <strong style="color: var(--primary); font-size: 1rem; font-weight: 800;">₹${parseFloat(t.amount).toLocaleString('en-IN')}</strong>
                     <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">${t.duration} Months Scheme</span>
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center;">
@@ -1575,7 +1575,7 @@ function setupEventListeners() {
             row.querySelector('.delete-tpl-btn').addEventListener('click', async () => {
                 const confirmed = await showCustomConfirm(
                     'Delete Template',
-                    `Are you sure you want to delete this template (â‚¹${parseFloat(t.amount).toLocaleString('en-IN')} - ${t.duration}m)?`
+                    `Are you sure you want to delete this template (₹${parseFloat(t.amount).toLocaleString('en-IN')} - ${t.duration}m)?`
                 );
                 if (confirmed) {
                     State.templates = State.templates.filter(x => x.id !== t.id);
@@ -1666,11 +1666,11 @@ function setupEventListeners() {
                 <div class="month-card-header">Month ${m}</div>
                 <div class="month-card-inputs">
                     <div class="month-input-group">
-                        <label>Installment (â‚¹)</label>
+                        <label>Installment (₹)</label>
                         <input type="text" inputmode="numeric" class="template-schedule-inst-input amount-input" data-month="${m}" value="${formatNumberIndian(instVal)}" required>
                     </div>
                     <div class="month-input-group">
-                        <label>Payout (â‚¹)</label>
+                        <label>Payout (₹)</label>
                         <input type="text" inputmode="numeric" class="template-schedule-payout-input amount-input" data-month="${m}" value="${formatNumberIndian(payoutVal)}" required>
                     </div>
                 </div>
@@ -2016,15 +2016,15 @@ function _renderDashboard() {
     const globalMetrics = getGlobalMetrics(State.dashboardSelectedMonth);
     
     // Removed stat-total-groups update
-    document.getElementById('stat-total-collected').textContent = 'â‚¹' + globalMetrics.totalCollected.toLocaleString('en-IN');
+    document.getElementById('stat-total-collected').textContent = '₹' + globalMetrics.totalCollected.toLocaleString('en-IN');
     
     const cashEl = document.getElementById('stat-summary-collected-cash');
-    if (cashEl) cashEl.textContent = 'â‚¹' + (globalMetrics.totalCollectedCash || 0).toLocaleString('en-IN');
+    if (cashEl) cashEl.textContent = '₹' + (globalMetrics.totalCollectedCash || 0).toLocaleString('en-IN');
     
     const gpayEl = document.getElementById('stat-summary-collected-gpay');
-    if (gpayEl) gpayEl.textContent = 'â‚¹' + (globalMetrics.totalCollectedGpay || 0).toLocaleString('en-IN');
+    if (gpayEl) gpayEl.textContent = '₹' + (globalMetrics.totalCollectedGpay || 0).toLocaleString('en-IN');
 
-    document.getElementById('stat-total-pending').textContent = 'â‚¹' + globalMetrics.totalPending.toLocaleString('en-IN');
+    document.getElementById('stat-total-pending').textContent = '₹' + globalMetrics.totalPending.toLocaleString('en-IN');
     
     // Populate month dropdown dynamic options
     populateDashboardMonthDropdown();
@@ -2040,15 +2040,15 @@ function _renderDashboard() {
             
             // Re-evaluate metrics for the new month selection
             const metrics = getGlobalMetrics(State.dashboardSelectedMonth);
-            document.getElementById('stat-total-collected').textContent = 'â‚¹' + metrics.totalCollected.toLocaleString('en-IN');
+            document.getElementById('stat-total-collected').textContent = '₹' + metrics.totalCollected.toLocaleString('en-IN');
             
             const mCashEl = document.getElementById('stat-summary-collected-cash');
-            if (mCashEl) mCashEl.textContent = 'â‚¹' + (metrics.totalCollectedCash || 0).toLocaleString('en-IN');
+            if (mCashEl) mCashEl.textContent = '₹' + (metrics.totalCollectedCash || 0).toLocaleString('en-IN');
             
             const mGpayEl = document.getElementById('stat-summary-collected-gpay');
-            if (mGpayEl) mGpayEl.textContent = 'â‚¹' + (metrics.totalCollectedGpay || 0).toLocaleString('en-IN');
+            if (mGpayEl) mGpayEl.textContent = '₹' + (metrics.totalCollectedGpay || 0).toLocaleString('en-IN');
 
-            document.getElementById('stat-total-pending').textContent = 'â‚¹' + metrics.totalPending.toLocaleString('en-IN');
+            document.getElementById('stat-total-pending').textContent = '₹' + metrics.totalPending.toLocaleString('en-IN');
             
             const searchVal = document.getElementById('dashboard-member-search')?.value.toLowerCase().trim() || '';
             renderDashboardMembersList(searchVal);
@@ -2660,7 +2660,7 @@ function renderDashboardGroupsList(filterConfig = null) {
                     <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.78rem; font-weight: 900; margin-right: 10px; flex-shrink: 0; box-shadow: 0 2px 6px ${colorPair.border}80;">${index + 1}</span>
                     <span style="font-weight: 700; letter-spacing: 0.3px;">${group.name}</span>
                 </div>
-                <div class="group-card-amount" style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #ffffff; padding: 4px 10px; border-radius: 8px; border: none; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(147,51,234,0.3);">â‚¹${schemeAmount.toLocaleString('en-IN')}</div>
+                <div class="group-card-amount" style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #ffffff; padding: 4px 10px; border-radius: 8px; border: none; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(147,51,234,0.3);">₹${schemeAmount.toLocaleString('en-IN')}</div>
             </div>
             <div class="group-card-info" style="color: var(--text-muted);">
                 <div class="info-item">
@@ -3324,22 +3324,22 @@ function renderDashboardMembersList(searchQuery = '') {
     // Update Dashboard DOM Elements
     const statTargetCollection = document.getElementById('dashboard-target-collection-text');
     if (statTargetCollection) {
-        statTargetCollection.textContent = `Target: â‚¹${syncExpectedAmount.toLocaleString('en-IN')}`;
+        statTargetCollection.textContent = `Target: ₹${syncExpectedAmount.toLocaleString('en-IN')}`;
     }
 
     const statTotalCollected = document.getElementById('stat-total-collected');
-    if (statTotalCollected) statTotalCollected.textContent = 'â‚¹' + syncCollected.toLocaleString('en-IN');
+    if (statTotalCollected) statTotalCollected.textContent = '₹' + syncCollected.toLocaleString('en-IN');
     
     const mCashEl = document.getElementById('stat-summary-collected-cash');
-    if (mCashEl) mCashEl.textContent = 'â‚¹' + syncCollectedCash.toLocaleString('en-IN');
+    if (mCashEl) mCashEl.textContent = '₹' + syncCollectedCash.toLocaleString('en-IN');
     const mGpayEl = document.getElementById('stat-summary-collected-gpay');
-    if (mGpayEl) mGpayEl.textContent = 'â‚¹' + syncCollectedGpay.toLocaleString('en-IN');
+    if (mGpayEl) mGpayEl.textContent = '₹' + syncCollectedGpay.toLocaleString('en-IN');
     
     const statTotalPending = document.getElementById('stat-total-pending');
-    if (statTotalPending) statTotalPending.textContent = 'â‚¹' + syncPending.toLocaleString('en-IN');
+    if (statTotalPending) statTotalPending.textContent = '₹' + syncPending.toLocaleString('en-IN');
     
     const mChitTakenEl = document.getElementById('stat-summary-chit-taken-amount');
-    if (mChitTakenEl) mChitTakenEl.textContent = 'â‚¹' + syncChitTaken.toLocaleString('en-IN');
+    if (mChitTakenEl) mChitTakenEl.textContent = '₹' + syncChitTaken.toLocaleString('en-IN');
     
     const statSummaryCollectedCount = document.getElementById('stat-summary-collected-count');
     if (statSummaryCollectedCount) statSummaryCollectedCount.textContent = `(${syncCountPaid})`;
@@ -3358,11 +3358,11 @@ function renderDashboardMembersList(searchQuery = '') {
             containerSD.innerHTML = `<span style="color: #9ca3af;">--</span>`;
             containerSD.style.backgroundColor = "transparent";
         } else if (difference < 0) {
-            containerSD.innerHTML = `<span style="color: #ffffff; font-weight: 900;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: â‚¹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.innerHTML = `<span style="color: #ffffff; font-weight: 900;"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Deficit: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
             containerSD.style.backgroundColor = "#ef4444"; // Solid Red
             containerSD.style.borderTop = "none";
         } else if (difference >= 0) {
-            containerSD.innerHTML = `<span style="color: #ffffff; font-weight: 900;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: â‚¹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
+            containerSD.innerHTML = `<span style="color: #ffffff; font-weight: 900;"><i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Surplus: ₹${Math.abs(difference).toLocaleString('en-IN')}</span>`;
             containerSD.style.backgroundColor = "#22c55e"; // Solid Green
             containerSD.style.borderTop = "none";
         }
@@ -3388,8 +3388,8 @@ function renderDashboardMembersList(searchQuery = '') {
         row.style.backgroundColor = item.currentMonthPaid ? 'rgba(48, 209, 88, 0.03)' : 'transparent';
         
         let monthNoText = item.relativeMonthNum;
-        let dueAmountText = item.dueAmount === 0 ? '--' : `â‚¹${item.dueAmount.toLocaleString('en-IN')}`;
-        let paidAmountText = item.paidAmount === 0 ? '--' : `â‚¹${item.paidAmount.toLocaleString('en-IN')}`;
+        let dueAmountText = item.dueAmount === 0 ? '--' : `₹${item.dueAmount.toLocaleString('en-IN')}`;
+        let paidAmountText = item.paidAmount === 0 ? '--' : `₹${item.paidAmount.toLocaleString('en-IN')}`;
         let paidDateText = item.displayPaidDate;
         let checkboxHtml = '';
 
@@ -3460,7 +3460,7 @@ function renderDashboardMembersList(searchQuery = '') {
             methodLetterHtml = ` <span style="color: #1e3a8a; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.4);">/ G</span>`;
         }
 
-        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill chit-taken-badge" style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; border: none; box-shadow: 0 2px 6px rgba(147, 51, 234, 0.4); cursor: pointer; letter-spacing: 0.03em;"><i data-lucide="check-circle" style="width: 10px; height: 10px; color: #fff;"></i> â‚¹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
+        let chitTakenHtml = item.hasTakenPayout ? `<span class="status-badge-pill chit-taken-badge" style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; border: none; box-shadow: 0 2px 6px rgba(147, 51, 234, 0.4); cursor: pointer; letter-spacing: 0.03em;"><i data-lucide="check-circle" style="width: 10px; height: 10px; color: #fff;"></i> ₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>`;
 
         let schemeAmountStr = '';
         let amount = item.group.chitAmount;
@@ -3704,7 +3704,7 @@ function renderGroupDetails(groupId) {
     // Show monthly installment as the primary amount
     const chitValueEl = document.getElementById('details-chit-value');
     if (chitValueEl) {
-        chitValueEl.textContent = 'â‚¹' + activeInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' / mo';
+        chitValueEl.textContent = '₹' + activeInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' / mo';
     }
     
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -3715,7 +3715,7 @@ function renderGroupDetails(groupId) {
     const dateRangeStr = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()} - ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;
     
     document.getElementById('details-duration').textContent = `${group.duration} Months`;
-    document.getElementById('details-installment-value').textContent = 'â‚¹' + group.chitAmount.toLocaleString('en-IN');
+    document.getElementById('details-installment-value').textContent = '₹' + group.chitAmount.toLocaleString('en-IN');
     
 
     const activeMonthName = getMonthLabel(group, group.currentMonth);
@@ -3725,14 +3725,14 @@ function renderGroupDetails(groupId) {
     // Set current month payout
     const payoutEl = document.getElementById('details-month-payout');
     if (payoutEl) {
-        payoutEl.textContent = 'â‚¹' + activePayout.toLocaleString('en-IN');
+        payoutEl.textContent = '₹' + activePayout.toLocaleString('en-IN');
     }
     
     // Recalculate metrics
     const metrics = getGroupMetrics(groupId);
     
-    document.getElementById('details-total-collected').textContent = 'â‚¹' + metrics.totalCollected.toLocaleString('en-IN');
-    document.getElementById('details-total-pending').textContent = 'â‚¹' + metrics.totalPending.toLocaleString('en-IN');
+    document.getElementById('details-total-collected').textContent = '₹' + metrics.totalCollected.toLocaleString('en-IN');
+    document.getElementById('details-total-pending').textContent = '₹' + metrics.totalPending.toLocaleString('en-IN');
     
     // Current cycle progress bar
     const progressPercentage = metrics.totalMembers > 0 
@@ -3745,7 +3745,7 @@ function renderGroupDetails(groupId) {
     const collectedCycleAmount = metrics.paidMembersForCurrentMonth * activeInstallment;
     const expectedCycleAmount = metrics.totalMembers * activeInstallment;
     document.getElementById('progress-amount-desc').textContent = 
-        `â‚¹${collectedCycleAmount.toLocaleString('en-IN')} of â‚¹${expectedCycleAmount.toLocaleString('en-IN')} collected for active cycle`;
+        `₹${collectedCycleAmount.toLocaleString('en-IN')} of ₹${expectedCycleAmount.toLocaleString('en-IN')} collected for active cycle`;
         
     // Reset filters and search inputs
     // (We do not reset search on every active billing month update so user can keep editing)
@@ -4156,10 +4156,10 @@ function renderChecklist(member, group) {
 
         const payoutHtml = isClaimed 
             ? `<div style="display: flex; flex-direction: column; align-items: center;"><div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #ef4444, #b91c1c); border: none; border-radius: var(--radius-sm); box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4); cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s ease;">
-                 <i data-lucide="check-circle" style="width: 14px; height: 14px; color: #fff;"></i> Taken â‚¹${payoutVal.toLocaleString('en-IN')}
+                 <i data-lucide="check-circle" style="width: 14px; height: 14px; color: #fff;"></i> Taken ₹${payoutVal.toLocaleString('en-IN')}
                </div>${payoutMethodHtml}${payoutDateHtml}</div>`
             : `<div class="payout-claim-btn" data-month="${m}" style="display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: var(--radius-sm); box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4); cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s ease;">
-                 Claim â‚¹${payoutVal.toLocaleString('en-IN')}
+                 Claim ₹${payoutVal.toLocaleString('en-IN')}
                </div>`;
 
         const isCurrentMonth = (m === group.currentMonth);
@@ -4177,7 +4177,7 @@ function renderChecklist(member, group) {
                 </select>
                 <span style="font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap;">ðŸ“… ${monthYearStr}</span>
             </div>
-            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">â‚¹${instVal.toLocaleString('en-IN')}</span>
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
             <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${isPaid ? '' : formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
             ${payoutHtml}
             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -4221,7 +4221,7 @@ function renderChecklist(member, group) {
             }
             document.getElementById('modal-paid-count').textContent = livePaidCount;
             document.getElementById('modal-pending-count').textContent = liveDueCount;
-            document.getElementById('modal-payment-due-val').textContent = 'â‚¹' + livePendingAmount.toLocaleString('en-IN');
+            document.getElementById('modal-payment-due-val').textContent = '₹' + livePendingAmount.toLocaleString('en-IN');
             
             const liveWaBtn = document.getElementById('btn-modal-whatsapp-reminder');
             if (livePendingAmount > 0) {
@@ -4264,7 +4264,7 @@ function renderChecklist(member, group) {
     // Update summary tags in modal
     document.getElementById('modal-paid-count').textContent = paidCount;
     document.getElementById('modal-pending-count').textContent = dueCount;
-    document.getElementById('modal-payment-due-val').textContent = 'â‚¹' + pendingAmount.toLocaleString('en-IN');
+    document.getElementById('modal-payment-due-val').textContent = '₹' + pendingAmount.toLocaleString('en-IN');
     
     const outstandingLabel = document.getElementById('modal-payment-due-label');
     const waBtn = document.getElementById('btn-modal-whatsapp-reminder');
@@ -4916,11 +4916,11 @@ function regenerateEditScheduleTable(group) {
             <div class="month-card-header">Month ${m}</div>
             <div class="month-card-inputs">
                 <div class="month-input-group">
-                    <label>Installment (â‚¹)</label>
+                    <label>Installment (₹)</label>
                     <input type="text" inputmode="numeric" class="edit-schedule-inst-input amount-input" data-month="${m}" value="${formatNumberIndian(instVal)}" required>
                 </div>
                 <div class="month-input-group">
-                    <label>Payout (â‚¹)</label>
+                    <label>Payout (₹)</label>
                     <input type="text" inputmode="numeric" class="edit-schedule-payout-input amount-input" data-month="${m}" value="${formatNumberIndian(payoutVal)}" required>
                 </div>
             </div>
