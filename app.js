@@ -1993,7 +1993,13 @@ function populateDashboardMonthDropdown() {
 }
 
 // 1. Dashboard Renderer
+let renderDashboardRAF = null;
 function renderDashboard() {
+    if (renderDashboardRAF) cancelAnimationFrame(renderDashboardRAF);
+    renderDashboardRAF = requestAnimationFrame(_renderDashboard);
+}
+
+function _renderDashboard() {
     // Global Metrics Calculation
     const globalMetrics = getGlobalMetrics(State.dashboardSelectedMonth);
     
@@ -2558,7 +2564,7 @@ function renderDashboard() {
 function renderDashboardGroupsList(filterConfig = null) {
         const container = document.getElementById('group-list-container');
         if (!container) return;
-        container.innerHTML = '';
+        const fragment = document.createDocumentFragment();
         
         let groupsToRender = [...State.groups];
 
@@ -2667,15 +2673,18 @@ function renderDashboardGroupsList(filterConfig = null) {
             switchView('screen-group-details');
         });
         
-        container.appendChild(card);
+        fragment.appendChild(card);
     });
+    
+    container.innerHTML = '';
+    container.appendChild(fragment);
     lucide.createIcons();
 }
 
 function renderDashboardMembersList(searchQuery = '') {
     const listContainer = document.getElementById('dashboard-members-container');
     if (!listContainer) return;
-    listContainer.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
     const selMonth = State.dashboardSelectedMonth || 'current';
     const isAccumulated = selMonth === 'accumulated';
@@ -3560,7 +3569,7 @@ function renderDashboardMembersList(searchQuery = '') {
             }
         }
 
-        listContainer.appendChild(row);
+        fragment.appendChild(row);
     });
 
     // Update Filtered Summary Footer
@@ -3602,6 +3611,8 @@ function renderDashboardMembersList(searchQuery = '') {
         }
     }
 
+    listContainer.innerHTML = '';
+    listContainer.appendChild(fragment);
     lucide.createIcons();
 }
 

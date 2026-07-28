@@ -44,11 +44,7 @@ body:not([data-app-state="dashboard"]) .app-header {
     display: none !important;
 }
 
-/* Initially hide everything to prevent FOUC until JS determines state */
-body[data-app-state="loading"] .app-device-shell {
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
+/* App device shell is now visible instantly. Relying on skeleton loaders instead of blank screen */
 
 /* Ensure only the active screen shows in landing/login states */
 body[data-app-state="landing"] .app-screen:not(#screen-landing),
@@ -553,7 +549,43 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <span style="text-align: center;"><i data-lucide="bell" style="width: 18px; height: 18px; color: #ffffff; stroke-width: 3px;"></i></span>
                             </div>
                             <div id="dashboard-members-container" style="display: flex; flex-direction: column;">
-                                <!-- Dynamic list of members loaded via JS -->
+                                <!-- Skeletons for initial load -->
+                                <div class="skeleton">
+                                    <div class="skeleton-row">
+                                        <div class="skeleton-left">
+                                            <div class="skeleton-avatar"></div>
+                                            <div>
+                                                <div class="skeleton-text-lg"></div>
+                                                <div class="skeleton-text-sm"></div>
+                                            </div>
+                                        </div>
+                                        <div class="skeleton-text-right"></div>
+                                    </div>
+                                </div>
+                                <div class="skeleton">
+                                    <div class="skeleton-row">
+                                        <div class="skeleton-left">
+                                            <div class="skeleton-avatar"></div>
+                                            <div>
+                                                <div class="skeleton-text-lg"></div>
+                                                <div class="skeleton-text-sm"></div>
+                                            </div>
+                                        </div>
+                                        <div class="skeleton-text-right"></div>
+                                    </div>
+                                </div>
+                                <div class="skeleton">
+                                    <div class="skeleton-row">
+                                        <div class="skeleton-left">
+                                            <div class="skeleton-avatar"></div>
+                                            <div>
+                                                <div class="skeleton-text-lg"></div>
+                                                <div class="skeleton-text-sm"></div>
+                                            </div>
+                                        </div>
+                                        <div class="skeleton-text-right"></div>
+                                    </div>
+                                </div>
                             </div>
                             <div id="dashboard-filtered-summary" style="display: none; align-items: center; justify-content: space-between; padding: 12px 16px; margin-top: 4px; border-top: 2px solid var(--primary); background: var(--bg-surface-elevated); border-radius: 0 0 12px 12px; gap: 8px; flex-wrap: wrap;">
                                 <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;"><i data-lucide="filter" style="width: 13px; height: 13px; color: var(--primary);"></i> Filtered Result</span>
@@ -614,7 +646,31 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <!-- Step 4: Group List View -->
                                 <div id="wizard-step-4" class="wizard-step">
                                     <div class="group-list" id="group-list-container">
-                                        <!-- Dynamic group lists -->
+                                        <!-- Skeletons for initial load -->
+                                        <div class="skeleton">
+                                            <div class="skeleton-row">
+                                                <div class="skeleton-left">
+                                                    <div class="skeleton-avatar" style="border-radius: 8px;"></div>
+                                                    <div>
+                                                        <div class="skeleton-text-lg"></div>
+                                                        <div class="skeleton-text-sm"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="skeleton-text-right"></div>
+                                            </div>
+                                        </div>
+                                        <div class="skeleton">
+                                            <div class="skeleton-row">
+                                                <div class="skeleton-left">
+                                                    <div class="skeleton-avatar" style="border-radius: 8px;"></div>
+                                                    <div>
+                                                        <div class="skeleton-text-lg"></div>
+                                                        <div class="skeleton-text-sm"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="skeleton-text-right"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

@@ -6474,3 +6474,118 @@ html, body, .app-device-shell {
     align-items: center;
     gap: 12px;
 }
+
+/* ==========================================================================
+   PERFORMANCE & SKELETON LOADERS
+   ========================================================================== */
+
+/* Fade In Utility for smooth component mounts */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Skeleton Container (matches UI components) */
+.skeleton {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme='light'] .skeleton {
+    background: #ffffff;
+}
+
+/* Skeleton elements */
+.skeleton-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.skeleton-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.skeleton-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--border);
+    flex-shrink: 0;
+}
+.skeleton-text-lg {
+    height: 18px;
+    border-radius: 4px;
+    background-color: var(--border);
+    width: 150px;
+    margin-bottom: 6px;
+}
+.skeleton-text-sm {
+    height: 12px;
+    border-radius: 4px;
+    background-color: var(--border);
+    width: 100px;
+}
+.skeleton-text-right {
+    height: 18px;
+    border-radius: 4px;
+    background-color: var(--border);
+    width: 80px;
+}
+
+/* Shimmer Animation */
+.skeleton-avatar, .skeleton-text-lg, .skeleton-text-sm, .skeleton-text-right {
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-avatar::after, .skeleton-text-lg::after, .skeleton-text-sm::after, .skeleton-text-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.05) 20%,
+        rgba(255, 255, 255, 0.1) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: shimmer 2s infinite;
+}
+
+[data-theme='light'] .skeleton-avatar::after, 
+[data-theme='light'] .skeleton-text-lg::after, 
+[data-theme='light'] .skeleton-text-sm::after, 
+[data-theme='light'] .skeleton-text-right::after {
+    background-image: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0.05) 20%,
+        rgba(0, 0, 0, 0.1) 60%,
+        rgba(0, 0, 0, 0)
+    );
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
