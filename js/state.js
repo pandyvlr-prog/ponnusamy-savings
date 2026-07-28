@@ -13,7 +13,14 @@ const State = {
     dashboardDateRangeTo: '',
     backupEmail: localStorage.getItem('ponnusamy_backup_email') || '',
     templateFilterDuration: '12',
-    savedNotes: []
+    savedNotes: [],
+    // [PHASE 4] Introduced isDirty flags for smart view caching
+    isDirty: {
+        dashboard: true,
+        pnl: true,
+        notes: true,
+        members: true
+    }
 };
 
 let originalStateSnapshot = null;
@@ -655,6 +662,14 @@ async function commitState(skipBanner = false) {
 }
 
 async function saveState() {
+    // [PHASE 4] Mark all views as dirty so they re-render on next visit
+    State.isDirty = {
+        dashboard: true,
+        pnl: true,
+        notes: true,
+        members: true
+    };
+    
     if (!originalStateSnapshot) {
         return commitState(true);
     }

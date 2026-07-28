@@ -1,5 +1,21 @@
 // --- PDF Generation Logic ---
-function generatePdfReport() {
+let isHtml2PdfLoaded = false;
+
+async function loadHtml2Pdf() {
+    if (isHtml2PdfLoaded || typeof html2pdf !== 'undefined') return true;
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.integrity = 'sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==';
+        script.crossOrigin = 'anonymous';
+        script.referrerPolicy = 'no-referrer';
+        script.onload = () => { isHtml2PdfLoaded = true; resolve(true); };
+        script.onerror = () => reject(new Error('Failed to load html2pdf.js'));
+        document.body.appendChild(script);
+    });
+}
+
+async function generatePdfReport() {
     const group = State.groups.find(g => g.id === State.selectedGroupId);
     if (!group) return;
     
@@ -141,17 +157,24 @@ function generatePdfReport() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(htmlContent).save().then(() => {
+    try {
+        await loadHtml2Pdf();
+        html2pdf().set(opt).from(htmlContent).save().then(() => {
+            if (overlay) overlay.style.display = 'none';
+            showNotification('PDF Report Generated Successfully!', 'success');
+        }).catch(err => {
+            console.error(err);
+            if (overlay) overlay.style.display = 'none';
+            showNotification('Error generating PDF', 'error');
+        });
+    } catch (error) {
+        console.error(error);
         if (overlay) overlay.style.display = 'none';
-        showNotification('PDF Report Generated Successfully!', 'success');
-    }).catch(err => {
-        console.error(err);
-        if (overlay) overlay.style.display = 'none';
-        showNotification('Error generating PDF', 'error');
-    });
+        showNotification('Failed to load PDF library', 'error');
+    }
 }
 
-function generateGlobalPdfReport(mode = 'download') {
+async function generateGlobalPdfReport(mode = 'download') {
     const selectedMonthKey = document.getElementById('global-pdf-export-month-select').value;
     const selectedDayValue = document.getElementById('global-pdf-export-day-select') ? document.getElementById('global-pdf-export-day-select').value : 'all';
     if (!selectedMonthKey) return;
@@ -364,46 +387,51 @@ function generateGlobalPdfReport(mode = 'download') {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
-    if (mode === 'download') {
-        html2pdf().set(opt).from(htmlContent).save().then(() => {
-            if (overlay) overlay.style.display = 'none';
-            showNotification('Global PDF Report Downloaded!', 'success');
-        }).catch(err => {
-            console.error(err);
-            if (overlay) overlay.style.display = 'none';
-            showNotification('Error generating PDF', 'error');
-        });
-    } else if (mode === 'share') {
-        html2pdf().set(opt).from(htmlContent).outputPdf('blob').then(async (blob) => {
-            if (overlay) overlay.style.display = 'none';
-            
-            const file = new File([blob], opt.filename, { type: 'application/pdf' });
-            
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: opt.filename,
-                        text: 'Here is the Global Dashboard Report',
-                        files: [file]
-                    });
-                    showNotification('Report shared successfully!', 'success');
-                } catch (error) {
-                    console.error('Error sharing', error);
-                    // AbortError is thrown when user cancels the share sheet
-                    if (error.name !== 'AbortError') {
-                        showNotification('Error sharing report.', 'error');
+    try {
+        await loadHtml2Pdf();
+        if (mode === 'download') {
+            html2pdf().set(opt).from(htmlContent).save().then(() => {
+                if (overlay) overlay.style.display = 'none';
+                showNotification('Global PDF Report Downloaded!', 'success');
+            }).catch(err => {
+                console.error(err);
+                if (overlay) overlay.style.display = 'none';
+                showNotification('Error generating PDF', 'error');
+            });
+        } else if (mode === 'share') {
+            html2pdf().set(opt).from(htmlContent).outputPdf('blob').then(async (blob) => {
+                if (overlay) overlay.style.display = 'none';
+                
+                const file = new File([blob], opt.filename, { type: 'application/pdf' });
+                
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: opt.filename,
+                            text: 'Here is the Global Dashboard Report',
+                            files: [file]
+                        });
+                        showNotification('Report shared successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error sharing', error);
+                        if (error.name !== 'AbortError') {
+                            showNotification('Error sharing report.', 'error');
+                        }
                     }
+                } else {
+                    showNotification('Web Share not supported on this device/browser', 'error');
+                    html2pdf().set(opt).from(htmlContent).save();
                 }
-            } else {
-                showNotification('Web Share not supported on this device/browser', 'error');
-                // Fallback to download
-                html2pdf().set(opt).from(htmlContent).save();
-            }
-        }).catch(err => {
-            console.error(err);
-            if (overlay) overlay.style.display = 'none';
-            showNotification('Error generating PDF', 'error');
-        });
+            }).catch(err => {
+                console.error(err);
+                if (overlay) overlay.style.display = 'none';
+                showNotification('Error generating PDF', 'error');
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        if (overlay) overlay.style.display = 'none';
+        showNotification('Failed to load PDF library', 'error');
     }
 }
 

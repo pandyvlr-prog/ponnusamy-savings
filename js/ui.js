@@ -204,21 +204,25 @@ function switchView(viewId) {
     }
     
     if (targetScreen) {
+        if (activeScreen && activeScreen.id === viewId) {
+            // [PHASE 3] Prevent duplicate rendering if already on the same screen
+            return;
+        }
+
         if (activeScreen && activeScreen.id !== viewId) {
-            // Slide out active
-            activeScreen.style.transform = '';
-            activeScreen.style.opacity = '0';
+            // [PHASE 3] Slide out active by just removing class. CSS display:none handles the rest.
             activeScreen.classList.remove('active');
-            activeScreen.style.pointerEvents = 'none';
+            // Clean up any old inline styles that might conflict
+            activeScreen.style.transform = '';
+            activeScreen.style.opacity = '';
+            activeScreen.style.pointerEvents = '';
         }
         
-        // Slide in target
+        // [PHASE 3] Slide in target
         targetScreen.classList.add('active');
-        targetScreen.style.pointerEvents = 'auto';
-        // Force reflow
-        targetScreen.offsetHeight;
+        targetScreen.style.pointerEvents = '';
         targetScreen.style.transform = '';
-        targetScreen.style.opacity = '1';
+        targetScreen.style.opacity = '';
         
         State.currentView = viewId;
         localStorage.setItem('pms_last_active_screen', viewId);
@@ -237,12 +241,22 @@ function switchView(viewId) {
         });
         
         // Contextual trigger on screen load
+        // [PHASE 4] Smart caching: Only re-render if data has changed (isDirty)
         if (viewId === 'screen-dashboard') {
-            renderDashboard();
+            if (State.isDirty.dashboard) {
+                renderDashboard();
+                State.isDirty.dashboard = false;
+            }
         } else if (viewId === 'screen-group-details') {
-            renderGroupDetails(State.selectedGroupId);
+            if (State.isDirty.members || State.selectedGroupId !== localStorage.getItem('pms_last_active_group')) {
+                renderGroupDetails(State.selectedGroupId);
+                State.isDirty.members = false;
+            }
         } else if (viewId === 'screen-pnl') {
-            renderPnLDashboard();
+            if (State.isDirty.pnl) {
+                renderPnLDashboard();
+                State.isDirty.pnl = false;
+            }
         }
     }
 }

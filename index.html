@@ -27,8 +27,7 @@
     <link rel="stylesheet" href="style.css?v=138">
     <link rel="stylesheet" href="auth.css">
 
-    <!-- html2pdf.js for PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
 
 <script>
 (function() {
@@ -50,6 +49,16 @@ body:not([data-app-state="dashboard"]) .app-header {
 body[data-app-state="landing"] .app-screen:not(#screen-landing),
 body[data-app-state="login"] .app-screen:not(#screen-login) {
     display: none !important;
+}
+
+/* [PHASE 5] Hardware Acceleration and CSS Containment */
+.app-screen {
+    contain: layout style paint;
+    will-change: opacity, transform;
+}
+
+.app-device-shell {
+    contain: layout size;
 }
 </style>
 </head>
@@ -1252,10 +1261,27 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                         <th class="pnl-th-right">Collected</th>
                                         <th class="pnl-th-right">Payout</th>
                                         <th class="pnl-th-right">Net</th>
-                                        <th class="pnl-th-right">Arrears</th>
+                                        <th style="border-top-right-radius: var(--radius-sm);">Arrears</th>
                                     </tr>
                                 </thead>
-                                <tbody id="pnl-groups-tbody"></tbody>
+                                <tbody id="pnl-groups-tbody">
+                                    <!-- [PHASE 2] Skeleton Loader injected to prevent black screen on hard refresh -->
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="skeleton skeleton-row" style="height: 48px; border-radius: 8px;"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="skeleton skeleton-row" style="height: 48px; border-radius: 8px; animation-delay: 0.1s;"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="skeleton skeleton-row" style="height: 48px; border-radius: 8px; animation-delay: 0.2s;"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -1275,7 +1301,12 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <i data-lucide="search"></i>
                         <input type="text" id="notes-search-input" placeholder="Search notes...">
                     </div>
-                    <div class="notes-grid-prm" id="notes-grid"></div>
+                    <div class="notes-grid-prm" id="notes-grid">
+                        <!-- [PHASE 2] Skeleton Loader injected to prevent blank grid on hard refresh -->
+                        <div class="note-card-prm skeleton" style="height: 140px; border-radius: 12px; pointer-events: none;"></div>
+                        <div class="note-card-prm skeleton" style="height: 140px; border-radius: 12px; pointer-events: none; animation-delay: 0.1s;"></div>
+                        <div class="note-card-prm skeleton" style="height: 140px; border-radius: 12px; pointer-events: none; animation-delay: 0.2s;"></div>
+                    </div>
                     <div id="notes-empty-state" class="notes-empty-prm" style="display:none;">
                         <i data-lucide="notebook-pen"></i>
                         <h3>Your workspace is empty</h3>

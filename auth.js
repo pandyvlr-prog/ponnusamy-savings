@@ -30,6 +30,20 @@ async function initAuth() {
     }
     // Check active Supabase session
     try {
+        // [PHASE 1] Check for cached session to render the application shell instantly
+        const cachedSession = localStorage.getItem('pms_cached_session');
+        let usedCache = false;
+        if (cachedSession) {
+            try {
+                AuthState.isAuthenticated = true;
+                AuthState.currentUser = JSON.parse(cachedSession);
+                // navigateTo('screen-dashboard') triggers switchView which triggers renderDashboard
+                navigateTo('screen-dashboard');
+                updateProfileUI();
+                usedCache = true;
+            } catch(e) {}
+        }
+
         const { data: { session } } = await supabaseClient.auth.getSession();
         
         if (session) {
@@ -45,16 +59,26 @@ async function initAuth() {
                 avatar: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture || null,
                 user_metadata: activeUser.user_metadata || {}
             };
-            navigateTo('screen-dashboard');
+            
+            // [PHASE 1] Save session to cache
+            localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
+
+            // [PHASE 1] Only navigate if we didn't use cache, otherwise we just update profile silently
+            if (!usedCache) {
+                navigateTo('screen-dashboard');
+            }
             updateProfileUI();
+            
             if (typeof loadState === 'function') await loadState();
-            if (typeof renderDashboard === 'function') renderDashboard();
+            // [PHASE 1] Removed duplicate renderDashboard() call. navigateTo already triggers it via switchView.
         } else {
             AuthState.isAuthenticated = false;
+            localStorage.removeItem('pms_cached_session');
             navigateTo('screen-landing');
         }
     } catch(err) {
         console.error(err);
+        localStorage.removeItem('pms_cached_session');
         navigateTo('screen-landing');
     }
     
@@ -81,13 +105,19 @@ async function initAuth() {
                 avatar: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture || null,
                 user_metadata: activeUser.user_metadata || {}
             };
+            
+            // [PHASE 1] Save session to cache
+            localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
+
             navigateTo('screen-dashboard');
             updateProfileUI();
             if (typeof loadState === 'function') await loadState();
-            if (typeof renderDashboard === 'function') renderDashboard();
+            // [PHASE 1] Removed duplicate renderDashboard() call.
         } else if (event === 'SIGNED_OUT') {
             AuthState.isAuthenticated = false;
             AuthState.currentUser = null;
+            // [PHASE 1] Clear cache on sign out
+            localStorage.removeItem('pms_cached_session');
             if (typeof loadState === 'function') await loadState();
             navigateTo('screen-landing');
         }
@@ -210,10 +240,7 @@ function setupAuthListeners() {
         
         updateProfileUI();
         
-        if (typeof renderDashboard === 'function') {
-            renderDashboard();
-        }
-        
+        // [PROD] Removed duplicate renderDashboard() — navigateTo triggers it via switchView
         navigateTo('screen-dashboard');
     });
 
@@ -225,7 +252,7 @@ function setupAuthListeners() {
         localStorage.setItem('ps_auth', JSON.stringify(AuthState));
         navigateTo('screen-dashboard');
         updateProfileUI();
-        if (typeof renderDashboard === 'function') renderDashboard();
+        // [PROD] Removed duplicate renderDashboard() — navigateTo triggers it via switchView
     });
 
     // Mock Google Login

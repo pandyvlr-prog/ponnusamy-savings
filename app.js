@@ -1,5 +1,17 @@
 // --- Initializing App ---
 document.addEventListener('DOMContentLoaded', () => {
+    // [PHASE 4] Debounce lucide.createIcons to prevent main thread freezing
+    if (typeof lucide !== 'undefined' && typeof window.lucideOriginalCreateIcons === 'undefined') {
+        window.lucideOriginalCreateIcons = lucide.createIcons;
+        let iconRaf;
+        lucide.createIcons = function(options) {
+            if (iconRaf) cancelAnimationFrame(iconRaf);
+            iconRaf = requestAnimationFrame(() => {
+                window.lucideOriginalCreateIcons.call(lucide, options);
+            });
+        };
+    }
+
     // Initialize Theme
     setupTheme();
     initAppearanceSettings();
