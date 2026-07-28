@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=139">
+    <link rel="stylesheet" href="style.css?v=140">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -85,6 +85,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <button class="sidebar-nav-item" data-target="screen-notes" title="Notepad">
                     <i data-lucide="file-text"></i>
                 </button>
+                <button class="sidebar-nav-item" data-target="screen-cards" title="Installment Cards">
+                    <i data-lucide="credit-card"></i>
+                </button>
             </div>
             <div class="desktop-sidebar-footer">
                 <button class="sidebar-nav-item" data-target="screen-settings" title="Settings">
@@ -103,13 +106,17 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <i data-lucide="bar-chart-2"></i>
                 <span>P&L</span>
             </button>
-                        <button class="bottom-nav-item" id="btn-bottom-calc">
+            <button class="bottom-nav-item" id="btn-bottom-calc">
                 <i data-lucide="calculator"></i>
                 <span>Calc</span>
             </button>
             <button class="bottom-nav-item" data-target="screen-notes">
                 <i data-lucide="file-text"></i>
                 <span>Notes</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-cards">
+                <i data-lucide="credit-card"></i>
+                <span>Cards</span>
             </button>
         </nav>
 
@@ -1312,84 +1319,6 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <h3>Your workspace is empty</h3>
                         <p>Create a note to start organizing your thoughts.</p>
                     </div>
-                    <!-- ===== INSTALLMENT CARDS ENTRY BUTTON ===== -->
-                    <div id="installment-entry-banner" class="ic-entry-banner">
-                        <div class="ic-entry-left">
-                            <div class="ic-entry-icon-wrap">
-                                <i data-lucide="credit-card"></i>
-                            </div>
-                            <div>
-                                <span class="ic-entry-title">Installment Cards</span>
-                                <span class="ic-entry-sub">12M &amp; 20M schemes</span>
-                            </div>
-                        </div>
-                        <button id="btn-open-installment-cards" class="ic-entry-btn">
-                            <i data-lucide="chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ===== INSTALLMENT CARDS FULL VIEW ===== -->
-                <div id="installment-cards-view" class="ic-fullview" style="display:none;">
-                    <!-- Topbar -->
-                    <div class="ic-topbar">
-                        <button id="btn-ic-back" class="ic-back-btn">
-                            <i data-lucide="arrow-left"></i>
-                        </button>
-                        <div class="ic-topbar-center">
-                            <span class="ic-topbar-title" id="ic-topbar-title">Installment Cards</span>
-                        </div>
-                        <div style="width:40px;"></div>
-                    </div>
-
-                    <!-- Tenure Selector Slides -->
-                    <div id="ic-tenure-selector" class="ic-tenure-selector">
-                        <p class="ic-tenure-label">Select Scheme</p>
-                        <div class="ic-tenure-slides">
-                            <button class="ic-tenure-slide" data-tenure="12M">
-                                <div class="ic-tenure-slide-icon">
-                                    <i data-lucide="calendar"></i>
-                                </div>
-                                <span class="ic-tenure-month">12M</span>
-                                <span class="ic-tenure-desc">12 Month Scheme</span>
-                            </button>
-                            <button class="ic-tenure-slide" data-tenure="20M">
-                                <div class="ic-tenure-slide-icon">
-                                    <i data-lucide="calendar-check"></i>
-                                </div>
-                                <span class="ic-tenure-month">20M</span>
-                                <span class="ic-tenure-desc">20 Month Scheme</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Cards Grid (shown after tenure selected) -->
-                    <div id="ic-cards-grid-view" class="ic-cards-grid-view" style="display:none;">
-                        <!-- Back to tenure + title row -->
-                        <div class="ic-grid-header">
-                            <button id="btn-ic-back-tenure" class="ic-back-tenure-btn">
-                                <i data-lucide="chevron-left"></i> All Schemes
-                            </button>
-                            <span id="ic-grid-tenure-label" class="ic-grid-tenure-label"></span>
-                        </div>
-
-                        <!-- Cards list (dynamically rendered) -->
-                        <div id="ic-cards-list" class="ic-cards-list"></div>
-
-                        <!-- Add new card button -->
-                        <button id="btn-ic-add-card" class="ic-add-card-btn">
-                            <i data-lucide="plus-circle"></i>
-                            <span>Upload New Card</span>
-                        </button>
-                        <!-- Hidden file input for adding new card -->
-                        <input type="file" id="ic-add-card-file-input" accept="image/*" style="display:none;">
-
-                        <!-- Share All button -->
-                        <button id="btn-ic-share-all" class="ic-share-all-btn">
-                            <i data-lucide="share-2"></i>
-                            <span>Share All to WhatsApp</span>
-                        </button>
-                    </div>
                 </div>
 
                 <div id="note-editor-view" class="notes-editor-prm" style="display: none;">
@@ -1421,9 +1350,55 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </div>
 
 
-    
-
             </section>
+
+            <!-- ===== SCREEN: INSTALLMENT CARDS ===== -->
+            <section id="screen-cards" class="app-screen ic-screen">
+                <!-- Tenure Selector View -->
+                <div id="ic-tenure-selector" class="ic-tenure-selector">
+                    <div class="ic-screen-header">
+                        <h1 class="ic-screen-title">Installment Cards</h1>
+                        <p class="ic-screen-sub">Select a scheme to view &amp; share cards</p>
+                    </div>
+                    <div class="ic-tenure-slides">
+                        <button class="ic-tenure-slide" data-tenure="12M">
+                            <div class="ic-tenure-slide-icon">
+                                <i data-lucide="calendar"></i>
+                            </div>
+                            <span class="ic-tenure-month">12M</span>
+                            <span class="ic-tenure-desc">12 Month Scheme</span>
+                        </button>
+                        <button class="ic-tenure-slide" data-tenure="20M">
+                            <div class="ic-tenure-slide-icon">
+                                <i data-lucide="calendar-check"></i>
+                            </div>
+                            <span class="ic-tenure-month">20M</span>
+                            <span class="ic-tenure-desc">20 Month Scheme</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cards Grid View (shown after tenure selected) -->
+                <div id="ic-cards-grid-view" class="ic-cards-grid-view" style="display:none;">
+                    <div class="ic-grid-header">
+                        <button id="btn-ic-back-tenure" class="ic-back-tenure-btn">
+                            <i data-lucide="chevron-left"></i> All Schemes
+                        </button>
+                        <span id="ic-grid-tenure-label" class="ic-grid-tenure-label"></span>
+                    </div>
+                    <div id="ic-cards-list" class="ic-cards-list"></div>
+                    <button id="btn-ic-add-card" class="ic-add-card-btn">
+                        <i data-lucide="plus-circle"></i>
+                        <span>Upload New Card</span>
+                    </button>
+                    <input type="file" id="ic-add-card-file-input" accept="image/*" style="display:none;">
+                    <button id="btn-ic-share-all" class="ic-share-all-btn">
+                        <i data-lucide="share-2"></i>
+                        <span>Share All to WhatsApp</span>
+                    </button>
+                </div>
+            </section>
+
   </div>
 </main>
         
