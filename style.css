@@ -6713,3 +6713,49 @@ html, body, .app-device-shell {
 }
 @media (max-width: 768px) { .pnl-table, .pnl-table tr, .pnl-table td, .pnl-table tbody { min-width: 0 !important; box-sizing: border-box !important; width: 100% !important; } }
 
+/* --- Dashboard Mobile Redesign --- */
+@media (max-width: 767px) {
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+    .metrics-grid .metric-item {
+        grid-column: 1 / -1 !important;
+        min-height: 140px;
+        justify-content: center;
+        padding: 24px;
+    }
+    .metrics-grid .metric-item .metric-value {
+        font-size: 2.2rem !important;
+    }
+    /* Cash and Gpay container */
+    .metrics-grid .metric-item:first-child > div:last-child {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(48,209,88,0.3);
+    }
+    .metrics-grid .metric-item:first-child > div:last-child > div {
+        padding: 16px 8px !important;
+    }
+    .metrics-grid .metric-item:first-child > div:last-child span[id^="stat-summary-collected-"] {
+        font-size: 1.4rem !important;
+    }
+}
+@media (max-width: 767px) {
+    .dashboard-card > div:first-child {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: center;
+        gap: 16px !important;
+    }
+    .dashboard-card > div:first-child h2 {
+        justify-content: center;
+        font-size: 1.3rem !important;
+    }
+    #dashboard-target-collection-badge {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 12px 20px !important;
+        font-size: 1.15rem !important;
+    }
+}
