@@ -2002,26 +2002,34 @@ body {
     grid-column: span 2;
     background-color: var(--bg-surface-elevated);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 12px;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
 }
 
 .progress-labels {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.74rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-body);
     color: var(--text-secondary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+}
+.progress-labels strong {
+    font-family: var(--font-number);
+    font-size: 1rem;
 }
 
 .progress-track {
-    height: 10px;
-    background-color: var(--green-light);
+    height: 12px;
+    background-color: var(--bg-surface);
     border-radius: var(--radius-full);
     overflow: hidden;
-    margin-bottom: 6px;
-    border: 1px solid rgba(48, 209, 88, 0.3);
+    margin-bottom: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .progress-bar {
@@ -3191,18 +3199,18 @@ body {
 .member-profile-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 @media (max-width: 480px) {
     .member-profile-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
-        margin-bottom: 8px;
+        gap: 10px;
+        margin-bottom: 16px;
     }
     .profile-grid-item {
-        padding: 6px 8px;
-        gap: 6px;
+        padding: 12px 10px;
+        gap: 8px;
     }
     .profile-icon-box {
         width: 22px;
@@ -6653,5 +6661,53 @@ html, body, .app-device-shell {
 @keyframes shimmer {
     100% {
         transform: translateX(100%);
+    }
+}
+/* --- Responsive P&L Table (Mobile Cards) --- */
+@media (max-width: 768px) {
+    .pnl-table thead {
+        display: none;
+    }
+    .pnl-table, .pnl-table tbody, .pnl-table tr, .pnl-table td {
+        display: block;
+        width: 100%;
+    }
+    .pnl-table tr {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+    }
+    .pnl-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border: none !important;
+        text-align: right !important;
+    }
+    .pnl-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        text-align: left;
+    }
+    /* Specific overrides for card layout */
+    .pnl-table .pnl-td-name {
+        font-size: 1.1rem;
+        color: var(--primary);
+        border-bottom: 1px solid var(--border) !important;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        justify-content: center;
+    }
+    .pnl-table .pnl-td-name::before { display: none; }
+    .pnl-table .pnl-td-num { display: none; } /* Hide row number */
+    .pnl-table .pnl-td-right {
+        font-size: 1.1rem;
     }
 }
