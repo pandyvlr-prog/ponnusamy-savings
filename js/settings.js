@@ -13,7 +13,8 @@ function exportBackup() {
         exportedAt: new Date().toISOString(),
         groups: State.groups,
         members: State.members,
-        templates: State.templates || []
+        templates: State.templates || [],
+        installmentCards: JSON.parse(localStorage.getItem('pms_installment_cards') || '{}')
     };
     
     const dataString = JSON.stringify(dataObj, null, 2);
@@ -45,7 +46,8 @@ function emailBackupDraft() {
         exportedAt: new Date().toISOString(),
         groups: State.groups,
         members: State.members,
-        templates: State.templates || []
+        templates: State.templates || [],
+        installmentCards: JSON.parse(localStorage.getItem('pms_installment_cards') || '{}')
     };
     
     const dataString = JSON.stringify(dataObj, null, 2);
@@ -103,6 +105,9 @@ function importBackup(e) {
                 if (importedData.templates) {
                     State.templates = importedData.templates;
                 }
+                if (importedData.installmentCards) {
+                    localStorage.setItem('pms_installment_cards', JSON.stringify(importedData.installmentCards));
+                }
                 saveState();
                 
                 showNotification('Database imported successfully!');
@@ -154,6 +159,7 @@ async function resetAllData() {
         setTimeout(() => {
             localStorage.removeItem(getStorageKey('groups'));
             localStorage.removeItem(getStorageKey('members'));
+            localStorage.removeItem('pms_installment_cards');
             State.groups = [];
             State.members = [];
             saveState();

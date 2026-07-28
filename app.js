@@ -5018,7 +5018,15 @@ async function deleteGroup() {
         catch (e) { return {}; }
     }
     function saveData(data) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch(e) {
+            console.error('Local storage quota exceeded or error:', e);
+            if(typeof showNotification === 'function') showNotification('Error saving cards: Storage full', 'error');
+        }
+        if (typeof commitState === 'function') {
+            commitState(true);
+        }
     }
     function uid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
@@ -5091,9 +5099,29 @@ async function deleteGroup() {
                 if (!file) return;
                 var reader = new FileReader();
                 reader.onload = function(ev) {
-                    var d = loadData();
-                    var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                    if (idx > -1) { d[currentTenure][idx].imageData = ev.target.result; saveData(d); renderCards(); }
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var MAX_WIDTH = 1000;
+                        var MAX_HEIGHT = 1000;
+                        var width = img.width;
+                        var height = img.height;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+
+                        var d = loadData();
+                        var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
+                        if (idx > -1) { d[currentTenure][idx].imageData = dataUrl; saveData(d); renderCards(); }
+                    };
+                    img.src = ev.target.result;
                 };
                 reader.readAsDataURL(file);
             });
@@ -5176,10 +5204,29 @@ async function deleteGroup() {
     function addNewCardSlot(file) {
         var reader = new FileReader();
         reader.onload = function(ev) {
-            var d = loadData();
-            if (!d[currentTenure]) d[currentTenure] = [];
-            d[currentTenure].push({ id: uid(), label: '', imageData: ev.target.result });
-            saveData(d); renderCards();
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                var MAX_WIDTH = 1000;
+                var MAX_HEIGHT = 1000;
+                var width = img.width;
+                var height = img.height;
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
+                canvas.width = width; canvas.height = height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+
+                var d = loadData();
+                if (!d[currentTenure]) d[currentTenure] = [];
+                d[currentTenure].push({ id: uid(), label: '', imageData: dataUrl });
+                saveData(d); renderCards();
+            };
+            img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
     }

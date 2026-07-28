@@ -573,6 +573,11 @@ async function loadState() {
                     localStorage.setItem('ponnusamy_backup_email', State.backupEmail);
                 }
                 
+                // Restore Installment Cards
+                if (data.installment_cards_data) {
+                    localStorage.setItem('pms_installment_cards', JSON.stringify(data.installment_cards_data));
+                }
+                
                 // Save to local storage for offline use
                 localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
                 localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
@@ -614,6 +619,12 @@ async function commitState(skipBanner = false) {
                 if (storedNotepad) workspaceNotepadData = JSON.parse(storedNotepad);
             } catch (e) {}
 
+            let installmentCardsData = {};
+            try {
+                const storedCards = localStorage.getItem('pms_installment_cards');
+                if (storedCards) installmentCardsData = JSON.parse(storedCards);
+            } catch (e) {}
+
             const cloudIcon = document.getElementById('cloud-sync-icon');
             const cloudBtn = document.getElementById('cloud-sync-status-btn');
             if (cloudIcon) {
@@ -632,6 +643,7 @@ async function commitState(skipBanner = false) {
                     templates_data: State.templates,
                     notes_data: State.savedNotes,
                     workspace_notepad: workspaceNotepadData,
+                    installment_cards_data: installmentCardsData,
                     updated_at: new Date().toISOString()
                 });
                 
