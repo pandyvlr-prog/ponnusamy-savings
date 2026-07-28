@@ -1,0 +1,2662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PMS - Simple Chit Management</title>
+    <!-- Meta tags for SEO & Mobile App behaviour -->
+    <meta name="description" content="Simple Chit Management for Everyone. Track chit groups, members, and monthly payments effortlessly.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/jpeg" href="logo-light.jpg">
+    <link rel="apple-touch-icon" href="logo-light.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Fonts: Outfit (Brand/Headlines) & Inter (Body UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    
+    <!-- App Core Styles -->
+    <link rel="stylesheet" href="style.css?v=137">
+    <link rel="stylesheet" href="auth.css">
+
+    <!-- html2pdf.js for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+
+<script>
+(function() {
+var theme = localStorage.getItem('ponnusamy_theme') || 'dark';
+document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<style id="wall-css">
+/* Hard State Walls to prevent screen bleeding and flickering */
+body:not([data-app-state="dashboard"]) #desktop-sidebar,
+body:not([data-app-state="dashboard"]) #bottom-nav,
+body:not([data-app-state="dashboard"]) .app-header {
+    display: none !important;
+}
+
+/* Initially hide everything to prevent FOUC until JS determines state */
+body[data-app-state="loading"] .app-device-shell {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Ensure only the active screen shows in landing/login states */
+body[data-app-state="landing"] .app-screen:not(#screen-landing),
+body[data-app-state="login"] .app-screen:not(#screen-login) {
+    display: none !important;
+}
+</style>
+</head>
+<body data-app-state="loading">
+    <!-- Static Theme Background -->
+    <div id="app-bg"></div>
+
+    <!-- Loading Screen Removed -->
+
+    <!-- App Shell Wrapper (Centered Mockup Frame on Desktop, Full Screen on Mobile) -->
+    <div class="app-device-shell">
+        
+        <aside id="desktop-sidebar" class="desktop-sidebar">
+            <div class="desktop-sidebar-logo">
+                <img src="logo-dark.jpg" alt="Logo">
+            </div>
+            <div class="desktop-sidebar-links">
+                <button class="sidebar-nav-item active" data-target="screen-dashboard" title="Home">
+                    <i data-lucide="home"></i>
+                </button>
+                <button class="sidebar-nav-item" data-target="screen-pnl" title="Profit & Loss">
+                    <i data-lucide="trending-up"></i>
+                </button>
+                <button class="sidebar-nav-item" data-target="screen-notes" title="Notepad">
+                    <i data-lucide="file-text"></i>
+                </button>
+            </div>
+            <div class="desktop-sidebar-footer">
+                <button class="sidebar-nav-item" data-target="screen-settings" title="Settings">
+                    <i data-lucide="settings"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- BOTTOM NAVIGATION (MOBILE) -->
+        <nav id="bottom-nav" class="bottom-nav">
+            <button class="bottom-nav-item active" data-target="screen-dashboard">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Home</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-pnl">
+                <i data-lucide="bar-chart-2"></i>
+                <span>P&L</span>
+            </button>
+                        <button class="bottom-nav-item" id="btn-bottom-calc">
+                <i data-lucide="calculator"></i>
+                <span>Calc</span>
+            </button>
+            <button class="bottom-nav-item" data-target="screen-notes">
+                <i data-lucide="file-text"></i>
+                <span>Notes</span>
+            </button>
+        </nav>
+
+        
+        
+
+        
+        <main class="app-container hide-global-header">
+                <header class="app-header">
+                    <!-- Row 1: Brand + Avatar -->
+                    <div class="app-header-row1">
+                        <!-- Left: Hamburger + Logo + Brand -->
+                        <div class="app-header-brand">
+
+                            <img src="logo-dark.jpg" class="header-logo-img" alt="PMS Logo">
+                            <div class="header-brand-text">
+                                <h1 class="app-title">PMS</h1>
+                                <div class="header-datetime">
+                                    <span id="dashboard-current-date" class="header-date">--</span>
+                                    <span id="live-clock" class="header-clock">--:--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Action chips + Avatar -->
+                        <div class="app-header-right">
+                            <!-- Action buttons -->
+                            <div class="header-action-chips" id="header-action-chips">
+                                <button class="header-chip" id="cloud-sync-status-btn" title="Cloud Sync Status" style="color: #10b981;">
+                                    <i data-lucide="cloud-check" id="cloud-sync-icon"></i>
+                                </button>
+                                <button class="header-chip" id="btn-global-calc" title="Calculator">
+                                    <i data-lucide="calculator"></i>
+                                </button>
+                                <button class="header-chip" id="btn-global-refresh" title="Refresh Data">
+                                    <i data-lucide="refresh-cw"></i>
+                                </button>
+                                <button class="header-chip" id="btn-privacy-toggle" title="Privacy Mode">
+                                    <i data-lucide="eye" id="privacy-eye-icon"></i>
+                                </button>
+                                <button class="header-chip" id="btn-global-export-pdf" title="Export PDF">
+                                    <i data-lucide="download" style="color: var(--primary);"></i>
+                                </button>
+                                                                <button class="header-chip" id="btn-toggle-mobile-desktop" title="Return to Mobile" style="display: none;">
+                                    <i data-lucide="smartphone"></i>
+                                </button>
+                                <button class="theme-slider-btn" id="btn-toggle-theme-desktop" aria-label="Toggle theme" title="Toggle Theme">
+                                    <div class="theme-slider-thumb"></div>
+                                    <i data-lucide="sun" class="slider-icon slider-sun"></i>
+                                    <i data-lucide="moon" class="slider-icon slider-moon"></i>
+                                </button>
+                            </div>
+
+                            <!-- Avatar — always visible -->
+                            <button class="header-avatar-btn" id="btn-profile-dropdown" title="Profile">
+                                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Avatar" id="header-avatar-img" referrerpolicy="no-referrer">
+                                <span class="header-avatar-ring"></span>
+                            </button>
+
+                            <!-- Profile Dropdown -->
+                            <div class="profile-dropdown" id="profile-dropdown-menu">
+                                <div class="dropdown-header">
+                                    <h4 id="dropdown-user-name">User Name</h4>
+                                    <span id="dropdown-user-email">user@example.com</span>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="btn-goto-settings">
+                                    <i data-lucide="user"></i> Profile &amp; Settings
+                                </button>
+                                <button class="dropdown-item" id="btn-dropdown-theme">
+                                    <i data-lucide="sun" id="dropdown-theme-icon"></i> <span id="dropdown-theme-text">Light Mode</span>
+                                </button>
+                                <button class="dropdown-item" id="btn-manual-install" style="color: #3b82f6;">
+                                    <i data-lucide="download"></i> Install App
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item text-danger" id="btn-sign-out">
+                                    <i data-lucide="log-out"></i> Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Quick-action bar (mobile only) -->
+                    <div class="app-header-row2" id="app-header-row2">
+                        <button class="header-quick-btn" id="btn-global-refresh-m" title="Refresh">
+                            <i data-lucide="refresh-cw"></i>
+                            <span>Refresh</span>
+                        </button>
+                        <button class="header-quick-btn" id="btn-privacy-toggle-m" title="Privacy">
+                            <i data-lucide="eye" id="privacy-eye-icon-m"></i>
+                            <span>Privacy</span>
+                        </button>
+                        <button class="header-quick-btn" id="btn-global-export-pdf-m" title="Export">
+                            <i data-lucide="download"></i>
+                            <span>Export</span>
+                        </button>
+                        <button class="header-quick-btn" id="btn-toggle-theme-m" title="Theme">
+                            <i data-lucide="sun" id="theme-icon-m"></i>
+                            <span id="theme-label-m">Theme</span>
+                        </button>
+                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
+                            <i data-lucide="monitor" id="desktop-icon-m"></i>
+                            <span id="desktop-label-m">Rotate</span>
+                        </button>
+                    </div>
+                </header>
+    <div class="app-screens-wrapper">
+<!-- SCREEN: LANDING PAGE -->
+            <section id="screen-landing" class="app-screen">
+                <!-- Top Navigation Bar -->
+                <header class="landing-header">
+                    <div class="landing-header-left">
+                        <img src="logo-dark.jpg" class="app-logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 6px;">
+                        <span class="landing-header-title">PMS</span>
+                    </div>
+                    <div class="landing-header-right">
+                        <button class="btn btn-text nav-login" id="nav-login-btn">Login</button>
+                        <button class="btn btn-primary nav-get-started" id="nav-get-started-btn">Get Started</button>
+                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
+                            <i data-lucide="monitor" id="desktop-icon-m"></i>
+                            <span id="desktop-label-m">Rotate</span>
+                        </button>
+                    </div>
+                </header>
+                <div class="landing-container">
+                    <div class="landing-hero">
+                        <div class="landing-logo-box" style="background: none; box-shadow: none; border-radius: 0; margin-bottom: 24px;">
+                            <img src="logo-dark.jpg" class="app-logo" style="width: 100px; height: 100px; object-fit: contain; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+                        </div>
+                        <h1 class="landing-title">Ponnusamy Monthly Saving</h1>
+                        <p class="landing-subtitle">PMS provides an incredibly smooth experience for tracking your chit groups.<br>Monitor collections, pending dues, and group members effortlessly.</p>
+                        <button class="btn btn-primary landing-btn" id="btn-goto-login">Login to PMS <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i></button>
+                    </div>
+                    <div class="landing-features">
+                        <div class="feature-item">
+                            <div class="feature-icon"><i data-lucide="activity"></i></div>
+                            <h3>Real-Time Tracking</h3>
+                            <p>Instantly update collections and keep perfect track of monthly pending dues for all members.</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i data-lucide="layers"></i></div>
+                            <h3>Smart Templates</h3>
+                            <p>Organize multiple chits easily with fully customizable term and scheme templates.</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+                            <h3>Secure Backups</h3>
+                            <p>Keep your financial records perfectly safe with local JSON exports and direct email backups.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN: LOGIN PAGE -->
+            <section id="screen-login" class="app-screen">
+                <div class="login-split">
+                    <div class="login-left">
+                        <div class="login-header-logo">
+                            <img src="logo-dark.jpg" class="app-logo" style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <span style="font-family: var(--font-heading); font-weight: 800; letter-spacing: 0.5px;">PMS</span>
+                        </div>
+                        <div class="login-form-container">
+                            <h2 class="login-title">Sign in to your account</h2>
+                            <p class="login-subtitle">Not a member? <a href="#" class="link-primary" id="register-new-link">Register new</a></p>
+                            
+                            <form id="login-form" class="login-form">
+                                <div class="form-group">
+                                    <label for="login-email">Email address</label>
+                                    <input type="email" id="login-email" class="form-input" required placeholder="name@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                        <label for="login-password">Password</label>
+                                        <a href="#" class="link-primary" id="forgot-password-link" style="font-size: 0.75rem;">Forgot password?</a>
+                                    </div>
+                                    <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600; margin-top: 8px;">Sign in</button>
+                            </form>
+                            
+                            <div class="login-divider">
+                                <span>Or continue with</span>
+                            </div>
+                            
+                            <button class="btn btn-outline" id="google-login-btn" style="width: 100%; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                                Google
+                            </button>
+                        </div>
+                    </div>
+                    <div class="login-right">
+                        <div class="login-right-content">
+                            <div style="text-align: center;">
+                                <img src="logo-dark.jpg" class="app-logo" style="width: 250px; max-width: 100%; height: auto; object-fit: contain; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 16px 40px rgba(0,0,0,0.2);">
+                            </div>
+                            <h2 class="login-hero-title">Manage Your <span class="text-primary">Chit Groups</span><br>Like a Pro</h2>
+                            <p class="login-hero-subtitle">Track all your members, monitor monthly collections, and securely backup your financial records in one premium dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 1: DASHBOARD & GROUP LIST (HOME) -->
+            <section id="screen-dashboard" class="app-screen">
+                
+                
+                <div class="screen-content">
+                    <!-- Metrics Dashboard Card -->
+                    <div class="dashboard-card" style="border: 2px solid var(--border-active); border-radius: 16px; overflow: hidden; border-color: #000000;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h2 class="section-title-alt" style="margin-bottom: 0; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37, #fce07e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; letter-spacing: -0.3px;"><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: #d4af37; -webkit-text-fill-color: initial; flex-shrink: 0;"></i>Dashboard Summary</h2>
+                            <span id="dashboard-target-collection-badge" style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #ffffff; padding: 8px 20px; border-radius: 10px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #4338ca; box-shadow: 0 6px 16px rgba(30, 58, 138, 0.6), inset 0 1px 1px rgba(255,255,255,0.2); letter-spacing: 0.5px; text-transform: uppercase;">
+                                <i data-lucide="trophy" style="width: 22px; height: 22px; color: #ffd700; flex-shrink: 0; vertical-align: middle; filter: drop-shadow(0 0 4px rgba(255,215,0,0.4));"></i>
+                                <span id="dashboard-target-collection-text">Target: ₹0</span>
+                            </span>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-item highlight-green" style="position: relative;">
+                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--green-dark);"><path d="M15 15.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/><path d="M12 14v3"/><path d="M5.6 10A11.1 11.1 0 0 1 12 7c3.3 0 6.4 1.3 8.4 3.6A7.8 7.8 0 0 1 22 16c0 3.3-2.7 6-6 6H8c-3.3 0-6-2.7-6-6 0-2.3 1-4.4 2.6-5.8Z"/><path d="M10 7V4c0-1.1.9-2 2-2h0c1.1 0 2 .9 2 2v3"/></svg>
+                                    Collected
+                                </span>
+                                <span class="metric-value text-green" id="stat-total-collected">₹0</span>
+                                <span id="stat-summary-collected-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--green-dark);">(0)</span>
+                                <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(48,209,88,0.2); padding-top: 8px;">
+                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%) !important; border: 1px solid #7c2d12; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
+                                        <div style="display: flex; align-items: center; gap: 6px; color: #fcd34d !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+                                            <!-- Cash Banknote SVG Logo -->
+                                            <svg width="20" height="14" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+                                                <rect x="0.5" y="0.5" width="23" height="15" rx="1.5" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+                                                <rect x="2" y="2" width="20" height="12" rx="1" fill="none" stroke="#16a34a" stroke-width="0.75"/>
+                                                <circle cx="5" cy="8" r="1.5" fill="#15803d"/>
+                                                <circle cx="19" cy="8" r="1.5" fill="#15803d"/>
+                                                <circle cx="12" cy="8" r="3.5" fill="#15803d"/>
+                                                <text x="12" y="10.8" font-family="sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">₹</text>
+                                            </svg>
+                                            CASH
+                                        </div>
+                                        <span id="stat-summary-collected-cash" style="font-size: 1.25rem; font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important; border: 1px solid #1e3a8a; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
+                                        <div style="display: flex; align-items: center; gap: 6px; color: #bfdbfe !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+                                            <!-- GPay SVG Logo -->
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+                                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                            </svg>
+                                            GPAY
+                                        </div>
+                                        <span id="stat-summary-collected-gpay" style="font-size: 1.25rem; font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-item highlight-red" style="position: relative;">
+                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--red-dark);"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+                                    Pending
+                                </span>
+                                <span class="metric-value text-red" id="stat-total-pending">₹0</span>
+                                <span id="stat-summary-pending-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--red-dark);">(0)</span>
+                            </div>
+                            <div class="metric-item" style="border-left: 3px solid #9333ea; background-color: rgba(147, 51, 234, 0.08); position: relative;">
+                                <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #9333ea;"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                                    Chit Taken
+                                </span>
+                                <span class="metric-value" style="color: #9333ea;" id="stat-summary-chit-taken-amount">₹0</span>
+                                <span id="stat-summary-chit-taken-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: #9333ea;">(0)</span>
+                                <div id="stat-surplus-deficit-container" style="margin-top: auto; margin: auto -10px -10px -10px; padding: 12px 10px; font-size: 0.95rem; font-weight: 800; display: flex; justify-content: center; align-items: center; border-radius: 0 0 var(--radius-md) var(--radius-md); border-top: 1px solid rgba(147, 51, 234, 0.2);">
+                                    <!-- Computed in JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer List Section -->
+                    <div class="section-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 class="section-title" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700;">All Group Members</h2>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary btn-icon-only" id="btn-toggle-to-groups" title="View Chit Groups List" style="padding: 6px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);">
+                                <i data-lucide="folders" style="width: 16px; height: 16px;"></i>
+                            </button>
+                            <span class="badge" id="member-total-badge" style="display: flex; align-items: center;">0 Members</span>
+                        </div>
+                    </div>
+
+                    <!-- Search Filter Row -->
+                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-direction: row; gap: 10px; align-items: center; width: 100%; flex-wrap: wrap;">
+                        <div class="search-input-wrapper" style="flex: 2; min-width: 200px; position: relative;">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="dashboard-member-search" placeholder="Search members by name..." style="padding: 8px 36px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%;">
+                            <button id="btn-clear-dashboard-search" class="btn-clear-search" title="Clear Search">
+                                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Custom Filter Dropdown -->
+                        <div class="tag-select-wrapper" style="position: relative; display: inline-block;">
+                            <button id="filter-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 140px; text-align: left; height: 38px; outline: none;">
+                                <span id="filter-dropdown-selected-text">Filter</span>
+                                <i data-lucide="sliders-horizontal" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--primary);"></i>
+                            </button>
+                            <div id="filter-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 190px; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <!-- Items will be dynamically generated in app.js -->
+                            </div>
+                            <select id="dashboard-tag-filter" style="display: none;">
+                                <option value="all">All</option>
+                                <option value="paid">Paid</option>
+                                <option value="partial">Partial</option>
+                                <option value="pending">Due</option>
+                                <option value="chit_taken">Chit Taken</option>
+                                <option value="new_customer_month">New Customer</option>
+                                <option value="new_customer">All New Customer</option>
+                                <option value="gpay">Gpay</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Custom Date Filter Dropdown -->
+                        <div class="date-select-wrapper" style="position: relative; display: inline-block;">
+                            <button id="date-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: #ffffff; cursor: pointer; width: 36px; height: 38px; outline: none; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;" title="Filter by Date">
+                                <div id="date-dropdown-month-text" style="background: linear-gradient(180deg, #ef4444, #dc2626); color: #fff; width: 100%; text-align: center; font-size: 8px; font-weight: 800; padding: 2px 0; letter-spacing: 0.5px; line-height: 1; border-bottom: 1px solid #b91c1c;">ALL</div>
+                                <div id="date-dropdown-selected-number" style="color: #111827; flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; font-family: sans-serif; margin-top: -1px; width: 100%;">ALL</div>
+                                <!-- Calendar rings -->
+                                <div style="position: absolute; top: -3px; left: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
+                                <div style="position: absolute; top: -3px; right: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
+                            </button>
+                            <div id="date-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; padding: 10px; min-width: 220px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <div style="margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: center;">
+                                    <button class="btn btn-text-link" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; border: none; background: transparent;" id="btn-clear-date-filter">
+                                        Clear Date Filter
+                                    </button>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;" id="date-dropdown-grid">
+                                    <!-- Day items will be dynamically generated in app.js -->
+                                </div>
+                            </div>
+                            <select id="dashboard-date-filter" style="display: none;">
+                                <option value="">Date Wise</option>
+                                <option value="1">1st</option>
+                                <option value="2">2nd</option>
+                                <option value="3">3rd</option>
+                                <option value="4">4th</option>
+                                <option value="5">5th</option>
+                                <option value="6">6th</option>
+                                <option value="7">7th</option>
+                                <option value="8">8th</option>
+                                <option value="9">9th</option>
+                                <option value="10">10th</option>
+                                <option value="11">11th</option>
+                                <option value="12">12th</option>
+                                <option value="13">13th</option>
+                                <option value="14">14th</option>
+                                <option value="15">15th</option>
+                                <option value="16">16th</option>
+                                <option value="17">17th</option>
+                                <option value="18">18th</option>
+                                <option value="19">19th</option>
+                                <option value="20">20th</option>
+                                <option value="21">21st</option>
+                                <option value="22">22nd</option>
+                                <option value="23">23rd</option>
+                                <option value="24">24th</option>
+                                <option value="25">25th</option>
+                                <option value="26">26th</option>
+                                <option value="27">27th</option>
+                                <option value="28">28th</option>
+                                <option value="29">29th</option>
+                                <option value="30">30th</option>
+                                <option value="31">31st</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Quick Report Download Dropdown -->
+                        <div class="quick-report-wrapper" style="position: relative; display: inline-block;">
+                            <button id="btn-quick-dashboard-report" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; width: 38px; height: 38px; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: var(--primary); transition: all 0.2s;" title="Download Report for selected Month & Date">
+                                <i data-lucide="file-down" style="width: 20px; height: 20px;"></i>
+                            </button>
+                            <div id="quick-report-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 150px; padding: 6px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <button class="btn btn-text-link" id="btn-quick-report-download" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px;">
+                                    <i data-lucide="download" style="width: 16px; height: 16px; color: var(--primary);"></i> Download PDF
+                                </button>
+                                <button class="btn btn-text-link" id="btn-quick-report-share" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px; margin-top: 2px;">
+                                    <i data-lucide="share-2" style="width: 16px; height: 16px; color: var(--primary);"></i> Share PDF
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="custom-month-select-wrapper" style="position: relative; display: inline-block;">
+                            <button id="custom-month-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 180px; text-align: left; height: 38px; outline: none;" title="Select Month">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="calendar" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                                    <span id="custom-month-dropdown-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">Current Month</span>
+                                </div>
+                                <i data-lucide="chevron-down" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--text-muted);"></i>
+                            </button>
+                            <div id="custom-month-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 180px; max-height: 300px; overflow-y: auto; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <!-- Dynamically populated by JS -->
+                            </div>
+                            <select id="dashboard-month-select" style="display: none;">
+                                <option value="current">Current Month</option>
+                            </select>
+                        </div>
+
+                        <!-- Dedicated Custom Date Range Button -->
+                        <button id="btn-open-date-range" title="Custom Date Range Filter" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
+                            <i data-lucide="calendar-range" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                            <span id="btn-date-range-label">Date Range</span>
+                        </button>
+                        <!-- Reset All Filters Button -->
+                        <button id="btn-reset-dashboard-filters" title="Reset All Filters" style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;">
+                            <i data-lucide="rotate-ccw" style="width: 16px; height: 16px; color: var(--danger); transition: transform 0.3s ease;"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Dashboard Filter Pills (Hidden, kept for JS reference counters) -->
+                    <div class="filter-pills" id="dashboard-filter-pills" style="display: none; margin-bottom: 14px; gap: 8px;">
+                        <button class="filter-pill active" data-dashfilter="all">All (<span id="dash-count-all">0</span>)</button>
+                        <button class="filter-pill text-green-pill" data-dashfilter="paid">Paid (<span id="dash-count-paid">0</span>)</button>
+                        <button class="filter-pill text-amber-pill" data-dashfilter="partial">Partial (<span id="dash-count-partial">0</span>)</button>
+                        <button class="filter-pill text-red-pill" data-dashfilter="pending">Due (<span id="dash-count-pending">0</span>)</button>
+                        <button class="filter-pill text-primary-pill" data-dashfilter="chit_taken">Chit Taken (<span id="dash-count-chit-taken">0</span>)</button>
+                        <button class="filter-pill text-teal-pill" data-dashfilter="new_customer_month">New Customer (<span id="dash-count-new-customer-month">0</span>)</button>
+                        <button class="filter-pill text-teal-pill" data-dashfilter="new_customer">All New Customer (<span id="dash-count-new-customer">0</span>)</button>
+                        <button class="filter-pill text-purple-pill" data-dashfilter="gpay">Gpay (<span id="dash-count-gpay">0</span>)</button>
+                        <button class="filter-pill text-orange-pill" data-dashfilter="cash">Cash (<span id="dash-count-cash">0</span>)</button>
+                    </div>
+                    
+                    <!-- Member Table Card Container -->
+                    <div class="member-list-scroll-wrapper">
+                        <div class="member-list-wrapper">
+                            <div class="member-table-header">
+                                <span style="text-align: center;">S.No</span>
+                                <span style="text-align: center; justify-content: center;">Name</span>
+                                <span style="text-align: center; justify-content: center;">Chit Group</span>
+                                <span style="text-align: center;">Scheme</span>
+                                <span style="text-align: center;"><i data-lucide="calendar" style="width: 18px; height: 18px; stroke-width: 2.5px;"></i></span>
+                                <span style="text-align: left;">Due Amount</span>
+                                <span style="text-align: left;">Paid Amount</span>
+                                <span style="text-align: center;">Paid Date</span>
+                                <span style="text-align: center;">Mark</span>
+                                <span style="text-align: center;">Chit Taken</span>
+                                <span style="text-align: center;"><i data-lucide="bell" style="width: 18px; height: 18px; color: #ffffff; stroke-width: 3px;"></i></span>
+                            </div>
+                            <div id="dashboard-members-container" style="display: flex; flex-direction: column;">
+                                <!-- Dynamic list of members loaded via JS -->
+                            </div>
+                            <div id="dashboard-filtered-summary" style="display: none; align-items: center; justify-content: space-between; padding: 12px 16px; margin-top: 4px; border-top: 2px solid var(--primary); background: var(--bg-surface-elevated); border-radius: 0 0 12px 12px; gap: 8px; flex-wrap: wrap;">
+                                <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;"><i data-lucide="filter" style="width: 13px; height: 13px; color: var(--primary);"></i> Filtered Result</span>
+                                <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Members: <strong id="filter-summary-count" style="color: var(--text-main);">0</strong></span>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Total Paid: <strong id="filter-summary-paid" style="color: #10b981;">&#8377;0</strong></span>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Gpay: <strong id="filter-summary-gpay" style="color: #3b82f6;">&#8377;0</strong></span>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Cash: <strong id="filter-summary-cash" style="color: #f59e0b;">&#8377;0</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groups Drawer Backdrop (Modal to view groups list wizard) -->
+                    <div class="modal-backdrop" id="groups-list-modal-backdrop">
+                        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 600px; margin: auto;">
+                            <div class="modal-header">
+                                <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                                    <button class="icon-btn" id="btn-wizard-back" type="button" style="display: none;">
+                                        <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
+                                    </button>
+                                    <span id="wizard-title">Chit Groups</span>
+                                </h3>
+                                <button class="icon-btn" id="btn-close-groups-modal" type="button">
+                                    <i data-lucide="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="max-height: 450px; overflow-y: auto;">
+                                
+                                <!-- Step 1: Calendar View -->
+                                <div id="wizard-step-1" class="wizard-step active-step">
+                                    <div class="wizard-year-header">
+                                        <button class="icon-btn" id="wizard-year-prev"><i data-lucide="chevron-left"></i></button>
+                                        <h3 id="wizard-year-display" style="color: #dc2626; font-size: 1.5rem; font-weight: 800; font-family: var(--font-heading);">2026</h3>
+                                        <button class="icon-btn" id="wizard-year-next"><i data-lucide="chevron-right"></i></button>
+                                    </div>
+                                    <div class="wizard-calendar-grid" id="wizard-calendar-grid">
+                                        <!-- Months injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Duration View -->
+                                <div id="wizard-step-2" class="wizard-step">
+                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Duration</h4>
+                                    <div class="wizard-chips-container" id="wizard-duration-chips">
+                                        <!-- Durations injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Amount View -->
+                                <div id="wizard-step-3" class="wizard-step">
+                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Total Scheme Amount</h4>
+                                    <div class="wizard-chips-container" id="wizard-amount-chips">
+                                        <!-- Amounts injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 4: Group List View -->
+                                <div id="wizard-step-4" class="wizard-step">
+                                    <div class="group-list" id="group-list-container">
+                                        <!-- Dynamic group lists -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floating Action Button -->
+                <button class="fab-btn" id="btn-add-group-fab" aria-label="Add new group">
+                    <i data-lucide="plus"></i>
+                </button>
+            </section>
+            
+            <!-- SCREEN 2: CREATE GROUP FORM -->
+            <section id="screen-create-group" class="app-screen">
+                <header class="screen-header">
+                    <button class="icon-btn btn-back" data-target="screen-dashboard">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <h2>New Chit Group</h2>
+                    <div class="header-placeholder"></div>
+                </header>
+                
+                <div class="screen-content">
+                    <form id="create-group-form" class="form-container">
+                        <div class="form-group">
+                            <label>Chit Scheme Duration</label>
+                            <div class="duration-chips">
+                                <label class="duration-chip-label">
+                                    <input type="radio" name="group-duration" value="12" checked>
+                                    <span class="chip-ui">12 Months</span>
+                                </label>
+                                <label class="duration-chip-label">
+                                    <input type="radio" name="group-duration" value="20">
+                                    <span class="chip-ui">20 Months</span>
+                                </label>
+                                <label class="duration-chip-label">
+                                    <input type="radio" name="group-duration" value="custom" id="duration-radio-custom">
+                                    <span class="chip-ui">Custom</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group hidden animate-fade-in" id="custom-duration-wrapper">
+                            <label for="group-duration-custom">Custom Duration (Months)</label>
+                            <input type="number" id="group-duration-custom" placeholder="e.g., 15" min="2" max="120">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Scheme Start Month & Year</label>
+                            <div class="date-selector-row">
+                                <select id="group-start-month" required>
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4">May</option>
+                                    <option value="5" selected>June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                                <select id="group-start-year" required>
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                    <option value="2031">2031</option>
+                                    <option value="2032">2032</option>
+                                </select>
+                            </div>
+                            <span class="field-help">Billing cycles and month labels will start from this calendar month.</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="group-name">Chit Group Name</label>
+                            <input type="text" id="group-name" placeholder="e.g., Jun 2026 - May 2027" required maxlength="30">
+                            <span class="field-help">Prefilled automatically based on duration. Edit to customize if desired.</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="group-amount">Total Scheme Amount</label>
+                            <div id="group-amount-quick-select" class="quick-select-amounts-row"></div>
+                            <div class="currency-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="text" inputmode="numeric" id="group-amount" class="amount-input" placeholder="e.g., 50,000" required>
+                            </div>
+                            <span class="field-help">The total value of the chit scheme (e.g., ₹50,000). Each member's monthly contribution will be calculated automatically.</span>
+                        </div>
+
+                        <div class="form-group" id="create-schedule-group" style="margin-top: 10px; display: none;">
+                            <label>Monthly Installments & Payouts Schedule</label>
+                            <div class="schedule-table-container">
+                                <div class="schedule-header-row">
+                                    <span>Month</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
+                                </div>
+                                <div id="create-schedule-rows-container" class="schedule-rows-grid">
+                                    <!-- Dynamic rows generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group info-box" style="display: none;">
+                            <i data-lucide="info" class="text-blue"></i>
+                            <div class="info-text">
+                                <p><strong>Installment details:</strong></p>
+                                <p id="duration-summary-text">Installment: Choose a duration to calculate.</p>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block btn-submit">
+                            Next: Add Members <i data-lucide="arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- SCREEN 3: ADD MEMBERS -->
+            <section id="screen-add-members" class="app-screen">
+                <header class="screen-header">
+                    <button class="icon-btn btn-back" data-target="screen-create-group">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <h2>Add Members</h2>
+                    <div class="header-placeholder"></div>
+                </header>
+                
+                <div class="screen-content">
+                    <div class="form-container">
+                        <div class="group-preview-card">
+                            <h3 id="preview-group-name">Group Name</h3>
+                            <div class="preview-stats">
+                                <span><i data-lucide="trending-up"></i> Monthly: <strong id="preview-group-installment">₹0</strong></span>
+                                <span><i data-lucide="calendar"></i> Duration: <strong id="preview-group-months">12m</strong></span>
+                                <span><i data-lucide="layers"></i> Total Pool: <strong id="preview-group-pool">₹0</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div class="add-member-form-box" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
+                            <h4 style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Enter Member Details</h4>
+                            <div class="form-grid-row">
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-name-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Name *</label>
+                                    <input type="text" id="member-name-input" placeholder="Name" maxlength="30" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-mobile-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Mobile No</label>
+                                    <input type="text" id="member-mobile-input" placeholder="Mobile Number" maxlength="15" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                            </div>
+                            <div class="form-grid-row">
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-work-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Place of Work</label>
+                                    <input type="text" id="member-work-input" placeholder="Place of work" maxlength="50" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-occupation-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Occupation</label>
+                                    <input type="text" id="member-occupation-input" placeholder="Occupation" maxlength="40" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-place-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Place</label>
+                                    <input type="text" id="member-place-input" placeholder="Place / City" maxlength="40" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                </div>
+                                <div class="form-grid-row">
+                                    <div class="form-group" style="gap: 4px;">
+                                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Customer Type</label>
+                                        <div style="display: flex; gap: 15px; align-items: center; padding: 8px 0;">
+                                            <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; color: var(--text-main);">
+                                                <input type="radio" name="member-customer-type" value="New" checked> New Customer
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; color: var(--text-main);">
+                                                <input type="radio" name="member-customer-type" value="Old"> Old Customer
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="gap: 4px;">
+                                        <label for="member-referred-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Referred By</label>
+                                        <input type="text" id="member-referred-input" placeholder="Referrer Name" maxlength="40" autocomplete="off" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="member-new-dates-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-dob-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Date of Birth</label>
+                                    <input type="date" id="member-dob-input" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
+                                </div>
+                                <div class="form-group" style="gap: 4px;">
+                                    <label for="member-anniversary-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Anniversary Date</label>
+                                    <input type="date" id="member-anniversary-input" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
+                                </div>
+                            </div>
+                            <div class="form-group" style="gap: 4px;">
+                                <label for="member-address-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Residential Address</label>
+                                <textarea id="member-address-input" placeholder="Full Address" maxlength="200" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-family: var(--font-body); resize: vertical; min-height: 50px; outline: none; transition: var(--transition-fast);"></textarea>
+                            </div>
+                            <button class="btn btn-secondary" id="btn-add-member-list" type="button" style="padding: 8px 16px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--radius-sm);">
+                                <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i> Add Member to List
+                            </button>
+                        </div>
+                        
+                        <div class="section-header">
+                            <span class="section-title-sub">Added Members</span>
+                            <span class="badge badge-accent" id="member-count-indicator">0 Members</span>
+                        </div>
+                        
+                        <div class="member-list-adding" id="added-members-list">
+                            <!-- Dynamic list of member name pills will go here -->
+                            <div class="empty-state-small">
+                                <p>No members added yet. Type a name above to start building the list.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="action-footer">
+                            <button class="btn btn-primary btn-block" id="btn-finalize-group">
+                                <i data-lucide="save"></i> Create Group & Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SCREEN 4: GROUP DETAILS -->
+            <section id="screen-group-details" class="app-screen">
+                <header class="screen-header">
+                    <button class="icon-btn btn-back" data-target="screen-dashboard">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <h2 id="details-header-title">Group Details</h2>
+                    <div class="header-actions-row" style="display: flex; gap: 8px;">
+                        <button class="icon-btn text-amber" id="btn-details-refresh" title="Refresh Data">
+                            <i data-lucide="refresh-cw"></i>
+                        </button>
+                        <button class="icon-btn text-amber" id="btn-details-export-pdf" title="Export PDF Report">
+                            <i data-lucide="download"></i>
+                        </button>
+                        <button class="icon-btn text-amber" id="btn-details-edit-group" title="Edit group details">
+                            <i data-lucide="edit-3"></i>
+                        </button>
+                        <button class="icon-btn text-amber" id="btn-details-add-member" title="Add new member to group">
+                            <i data-lucide="user-plus"></i>
+                        </button>
+                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
+                            <i data-lucide="monitor" id="desktop-icon-m"></i>
+                            <span id="desktop-label-m">Rotate</span>
+                        </button>
+                    </div>
+                </header>
+                
+                <div class="screen-content">
+                    <!-- Details Grid for Desktop (Meta details + Financials side-by-side) -->
+                    <div class="details-top-grid">
+                        <!-- Group Info Hero -->
+                        <div class="group-hero-card" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h2 id="details-group-name" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                                        Group Name
+                                        <span class="status-badge active-badge" style="font-size: 0.65rem; padding: 2px 6px;"><span class="dot"></span> Active</span>
+                                    </h2>
+                                    <div style="display: flex; gap: 12px; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+                                        <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> <span id="details-duration" style="font-weight: 700; color: var(--primary);">0 Months</span></span>
+                                        <span style="color: var(--border-active);">|</span>
+                                        <span style="display: flex; align-items: center; gap: 4px; font-weight: 700;">Scheme: <span id="details-installment-value" style="color: var(--text-main);">₹0</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Month Adjuster Component -->
+                            <div class="month-selector-widget" style="background: var(--bg-body); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; font-size: 0.75rem;">
+                                    <span class="widget-label" style="margin: 0;">Current Billing Month</span>
+                                    <span class="widget-label" style="margin: 0;">Payout: <strong id="details-month-payout" style="color: var(--primary);">₹0</strong></span>
+                                </div>
+                                <div class="adjuster-controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 4px; box-shadow: var(--shadow-sm);">
+                                    <button class="adjuster-btn" id="btn-month-decrement" aria-label="Previous Month" style="width: 32px; height: 32px; padding: 0;">
+                                        <i data-lucide="minus" style="width: 16px; height: 16px;"></i>
+                                    </button>
+                                    <span class="active-month-text" id="details-current-month-text" style="font-size: 0.9rem; font-weight: 800; padding: 0 10px;">Month 1</span>
+                                    <button class="adjuster-btn" id="btn-month-increment" aria-label="Next Month" style="width: 32px; height: 32px; padding: 0;">
+                                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Financial Overview Dashboard -->
+                        <div class="financials-dashboard">
+                            <div class="fin-card highlight-green">
+                                <span class="fin-label"><i data-lucide="check-circle" class="icon-inline text-green"></i> Total Collected</span>
+                                <span class="fin-val" id="details-total-collected">₹0</span>
+                            </div>
+                            <div class="fin-card highlight-red">
+                                <span class="fin-label"><i data-lucide="alert-circle" class="icon-inline text-red"></i> Pending Payments</span>
+                                <span class="fin-val" id="details-total-pending">₹0</span>
+                            </div>
+                            
+                            <!-- Collection Progress Bar -->
+                            <div class="collection-progress-container">
+                                <div class="progress-labels">
+                                    <span>Month <span id="progress-current-month">1</span> Progress</span>
+                                    <strong id="progress-percentage-text" class="text-green">0%</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-bar" id="details-progress-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-desc" id="progress-amount-desc">₹0 of ₹0 collected for active cycle</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter and Search controls -->
+                    <div class="search-filter-section">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="member-search-input" placeholder="Search members...">
+                        </div>
+                        
+                        <div class="filter-pills">
+                            <button class="filter-pill active" data-filter="all">All (<span id="count-filter-all">0</span>)</button>
+                            <button class="filter-pill text-green-pill" data-filter="paid">Paid (<span id="count-filter-paid">0</span>)</button>
+                            <button class="filter-pill text-red-pill" data-filter="pending">Pending (<span id="count-filter-pending">0</span>)</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Members Cards List -->
+                    <div class="member-cards-grid" id="details-members-grid">
+                        <!-- Dynamic member cards -->
+                    </div>
+                </div>
+            </section>
+            <!-- SCREEN: SETTINGS PAGE -->
+            <section id="screen-settings" class="app-screen">
+                <header class="app-header" style="padding-bottom: 0; border-bottom: none;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="icon-btn" id="btn-back-to-dashboard" style="background: var(--bg-surface);">
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+                        <h2 style="font-size: 1.25rem; font-weight: 700;">Settings</h2>
+                    </div>
+                </header>
+                
+                <div class="screen-content" style="padding-top: 10px;">
+                    <div class="settings-grid">
+                        
+                        <!-- Profile Details Card -->
+                        <div class="settings-card profile-settings-card">
+                            <div class="settings-card-header" style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px;">
+                                <div class="settings-avatar-large">
+                                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=80" alt="Avatar" id="settings-avatar-img" referrerpolicy="no-referrer">
+                                    <label class="avatar-edit-btn" for="settings-avatar-input" style="cursor: pointer;">
+                                        <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+                                        <input type="file" id="settings-avatar-input" accept="image/*" style="display: none;">
+                                    </label>
+                                </div>
+                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 id="settings-user-name-display" style="font-size: 1.25rem; margin-bottom: 4px;">User Name</h3>
+                                        <p id="settings-user-email-display" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 4px;">user@example.com</p>
+                                        <p style="color: var(--text-tertiary); font-size: 0.75rem;">Image file size must be less than 2MB.</p>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="icon-btn text-primary" id="btn-open-change-password" title="Change Password" style="background: var(--bg-surface-elevated); width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);">
+                                            <i data-lucide="lock" style="width: 18px; height: 18px;"></i>
+                                        </button>
+                                        <button class="icon-btn text-red" id="btn-settings-sign-out" title="Sign Out" style="background: rgba(255, 59, 48, 0.1); width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255, 59, 48, 0.2); color: var(--red);">
+                                            <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="profile-settings-form">
+                                <div class="settings-form-row">
+                                    <div class="form-group">
+                                        <label>Display Name</label>
+                                        <input type="text" class="form-input" id="settings-input-name" value="User Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email Address</label>
+                                        <input type="email" class="form-input" id="settings-input-email" value="user@example.com" disabled style="background-color: var(--bg-body); cursor: not-allowed; opacity: 0.7;">
+                                        <p style="font-size: 0.7rem; color: var(--text-tertiary); margin-top: 4px;">Email address cannot be changed.</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                                    <button type="button" class="btn btn-primary" id="btn-save-profile" style="padding: 8px 16px; display: flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Save Profile
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Extra Settings Row -->
+                        <div class="settings-bottom-row" style="margin-top: 10px;">
+                            <!-- Templates Card -->
+                            <div class="settings-card">
+                                <div class="settings-card-header" style="display: flex; gap: 12px; margin-bottom: 20px;">
+                                    <div class="settings-icon-box" style="background-color: rgba(33, 150, 243, 0.1); color: #2196F3;"><i data-lucide="layout-template"></i></div>
+                                    <div>
+                                        <h3 style="font-size: 1.05rem; margin-bottom: 2px;">Scheme Templates</h3>
+                                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Manage your custom group templates.</p>
+                                    </div>
+                                </div>
+                                <div class="template-filter-pills" style="display: flex; gap: 8px; margin-bottom: 12px; width: 100%;">
+                                    <button type="button" class="filter-pill active" data-duration="12">12 Months</button>
+                                    <button type="button" class="filter-pill" data-duration="20">20 Months</button>
+                                    <button type="button" class="filter-pill" data-duration="other">Other</button>
+                                </div>
+                                <button class="btn btn-outline btn-block" id="btn-add-template" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 10px;">
+                                    <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> Create New Template
+                                </button>
+                            </div>
+                            
+                            <!-- Backup & Restore Card -->
+                            <div class="settings-card">
+                                <div class="settings-card-header" style="display: flex; gap: 12px; margin-bottom: 20px;">
+                                    <div class="settings-icon-box" style="background-color: rgba(76, 175, 80, 0.1); color: #4CAF50;"><i data-lucide="database-backup"></i></div>
+                                    <div>
+                                        <h3 style="font-size: 1.05rem; margin-bottom: 2px;">Backup & Restore</h3>
+                                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Secure your app data locally or via email.</p>
+                                    </div>
+                                </div>
+                                <div class="drawer-actions-grid" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <button class="btn btn-outline btn-block" id="btn-export-backup" type="button" style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 10px;">
+                                        <i data-lucide="download" style="width: 16px; height: 16px;"></i> Export JSON Backup
+                                    </button>
+                                    <button class="btn btn-outline btn-block" id="btn-email-backup" type="button" style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 10px;">
+                                        <i data-lucide="mail" style="width: 16px; height: 16px;"></i> Email Backup Draft
+                                    </button>
+                                    <label class="btn btn-primary btn-block btn-file-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; padding: 10px;">
+                                        <i data-lucide="upload" style="width: 16px; height: 16px;"></i> Restore from Backup
+                                        <input type="file" id="import-backup-file" accept=".json" style="display: none;">
+                                    </label>
+                                </div>
+                                <div class="form-group" style="gap: 4px; margin-top: 15px;">
+                                    <label for="settings-backup-email" style="font-size: 0.72rem; font-weight: 600; color: var(--text-secondary);">Backup Gmail Address</label>
+                                    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                                        <input type="email" id="settings-backup-email" placeholder="your-email@gmail.com" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); flex: 1;" disabled>
+                                        <button id="btn-edit-backup-email" class="icon-btn text-amber" style="padding: 8px; width: 34px; height: 34px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background-color: var(--bg-surface-elevated); border: 1px solid var(--border);" title="Edit email" type="button">
+                                            <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Appearance & Theme Card -->
+                            <div class="settings-card">
+                                <div class="settings-card-header" style="display: flex; gap: 12px; margin-bottom: 20px;">
+                                    <div class="settings-icon-box" style="background-color: rgba(236, 72, 153, 0.1); color: #EC4899;"><i data-lucide="palette"></i></div>
+                                    <div>
+                                        <h3 style="font-size: 1.05rem; margin-bottom: 2px;">Appearance</h3>
+                                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Customize app font and text size.</p>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="gap: 8px; margin-bottom: 12px;">
+                                    <label for="settings-font-family" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">App Font Family</label>
+                                    <select id="settings-font-family" style="padding: 8px 12px; font-size: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
+                                        <option value="'Lora', serif">Lora (Serif Default)</option>
+                                        <option value="'Inter', sans-serif">Inter (Modern Sans)</option>
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Poppins', sans-serif">Poppins</option>
+                                        <option value="system-ui, -apple-system, sans-serif">System Default</option>
+                                        <option value="'Arial Narrow', Arial, sans-serif">Arial Narrow</option>
+                                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                                        <option value="'Bookman Old Style', Bookman, serif">Bookman Old Style</option>
+                                        <option value="'Marudham', sans-serif">Marudham</option>
+                                        <option value="sans-serif">Generic Sans Serif</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat (Premium Sans)</option>
+                                        <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
+                                        <option value="'Georgia', serif">Georgia (Classic)</option>
+                                        <option value="'Courier New', Courier, monospace">Monospace (Fixed Width)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="gap: 8px;">
+                                    <label for="settings-font-size" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Text Size Scale</label>
+                                    <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                                        <input type="range" id="settings-font-size" min="14" max="22" step="1" value="16" style="flex: 1;">
+                                        <span id="settings-font-size-label" style="font-weight: 700; width: 40px; text-align: right;">16px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Danger Zone Card -->
+                        <div class="settings-card" style="border-color: rgba(244, 67, 54, 0.3);">
+                            <div class="settings-card-header" style="display: flex; gap: 12px; margin-bottom: 12px;">
+                                <div class="settings-icon-box" style="background-color: rgba(244, 67, 54, 0.1); color: #F44336;"><i data-lucide="alert-triangle"></i></div>
+                                <div>
+                                    <h3 style="font-size: 1.05rem; margin-bottom: 2px; color: #F44336;">Danger Zone</h3>
+                                    <p style="color: var(--text-secondary); font-size: 0.85rem;">This action will delete all chit groups and members. Cannot be undone.</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger btn-block" id="btn-reset-app" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 10px;">
+                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Wipe All Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+  
+    <section id="screen-pnl" class="app-screen">
+                <div class="screen-content pnl-screen-content">
+                    <div class="pnl-hero">
+                        <div class="pnl-hero-glow pnl-hero-glow-1"></div>
+                        <div class="pnl-hero-glow pnl-hero-glow-2"></div>
+                        <div class="pnl-hero-glow pnl-hero-glow-3"></div>
+
+                        <div class="pnl-hero-topbar">
+                            <div>
+                                <p class="pnl-hero-eyebrow">Business Analytics</p>
+                                <h1 class="pnl-hero-title">Profit &amp; Loss</h1>
+                            </div>
+                            <span class="pnl-live-badge">
+                                <i data-lucide="activity" style="width:14px;height:14px;"></i>
+                                Live Summary
+                            </span>
+                        </div>
+
+                        <div class="pnl-metric-grid">
+                            <div class="pnl-metric-card pnl-card-green">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="trending-up"></i></div>
+                                <span class="pnl-card-label">Total Collected</span>
+                                <span class="pnl-card-value" id="pnl-global-expected">₹0</span>
+                                <span class="pnl-card-foot">Cash received from members</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-purple">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="wallet"></i></div>
+                                <span class="pnl-card-label">Total Payout</span>
+                                <span class="pnl-card-value" id="pnl-global-payout">₹0</span>
+                                <span class="pnl-card-foot">Chit amounts disbursed</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-green" id="pnl-global-realized-card">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="piggy-bank"></i></div>
+                                <span class="pnl-card-label"><span id="pnl-global-title">Net Profit</span></span>
+                                <span class="pnl-card-value" id="pnl-global-realized">₹0</span>
+                                <span class="pnl-card-foot">Actual cash in hand</span>
+                            </div>
+
+                            <div class="pnl-metric-card pnl-card-red">
+                                <div class="pnl-card-shine"></div>
+                                <div class="pnl-card-icon"><i data-lucide="alert-circle"></i></div>
+                                <span class="pnl-card-label">Pending Arrears</span>
+                                <span class="pnl-card-value" id="pnl-global-pending">₹0</span>
+                                <span class="pnl-card-foot">Outstanding member dues</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pnl-table-zone">
+                        <div class="pnl-toolbar">
+                            <div class="pnl-toolbar-left">
+                                <i data-lucide="layers" style="width:18px;height:18px;color:var(--primary);"></i>
+                                <span class="pnl-toolbar-title">Group Breakdown</span>
+                            </div>
+                            <span class="pnl-toolbar-hint">Per-group margins &amp; arrears</span>
+                        </div>
+
+                        <div class="pnl-table-scroll">
+                            <table class="pnl-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Group Name</th>
+                                        <th class="pnl-th-center">Duration</th>
+                                        <th class="pnl-th-right">Collected</th>
+                                        <th class="pnl-th-right">Payout</th>
+                                        <th class="pnl-th-right">Net</th>
+                                        <th class="pnl-th-right">Arrears</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pnl-groups-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </section>
+    <section id="screen-notes" class="app-screen notes-screen-prm">
+                <div id="notes-list-view" class="notes-list-prm">
+                    <div class="notes-header-prm">
+                        <div class="notes-header-text">
+                            <h1>My Workspace</h1>
+                            <p id="notes-count-label">0 Notes</p>
+                        </div>
+                        <button id="btn-notepad-add" class="notes-btn-primary">
+                            <i data-lucide="plus"></i> New Note
+                        </button>
+                    </div>
+                    <div class="notes-search-prm">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="notes-search-input" placeholder="Search notes...">
+                    </div>
+                    <div class="notes-grid-prm" id="notes-grid"></div>
+                    <div id="notes-empty-state" class="notes-empty-prm" style="display:none;">
+                        <i data-lucide="notebook-pen"></i>
+                        <h3>Your workspace is empty</h3>
+                        <p>Create a note to start organizing your thoughts.</p>
+                    </div>
+                </div>
+
+                <div id="note-editor-view" class="notes-editor-prm" style="display: none;">
+                    <div class="editor-topbar-prm">
+                        <button id="btn-back-notes" class="editor-btn-icon"><i data-lucide="arrow-left"></i></button>
+                        <div class="editor-status-prm">
+                            <span id="notepad-status"></span>
+                            <span id="notepad-date-display"></span>
+                        </div>
+                        <div class="editor-actions-prm">
+                            <label class="editor-color-picker">
+                                <i data-lucide="palette"></i>
+                                <input type="color" id="notepad-color-picker" value="#1e1e2e">
+                            </label>
+                            <button id="btn-notepad-delete" class="editor-btn-icon"><i data-lucide="trash-2"></i></button>
+                            <button id="btn-share-whatsapp" class="editor-btn-icon"><i data-lucide="share-2"></i></button>
+                        </div>
+                    </div>
+                    <input type="text" id="notepad-title" class="editor-title-prm" placeholder="Note Title...">
+                    <div class="editor-toolbar-prm">
+                        <button class="fmt-btn" data-cmd="bold"><i data-lucide="bold"></i></button>
+                        <button class="fmt-btn" data-cmd="italic"><i data-lucide="italic"></i></button>
+                        <button class="fmt-btn" data-cmd="underline"><i data-lucide="underline"></i></button>
+                        <div class="fmt-divider"></div>
+                        <button class="fmt-btn" data-cmd="insertUnorderedList"><i data-lucide="list"></i></button>
+                        <button class="fmt-btn" data-cmd="insertOrderedList"><i data-lucide="list-ordered"></i></button>
+                    </div>
+                    <div id="notepad-textarea" class="editor-content-prm" contenteditable="true" data-placeholder="Start writing..."></div>
+                </div>
+
+
+    
+
+            </section>
+  </div>
+</main>
+        
+        <!-- DIALOG/MODAL: CHANGE PASSWORD -->
+        <div class="modal-backdrop" id="change-password-modal-backdrop">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 400px; margin: auto;">
+                <div class="modal-header">
+                    <h3>Change Password</h3>
+                    <button class="icon-btn" id="btn-close-change-password-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: -10px;">Update your account credentials securely.</p>
+                    <form id="modal-password-settings-form">
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label>New Password</label>
+                            <input type="password" class="form-input" placeholder="Min 8 characters">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" class="form-input" placeholder="Re-enter new password">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btn-cancel-change-password">Cancel</button>
+                    <button class="btn btn-primary" id="btn-save-change-password">Update Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIALOG/MODAL: TEMPLATES LIST -->
+        <div class="modal-backdrop" id="templates-list-modal-backdrop">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 400px; margin: auto;">
+                <div class="modal-header">
+                    <h3 id="templates-modal-title">Scheme Templates</h3>
+                    <button class="icon-btn" id="btn-close-templates-list-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                    <div id="templates-list-container" style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Dynamic templates list -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIALOG/MODAL: PAYMENT METHOD SELECTION -->
+        <div class="modal-backdrop" id="payment-method-modal-backdrop" style="z-index: 20000000 !important;">
+            <div class="payment-modal" style="max-width: 400px; padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 1.2rem; color: var(--text-main); margin: 0;">Select Payment Method</h3>
+                    <button class="icon-btn text-muted" id="btn-close-method-modal" type="button">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                    <button id="btn-select-cash" class="btn btn-outline" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-color: var(--green-dark); color: var(--green-dark);">
+                        <i data-lucide="banknote" style="width: 32px; height: 32px;"></i>
+                        <span style="font-weight: 700; font-size: 1.1rem;">Cash</span>
+                    </button>
+                    <button id="btn-select-gpay" class="btn btn-outline" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-color: #4285F4; color: #4285F4;">
+                        <i data-lucide="smartphone" style="width: 32px; height: 32px;"></i>
+                        <span style="font-weight: 700; font-size: 1.1rem;">GPay</span>
+                    </button>
+                </div>
+                
+                <div id="gpay-note-section" style="display: none; flex-direction: column; gap: 12px;">
+                    <label for="gpay-note-input" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Notes</label>
+                    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                        <input type="text" id="gpay-note-input" list="gpay-notes-suggestions" placeholder="e.g. UPI Ref 123456" style="flex: 1; min-width: 0; padding: 12px; font-size: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                        <button id="btn-add-note" type="button" title="Save note to list" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; color: var(--primary); transition: all 0.2s ease;">
+                            <i data-lucide="plus" style="width: 20px; height: 20px;"></i>
+                        </button>
+                        <button id="btn-delete-note" type="button" title="Delete note from list" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; color: #ef4444; transition: all 0.2s ease;">
+                            <i data-lucide="trash-2" style="width: 20px; height: 20px;"></i>
+                        </button>
+                    </div>
+                    <datalist id="gpay-notes-suggestions">
+                        <option value="P.PANDYAN - CUB"></option>
+                        <option value="P.PANDYAN - HDFC"></option>
+                        <option value="P.PANDYAN - IB"></option>
+                        <option value="PANDIAMMAL"></option>
+                        <option value="ARAVINDHAN"></option>
+                        <option value="DEVI MEENAKSHI"></option>
+                        <option value="DHINESHKUMAR"></option>
+                        <option value="VASUKI"></option>
+                        <option value="GANESAN RANI"></option>
+                        <option value="MEENA MAN"></option>
+                        <option value="KARTHIKPANDI"></option>
+                    </datalist>
+                    <button id="btn-confirm-gpay" class="btn btn-primary btn-block" style="padding: 12px; margin-top: 8px;">Confirm Payment</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIALOG/MODAL: GLOBAL PDF EXPORT MONTH SELECTION -->
+        <div class="modal-backdrop" id="global-pdf-export-modal-backdrop">
+            <div class="payment-modal" style="max-width: 400px;">
+                <div class="modal-header">
+                    <div class="modal-header-titles">
+                        <h3 class="modal-title">Premium Reports</h3>
+                        <p class="modal-subtitle">Generate Yearly or Chit Taken Reports</p>
+                    </div>
+                    <button class="icon-btn" id="btn-close-global-pdf-export-modal"><i data-lucide="x"></i></button>
+                </div>
+                <div class="modal-content">
+                    <!-- YEARLY REPORT SECTION -->
+                    <div id="section-yearly-report" style="display: block;">
+                        <div class="form-group">
+                            <label for="yearly-pdf-export-year-select">Select Year</label>
+                            <select id="yearly-pdf-export-year-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btn-generate-yearly-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Yearly Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIALOG/MODAL: PDF EXPORT MONTH SELECTION -->
+        <div class="modal-backdrop" id="pdf-export-modal-backdrop">
+            <div class="payment-modal" style="max-width: 350px;">
+                <div class="modal-header">
+                    <div class="modal-header-titles">
+                        <h3 class="modal-title">Export PDF Report</h3>
+                        <p class="modal-subtitle">Select month to generate report</p>
+                    </div>
+                    <button class="icon-btn" id="btn-close-pdf-export-modal"><i data-lucide="x"></i></button>
+                </div>
+                <div class="modal-content">
+                    <div class="form-group">
+                        <label for="pdf-export-month-select">Select Month</label>
+                        <select id="pdf-export-month-select" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="btn-generate-pdf" style="width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIALOG/MODAL: PAYMENT TRACKING CHECKLIST -->
+        <div class="modal-backdrop" id="payment-modal-backdrop">
+            <div class="payment-modal">
+                <div class="modal-header">
+                    <div class="modal-header-titles">
+                        <span class="modal-subtitle" id="payment-modal-group-name">Group Name</span>
+                        <h3 class="modal-title" id="payment-modal-member-name" style="text-transform: uppercase; letter-spacing: 0.03em;">Member Name</h3>
+                    </div>
+                    <button class="icon-btn" id="btn-close-payment-modal" aria-label="Close modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Member Payment Summary Box -->
+                    <div class="member-payment-hero" style="margin-bottom: 10px;">
+                        <div class="hero-left">
+                            <span class="outstanding-label" id="modal-payment-due-label">Current Outstanding</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="outstanding-value text-red" id="modal-payment-due-val">₹0</span>
+                                <button id="btn-modal-whatsapp-reminder" class="whatsapp-reminder-btn hidden" title="Send WhatsApp Reminder" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background-color: rgba(37, 211, 102, 0.12); border: 1px solid rgba(37, 211, 102, 0.25); color: #25d366; cursor: pointer; transition: all 0.2s ease; outline: none;">
+                                    <i data-lucide="send" style="width: 12px; height: 12px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hero-right">
+                            <div class="stat-pills">
+                                <span class="stat-pill paid-pill"><span id="modal-paid-count">0</span> Paid</span>
+                                <span class="stat-pill pending-pill"><span id="modal-pending-count">0</span> Due</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Member Profile Details Grid (Premium Glassmorphic layout) -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" id="btn-toggle-profile-details">
+                            <img src="avatar_icon.png" alt="Profile" style="width: 18px; height: 18px; object-fit: contain; flex-shrink: 0;">
+                            <h4 class="modal-section-title" style="margin-bottom: 0;">Member Profile Details</h4>
+                            <i data-lucide="chevron-down" class="toggle-profile-btn" id="profile-toggle-icon" style="width: 16px; height: 16px; color: var(--text-secondary);"></i>
+                        </div>
+                        <button class="icon-btn text-amber" id="btn-edit-member-profile" style="padding: 4px;" title="Edit profile">
+                            <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="profile-details-collapsible" class="profile-details-wrapper">
+                        <div id="payment-modal-member-profile-card" class="member-profile-grid">
+                        <div class="profile-grid-item">
+                            <div class="profile-icon-box"><i data-lucide="briefcase"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Work Place</span>
+                                <span class="profile-info-value" id="modal-detail-work">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item">
+                            <div class="profile-icon-box"><i data-lucide="award"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Occupation</span>
+                                <span class="profile-info-value" id="modal-detail-occupation">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item">
+                            <div class="profile-icon-box"><i data-lucide="map-pin"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Place</span>
+                                <span class="profile-info-value" id="modal-detail-place">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item">
+                            <div class="profile-icon-box"><i data-lucide="phone"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Mobile</span>
+                                <span class="profile-info-value" id="modal-detail-mobile" style="color: var(--primary);">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item">
+                            <div class="profile-icon-box"><i data-lucide="tag"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Customer Type</span>
+                                <span class="profile-info-value" id="modal-detail-type">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item">
+                            <div class="profile-icon-box"><i data-lucide="users"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Referred By</span>
+                                <span class="profile-info-value" id="modal-detail-referred">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item" id="modal-detail-dob-row" style="display: none;">
+                            <div class="profile-icon-box"><i data-lucide="cake"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Date of Birth</span>
+                                <span class="profile-info-value" id="modal-detail-dob">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item" id="modal-detail-anniversary-row" style="display: none;">
+                            <div class="profile-icon-box"><i data-lucide="calendar"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Anniversary Date</span>
+                                <span class="profile-info-value" id="modal-detail-anniversary">--</span>
+                            </div>
+                        </div>
+                        <div class="profile-grid-item full-width">
+                            <div class="profile-icon-box"><i data-lucide="home"></i></div>
+                            <div class="profile-info-content">
+                                <span class="profile-info-label">Residential Address</span>
+                                <span class="profile-info-value" id="modal-detail-address" style="line-height: 1.4;">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inline Edit Form (hidden by default) -->
+                    <div id="payment-modal-member-profile-edit" class="form-container hidden animate-fade-in" style="margin-bottom: 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                        <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                            <label for="edit-member-name" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Member Name *</label>
+                            <input type="text" id="edit-member-name" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);" required>
+                        </div>
+                        <div class="form-grid-row">
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-work" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Work Place</label>
+                                <input type="text" id="edit-member-work" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                            </div>
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-occupation" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Occupation</label>
+                                <input type="text" id="edit-member-occupation" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                            </div>
+                        </div>
+                        <div class="form-grid-row">
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-place" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Place</label>
+                                <input type="text" id="edit-member-place" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                            </div>
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-mobile" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Mobile</label>
+                                <input type="text" id="edit-member-mobile" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                            </div>
+                        </div>
+                        <div class="form-grid-row">
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Customer Type</label>
+                                <div style="display: flex; gap: 15px; align-items: center; padding: 4px 0;">
+                                    <label style="display: flex; align-items: center; gap: 5px; font-size: 0.8rem; cursor: pointer;">
+                                        <input type="radio" name="edit-member-customer-type" value="New" checked> New
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 5px; font-size: 0.8rem; cursor: pointer;">
+                                        <input type="radio" name="edit-member-customer-type" value="Old"> Old
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-referred" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Referred By</label>
+                                <input type="text" id="edit-member-referred" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                            </div>
+                        </div>
+                        <div id="edit-member-new-dates-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0;">
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-dob" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Date of Birth</label>
+                                <input type="date" id="edit-member-dob" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
+                            </div>
+                            <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                                <label for="edit-member-anniversary" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Anniversary Date</label>
+                                <input type="date" id="edit-member-anniversary" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%;">
+                            </div>
+                        </div>
+                        <div class="form-group" style="gap: 4px; margin-bottom: 0;">
+                            <label for="edit-member-address" style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary);">Residential Address</label>
+                            <textarea id="edit-member-address" style="padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-family: var(--font-body); resize: vertical; min-height: 40px; outline: none;"></textarea>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                            <button class="btn btn-danger" id="btn-delete-member" style="padding: 6px 12px; font-size: 0.75rem; background-color: var(--red); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;" type="button">Delete Member</button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary" id="btn-cancel-member-edit" style="padding: 6px 12px; font-size: 0.75rem;" type="button">Cancel</button>
+                                <button class="btn btn-primary" id="btn-save-member-edit" style="padding: 6px 12px; font-size: 0.75rem;" type="button">Save Details</button>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    
+                    <!-- Checklist Card Table -->
+                    <h4 class="modal-section-title">Scheme Installments & Payouts Card</h4>
+                    <div class="scheme-card-table-wrapper" style="border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; background-color: var(--bg-surface-elevated); margin-bottom: 15px;">
+                        <div class="scheme-card-table-header" style="display: grid; grid-template-columns: 0.6fr 1.1fr 0.9fr 0.9fr 0.9fr 0.6fr; gap: 8px; padding: 10px; font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); background-color: rgba(255,255,255,0.02); text-align: center; align-items: center;">
+                            <span style="display: inline-flex; align-items: center; justify-content: center;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i></span>
+                            <span>Date</span>
+                            <span>Installment (₹)</span>
+                            <span>Partial Paid (₹)</span>
+                            <span>Payout (₹)</span>
+                            <span>Mark</span>
+                        </div>
+                        <div id="modal-checklist-container" style="display: flex; flex-direction: column; max-height: 350px; overflow-y: auto;">
+                            <!-- Dynamic rows generated by JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-block" id="btn-save-payment-modal">Done</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- QUICK MODAL FOR ADDING MEMBER TO EXISTING GROUP -->
+        <div class="modal-backdrop" id="add-member-modal-backdrop">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 500px; margin: auto;">
+                <div class="modal-header">
+                    <h3>Add New Member</h3>
+                    <button class="icon-btn" id="btn-close-add-member-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto;">
+                    <div class="form-group">
+                        <label for="new-member-name-input">Member Name *</label>
+                        <input type="text" id="new-member-name-input" placeholder="e.g. Ponnusamy K" maxlength="30">
+                    </div>
+                    <div class="form-grid-row">
+                        <div class="form-group">
+                            <label for="new-member-mobile-input">Mobile No</label>
+                            <input type="text" id="new-member-mobile-input" placeholder="Mobile Number" maxlength="15">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-member-place-input">Place</label>
+                            <input type="text" id="new-member-place-input" placeholder="Place / City" maxlength="40">
+                        </div>
+                    </div>
+                    <div class="form-grid-row">
+                        <div class="form-group">
+                            <label>Customer Type</label>
+                            <div style="display: flex; gap: 15px; align-items: center; padding: 8px 0;">
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9rem; cursor: pointer; color: var(--text-main);">
+                                    <input type="radio" name="new-member-customer-type" value="New" checked> New Customer
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9rem; cursor: pointer; color: var(--text-main);">
+                                    <input type="radio" name="new-member-customer-type" value="Old"> Old Customer
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-member-referred-input">Referred By</label>
+                            <input type="text" id="new-member-referred-input" placeholder="Referrer Name" maxlength="40">
+                        </div>
+                    </div>
+                    <div class="form-grid-row">
+                        <div class="form-group">
+                            <label for="new-member-work-input">Place of Work</label>
+                            <input type="text" id="new-member-work-input" placeholder="Place of work" maxlength="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-member-occupation-input">Occupation</label>
+                            <input type="text" id="new-member-occupation-input" placeholder="Occupation" maxlength="40">
+                        </div>
+                    </div>
+                    <div id="quick-add-member-dates-container" class="form-grid-row">
+                        <div class="form-group">
+                            <label for="new-member-dob-input">Date of Birth</label>
+                            <input type="date" id="new-member-dob-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-member-anniversary-input">Anniversary Date</label>
+                            <input type="date" id="new-member-anniversary-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-member-address-input">Residential Address</label>
+                        <textarea id="new-member-address-input" placeholder="Full Address" maxlength="200" style="padding: 10px 14px; font-size: 0.92rem; border-radius: var(--radius-md); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-family: var(--font-body); resize: vertical; min-height: 60px; outline: none; transition: var(--transition-fast);"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btn-cancel-add-member">Cancel</button>
+                    <button class="btn btn-primary" id="btn-save-new-member">Add Member</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK MODAL FOR EDITING EXISTING GROUP -->
+        <div class="modal-backdrop" id="edit-group-modal-backdrop">
+            <div class="simple-modal">
+                <div class="modal-header">
+                    <h3>Edit Chit Group</h3>
+                    <button class="icon-btn" id="btn-close-edit-group-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-group-form" class="form-container">
+                        <div class="form-group">
+                            <label for="edit-group-name">Chit Group Name</label>
+                            <input type="text" id="edit-group-name" placeholder="e.g. Jun 2026 - May 2027" required maxlength="30">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="edit-group-amount">Total Scheme Amount</label>
+                            <div class="currency-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="text" inputmode="numeric" id="edit-group-amount" class="amount-input" placeholder="e.g., 50,000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Scheme Start Month & Year</label>
+                            <div class="date-selector-row">
+                                <select id="edit-group-start-month" required>
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4">May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                                <select id="edit-group-start-year" required>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                    <option value="2031">2031</option>
+                                    <option value="2032">2032</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="edit-schedule-group" style="margin-top: 10px;">
+                            <label>Monthly Installments & Payouts Schedule</label>
+                            <div class="schedule-table-container">
+                                <div class="schedule-header-row">
+                                    <span>Month</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
+                                </div>
+                                <div id="edit-schedule-rows-container" class="schedule-rows-grid">
+                                    <!-- Dynamic rows generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; gap: 10px;">
+                    <button class="btn btn-danger" id="btn-delete-group" type="button">Delete Group</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" id="btn-cancel-edit-group">Cancel</button>
+                        <button class="btn btn-primary" id="btn-save-edit-group">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYOUT METHOD MODAL -->
+        <div class="modal-backdrop" id="payout-method-modal-backdrop" style="z-index: 1400;">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 420px; margin: auto; padding: 25px;">
+                <div class="modal-header" style="margin-bottom: 20px; border-bottom: none; padding-bottom: 0;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700;">Select Payment Method</h3>
+                    <button class="icon-btn" id="btn-close-payout-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding-top: 5px;">
+                    <form id="payout-claim-form" class="form-container">
+                        <div class="payment-method-cards">
+                            <label class="payment-card-label" id="label-cash">
+                                <input type="radio" name="payout-method" value="cash" checked>
+                                <div class="payment-card cash-card">
+                                    <i data-lucide="banknote"></i>
+                                    <span>Cash</span>
+                                </div>
+                            </label>
+                            <label class="payment-card-label" id="label-gpay">
+                                <input type="radio" name="payout-method" value="gpay">
+                                <div class="payment-card gpay-card">
+                                    <i data-lucide="smartphone"></i>
+                                    <span>GPay</span>
+                                </div>
+                            </label>
+                        </div>
+                                                <div class="form-group" id="payout-date-wrapper" style="margin-top: 15px;">
+                            <label for="payout-date-input">Payout Date</label>
+                            <input type="date" id="payout-date-input" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                        </div>
+                        <div class="form-group hidden animate-fade-in" id="payout-gpay-note-wrapper" style="margin-top: 15px;">
+                            <label for="payout-note-input">Custom Note (Optional)</label>
+                            <input type="text" id="payout-note-input" placeholder="Enter details here" maxlength="50">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn btn-secondary" id="btn-cancel-payout" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="btn-confirm-payout" type="button">Confirm Payout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOM CONFIRMATION MODAL -->
+        <div class="modal-backdrop" id="confirm-modal-backdrop" style="z-index: 1500;">
+            <div class="simple-modal" style="max-width: 400px; margin: auto;">
+                <div class="modal-header">
+                    <h3 id="confirm-modal-title">Confirm Action</h3>
+                    <button class="icon-btn" id="btn-close-confirm-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-modal-message" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);"></p>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn btn-secondary" id="btn-confirm-cancel">Cancel</button>
+                    <button class="btn btn-danger" id="btn-confirm-ok">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEMPLATE EDITOR MODAL -->
+        <div class="modal-backdrop" id="template-modal-backdrop">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 600px; margin: auto;">
+                <div class="modal-header">
+                    <h3 id="template-modal-title">Scheme Card Template</h3>
+                    <button class="icon-btn" id="btn-close-template-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="template-form" class="form-container">
+                        <div class="form-grid-row">
+                            <div class="form-group">
+                                <label for="template-amount">Scheme Amount</label>
+                                <div class="currency-input-wrapper">
+                                    <span class="currency-symbol">₹</span>
+                                    <input type="text" inputmode="numeric" id="template-amount" class="amount-input" placeholder="e.g., 25,000" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Scheme Duration</label>
+                                <div class="duration-chips">
+                                    <label class="duration-chip-label">
+                                        <input type="radio" name="template-duration-type" value="12" checked>
+                                        <span class="chip-ui">12 Months</span>
+                                    </label>
+                                    <label class="duration-chip-label">
+                                        <input type="radio" name="template-duration-type" value="20">
+                                        <span class="chip-ui">20 Months</span>
+                                    </label>
+                                    <label class="duration-chip-label">
+                                        <input type="radio" name="template-duration-type" value="custom" id="template-duration-radio-custom">
+                                        <span class="chip-ui">Custom</span>
+                                    </label>
+                                </div>
+                                <input type="hidden" id="template-duration" value="12">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group hidden animate-fade-in" id="template-custom-duration-wrapper" style="margin-top: 10px;">
+                            <label for="template-duration-custom">Custom Duration (Months)</label>
+                            <input type="number" id="template-duration-custom" placeholder="e.g., 15" min="2" max="120">
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label>Configure Monthly Installments & Payouts</label>
+                            <div class="schedule-table-container">
+                                <div class="schedule-header-row">
+                                    <span>Month</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
+                                </div>
+                                <div id="template-schedule-rows-container" class="schedule-rows-grid">
+                                    <!-- Dynamic rows generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; gap: 10px;">
+                    <button class="btn btn-danger" id="btn-delete-template" type="button">Delete Template</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" id="btn-cancel-template">Cancel</button>
+                        <button class="btn btn-primary" id="btn-save-template">Save Template</button>
+                </div>
+                        <div class="form-group">
+                            <label for="edit-group-name">Chit Group Name</label>
+                            <input type="text" id="edit-group-name" placeholder="e.g. Jun 2026 - May 2027" required maxlength="30">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="edit-group-amount">Total Scheme Amount</label>
+                            <div class="currency-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="text" inputmode="numeric" id="edit-group-amount" class="amount-input" placeholder="e.g., 50,000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Scheme Start Month & Year</label>
+                            <div class="date-selector-row">
+                                <select id="edit-group-start-month" required>
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4">May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                                <select id="edit-group-start-year" required>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                    <option value="2031">2031</option>
+                                    <option value="2032">2032</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="edit-schedule-group" style="margin-top: 10px;">
+                            <label>Monthly Installments & Payouts Schedule</label>
+                            <div class="schedule-table-container">
+                                <div class="schedule-header-row">
+                                    <span>Month</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
+                                </div>
+                                <div id="edit-schedule-rows-container" class="schedule-rows-grid">
+                                    <!-- Dynamic rows generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; gap: 10px;">
+                    <button class="btn btn-danger" id="btn-delete-group" type="button">Delete Group</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" id="btn-cancel-edit-group">Cancel</button>
+                        <button class="btn btn-primary" id="btn-save-edit-group">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYOUT METHOD MODAL -->
+        <div class="modal-backdrop" id="payout-method-modal-backdrop" style="z-index: 1400;">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 420px; margin: auto; padding: 25px;">
+                <div class="modal-header" style="margin-bottom: 20px; border-bottom: none; padding-bottom: 0;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700;">Select Payment Method</h3>
+                    <button class="icon-btn" id="btn-close-payout-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding-top: 5px;">
+                    <form id="payout-claim-form" class="form-container">
+                        <div class="payment-method-cards">
+                            <label class="payment-card-label" id="label-cash">
+                                <input type="radio" name="payout-method" value="cash" checked>
+                                <div class="payment-card cash-card">
+                                    <i data-lucide="banknote"></i>
+                                    <span>Cash</span>
+                                </div>
+                            </label>
+                            <label class="payment-card-label" id="label-gpay">
+                                <input type="radio" name="payout-method" value="gpay">
+                                <div class="payment-card gpay-card">
+                                    <i data-lucide="smartphone"></i>
+                                    <span>GPay</span>
+                                </div>
+                            </label>
+                        </div>
+                                                <div class="form-group" id="payout-date-wrapper" style="margin-top: 15px;">
+                            <label for="payout-date-input">Payout Date</label>
+                            <input type="date" id="payout-date-input" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                        </div>
+                        <div class="form-group hidden animate-fade-in" id="payout-gpay-note-wrapper" style="margin-top: 15px;">
+                            <label for="payout-note-input">Custom Note (Optional)</label>
+                            <input type="text" id="payout-note-input" placeholder="Enter details here" maxlength="50">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn btn-secondary" id="btn-cancel-payout" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="btn-confirm-payout" type="button">Confirm Payout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOM CONFIRMATION MODAL -->
+        <div class="modal-backdrop" id="confirm-modal-backdrop" style="z-index: 1500;">
+            <div class="simple-modal" style="max-width: 400px; margin: auto;">
+                <div class="modal-header">
+                    <h3 id="confirm-modal-title">Confirm Action</h3>
+                    <button class="icon-btn" id="btn-close-confirm-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-modal-message" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);"></p>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn btn-secondary" id="btn-confirm-cancel">Cancel</button>
+                    <button class="btn btn-danger" id="btn-confirm-ok">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEMPLATE EDITOR MODAL -->
+        <div class="modal-backdrop" id="template-modal-backdrop">
+            <div class="simple-modal" style="width: calc(100% - 40px); max-width: 600px; margin: auto;">
+                <div class="modal-header">
+                    <h3 id="template-modal-title">Scheme Card Template</h3>
+                    <button class="icon-btn" id="btn-close-template-modal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="template-form" class="form-container">
+                        <div class="form-grid-row">
+                            <div class="form-group">
+                                <label for="template-amount">Scheme Amount</label>
+                                <div class="currency-input-wrapper">
+                                    <span class="currency-symbol">₹</span>
+                                    <input type="text" inputmode="numeric" id="template-amount" class="amount-input" placeholder="e.g., 25,000" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Scheme Duration</label>
+                                <div class="duration-chips">
+                                    <label class="duration-chip-label">
+                                        <input type="radio" name="template-duration-type" value="12" checked>
+                                        <span class="chip-ui">12 Months</span>
+                                    </label>
+                                    <label class="duration-chip-label">
+                                        <input type="radio" name="template-duration-type" value="20">
+                                        <span class="chip-ui">20 Months</span>
+                                    </label>
+                                    <label class="duration-chip-label">
+                                        <input type="radio" name="template-duration-type" value="custom" id="template-duration-radio-custom">
+                                        <span class="chip-ui">Custom</span>
+                                    </label>
+                                </div>
+                                <input type="hidden" id="template-duration" value="12">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group hidden animate-fade-in" id="template-custom-duration-wrapper" style="margin-top: 10px;">
+                            <label for="template-duration-custom">Custom Duration (Months)</label>
+                            <input type="number" id="template-duration-custom" placeholder="e.g., 15" min="2" max="120">
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label>Configure Monthly Installments & Payouts</label>
+                            <div class="schedule-table-container">
+                                <div class="schedule-header-row">
+                                    <span>Month</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
+                                </div>
+                                <div id="template-schedule-rows-container" class="schedule-rows-grid">
+                                    <!-- Dynamic rows generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; gap: 10px;">
+                    <button class="btn btn-danger" id="btn-delete-template" type="button">Delete Template</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" id="btn-cancel-template">Cancel</button>
+                        <button class="btn btn-primary" id="btn-save-template">Save Template</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <script src="auth.js?v=110" defer></script>
+    <script src="js/utils.js?v=136" defer></script>
+    <script src="js/state.js?v=137" defer></script>
+    <script src="js/ui.js?v=136" defer></script>
+    <script src="js/settings.js?v=136" defer></script>
+    <script src="js/pdf.js?v=136" defer></script>
+    <script src="js/pnl.js?v=136" defer></script>
+    <script src="app.js?v=137" defer></script>
+
+    <!-- HIDDEN PDF TEMPLATE (GROUP) -->
+    <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Colored Header -->
+        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Monthly Chit Fund Report</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h2 id="pdf-group-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <p id="pdf-month-name" style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">--</p>
+                <p id="pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+            </div>
+        </div>
+
+        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Target Collection</div>
+                    <div id="pdf-target-collection" style="font-size: 20px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collected Amount</div>
+                    <div id="pdf-total-collected" style="font-size: 20px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Pending Amount</div>
+                    <div id="pdf-total-pending" style="font-size: 20px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
+                    <div id="pdf-collection-percentage" style="font-size: 20px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background: #f8fafc; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700;">Total Members</div>
+                    <div id="pdf-total-members" style="font-size: 16px; font-weight: 800; color: #0f172a; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #ecfdf5; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #a7f3d0;">
+                    <div style="font-size: 10px; color: #047857; text-transform: uppercase; font-weight: 700;">Members Paid</div>
+                    <div id="pdf-members-paid" style="font-size: 16px; font-weight: 800; color: #065f46; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #fef2f2; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #fecaca;">
+                    <div style="font-size: 10px; color: #b91c1c; text-transform: uppercase; font-weight: 700;">Members Pending</div>
+                    <div id="pdf-members-pending" style="font-size: 16px; font-weight: 800; color: #991b1b; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #eef2ff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #c7d2fe;">
+                    <div style="font-size: 10px; color: #4338ca; text-transform: uppercase; font-weight: 700;">Taken Chit</div>
+                    <div id="pdf-members-taken" style="font-size: 16px; font-weight: 800; color: #3730a3; margin-top: 4px;">0</div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Member Payment Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 12px; border: 1px solid #d1d5db;">
+                <thead>
+                    <tr style="background-color: #111827;">
+                        <th style="padding: 12px; text-align: center; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">S.No</th>
+                        <th style="padding: 12px; text-align: left; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Member Name</th>
+                        <th style="padding: 12px; text-align: center; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Chit Status</th>
+                        <th style="padding: 12px; text-align: left; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Date Paid</th>
+                        <th style="padding: 12px; text-align: right; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Amount (₹)</th>
+                        <th style="padding: 12px; text-align: center; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-table-body">
+                    <!-- Rows populated dynamically -->
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 16px; font-weight: 800; color: #b91c1c; margin: 0 0 10px 0; border-bottom: 2px solid #fecaca; padding-bottom: 8px;">Defaulters Summary (Pending This Month)</h3>
+            <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 0 8px 8px 8px; text-align: left; color: #991b1b; font-weight: 700; border-bottom: 1px solid #fca5a5;">Member Name</th>
+                            <th style="padding: 0 8px 8px 8px; text-align: left; color: #991b1b; font-weight: 700; border-bottom: 1px solid #fca5a5;">Mobile</th>
+                            <th style="padding: 0 8px 8px 8px; text-align: right; color: #991b1b; font-weight: 700; border-bottom: 1px solid #fca5a5;">Pending Due (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pdf-defaulters-body">
+                        <!-- Rows populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <div style="text-align: center; width: 200px;">
+                    <div style="border-bottom: 1px solid #94a3b8; height: 30px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; color: #475569; font-weight: 700;">Organizer Signature</div>
+                </div>
+                <div style="text-align: right; align-self: flex-end;">
+                    <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN INPUTS FOR QUICK REPORT -->
+    <div style="display: none;">
+        <select id="global-pdf-export-month-select"></select>
+        <select id="global-pdf-export-day-select"><option value="all">all</option></select>
+    </div>
+
+    <!-- HIDDEN PDF TEMPLATE (GLOBAL DASHBOARD - RESTORED FOR QUICK REPORT) -->
+    <div id="global-pdf-template-container" style="display: none; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Colored Header -->
+        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Global Dashboard Report</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h2 id="global-pdf-month-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
+                <p id="global-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+            </div>
+        </div>
+
+        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+            
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Global Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Target</div>
+                    <div id="global-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Collected</div>
+                    <div id="global-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Pending</div>
+                    <div id="global-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
+                    <div id="global-pdf-percentage" style="font-size: 24px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
+                </div>
+            </div>
+
+            <div id="global-pdf-unified-table-container">
+                <!-- Single table populated dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Prepared By</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Authorized Signatory</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN PDF TEMPLATE (YEARLY REPORT) -->
+    <div id="yearly-pdf-template-container" style="display: none; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Colored Header -->
+        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Yearly Dashboard Report</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h2 id="yearly-pdf-year-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
+                <p id="yearly-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+            </div>
+        </div>
+
+        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Yearly Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Target</div>
+                    <div id="yearly-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Collected</div>
+                    <div id="yearly-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Pending</div>
+                    <div id="yearly-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
+                    <div id="yearly-pdf-percentage" style="font-size: 24px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
+                </div>
+            </div>
+
+            <div id="yearly-pdf-table-container">
+                <!-- Single table populated dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <div style="text-align: center; width: 200px;">
+                    <div style="border-bottom: 1px solid #94a3b8; height: 30px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; color: #475569; font-weight: 700;">Organizer Signature</div>
+                </div>
+                <div style="text-align: right; align-self: flex-end;">
+                    <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN PDF TEMPLATE (CHIT TAKEN REPORT) -->
+    <div id="chit-taken-pdf-template-container" style="display: none; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Colored Header -->
+        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #6366f1;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #6366f1;">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                    <p style="font-size: 15px; color: #6366f1; margin: 6px 0 0 0; font-weight: 700;">Chit Taken Report</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h2 id="chit-pdf-month-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
+                <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
+                <p id="chit-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+            </div>
+        </div>
+
+        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Payout Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Members Taken</div>
+                    <div id="chit-pdf-total-members" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Payout Amount</div>
+                    <div id="chit-pdf-total-amount" style="font-size: 24px; font-weight: 800; color: #6366f1; margin-top: 6px;">₹0</div>
+                </div>
+            </div>
+
+            <div id="chit-pdf-table-container">
+                <!-- Single table populated dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <div style="text-align: center; width: 200px;">
+                    <div style="border-bottom: 1px solid #94a3b8; height: 30px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; color: #475569; font-weight: 700;">Organizer Signature</div>
+                </div>
+                <div style="text-align: right; align-self: flex-end;">
+                    <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
+                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                <!-- SCREEN: CALCULATOR -->
+            <!-- CALCULATOR MODAL OVERLAY -->
+            
+    <!-- SCREEN: NOTEPAD (REDESIGNED) -->
+            
+
+
+        </div>
+    </div>
+
+    <!-- SIDEBAR MENU -->
+    <div id="sidebar-overlay" class="sidebar-overlay" style="display: none;"></div>
+    <div id="sidebar-menu" class="sidebar-menu">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">Menu</h3>
+            <button class="icon-btn" id="btn-sidebar-close"><i data-lucide="x"></i></button>
+        </div>
+        <div class="sidebar-content">
+            <a href="#" class="sidebar-link active" data-target="screen-dashboard">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-link" data-target="screen-pnl">
+                <i data-lucide="bar-chart-2"></i> Profit & Loss
+            </a>
+            <a href="#" class="sidebar-link" data-target="screen-notes">
+                <i data-lucide="file-text"></i> Notepad
+            </a>
+            <a href="#" class="sidebar-link" data-target="screen-settings">
+                <i data-lucide="settings"></i> Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- PWA Custom Install Prompt -->
+    <div id="pwa-install-prompt" class="pwa-install-popup" style="display: none;">
+        <button id="pwa-close-btn" class="pwa-close"><i data-lucide="x" style="width: 14px; height: 14px;"></i></button>
+        <div class="pwa-content">
+            <img src="logo-light.jpg" alt="App Logo" class="pwa-logo">
+            <div class="pwa-text">
+                <h4>Install PMS App <span style="display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #6366f1, #3b82f6); border-radius: 6px; padding: 2px 6px; font-size: 0.65rem; font-weight: 800; color: #fff; letter-spacing: 0.3px;">PWA</span></h4>
+                <p>Add to Home Screen for instant access, real-time sync &amp; a native app experience!</p>
+            </div>
+        </div>
+        <div class="pwa-actions">
+            <button id="pwa-later-btn" class="pwa-btn-later">Later</button>
+            <button id="pwa-install-btn" class="pwa-btn-install"><i data-lucide="download" style="width: 16px; height: 16px;"></i> Install Now</button>
+        </div>
+    </div>
+
+<div id="calc-modal-overlay" class="calc-modal-overlay">
+                <div class="calc-premium-container">
+                    <button class="calc-modal-close" id="btn-close-calc-modal"><i data-lucide="x"></i></button>
+                    <div class="calc-premium-glow"></div>
+                    <div class="calc-premium-glass">
+                        <div class="calc-premium-header">
+                            <i data-lucide="calculator"></i>
+                            <span>Premium Calculator</span>
+                        </div>
+                        <div class="calc-premium-display">
+                            <div class="calc-premium-history" id="calc-history"></div>
+                            <input type="text" id="calc-display" class="calc-premium-input" value="0" readonly>
+                        </div>
+                        <div class="calc-premium-keypad">
+                            <button class="calc-btn-prm btn-clear" data-action="clear">AC</button>
+                            <button class="calc-btn-prm btn-fn" data-action="backspace"><i data-lucide="delete"></i></button>
+                            <button class="calc-btn-prm btn-fn" data-action="percent">%</button>
+                            <button class="calc-btn-prm btn-op" data-action="divide">÷</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="7">7</button>
+                            <button class="calc-btn-prm btn-num" data-num="8">8</button>
+                            <button class="calc-btn-prm btn-num" data-num="9">9</button>
+                            <button class="calc-btn-prm btn-op" data-action="multiply">×</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="4">4</button>
+                            <button class="calc-btn-prm btn-num" data-num="5">5</button>
+                            <button class="calc-btn-prm btn-num" data-num="6">6</button>
+                            <button class="calc-btn-prm btn-op" data-action="subtract">−</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="1">1</button>
+                            <button class="calc-btn-prm btn-num" data-num="2">2</button>
+                            <button class="calc-btn-prm btn-num" data-num="3">3</button>
+                            <button class="calc-btn-prm btn-op" data-action="add">+</button>
+
+                            <button class="calc-btn-prm btn-num" data-num="00">00</button>
+                            <button class="calc-btn-prm btn-num" data-num="0">0</button>
+                            <button class="calc-btn-prm btn-num" data-num=".">.</button>
+                            <button class="calc-btn-prm btn-equal" data-action="calculate">=</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFIT AND LOSS SCREEN -->
+            
+<!-- Custom Date Range Modal -->
+<div id="custom-date-range-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:10000000 !important; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-surface-elevated); border:1px solid var(--border); border-radius:20px; padding:28px 24px; width:calc(100% - 48px); max-width:360px; box-shadow:0 24px 64px rgba(0,0,0,0.25);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i data-lucide="calendar-range" style="width:20px; height:20px; color:var(--primary);"></i>
+                <h3 style="font-size:1rem; font-weight:800; color:var(--text-main); margin:0;">Custom Date Range</h3>
+            </div>
+            <button id="btn-close-date-range-modal" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary);">
+                <i data-lucide="x" style="width:16px; height:16px;"></i>
+            </button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; display:block;">From Date</label>
+                <input type="date" id="date-range-from" style="width:100%; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); font-size:0.9rem; font-weight:600; outline:none; box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; display:block;">To Date</label>
+                <input type="date" id="date-range-to" style="width:100%; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); font-size:0.9rem; font-weight:600; outline:none; box-sizing:border-box;">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button id="btn-apply-date-range" style="flex:1; padding:11px; border-radius:10px; background:var(--primary-gradient); border:none; color:#000; font-weight:800; font-size:0.9rem; cursor:pointer;">Apply Filter</button>
+            <button id="btn-clear-date-range" style="flex:1; padding:11px; border-radius:10px; background:var(--bg-surface); border:1px solid var(--border); color:var(--text-secondary); font-weight:700; font-size:0.9rem; cursor:pointer;">Clear</button>
+        </div>
+    </div>
+</div>
+
+<!-- P&L Month Drawer Modal -->
+<div class="pnl-drawer-backdrop" id="pnl-drawer-backdrop" onclick="closePnLMonthDrawer()" style="display:none;">
+    <div class="pnl-month-drawer" id="pnl-month-drawer" onclick="event.stopPropagation()">
+        <div class="pnl-drawer-header">
+            <h3 id="pnl-drawer-title">Group Name</h3>
+            <button class="pnl-drawer-close-btn" onclick="closePnLMonthDrawer()" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="pnl-drawer-content">
+            <table class="pnl-drawer-month-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Inst.</th>
+                        <th>Paid</th>
+                        <th>Collected</th>
+                        <th>Payout</th>
+                        <th>Arrears</th>
+                    </tr>
+                </thead>
+                <tbody id="pnl-drawer-tbody">
+                    <!-- Rows injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+                </div>
+            
+    <!-- Global Save/Discard Banner -->
+    <style>
+        .save-discard-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            z-index: 9999;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .save-discard-banner.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .banner-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .banner-icon {
+            color: var(--blue-main);
+            width: 24px;
+            height: 24px;
+        }
+
+        .banner-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    </style>
+    <div id="save-discard-banner" class="save-discard-banner">
+        <div class="banner-content">
+            <i data-lucide="alert-circle" class="banner-icon"></i>
+            <span class="banner-text">Unsaved Changes</span>
+        </div>
+        <div class="banner-actions">
+            <button id="btn-discard-changes" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; padding: 8px 16px;">Discard</button>
+            <button id="btn-save-changes" class="btn btn-primary" style="padding: 8px 16px;">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Edit/Cancel Confirmation Modal -->
+    <div id="edit-cancel-modal-backdrop" class="modal-backdrop">
+        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 320px; margin: auto; text-align: center;">
+            <div class="modal-header">
+                <h3 class="modal-title">Payment Options</h3>
+                <button class="btn-close-modal" id="btn-close-edit-cancel">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 24px 16px; display: flex; flex-direction: column; gap: 12px;">
+                <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 0.95rem;">Do you want to edit this payment or unmark it?</p>
+                <button id="btn-action-edit-payment" class="btn btn-outline" style="width: 100%; border-color: var(--blue-main); color: var(--blue-main);">Edit Payment</button>
+                <button id="btn-action-unmark-payment" class="btn btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444;">Unmark Payment</button>
+                <button id="btn-action-cancel-edit" class="btn btn-secondary" style="width: 100%; margin-top: 8px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+</html>
+<script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
