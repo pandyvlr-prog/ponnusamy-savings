@@ -5030,6 +5030,7 @@ async function deleteGroup() {
         if (tenureSelector) tenureSelector.style.display = 'flex';
         if (cardsGridView)  cardsGridView.style.display  = 'none';
         currentTenure = null;
+        if (window.lucide) window.lucide.createIcons();
     }
 
     function openTenureCards(tenure) {
@@ -5039,6 +5040,7 @@ async function deleteGroup() {
         var label          = document.getElementById('ic-grid-tenure-label');
         if (tenureSelector) tenureSelector.style.display = 'none';
         if (cardsGridView)  cardsGridView.style.display  = 'flex';
+        cardsGridView.style.flexDirection = 'column';
         if (label)          label.textContent = tenure + ' Scheme';
         renderCards();
         if (window.lucide) window.lucide.createIcons();
@@ -5059,18 +5061,19 @@ async function deleteGroup() {
 
         cards.forEach(function(card) {
             var item = document.createElement('div');
-            item.className = 'ic-card-item';
+            item.style.cssText = 'background:var(--bg-surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:box-shadow 0.25s,transform 0.25s;position:relative;';
             item.dataset.cardId = card.id;
             var hasImage = !!card.imageData;
+            var imgAreaStyle = 'width:100%;min-height:180px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:16px 16px 0 0;';
             var imgHTML = hasImage
-                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy"><button class="ic-change-photo-btn" title="Change Photo"><i data-lucide="camera"></i></button>'
-                : '<div class="ic-upload-placeholder"><i data-lucide="upload-cloud"></i><span>Tap to upload card photo</span></div>';
-            item.innerHTML = '<div class="ic-card-image-area">' + imgHTML + '</div>'
-                + '<div class="ic-card-footer">'
-                + '<input class="ic-card-label-input" type="text" value="' + (card.label || '') + '" placeholder="e.g. 50K, 1L, 2L..." maxlength="30">'
-                + '<div class="ic-card-actions">'
-                + '<button class="ic-share-btn" title="Share to WhatsApp"><i data-lucide="share-2"></i></button>'
-                + '<button class="ic-delete-btn" title="Delete Card"><i data-lucide="trash-2"></i></button>'
+                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy" style="width:100%;height:auto;display:block;object-fit:contain;max-height:360px;"><button class="ic-change-photo-btn" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:8px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);" title="Change Photo"><i data-lucide="camera" style="width:15px;height:15px;"></i></button>'
+                : '<div class="ic-upload-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 20px;cursor:pointer;width:100%;"><i data-lucide="upload-cloud" style="width:44px;height:44px;color:#6366f1;opacity:0.7;"></i><span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Tap to upload card photo</span></div>';
+            item.innerHTML = '<div style="' + imgAreaStyle + '">' + imgHTML + '</div>'
+                + '<div style="display:flex;align-items:center;padding:12px 14px;border-top:1px solid var(--border);gap:10px;">'
+                + '<input class="ic-card-label-input" type="text" value="' + (card.label || '') + '" placeholder="e.g. 50K, 1L, 2L..." maxlength="30" style="flex:1;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text-main);font-size:1rem;font-weight:800;outline:none;padding:4px 6px;min-width:0;">'
+                + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
+                + '<button class="ic-share-btn" title="Share to WhatsApp" style="width:38px;height:38px;border-radius:10px;border:1px solid rgba(37,211,102,0.4);background:rgba(37,211,102,0.12);color:#25d366;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="share-2" style="width:16px;height:16px;"></i></button>'
+                + '<button class="ic-delete-btn" title="Delete Card" style="width:34px;height:34px;border-radius:8px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.08);color:#ef4444;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>'
                 + '</div></div>';
             list.appendChild(item);
 
