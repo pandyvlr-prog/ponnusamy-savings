@@ -3516,7 +3516,7 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 
 /* Fixes for mobile display */
 @media (max-width: 767px) {
-    .fab-btn { bottom: 85px; right: 20px; }
+    .fab-btn { bottom: 110px !important; right: 20px !important; }
     .header-actions-row { gap: 4px !important; }
     .app-header { padding: 12px 16px; }
 }
@@ -6711,3 +6711,5 @@ html, body, .app-device-shell {
         font-size: 1.1rem;
     }
 }
+@media (max-width: 768px) { .pnl-table, .pnl-table tr, .pnl-table td, .pnl-table tbody { min-width: 0 !important; box-sizing: border-box !important; width: 100% !important; } }
+

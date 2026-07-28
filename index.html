@@ -340,7 +340,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                             </svg>
                                             CASH
                                         </div>
-                                        <span id="stat-summary-collected-cash" style="font-size: 1.25rem; font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
+                                        <span id="stat-summary-collected-cash" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
                                     </div>
                                     <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important; border: 1px solid #1e3a8a; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
                                         <div style="display: flex; align-items: center; gap: 6px; color: #bfdbfe !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
@@ -353,7 +353,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                             </svg>
                                             GPAY
                                         </div>
-                                        <span id="stat-summary-collected-gpay" style="font-size: 1.25rem; font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
+                                        <span id="stat-summary-collected-gpay" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
                                     </div>
                                 </div>
                             </div>
@@ -391,7 +391,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                     </div>
 
                     <!-- Search Filter Row -->
-                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-direction: row; gap: 10px; align-items: center; width: 100%; flex-wrap: wrap;">
+                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-direction: row; gap: 10px; align-items: center; width: 100%; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
                         <div class="search-input-wrapper" style="flex: 2; min-width: 200px; position: relative;">
                             <i data-lucide="search" class="search-icon"></i>
                             <input type="text" id="dashboard-member-search" placeholder="Search members by name..." style="padding: 8px 36px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%;">
