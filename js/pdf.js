@@ -440,10 +440,12 @@ async function generateGlobalPdfReport(mode = 'download') {
 /* --- PWA Install Logic --- */
 let deferredPrompt;
 
-// Register Service Worker
+// Register Service Worker with automatic update check & cache flush
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+            reg.update();
+        }).catch(err => {
             console.log('SW registration failed: ', err);
         });
     });

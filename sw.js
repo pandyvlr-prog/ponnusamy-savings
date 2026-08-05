@@ -1,61 +1,25 @@
 /**
- * Ponnusamy Savings - Service Worker
- * Cache-first strategy for static assets, network-first for API calls
+ * Ponnusamy Savings - Service Worker (v177 Network-First)
+ * Ensures all devices ALWAYS load the latest UI from server without stale cache!
  */
 
-const CACHE_VERSION = 'pms-v150';
+const CACHE_VERSION = 'pms-v177-flush';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
-const APP_SHELL = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/app.js',
-    '/auth.js',
-    '/auth.css',
-    '/manifest.json',
-    '/logo-dark.jpg',
-    '/logo-light.jpg',
-    '/target_icon.png',
-    '/avatar_icon.png',
-    '/calendar_icon.png',
-];
-
-const CDN_HOSTS = [
-    'fonts.googleapis.com',
-    'fonts.gstatic.com',
-    'unpkg.com',
-    'cdn.jsdelivr.net'
-];
-
 self.addEventListener('install', (event) => {
-    // Add cache buster query to ensure fresh fetch from server
-    const cb = '?cb=' + Date.now();
-    event.waitUntil(
-        caches.open(STATIC_CACHE).then(cache => {
-            return Promise.all(
-                APP_SHELL.map(url => {
-                    return fetch(url + cb, { cache: 'no-store' })
-                        .then(res => {
-                            if (!res.ok) throw new Error('Failed ' + url);
-                            // Store it under the original URL without cache buster
-                            return cache.put(url, res);
-                        });
-                })
-            );
-        }).then(() => self.skipWaiting())
-    );
+    // Force new service worker to activate immediately
+    self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
             .then(keys => Promise.all(
-                keys.filter(k => k.startsWith('pms-') && k !== STATIC_CACHE && k !== RUNTIME_CACHE)
-                    .map(k => caches.delete(k))
+                // Delete ALL old caches to purge stale v150 assets completely
+                keys.map(k => caches.delete(k))
             ))
-            .then(() => clients.claim())
+            .then(() => self.clients.claim())
     );
 });
 
@@ -66,33 +30,19 @@ self.addEventListener('fetch', (event) => {
     if (request.method !== 'GET') return;
     if (url.hostname.includes('supabase.co')) return;
 
-    const isCDN = CDN_HOSTS.some(h => url.hostname.includes(h));
-    if (isCDN) {
-        event.respondWith(
-            caches.open(RUNTIME_CACHE).then(cache =>
-                cache.match(request).then(cached => {
-                    const networkFetch = fetch(request).then(response => {
-                        if (response.ok) cache.put(request, response.clone());
-                        return response;
-                    });
-                    return cached || networkFetch;
-                })
-            )
-        );
-        return;
-    }
-
-    // App shell: cache-first but ignore query strings so ?v=xxx matches
+    // NETWORK-FIRST STRATEGY: Always fetch fresh code from Vercel server first
     event.respondWith(
-        caches.match(request, { ignoreSearch: true }).then(cached => {
-            if (cached) return cached;
-            return fetch(request).then(response => {
+        fetch(request)
+            .then(response => {
                 if (response.ok && request.url.startsWith(self.location.origin)) {
                     const clone = response.clone();
                     caches.open(STATIC_CACHE).then(cache => cache.put(request, clone));
                 }
                 return response;
-            });
-        })
+            })
+            .catch(() => {
+                // Offline fallback from local cache if no internet connection
+                return caches.match(request);
+            })
     );
 });
