@@ -230,32 +230,58 @@ function setupAuthListeners() {
         });
     });
 
-    // Login Form Submit
-    document.getElementById('login-form').addEventListener('submit', (e) => {
+    // Login Form Submit — Real Supabase Auth
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const name = email.split('@')[0].toUpperCase();
-        
-        let userData = { name, email, avatar: null };
-        const savedUserData = localStorage.getItem('ps_user_' + email);
-        if (savedUserData) {
-            userData = JSON.parse(savedUserData);
-        } else {
-            localStorage.setItem('ps_user_' + email, JSON.stringify(userData));
+        const email = document.getElementById('login-email').value.trim();
+        const passwordEl = document.getElementById('login-password');
+        const password = passwordEl ? passwordEl.value : '';
+
+        if (!supabaseClient) {
+            if (typeof showNotification === 'function') showNotification('Database not connected. Running offline.', 'error');
+            return;
         }
-        
-        AuthState.isAuthenticated = true;
-        AuthState.currentUser = userData;
-        localStorage.setItem('ps_auth', JSON.stringify(AuthState));
-        
-        if (typeof loadState === 'function') {
-            loadState();
+
+        const submitBtn = e.target.querySelector('[type="submit"]');
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing in…'; }
+
+        try {
+            let authResult;
+            if (password) {
+                // Attempt real sign-in first
+                authResult = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (authResult.error && authResult.error.message && authResult.error.message.toLowerCase().includes('invalid login')) {
+                    // Auto-register if user doesn't exist
+                    const signUpResult = await supabaseClient.auth.signUp({ email, password });
+                    if (signUpResult.error) {
+                        if (typeof showNotification === 'function') showNotification(signUpResult.error.message, 'error');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                        return;
+                    }
+                    authResult = signUpResult;
+                }
+            } else {
+                // No password field (legacy form): send magic link
+                authResult = await supabaseClient.auth.signInWithOtp({ email });
+                if (!authResult.error) {
+                    if (typeof showNotification === 'function') showNotification('Magic link sent! Check your email.', 'success');
+                }
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                return;
+            }
+
+            if (authResult.error) {
+                if (typeof showNotification === 'function') showNotification(authResult.error.message, 'error');
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                return;
+            }
+
+            // onAuthStateChange handles the rest (loadState, navigate)
+        } catch (err) {
+            console.error('Login error:', err);
+            if (typeof showNotification === 'function') showNotification('Login failed. Please try again.', 'error');
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
         }
-        
-        updateProfileUI();
-        
-        // [PROD] Removed duplicate renderDashboard() — navigateTo triggers it via switchView
-        navigateTo('screen-dashboard');
     });
 
     // Mock Registration
