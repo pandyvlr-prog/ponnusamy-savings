@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const greetEl = document.getElementById('db-greeting-text');
     if (greetEl) {
         const h = new Date().getHours();
-        greetEl.textContent = h < 12 ? 'Good morning ðŸ‘‹' : h < 17 ? 'Good afternoon ðŸ‘‹' : 'Good evening ðŸ‘‹';
+        greetEl.textContent = h < 12 ? 'Good morning 👋' : h < 17 ? 'Good afternoon 👋' : 'Good evening 👋';
     }
     
     // Initialize Lucide Icons
@@ -4175,7 +4175,7 @@ function renderChecklist(member, group) {
                 <select class="custom-payment-date-select" data-month="${m}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); text-align: center;">
                     ${dateOptions}
                 </select>
-                <span style="font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap;">ðŸ“… ${monthYearStr}</span>
+                <span style="font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap;">📅 ${monthYearStr}</span>
             </div>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
             <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${isPaid ? '' : formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
@@ -5007,7 +5007,7 @@ async function deleteGroup() {
 
 
 /* ============================================================
-   INSTALLMENT CARDS MODULE  (v2 - standalone screen)
+   SCHEME CARD MODULE  (v2 - standalone screen)
    ============================================================ */
 (function InstallmentCardsModule() {
     const STORAGE_KEY = 'pms_installment_cards';
@@ -5165,7 +5165,7 @@ async function deleteGroup() {
 
     function shareCard(card) {
         if (!card.imageData) { alert('Please upload a card image first.'); return; }
-        shareImageFile(dataURLtoFile(card.imageData, (card.label || 'card') + '.jpg'), (currentTenure || '') + ' ' + (card.label || 'card') + ' Installment Card');
+        shareImageFile(dataURLtoFile(card.imageData, (card.label || 'card') + '.jpg'), (currentTenure || '') + ' ' + (card.label || 'card') + ' Scheme Card');
     }
 
     async function shareAllCards() {
@@ -5197,7 +5197,7 @@ async function deleteGroup() {
         });
         canvas.toBlob(async function(blob) {
             var file = new File([blob], (currentTenure || 'All') + '_Cards.jpg', { type: 'image/jpeg' });
-            await shareImageFile(file, currentTenure + ' Installment Cards');
+            await shareImageFile(file, currentTenure + ' Scheme Cards');
         }, 'image/jpeg', 0.92);
     }
 
@@ -5262,5 +5262,5 @@ async function deleteGroup() {
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
 })();
 /* ============================================================
-   END INSTALLMENT CARDS MODULE
+   END SCHEME CARD MODULE
    ============================================================ */
