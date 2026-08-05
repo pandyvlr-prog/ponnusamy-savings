@@ -585,12 +585,13 @@ async function loadState() {
                 }
 
                 // Trigger UI refresh for Scheme Cards if functions exist
-                if (typeof window.updateSelectionStats === 'function') {
-                    window.updateSelectionStats();
-                }
-                if (typeof window.calculateAndRenderGallery === 'function') {
-                    window.calculateAndRenderGallery();
-                }
+                const refreshGalleryUI = () => {
+                    if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
+                    if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
+                };
+                refreshGalleryUI();
+                setTimeout(refreshGalleryUI, 200);
+                setTimeout(refreshGalleryUI, 800);
                 
                 // Save to local storage for offline use
                 localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
