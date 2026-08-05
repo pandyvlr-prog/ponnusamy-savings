@@ -5816,6 +5816,82 @@ async function deleteGroup() {
         }
     }
 
+    // --- DYNAMIC SUGGESTION PILLS ENGINE (+ ADD & DELETE CUSTOM PILLS) ---
+    const defaultPills = ['25K', '50K', '75K', '1L', '2L', '5L'];
+
+    function getCustomPills() {
+        try {
+            const saved = localStorage.getItem('pms_custom_value_pills');
+            return saved ? JSON.parse(saved) : [];
+        } catch(e) {
+            return [];
+        }
+    }
+
+    function saveCustomPills(pills) {
+        localStorage.setItem('pms_custom_value_pills', JSON.stringify(pills));
+    }
+
+    function renderPillsIntoContainer(containerId, inputId) {
+        const container = document.getElementById(containerId);
+        const inputEl = document.getElementById(inputId);
+        if (!container || !inputEl) return;
+
+        container.innerHTML = '';
+        const customPills = getCustomPills();
+        const allPills = [...defaultPills, ...customPills];
+
+        allPills.forEach((pillText, idx) => {
+            const isCustom = idx >= defaultPills.length;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'ic-suggestion-pill' + (isCustom ? ' is-custom-pill' : '');
+            
+            if (isCustom) {
+                btn.innerHTML = `<span>${pillText}</span><span class="ic-pill-delete-x" title="Delete custom pill">&times;</span>`;
+            } else {
+                btn.textContent = pillText;
+            }
+
+            btn.addEventListener('click', (e) => {
+                if (e.target.classList.contains('ic-pill-delete-x')) {
+                    e.stopPropagation();
+                    const updated = customPills.filter(p => p !== pillText);
+                    saveCustomPills(updated);
+                    renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
+                    renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
+                    return;
+                }
+                inputEl.value = pillText;
+                inputEl.focus();
+            });
+
+            container.appendChild(btn);
+        });
+
+        // Add "+" Custom Pill Button
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'ic-suggestion-pill ic-add-pill';
+        addBtn.innerHTML = `<i data-lucide="plus" style="width:14px;height:14px;stroke-width:3;"></i> Add`;
+        addBtn.addEventListener('click', () => {
+            const customVal = prompt('Enter custom card value (e.g. 30K, 35K, 1.5L):');
+            if (customVal && customVal.trim()) {
+                const formatted = customVal.trim().toUpperCase();
+                const current = getCustomPills();
+                if (!current.includes(formatted) && !defaultPills.includes(formatted)) {
+                    current.push(formatted);
+                    saveCustomPills(current);
+                    renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
+                    renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
+                }
+            }
+        });
+
+        container.appendChild(addBtn);
+        if (window.lucide) window.lucide.createIcons();
+    }
+
     // Load value screen for current wizard queue index
     function loadWizardImageValueStep() {
         const item = wizardQueue[wizardIndex];
@@ -5829,6 +5905,7 @@ async function deleteGroup() {
             input.value = item.valueStr || '';
             setTimeout(() => input.focus(), 150);
         }
+        renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
     }
 
     // Render review page of wizard
@@ -5890,6 +5967,7 @@ async function deleteGroup() {
             input.value = card.label || '';
             setTimeout(() => input.focus(), 150);
         }
+        renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
 
         document.getElementById('ic-edit-modal-backdrop').style.display = 'flex';
     }

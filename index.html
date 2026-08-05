@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=167">
+    <link rel="stylesheet" href="style.css?v=168">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -646,25 +646,72 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     object-fit: contain !important;
 }
 
-/* Suggestion Pills */
+/* Suggestion Pills - High Contrast Bold Gold Design */
+.ic-suggestions-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+    align-items: center !important;
+}
+
 .ic-suggestion-pill {
-    padding: 8px 12px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(212,175,55,0.3) !important;
-    background: rgba(212,175,55,0.08) !important;
-    color: #D4AF37 !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
+    padding: 8px 14px !important;
+    border-radius: 12px !important;
+    border: 1px solid #D4AF37 !important;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%) !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    font-weight: 800 !important;
+    font-size: 0.88rem !important;
     cursor: pointer !important;
-    text-align: center !important;
-    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    box-shadow: 0 3px 10px rgba(212,175,55,0.35) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    letter-spacing: 0.3px !important;
 }
 
 .ic-suggestion-pill:hover {
-    background: #D4AF37 !important;
+    transform: translateY(-2px) scale(1.03) !important;
+    box-shadow: 0 6px 18px rgba(212,175,55,0.55) !important;
+    border-color: #ffffff !important;
+}
+
+.ic-suggestion-pill.ic-add-pill {
+    background: rgba(212, 175, 55, 0.15) !important;
+    color: #D4AF37 !important;
+    -webkit-text-fill-color: #D4AF37 !important;
+    border: 1.5px dashed rgba(212, 175, 55, 0.7) !important;
+    box-shadow: none !important;
+}
+
+.ic-suggestion-pill.ic-add-pill:hover {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%) !important;
     color: #000000 !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(212,175,55,0.3) !important;
+    -webkit-text-fill-color: #000000 !important;
+    border-style: solid !important;
+}
+
+.ic-pill-delete-x {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    background: rgba(0, 0, 0, 0.25) !important;
+    color: #000000 !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    margin-left: 4px !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+
+.ic-pill-delete-x:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
 }
 
 /* Make icons non-interactive to ensure button click handlers fire reliably */
@@ -2190,14 +2237,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div style="display: flex; flex-direction: column;">
                                 <label class="ic-wizard-input-label" for="ic-wizard-value-input">Enter Scheme Value</label>
                                 <input type="text" id="ic-wizard-value-input" class="ic-wizard-input" placeholder="e.g. 25K, 50K, 1L" autocomplete="off">
-                                <div class="ic-suggestions-grid">
-                                    <button class="ic-suggestion-pill">25K</button>
-                                    <button class="ic-suggestion-pill">50K</button>
-                                    <button class="ic-suggestion-pill">75K</button>
-                                    <button class="ic-suggestion-pill">1L</button>
-                                    <button class="ic-suggestion-pill">2L</button>
-                                    <button class="ic-suggestion-pill">5L</button>
-                                </div>
+                                <div class="ic-suggestions-grid" id="ic-wizard-suggestions-grid"></div>
                             </div>
                         </div>
 
@@ -2234,14 +2274,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <div style="display: flex; flex-direction: column;">
                             <label class="ic-wizard-input-label" for="ic-edit-value-input">Card Value</label>
                             <input type="text" id="ic-edit-value-input" class="ic-wizard-input" placeholder="e.g. 25K, 50K" autocomplete="off">
-                            <div class="ic-suggestions-grid">
-                                <button class="ic-suggestion-pill">25K</button>
-                                <button class="ic-suggestion-pill">50K</button>
-                                <button class="ic-suggestion-pill">75K</button>
-                                <button class="ic-suggestion-pill">1L</button>
-                                <button class="ic-suggestion-pill">2L</button>
-                                <button class="ic-suggestion-pill">5L</button>
-                            </div>
+                            <div class="ic-suggestions-grid" id="ic-edit-suggestions-grid"></div>
                         </div>
                     </div>
                     <div class="ic-modal-premium-footer">
