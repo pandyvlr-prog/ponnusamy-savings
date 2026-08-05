@@ -5012,6 +5012,8 @@ async function deleteGroup() {
 (function InstallmentCardsModule() {
     const STORAGE_KEY = 'pms_installment_cards';
     let currentTenure = null;
+    let uploadQueue = [];
+    let totalUploadCount = 0;
 
     function loadData() {
         try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
@@ -5030,6 +5032,36 @@ async function deleteGroup() {
     }
     function uid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    // Helper to parse strings like "25k", "50K", "1L", "2lakh" to numbers for sorting
+    function parseValueLabel(label) {
+        if (!label) return 9999999; // Unlabelled ones go to the end
+        let str = label.trim().toLowerCase();
+        
+        // Remove currency symbols, commas and spaces
+        str = str.replace(/[₹$,\s]/g, '');
+        
+        let multiplier = 1;
+        if (str.endsWith('k')) {
+            multiplier = 1000;
+            str = str.slice(0, -1);
+        } else if (str.endsWith('l')) {
+            multiplier = 100000;
+            str = str.slice(0, -1);
+        } else if (str.endsWith('lakh') || str.endsWith('lakhs')) {
+            multiplier = 100000;
+            str = str.replace(/lakhs?/, '');
+        } else if (str.endsWith('cr') || str.endsWith('crore') || str.endsWith('crores')) {
+            multiplier = 10000000;
+            str = str.replace(/crores?|cr/, '');
+        } else if (str.endsWith('m')) {
+            multiplier = 1000000;
+            str = str.slice(0, -1);
+        }
+        
+        const val = parseFloat(str);
+        return isNaN(val) ? 9999999 : val * multiplier;
     }
 
     function showTenureSelector() {
@@ -5054,6 +5086,66 @@ async function deleteGroup() {
         if (window.lucide) window.lucide.createIcons();
     }
 
+    function openValuePromptModal(titleText, imageSrc, defaultValue, callback) {
+        var modal = document.getElementById('ic-prompt-modal-backdrop');
+        var title = document.getElementById('ic-prompt-title');
+        var preview = document.getElementById('ic-prompt-img-preview');
+        var input = document.getElementById('ic-prompt-input');
+        var submitBtn = document.getElementById('btn-submit-ic-prompt');
+        var cancelBtn = document.getElementById('btn-cancel-ic-prompt');
+        var closeBtn = document.getElementById('btn-close-ic-prompt');
+
+        if (!modal || !input) return;
+
+        title.textContent = titleText;
+        preview.src = imageSrc || '';
+        input.value = defaultValue || '';
+
+        modal.style.display = 'flex';
+
+        // Focus the input instantly
+        setTimeout(function() {
+            input.focus();
+            input.select();
+        }, 100);
+
+        // Remove previous listeners using cloneNode replacement
+        var newSubmit = submitBtn.cloneNode(true);
+        submitBtn.parentNode.replaceChild(newSubmit, submitBtn);
+        submitBtn = newSubmit;
+
+        var newCancel = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+        cancelBtn = newCancel;
+
+        var newClose = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newClose, closeBtn);
+        closeBtn = newClose;
+
+        function handleSubmit() {
+            modal.style.display = 'none';
+            callback(input.value.trim());
+        }
+
+        function handleCancel() {
+            modal.style.display = 'none';
+            callback(null);
+        }
+
+        submitBtn.addEventListener('click', handleSubmit);
+        cancelBtn.addEventListener('click', handleCancel);
+        closeBtn.addEventListener('click', handleCancel);
+
+        // Enter key in input triggers submit
+        input.onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                handleSubmit();
+            } else if (e.key === 'Escape') {
+                handleCancel();
+            }
+        };
+    }
+
     function renderCards() {
         var list = document.getElementById('ic-cards-list');
         if (!list) return;
@@ -5061,28 +5153,41 @@ async function deleteGroup() {
         var cards = (data[currentTenure] || []);
         list.innerHTML = '';
 
+        // Sort cards by value (smaller to larger)
+        cards.sort(function(a, b) {
+            return parseValueLabel(a.label) - parseValueLabel(b.label);
+        });
+
         if (cards.length === 0) {
-            list.innerHTML = '<div class="ic-empty-state"><i data-lucide="image-off"></i><p>No cards yet. Tap "Upload New Card" to add your first card photo!</p></div>';
+            list.innerHTML = '<div class="ic-empty-state"><i data-lucide="image-off"></i><p>No cards yet. Tap "Upload New Card(s)" to add your first card photo!</p></div>';
             if (window.lucide) window.lucide.createIcons();
             return;
         }
 
         cards.forEach(function(card) {
             var item = document.createElement('div');
-            item.style.cssText = 'background:var(--bg-surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:box-shadow 0.25s,transform 0.25s;position:relative;';
+            item.className = 'ic-card-item';
             item.dataset.cardId = card.id;
+
             var hasImage = !!card.imageData;
-            var imgAreaStyle = 'width:100%;min-height:180px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:16px 16px 0 0;';
             var imgHTML = hasImage
-                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy" style="width:100%;height:auto;display:block;object-fit:contain;max-height:360px;"><button class="ic-change-photo-btn" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:8px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);" title="Change Photo"><i data-lucide="camera" style="width:15px;height:15px;"></i></button>'
-                : '<div class="ic-upload-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 20px;cursor:pointer;width:100%;"><i data-lucide="upload-cloud" style="width:44px;height:44px;color:#6366f1;opacity:0.7;"></i><span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Tap to upload card photo</span></div>';
-            item.innerHTML = '<div style="' + imgAreaStyle + '">' + imgHTML + '</div>'
-                + '<div style="display:flex;align-items:center;padding:12px 14px;border-top:1px solid var(--border);gap:10px;">'
-                + '<input class="ic-card-label-input" type="text" value="' + (card.label || '') + '" placeholder="e.g. 50K, 1L, 2L..." maxlength="30" style="flex:1;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text-main);font-size:1rem;font-weight:800;outline:none;padding:4px 6px;min-width:0;">'
-                + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
-                + '<button class="ic-share-btn" title="Share to WhatsApp" style="width:38px;height:38px;border-radius:10px;border:1px solid rgba(37,211,102,0.4);background:rgba(37,211,102,0.12);color:#25d366;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="share-2" style="width:16px;height:16px;"></i></button>'
-                + '<button class="ic-delete-btn" title="Delete Card" style="width:34px;height:34px;border-radius:8px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.08);color:#ef4444;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>'
+                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy">'
+                  + '<div class="ic-card-badge"><i data-lucide="tag" style="width:14px; height:14px; margin-top:2px;"></i>' + (card.label || 'Unnamed') + '</div>'
+                  + '<button class="ic-change-photo-btn" title="Change Photo"><i data-lucide="camera" style="width:16px;height:16px;"></i></button>'
+                : '<div class="ic-upload-placeholder"><i data-lucide="upload-cloud"></i><span>Tap to upload card photo</span></div>';
+
+            item.innerHTML = '<div class="ic-card-image-area">' + imgHTML + '</div>'
+                + '<div class="ic-card-footer">'
+                + '<div class="ic-card-info">'
+                + '<span class="ic-card-title">' + (card.label || 'Unnamed Card') + '</span>'
+                + '<span class="ic-card-subtitle">' + currentTenure + ' Scheme</span>'
+                + '</div>'
+                + '<div class="ic-card-actions">'
+                + '<button class="ic-action-btn ic-btn-edit" title="Edit Value"><i data-lucide="edit-3" style="width:16px;height:16px;"></i></button>'
+                + '<button class="ic-action-btn ic-btn-share" title="Share to WhatsApp"><i data-lucide="share-2" style="width:16px;height:16px;"></i></button>'
+                + '<button class="ic-action-btn ic-btn-delete" title="Delete Card"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>'
                 + '</div></div>';
+            
             list.appendChild(item);
 
             var fileInput = document.createElement('input');
@@ -5091,6 +5196,7 @@ async function deleteGroup() {
 
             var placeholder = item.querySelector('.ic-upload-placeholder');
             if (placeholder) placeholder.addEventListener('click', function() { fileInput.click(); });
+            
             var changeBtn = item.querySelector('.ic-change-photo-btn');
             if (changeBtn) changeBtn.addEventListener('click', function(e) { e.stopPropagation(); fileInput.click(); });
 
@@ -5115,26 +5221,47 @@ async function deleteGroup() {
                         canvas.height = height;
                         var ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
-                        var d = loadData();
-                        var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                        if (idx > -1) { d[currentTenure][idx].imageData = dataUrl; saveData(d); renderCards(); }
+                        // Prompt to confirm/edit value with the new photo
+                        openValuePromptModal("Update Card Photo & Value", dataUrl, card.label || "", function(newValue) {
+                            if (newValue !== null) {
+                                var d = loadData();
+                                var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
+                                if (idx > -1) {
+                                    d[currentTenure][idx].imageData = dataUrl;
+                                    d[currentTenure][idx].label = newValue || (currentTenure + ' Card');
+                                    saveData(d);
+                                    renderCards();
+                                }
+                            }
+                        });
                     };
                     img.src = ev.target.result;
                 };
                 reader.readAsDataURL(file);
             });
 
-            var labelInput = item.querySelector('.ic-card-label-input');
-            labelInput.addEventListener('blur', function() {
-                var d = loadData();
-                var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                if (idx > -1) { d[currentTenure][idx].label = labelInput.value.trim(); saveData(d); }
+            // Edit button handler
+            item.querySelector('.ic-btn-edit').addEventListener('click', function() {
+                openValuePromptModal("Edit Card Value", card.imageData, card.label || "", function(newValue) {
+                    if (newValue !== null) {
+                        var d = loadData();
+                        var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
+                        if (idx > -1) {
+                            d[currentTenure][idx].label = newValue || (currentTenure + ' Card');
+                            saveData(d);
+                            renderCards();
+                        }
+                    }
+                });
             });
 
-            item.querySelector('.ic-share-btn').addEventListener('click', function() { shareCard(card); });
-            item.querySelector('.ic-delete-btn').addEventListener('click', function() {
+            // Share button handler
+            item.querySelector('.ic-btn-share').addEventListener('click', function() { shareCard(card); });
+            
+            // Delete button handler
+            item.querySelector('.ic-btn-delete').addEventListener('click', function() {
                 if (!confirm('Delete this card?')) return;
                 var d = loadData();
                 d[currentTenure] = (d[currentTenure] || []).filter(function(c) { return c.id !== card.id; });
@@ -5159,7 +5286,7 @@ async function deleteGroup() {
             var url = URL.createObjectURL(file);
             window.open(url, '_blank');
             setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
-            if (typeof showNotification === 'function') showNotification('Opened in new tab - save and share manually.', 'info');
+            if (typeof showNotification === 'function') showNotification('Opened image in new tab - save and share manually.', 'info');
         }
     }
 
@@ -5172,67 +5299,80 @@ async function deleteGroup() {
         var d = loadData();
         var cards = (d[currentTenure] || []).filter(function(c) { return !!c.imageData; });
         if (!cards.length) { alert('No card images uploaded yet.'); return; }
-        if (cards.length === 1) { shareCard(cards[0]); return; }
-        if (typeof showNotification === 'function') showNotification('Preparing images...', 'info');
-        var imgs = await Promise.all(cards.map(function(c) {
-            return new Promise(function(resolve) {
-                var img = new Image();
-                img.onload = function() { resolve(img); }; img.onerror = function() { resolve(null); };
-                img.src = c.imageData;
-            });
-        }));
-        var validImgs = imgs.filter(Boolean);
-        if (!validImgs.length) { alert('Could not load images.'); return; }
-        var GAP = 16;
-        var maxW = Math.max.apply(null, validImgs.map(function(i) { return i.naturalWidth; }));
-        var totalH = validImgs.reduce(function(acc, img) { return acc + Math.round(img.naturalHeight * (maxW / img.naturalWidth)) + GAP; }, GAP);
-        var canvas = document.createElement('canvas');
-        canvas.width = maxW; canvas.height = totalH;
-        var ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#0f0f0f'; ctx.fillRect(0, 0, maxW, totalH);
-        var y = GAP;
-        validImgs.forEach(function(img) {
-            var drawH = Math.round(img.naturalHeight * (maxW / img.naturalWidth));
-            ctx.drawImage(img, 0, y, maxW, drawH); y += drawH + GAP;
+
+        // Sort cards by value first
+        cards.sort(function(a, b) {
+            return parseValueLabel(a.label) - parseValueLabel(b.label);
         });
-        canvas.toBlob(async function(blob) {
-            var file = new File([blob], (currentTenure || 'All') + '_Cards.jpg', { type: 'image/jpeg' });
-            await shareImageFile(file, currentTenure + ' Scheme Cards');
-        }, 'image/jpeg', 0.92);
+
+        if (typeof showNotification === 'function') showNotification('Preparing images for sharing...', 'info');
+
+        // Convert base64 data to File objects for separate sharing
+        var files = cards.map(function(card, index) {
+            var sanitizedLabel = (card.label || 'card').replace(/[^a-zA-Z0-9]/g, '_');
+            return dataURLtoFile(card.imageData, (index + 1) + '_' + sanitizedLabel + '.jpg');
+        });
+
+        // Use native Navigator share to send all files together (as separate images) if supported
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: files })) {
+            try {
+                await navigator.share({
+                    title: currentTenure + ' Scheme Cards',
+                    files: files
+                });
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.warn('Native group share failed, falling back to sequential windows.', err);
+                    await shareSeparatelyFallback(files);
+                }
+            }
+        } else {
+            await shareSeparatelyFallback(files);
+        }
     }
 
-    function addNewCardSlot(file) {
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-            var img = new Image();
-            img.onload = function() {
-                var canvas = document.createElement('canvas');
-                var MAX_WIDTH = 1000;
-                var MAX_HEIGHT = 1000;
-                var width = img.width;
-                var height = img.height;
-                if (width > height) {
-                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                } else {
-                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                }
-                canvas.width = width; canvas.height = height;
-                var ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+    async function shareSeparatelyFallback(files) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const url = URL.createObjectURL(file);
+            window.open(url, '_blank');
+            await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        if (typeof showNotification === 'function') {
+            showNotification('Opened ' + files.length + ' cards in new tabs. Save and share them.', 'info');
+        }
+    }
 
+    function processNextInUploadQueue() {
+        var addCardInput = document.getElementById('ic-add-card-file-input');
+        if (uploadQueue.length === 0) {
+            if (addCardInput) addCardInput.value = '';
+            return;
+        }
+
+        var currentIdx = totalUploadCount - uploadQueue.length + 1;
+        var item = uploadQueue[0];
+        var title = "Add Card (" + currentIdx + " of " + totalUploadCount + ")";
+
+        openValuePromptModal(title, item.dataUrl, "", function(enteredValue) {
+            if (enteredValue !== null) {
                 var d = loadData();
                 if (!d[currentTenure]) d[currentTenure] = [];
-                d[currentTenure].push({ id: uid(), label: '', imageData: dataUrl });
-                saveData(d); renderCards();
-            };
-            img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
+                d[currentTenure].push({
+                    id: uid(),
+                    label: enteredValue || (currentTenure + ' Card'),
+                    imageData: item.dataUrl
+                });
+                saveData(d);
+                renderCards();
+            }
+            // Remove current item and recurse to process next in queue
+            uploadQueue.shift();
+            processNextInUploadQueue();
+        });
     }
 
     function init() {
-        // Reset to tenure selector every time screen-cards is opened
         document.addEventListener('click', function(e) {
             if (e.target.closest('[data-target="screen-cards"]')) {
                 setTimeout(showTenureSelector, 60);
@@ -5251,7 +5391,45 @@ async function deleteGroup() {
         if (addCardBtn && addCardInput) {
             addCardBtn.addEventListener('click', function() { addCardInput.click(); });
             addCardInput.addEventListener('change', function() {
-                if (addCardInput.files[0]) { addNewCardSlot(addCardInput.files[0]); addCardInput.value = ''; }
+                var files = Array.from(addCardInput.files);
+                if (files.length === 0) return;
+
+                uploadQueue = [];
+                totalUploadCount = files.length;
+                var loadedCount = 0;
+
+                if (typeof showNotification === 'function') showNotification('Processing images...', 'info');
+
+                files.forEach(function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        var img = new Image();
+                        img.onload = function() {
+                            var canvas = document.createElement('canvas');
+                            var MAX_WIDTH = 1000;
+                            var MAX_HEIGHT = 1000;
+                            var width = img.width;
+                            var height = img.height;
+                            if (width > height) {
+                                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                            } else {
+                                if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                            }
+                            canvas.width = width; canvas.height = height;
+                            var ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                            uploadQueue.push({ file: file, dataUrl: dataUrl });
+                            loadedCount++;
+                            if (loadedCount === files.length) {
+                                processNextInUploadQueue();
+                            }
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
             });
         }
 
