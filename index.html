@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=163">
+    <link rel="stylesheet" href="style.css?v=164">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -121,16 +121,19 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     grid-template-columns: repeat(auto-fit,minmax(280px,1fr)) !important;
     gap: 24px !important;
     margin-top: 8px !important;
+    align-items: start !important;
 }
 /* SCHEME CARDS */
 #ic-tenure-selector .ic-scheme-card {
     background: rgba(255,255,255,.05) !important;
     border: 1px solid rgba(255,255,255,.12) !important;
     border-radius: 24px !important;
-    padding: 28px !important;
-    min-height: 360px !important;
+    padding: 24px !important;
+    height: auto !important;
+    min-height: auto !important;
     display: flex !important;
     flex-direction: column !important;
+    justify-content: flex-start !important;
     position: relative !important;
     overflow: hidden !important;
     cursor: pointer !important;
@@ -196,7 +199,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 #ic-tenure-selector .ic-scheme-meta { margin-bottom: 16px; }
 #ic-tenure-selector .ic-scheme-stats-list {
-    flex: 1 !important;
+    flex: none !important;
     display: flex !important; flex-direction: column !important; gap: 10px !important;
     margin-bottom: 20px !important; padding: 16px !important;
     background: rgba(255,255,255,.04) !important;
@@ -223,7 +226,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     text-align: center !important;
     box-shadow: 0 4px 16px rgba(212,175,55,.4) !important;
     transition: transform .2s,box-shadow .2s !important;
-    margin-top: auto !important;
+    margin-top: 0 !important;
     letter-spacing: .3px !important;
 }
 #ic-tenure-selector .ic-scheme-btn:hover {
