@@ -989,37 +989,39 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 
 /* SIDEBAR TABLET FIT & SETTINGS ICON VISIBILITY FIX */
-.desktop-sidebar {
-    height: 100vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    overflow-y: auto !important;
-}
+@media (min-width: 769px) {
+    .desktop-sidebar {
+        height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important;
+    }
 
-.desktop-sidebar-logo {
-    padding: 12px 0 10px !important;
-    margin-bottom: 4px !important;
-    flex-shrink: 0 !important;
-}
+    .desktop-sidebar-logo {
+        padding: 12px 0 10px !important;
+        margin-bottom: 4px !important;
+        flex-shrink: 0 !important;
+    }
 
-.desktop-sidebar-links {
-    padding: 8px 0 !important;
-    gap: 6px !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-}
+    .desktop-sidebar-links {
+        padding: 8px 0 !important;
+        gap: 6px !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
 
-.desktop-sidebar-footer {
-    padding: 10px 0 14px !important;
-    border-top: 1px solid var(--border) !important;
-    flex-shrink: 0 !important;
-    margin-top: auto !important;
+    .desktop-sidebar-footer {
+        padding: 10px 0 14px !important;
+        border-top: 1px solid var(--border) !important;
+        flex-shrink: 0 !important;
+        margin-top: auto !important;
+    }
 }
 </style>
 </head>
