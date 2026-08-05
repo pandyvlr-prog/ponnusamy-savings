@@ -5012,13 +5012,21 @@ async function deleteGroup() {
 (function InstallmentCardsModule() {
     const STORAGE_KEY = 'pms_installment_cards';
     let currentTenure = null;
-    let uploadQueue = [];
-    let totalUploadCount = 0;
+    let wizardQueue = [];
+    let wizardIndex = 0;
+    let wizardMode = 'single'; // 'single' or 'bulk'
+    
+    let selectedCardForEdit = null;
+    let selectedCardForDelete = null;
+    let selectedCardForShare = null;
 
+    // Load state from local storage
     function loadData() {
         try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
         catch (e) { return {}; }
     }
+
+    // Save state to local storage and sync to Supabase
     function saveData(data) {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -5029,14 +5037,81 @@ async function deleteGroup() {
         if (typeof commitState === 'function') {
             commitState(true);
         }
+        updateSelectionStats();
     }
+
+    // Helper for generating unique ids
     function uid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     }
 
-    // Helper to parse strings like "25k", "50K", "1L", "2lakh" to numbers for sorting
+    // Estimate storage used in KB/MB
+    function calculateStorageUsed() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY) || '{}';
+            const bytes = new Blob([raw]).size;
+            if (bytes < 1024) return bytes + ' Bytes';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(2) + ' MB';
+        } catch(e) {
+            return '0 KB';
+        }
+    }
+
+    // High performance counting animation
+    function animateStatsCounter(elementId, targetValue, isCurrency = false) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        const duration = 800; // ms
+        const startTime = performance.now();
+        const startValue = 0;
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease out quad formula
+            const easeProgress = progress * (2 - progress);
+            const currentValue = startValue + easeProgress * (targetValue - startValue);
+
+            if (isCurrency) {
+                el.textContent = formatCurrencyINR(Math.round(currentValue));
+            } else {
+                el.textContent = Math.round(currentValue).toLocaleString();
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    // Indian Rupee currency formatter
+    function formatCurrencyINR(val) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0
+        }).format(val);
+    }
+
+    // Elegant date formatter
+    function formatDate(isoString) {
+        if (!isoString) return 'N/A';
+        try {
+            const d = new Date(isoString);
+            if (isNaN(d.getTime())) return 'N/A';
+            return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch (e) {
+            return 'N/A';
+        }
+    }
+
+    // Smart value label parser (converts shorthand notation into numerical value)
     function parseValueLabel(label) {
-        if (!label) return 9999999; // Unlabelled ones go to the end
+        if (!label) return 9999999; 
         let str = label.trim().toLowerCase();
         
         // Remove currency symbols, commas and spaces
@@ -5064,377 +5139,1261 @@ async function deleteGroup() {
         return isNaN(val) ? 9999999 : val * multiplier;
     }
 
+    // Format inputs automatically if possible (e.g. 25k -> ₹25,000)
+    function cleanAndFormatLabel(inputStr) {
+        const numeric = parseValueLabel(inputStr);
+        if (numeric !== 9999999) {
+            return formatCurrencyINR(numeric);
+        }
+        return inputStr;
+    }
+
+    // Update selection page counters
+    function updateSelectionStats() {
+        const data = loadData();
+        ['12M', '20M'].forEach(tenure => {
+            const cards = data[tenure] || [];
+            
+            // Stats count
+            const countEl = document.getElementById('stats-' + tenure + '-count');
+            if (countEl) countEl.textContent = cards.length;
+
+            // Stats value sum
+            let totalValue = 0;
+            let lastUpdated = null;
+            cards.forEach(c => {
+                const val = parseValueLabel(c.label);
+                if (val !== 9999999) totalValue += val;
+                if (c.uploadedAt) {
+                    const d = new Date(c.uploadedAt);
+                    if (!lastUpdated || d > lastUpdated) lastUpdated = d;
+                }
+            });
+
+            const valEl = document.getElementById('stats-' + tenure + '-value');
+            if (valEl) valEl.textContent = formatCurrencyINR(totalValue);
+
+            const updatedEl = document.getElementById('stats-' + tenure + '-updated');
+            if (updatedEl) {
+                updatedEl.textContent = lastUpdated ? formatDate(lastUpdated.toISOString()) : 'N/A';
+            }
+        });
+    }
+
+    // Page 1 selector screen navigation handler
     function showTenureSelector() {
-        var tenureSelector = document.getElementById('ic-tenure-selector');
-        var cardsGridView  = document.getElementById('ic-cards-grid-view');
-        if (tenureSelector) tenureSelector.style.display = 'flex';
-        if (cardsGridView)  cardsGridView.style.display  = 'none';
+        const screen = document.getElementById('screen-cards');
+        if (!screen) return;
+
+        // Animate Page Transition back to landing
+        const selectorView = document.getElementById('ic-tenure-selector');
+        const cardsGridView = document.getElementById('ic-cards-grid-view');
+        const fab = document.getElementById('ic-fab-upload');
+
+        if (cardsGridView) cardsGridView.style.display = 'none';
+        if (fab) fab.style.display = 'none';
+        if (selectorView) {
+            selectorView.style.display = 'block';
+            selectorView.classList.add('ic-fade-in');
+            setTimeout(() => selectorView.classList.remove('ic-fade-in'), 500);
+        }
         currentTenure = null;
+        updateSelectionStats();
         if (window.lucide) window.lucide.createIcons();
     }
 
+    // Page 2 gallery page navigation handler
     function openTenureCards(tenure) {
         currentTenure = tenure;
-        var tenureSelector = document.getElementById('ic-tenure-selector');
-        var cardsGridView  = document.getElementById('ic-cards-grid-view');
-        var label          = document.getElementById('ic-grid-tenure-label');
-        if (tenureSelector) tenureSelector.style.display = 'none';
-        if (cardsGridView)  cardsGridView.style.display  = 'flex';
-        cardsGridView.style.flexDirection = 'column';
-        if (label)          label.textContent = tenure + ' Scheme';
-        renderCards();
-        if (window.lucide) window.lucide.createIcons();
-    }
+        const selectorView = document.getElementById('ic-tenure-selector');
+        const cardsGridView = document.getElementById('ic-cards-grid-view');
+        const label = document.getElementById('ic-grid-tenure-label');
+        const sub = document.getElementById('ic-grid-tenure-sub');
+        const fab = document.getElementById('ic-fab-upload');
 
-    function openValuePromptModal(titleText, imageSrc, defaultValue, callback) {
-        var modal = document.getElementById('ic-prompt-modal-backdrop');
-        var title = document.getElementById('ic-prompt-title');
-        var preview = document.getElementById('ic-prompt-img-preview');
-        var input = document.getElementById('ic-prompt-input');
-        var submitBtn = document.getElementById('btn-submit-ic-prompt');
-        var cancelBtn = document.getElementById('btn-cancel-ic-prompt');
-        var closeBtn = document.getElementById('btn-close-ic-prompt');
-
-        if (!modal || !input) return;
-
-        title.textContent = titleText;
-        preview.src = imageSrc || '';
-        input.value = defaultValue || '';
-
-        modal.style.display = 'flex';
-
-        // Focus the input instantly
-        setTimeout(function() {
-            input.focus();
-            input.select();
-        }, 100);
-
-        // Remove previous listeners using cloneNode replacement
-        var newSubmit = submitBtn.cloneNode(true);
-        submitBtn.parentNode.replaceChild(newSubmit, submitBtn);
-        submitBtn = newSubmit;
-
-        var newCancel = cancelBtn.cloneNode(true);
-        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
-        cancelBtn = newCancel;
-
-        var newClose = closeBtn.cloneNode(true);
-        closeBtn.parentNode.replaceChild(newClose, closeBtn);
-        closeBtn = newClose;
-
-        function handleSubmit() {
-            modal.style.display = 'none';
-            callback(input.value.trim());
+        // Transition animations
+        const clickedCard = document.getElementById('card-scheme-' + tenure);
+        if (clickedCard) {
+            document.getElementById('screen-cards').classList.add('ic-transitioning');
+            clickedCard.style.transform = 'scale(1.05)';
+            clickedCard.style.boxShadow = '0 0 40px var(--primary-glow)';
         }
 
-        function handleCancel() {
-            modal.style.display = 'none';
-            callback(null);
-        }
-
-        submitBtn.addEventListener('click', handleSubmit);
-        cancelBtn.addEventListener('click', handleCancel);
-        closeBtn.addEventListener('click', handleCancel);
-
-        // Enter key in input triggers submit
-        input.onkeydown = function(e) {
-            if (e.key === 'Enter') {
-                handleSubmit();
-            } else if (e.key === 'Escape') {
-                handleCancel();
+        setTimeout(() => {
+            if (clickedCard) {
+                clickedCard.style.transform = '';
+                clickedCard.style.boxShadow = '';
             }
-        };
+            document.getElementById('screen-cards').classList.remove('ic-transitioning');
+
+            if (selectorView) selectorView.style.display = 'none';
+            if (cardsGridView) {
+                cardsGridView.style.display = 'block';
+                cardsGridView.classList.add('ic-fade-in');
+                setTimeout(() => cardsGridView.classList.remove('ic-fade-in'), 500);
+            }
+            if (fab) fab.style.display = 'flex';
+            if (label) label.textContent = tenure === '12M' ? '12 Month Scheme' : '20 Month Scheme';
+            if (sub) sub.textContent = 'Manage your ' + (tenure === '12M' ? '12-month' : '20-month') + ' installment cards';
+
+            // Reset filters
+            const searchInput = document.getElementById('ic-search-input');
+            const filterSelect = document.getElementById('ic-filter-select');
+            const sortSelect = document.getElementById('ic-sort-select');
+            if (searchInput) searchInput.value = '';
+            if (filterSelect) filterSelect.value = 'all';
+            if (sortSelect) sortSelect.value = 'auto';
+
+            calculateAndRenderGallery();
+        }, 350);
     }
 
-    function renderCards() {
-        var list = document.getElementById('ic-cards-list');
+    // Calculate gallery statistics & render grid items
+    function calculateAndRenderGallery() {
+        const data = loadData();
+        let cards = data[currentTenure] || [];
+
+        // Automatic sorting defaults to value ascending
+        cards.sort((a, b) => parseValueLabel(a.label) - parseValueLabel(b.label));
+
+        // Save automatic sort if database doesn't reflect it
+        let totalCards = cards.length;
+        let totalValue = 0;
+        let highestValue = 0;
+        let lowestValue = cards.length > 0 ? 9999999 : 0;
+        let lastUpdatedStr = null;
+        let storageBytes = 0;
+
+        cards.forEach(c => {
+            const numericVal = parseValueLabel(c.label);
+            if (numericVal !== 9999999) {
+                totalValue += numericVal;
+                if (numericVal > highestValue) highestValue = numericVal;
+                if (numericVal < lowestValue) lowestValue = numericVal;
+            }
+            if (c.imageData) {
+                storageBytes += c.imageData.length;
+            }
+        });
+        if (lowestValue === 9999999) lowestValue = 0;
+
+        const avgValue = totalCards > 0 ? Math.round(totalValue / totalCards) : 0;
+        
+        // Storage display size calculation
+        let storageString = '0 KB';
+        if (storageBytes > 0) {
+            const kb = storageBytes / 1024;
+            storageString = kb < 1024 ? kb.toFixed(1) + ' KB' : (kb / 1024).toFixed(2) + ' MB';
+        }
+
+        // Animate counter values
+        animateStatsCounter('gallery-stat-total-cards', totalCards);
+        animateStatsCounter('gallery-stat-total-value', totalValue, true);
+        animateStatsCounter('gallery-stat-highest-value', highestValue, true);
+        animateStatsCounter('gallery-stat-lowest-value', lowestValue, true);
+        animateStatsCounter('gallery-stat-avg-value', avgValue, true);
+        
+        const storageEl = document.getElementById('gallery-stat-storage-used');
+        if (storageEl) storageEl.textContent = storageString;
+
+        // Render card items
+        renderGalleryItems();
+    }
+
+    // Filter, sort & render individual cards
+    function renderGalleryItems() {
+        const list = document.getElementById('ic-cards-list');
         if (!list) return;
-        var data  = loadData();
-        var cards = (data[currentTenure] || []);
+
+        const data = loadData();
+        let cards = data[currentTenure] || [];
+
+        // Apply Search Filter
+        const query = (document.getElementById('ic-search-input')?.value || '').trim().toLowerCase();
+        if (query) {
+            cards = cards.filter(c => {
+                const labelMatch = (c.label || '').toLowerCase().includes(query);
+                const dateMatch = formatDate(c.uploadedAt).toLowerCase().includes(query);
+                return labelMatch || dateMatch;
+            });
+        }
+
+        // Apply Value Filters
+        const filterVal = document.getElementById('ic-filter-select')?.value || 'all';
+        if (filterVal === 'low') {
+            cards = cards.filter(c => parseValueLabel(c.label) <= 100000);
+        } else if (filterVal === 'high') {
+            cards = cards.filter(c => parseValueLabel(c.label) > 100000);
+        }
+
+        // Apply Sort Dropdown
+        const sortVal = document.getElementById('ic-sort-select')?.value || 'auto';
+        if (sortVal === 'auto' || sortVal === 'asc') {
+            cards.sort((a, b) => parseValueLabel(a.label) - parseValueLabel(b.label));
+        } else if (sortVal === 'desc') {
+            cards.sort((a, b) => parseValueLabel(b.label) - parseValueLabel(a.label));
+        } else if (sortVal === 'newest') {
+            cards.sort((a, b) => new Date(b.uploadedAt || 0) - new Date(a.uploadedAt || 0));
+        } else if (sortVal === 'oldest') {
+            cards.sort((a, b) => new Date(a.uploadedAt || 0) - new Date(b.uploadedAt || 0));
+        }
+
         list.innerHTML = '';
 
-        // Sort cards by value (smaller to larger)
-        cards.sort(function(a, b) {
-            return parseValueLabel(a.label) - parseValueLabel(b.label);
-        });
-
+        // Empty state check
         if (cards.length === 0) {
-            list.innerHTML = '<div class="ic-empty-state"><i data-lucide="image-off"></i><p>No cards yet. Tap "Upload New Card(s)" to add your first card photo!</p></div>';
+            list.innerHTML = `
+                <div class="ic-empty-gallery">
+                    <svg class="ic-empty-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                    <h3 class="ic-empty-title">No Scheme Cards Uploaded</h3>
+                    <p class="ic-empty-subtitle">Upload your first card to get started. Organize, sort, and share them securely.</p>
+                    <button class="ic-scheme-btn" style="max-width: 200px;" id="btn-ic-empty-upload">
+                        <i data-lucide="plus" style="width:18px;height:18px;color:#000;"></i> Upload Cards
+                    </button>
+                </div>
+            `;
+            const emptyUploadBtn = document.getElementById('btn-ic-empty-upload');
+            if (emptyUploadBtn) {
+                emptyUploadBtn.addEventListener('click', openUploadWizard);
+            }
             if (window.lucide) window.lucide.createIcons();
             return;
         }
 
-        cards.forEach(function(card) {
-            var item = document.createElement('div');
-            item.className = 'ic-card-item';
+        // Show Skeleton loaders first if image is big (simulated soft skeletons)
+        cards.forEach(card => {
+            const item = document.createElement('div');
+            item.className = 'ic-premium-card-item';
             item.dataset.cardId = card.id;
 
-            var hasImage = !!card.imageData;
-            var imgHTML = hasImage
-                ? '<img src="' + card.imageData + '" alt="' + (card.label || 'Card') + '" loading="lazy">'
-                  + '<div class="ic-card-badge"><i data-lucide="tag" style="width:14px; height:14px; margin-top:2px;"></i>' + (card.label || 'Unnamed') + '</div>'
-                  + '<button class="ic-change-photo-btn" title="Change Photo"><i data-lucide="camera" style="width:16px;height:16px;"></i></button>'
-                : '<div class="ic-upload-placeholder"><i data-lucide="upload-cloud"></i><span>Tap to upload card photo</span></div>';
+            // Highlight matches helper
+            let displayLabel = card.label || 'Unnamed Card';
+            if (query && displayLabel.toLowerCase().includes(query)) {
+                const regex = new RegExp(`(${query})`, 'gi');
+                displayLabel = displayLabel.replace(regex, '<mark class="search-highlight">$1</mark>');
+            }
 
-            item.innerHTML = '<div class="ic-card-image-area">' + imgHTML + '</div>'
-                + '<div class="ic-card-footer">'
-                + '<div class="ic-card-info">'
-                + '<span class="ic-card-title">' + (card.label || 'Unnamed Card') + '</span>'
-                + '<span class="ic-card-subtitle">' + currentTenure + ' Scheme</span>'
-                + '</div>'
-                + '<div class="ic-card-actions">'
-                + '<button class="ic-action-btn ic-btn-edit" title="Edit Value"><i data-lucide="edit-3" style="width:16px;height:16px;"></i></button>'
-                + '<button class="ic-action-btn ic-btn-share" title="Share to WhatsApp"><i data-lucide="share-2" style="width:16px;height:16px;"></i></button>'
-                + '<button class="ic-action-btn ic-btn-delete" title="Delete Card"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>'
-                + '</div></div>';
-            
+            let displayDate = formatDate(card.uploadedAt);
+            if (query && displayDate.toLowerCase().includes(query)) {
+                const regex = new RegExp(`(${query})`, 'gi');
+                displayDate = displayDate.replace(regex, '<mark class="search-highlight">$1</mark>');
+            }
+
+            const imgAreaHTML = card.imageData
+                ? `<img class="ic-premium-card-img" src="${card.imageData}" alt="${card.label}" loading="lazy">
+                   <div class="ic-premium-value-badge"><i data-lucide="tag" style="width:14px; height:14px;"></i> ${card.label || 'Unnamed'}</div>`
+                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);"><i data-lucide="image-off" style="width:36px;height:36px;"></i></div>`;
+
+            item.innerHTML = `
+                <div class="ic-premium-image-wrap">${imgAreaHTML}</div>
+                <div class="ic-premium-card-footer">
+                    <div class="ic-premium-card-details">
+                        <span class="ic-premium-card-title">${displayLabel}</span>
+                        <span class="ic-premium-card-date">${displayDate}</span>
+                    </div>
+                    <div class="ic-premium-card-actions">
+                        <button class="ic-premium-icon-btn ic-edit" title="Edit Card"><i data-lucide="edit-3"></i></button>
+                        <button class="ic-premium-icon-btn ic-share" title="Share Options"><i data-lucide="share-2"></i></button>
+                        <button class="ic-premium-icon-btn ic-delete" title="Delete Card"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </div>
+            `;
+
             list.appendChild(item);
 
-            var fileInput = document.createElement('input');
-            fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
-            item.appendChild(fileInput);
-
-            var placeholder = item.querySelector('.ic-upload-placeholder');
-            if (placeholder) placeholder.addEventListener('click', function() { fileInput.click(); });
-            
-            var changeBtn = item.querySelector('.ic-change-photo-btn');
-            if (changeBtn) changeBtn.addEventListener('click', function(e) { e.stopPropagation(); fileInput.click(); });
-
-            fileInput.addEventListener('change', function() {
-                var file = fileInput.files[0];
-                if (!file) return;
-                var reader = new FileReader();
-                reader.onload = function(ev) {
-                    var img = new Image();
-                    img.onload = function() {
-                        var canvas = document.createElement('canvas');
-                        var MAX_WIDTH = 1000;
-                        var MAX_HEIGHT = 1000;
-                        var width = img.width;
-                        var height = img.height;
-                        if (width > height) {
-                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                        } else {
-                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                        }
-                        canvas.width = width;
-                        canvas.height = height;
-                        var ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-                        // Prompt to confirm/edit value with the new photo
-                        openValuePromptModal("Update Card Photo & Value", dataUrl, card.label || "", function(newValue) {
-                            if (newValue !== null) {
-                                var d = loadData();
-                                var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                                if (idx > -1) {
-                                    d[currentTenure][idx].imageData = dataUrl;
-                                    d[currentTenure][idx].label = newValue || (currentTenure + ' Card');
-                                    saveData(d);
-                                    renderCards();
-                                }
-                            }
-                        });
-                    };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
+            // Bind Actions
+            item.querySelector('.ic-edit').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openEditModal(card);
             });
-
-            // Edit button handler
-            item.querySelector('.ic-btn-edit').addEventListener('click', function() {
-                openValuePromptModal("Edit Card Value", card.imageData, card.label || "", function(newValue) {
-                    if (newValue !== null) {
-                        var d = loadData();
-                        var idx = (d[currentTenure] || []).findIndex(function(c) { return c.id === card.id; });
-                        if (idx > -1) {
-                            d[currentTenure][idx].label = newValue || (currentTenure + ' Card');
-                            saveData(d);
-                            renderCards();
-                        }
-                    }
-                });
+            item.querySelector('.ic-share').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openSharePopover(e, card);
             });
-
-            // Share button handler
-            item.querySelector('.ic-btn-share').addEventListener('click', function() { shareCard(card); });
-            
-            // Delete button handler
-            item.querySelector('.ic-btn-delete').addEventListener('click', function() {
-                if (!confirm('Delete this card?')) return;
-                var d = loadData();
-                d[currentTenure] = (d[currentTenure] || []).filter(function(c) { return c.id !== card.id; });
-                saveData(d); renderCards();
+            item.querySelector('.ic-delete').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openDeleteConfirmation(card);
+            });
+            item.querySelector('.ic-premium-image-wrap').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openLightbox(card);
             });
         });
 
         if (window.lucide) window.lucide.createIcons();
     }
 
+    // --- PREMIUM FULL-SCREEN IMAGE VIEWER (LIGHTBOX) ENGINE ---
+    let lightboxCardsList = [];
+    let lightboxIndex = 0;
+    
+    // Zoom, Pan, Swipe gesture variables
+    let zoomScale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let lastPanX = 0;
+    let lastPanY = 0;
+    let initialPinchDistance = 0;
+    let initialScale = 1;
+    let swipeStartX = 0;
+    let swipeThreshold = 80;
+
+    function openLightbox(card) {
+        const data = loadData();
+        let cards = data[currentTenure] || [];
+
+        // Apply active gallery search, filter & sort so Lightbox matches Gallery view exactly
+        const query = (document.getElementById('ic-search-input')?.value || '').trim().toLowerCase();
+        if (query) {
+            cards = cards.filter(c => {
+                const labelMatch = (c.label || '').toLowerCase().includes(query);
+                const dateMatch = formatDate(c.uploadedAt).toLowerCase().includes(query);
+                return labelMatch || dateMatch;
+            });
+        }
+
+        const filterVal = document.getElementById('ic-filter-select')?.value || 'all';
+        if (filterVal === 'low') {
+            cards = cards.filter(c => parseValueLabel(c.label) <= 100000);
+        } else if (filterVal === 'high') {
+            cards = cards.filter(c => parseValueLabel(c.label) > 100000);
+        }
+
+        const sortVal = document.getElementById('ic-sort-select')?.value || 'auto';
+        if (sortVal === 'auto' || sortVal === 'asc') {
+            cards.sort((a, b) => parseValueLabel(a.label) - parseValueLabel(b.label));
+        } else if (sortVal === 'desc') {
+            cards.sort((a, b) => parseValueLabel(b.label) - parseValueLabel(a.label));
+        } else if (sortVal === 'newest') {
+            cards.sort((a, b) => new Date(b.uploadedAt || 0) - new Date(a.uploadedAt || 0));
+        } else if (sortVal === 'oldest') {
+            cards.sort((a, b) => new Date(a.uploadedAt || 0) - new Date(b.uploadedAt || 0));
+        }
+
+        lightboxCardsList = cards;
+        lightboxIndex = cards.findIndex(c => c.id === card.id);
+        if (lightboxIndex === -1) lightboxIndex = 0;
+
+        const backdrop = document.getElementById('ic-lightbox-backdrop');
+        if (backdrop) backdrop.style.display = 'flex';
+
+        resetLightboxZoom();
+        renderLightboxCard();
+    }
+
+    function renderLightboxCard() {
+        if (!lightboxCardsList.length || lightboxIndex < 0 || lightboxIndex >= lightboxCardsList.length) return;
+        const card = lightboxCardsList[lightboxIndex];
+
+        const img = document.getElementById('ic-lightbox-img');
+        const title = document.getElementById('ic-lightbox-title');
+        const date = document.getElementById('ic-lightbox-date');
+        const pos = document.getElementById('ic-lightbox-position');
+
+        if (img) {
+            img.style.opacity = 0;
+            setTimeout(() => {
+                img.src = card.imageData || '';
+                img.style.opacity = 1;
+            }, 100);
+        }
+        if (title) title.textContent = card.label || 'Unnamed Card';
+        if (date) date.textContent = 'Uploaded ' + formatDate(card.uploadedAt);
+        if (pos) pos.textContent = `Image ${lightboxIndex + 1} of ${lightboxCardsList.length}`;
+
+        resetLightboxZoom();
+
+        // Preload adjacent images
+        if (lightboxIndex > 0) {
+            const prevImg = new Image();
+            prevImg.src = lightboxCardsList[lightboxIndex - 1].imageData;
+        }
+        if (lightboxIndex < lightboxCardsList.length - 1) {
+            const nextImg = new Image();
+            nextImg.src = lightboxCardsList[lightboxIndex + 1].imageData;
+        }
+    }
+
+    function resetLightboxZoom() {
+        zoomScale = 1;
+        panX = 0;
+        panY = 0;
+        applyLightboxTransform();
+    }
+
+    function applyLightboxTransform() {
+        const img = document.getElementById('ic-lightbox-img');
+        if (img) {
+            img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+        }
+    }
+
+    function closeLightbox() {
+        const backdrop = document.getElementById('ic-lightbox-backdrop');
+        if (backdrop) backdrop.style.display = 'none';
+    }
+
+    function navigateLightbox(direction) {
+        if (direction === 'next' && lightboxIndex < lightboxCardsList.length - 1) {
+            lightboxIndex++;
+            renderLightboxCard();
+        } else if (direction === 'prev' && lightboxIndex > 0) {
+            lightboxIndex--;
+            renderLightboxCard();
+        }
+    }
+
+    function initLightboxEvents() {
+        const backdrop = document.getElementById('ic-lightbox-backdrop');
+        const img = document.getElementById('ic-lightbox-img');
+        const viewport = document.getElementById('ic-lightbox-viewport');
+        const btnPrev = document.getElementById('btn-lightbox-prev');
+        const btnNext = document.getElementById('btn-lightbox-next');
+        const btnClose = document.getElementById('btn-close-ic-lightbox');
+
+        if (!backdrop || !viewport || !img) return;
+
+        if (btnPrev) btnPrev.addEventListener('click', () => navigateLightbox('prev'));
+        if (btnNext) btnNext.addEventListener('click', () => navigateLightbox('next'));
+        if (btnClose) btnClose.addEventListener('click', closeLightbox);
+
+        const btnEdit = document.getElementById('btn-lightbox-edit');
+        const btnShare = document.getElementById('btn-lightbox-share');
+        const btnDownload = document.getElementById('btn-lightbox-download');
+        const btnDelete = document.getElementById('btn-lightbox-delete');
+
+        if (btnEdit) {
+            btnEdit.addEventListener('click', () => {
+                const card = lightboxCardsList[lightboxIndex];
+                closeLightbox();
+                if (card) openEditModal(card);
+            });
+        }
+        if (btnShare) {
+            btnShare.addEventListener('click', (e) => {
+                const card = lightboxCardsList[lightboxIndex];
+                if (card) openSharePopover(e, card);
+            });
+        }
+        if (btnDownload) {
+            btnDownload.addEventListener('click', () => {
+                const card = lightboxCardsList[lightboxIndex];
+                if (card) downloadCardImage(card);
+            });
+        }
+        if (btnDelete) {
+            btnDelete.addEventListener('click', () => {
+                const card = lightboxCardsList[lightboxIndex];
+                closeLightbox();
+                if (card) openDeleteConfirmation(card);
+            });
+        }
+
+        // Close on backdrop/outside click
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop || e.target === viewport) {
+                closeLightbox();
+            }
+        });
+
+        // Double click to zoom
+        viewport.addEventListener('dblclick', () => {
+            if (zoomScale > 1) {
+                resetLightboxZoom();
+            } else {
+                zoomScale = 2.5;
+                applyLightboxTransform();
+            }
+        });
+
+        // Wheel Zoom
+        viewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = 0.1;
+            if (e.deltaY < 0) {
+                zoomScale = Math.min(zoomScale + zoomFactor, 5);
+            } else {
+                zoomScale = Math.max(zoomScale - zoomFactor, 1);
+                if (zoomScale === 1) {
+                    panX = 0;
+                    panY = 0;
+                }
+            }
+            applyLightboxTransform();
+        }, { passive: false });
+
+        // Touch & Mouse Drag Panning / Swipe Navigation
+        const startDrag = (clientX, clientY) => {
+            isDragging = true;
+            startX = clientX;
+            startY = clientY;
+            lastPanX = panX;
+            lastPanY = panY;
+            swipeStartX = clientX;
+        };
+
+        const moveDrag = (clientX, clientY) => {
+            if (!isDragging) return;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+
+            if (zoomScale > 1) {
+                panX = lastPanX + dx;
+                panY = lastPanY + dy;
+                applyLightboxTransform();
+            }
+        };
+
+        const endDrag = (clientX) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            if (zoomScale === 1) {
+                const deltaX = clientX - swipeStartX;
+                if (Math.abs(deltaX) > swipeThreshold) {
+                    if (deltaX > 0) {
+                        navigateLightbox('prev');
+                    } else {
+                        navigateLightbox('next');
+                    }
+                }
+            }
+        };
+
+        // Mouse events
+        viewport.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startDrag(e.clientX, e.clientY);
+        });
+        window.addEventListener('mousemove', (e) => {
+            moveDrag(e.clientX, e.clientY);
+        });
+        window.addEventListener('mouseup', (e) => {
+            if (isDragging) endDrag(e.clientX);
+        });
+
+        // Touch events
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                startDrag(e.touches[0].clientX, e.touches[0].clientY);
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScale = zoomScale;
+            }
+        });
+
+        viewport.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+            } else if (e.touches.length === 2) {
+                e.preventDefault();
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const factor = dist / initialPinchDistance;
+                zoomScale = Math.min(Math.max(initialScale * factor, 1), 5);
+                if (zoomScale === 1) {
+                    panX = 0;
+                    panY = 0;
+                }
+                applyLightboxTransform();
+            }
+        });
+
+        viewport.addEventListener('touchend', (e) => {
+            if (isDragging) {
+                const clientX = e.changedTouches[0].clientX;
+                endDrag(clientX);
+            }
+        });
+
+        // Keyboard Navigation (ESC close, Arrow navigation)
+        window.addEventListener('keydown', (e) => {
+            const backdropEl = document.getElementById('ic-lightbox-backdrop');
+            if (backdropEl && backdropEl.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                } else if (e.key === 'ArrowRight') {
+                    navigateLightbox('next');
+                } else if (e.key === 'ArrowLeft') {
+                    navigateLightbox('prev');
+                }
+            }
+        });
+    }
+
+    // Compression utility (Canvas scale to 1000px max, quality 0.7 JPEG)
+    function compressImage(file, callback) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 1000;
+                const MAX_HEIGHT = 1000;
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                callback(dataUrl);
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // --- UPLOAD WIZARD ENGINE ---
+    function openUploadWizard() {
+        wizardQueue = [];
+        wizardIndex = 0;
+        
+        // Reset steps
+        document.querySelectorAll('.ic-wizard-step').forEach(step => step.classList.remove('active'));
+        document.getElementById('ic-wizard-step-type').classList.add('active');
+
+        // Hide back btn, show cancel
+        document.getElementById('btn-wizard-back').style.display = 'none';
+        document.getElementById('btn-wizard-cancel').style.display = 'block';
+        document.getElementById('btn-wizard-next').style.display = 'none';
+        document.getElementById('ic-wizard-title').textContent = 'Upload Scheme Cards';
+
+        document.getElementById('ic-upload-wizard-backdrop').style.display = 'flex';
+    }
+
+    function closeUploadWizard() {
+        document.getElementById('ic-upload-wizard-backdrop').style.display = 'none';
+    }
+
+    function advanceWizardStep(stepId) {
+        document.querySelectorAll('.ic-wizard-step').forEach(step => step.classList.remove('active'));
+        document.getElementById(stepId).classList.add('active');
+
+        // Back button toggles
+        const backBtn = document.getElementById('btn-wizard-back');
+        if (stepId === 'ic-wizard-step-type') {
+            backBtn.style.display = 'none';
+        } else {
+            backBtn.style.display = 'block';
+        }
+
+        // Title changes based on step
+        const titleEl = document.getElementById('ic-wizard-title');
+        if (stepId === 'ic-wizard-step-value') {
+            titleEl.textContent = `Assign Values (${wizardIndex + 1} of ${wizardQueue.length})`;
+            document.getElementById('btn-wizard-next').style.display = 'block';
+            document.getElementById('btn-wizard-next').textContent = (wizardIndex === wizardQueue.length - 1) ? 'Review' : 'Next';
+            loadWizardImageValueStep();
+        } else if (stepId === 'ic-wizard-step-review') {
+            titleEl.textContent = 'Review & Upload';
+            document.getElementById('btn-wizard-next').style.display = 'block';
+            document.getElementById('btn-wizard-next').textContent = 'Submit Upload';
+            renderWizardReview();
+        } else {
+            document.getElementById('btn-wizard-next').style.display = 'none';
+        }
+    }
+
+    // Load value screen for current wizard queue index
+    function loadWizardImageValueStep() {
+        const item = wizardQueue[wizardIndex];
+        const preview = document.getElementById('ic-wizard-img-preview');
+        const indicator = document.getElementById('ic-wizard-index-indicator');
+        const input = document.getElementById('ic-wizard-value-input');
+
+        if (preview) preview.src = item.dataUrl || '';
+        if (indicator) indicator.textContent = `Card ${wizardIndex + 1} of ${wizardQueue.length}`;
+        if (input) {
+            input.value = item.valueStr || '';
+            setTimeout(() => input.focus(), 150);
+        }
+    }
+
+    // Render review page of wizard
+    function renderWizardReview() {
+        const container = document.getElementById('ic-wizard-review-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        wizardQueue.forEach(item => {
+            const cardItem = document.createElement('div');
+            cardItem.className = 'ic-wizard-review-item';
+            cardItem.innerHTML = `
+                <div class="ic-wizard-review-thumb">
+                    <img src="${item.dataUrl}" alt="Thumb">
+                </div>
+                <div class="ic-wizard-review-info">
+                    <span class="ic-wizard-review-name">${item.valueStr || 'Unnamed Value'}</span>
+                    <span class="ic-wizard-review-tag">${cleanAndFormatLabel(item.valueStr)}</span>
+                </div>
+            `;
+            container.appendChild(cardItem);
+        });
+    }
+
+    // Submit wizard uploads
+    function submitWizardUploads() {
+        const data = loadData();
+        if (!data[currentTenure]) data[currentTenure] = [];
+
+        const nowIso = new Date().toISOString();
+
+        wizardQueue.forEach(item => {
+            const formatted = cleanAndFormatLabel(item.valueStr);
+            data[currentTenure].push({
+                id: uid(),
+                label: formatted || (currentTenure + ' Card'),
+                imageData: item.dataUrl,
+                uploadedAt: nowIso
+            });
+        });
+
+        saveData(data);
+        closeUploadWizard();
+        calculateAndRenderGallery();
+
+        if (typeof showNotification === 'function') {
+            showNotification(`${wizardQueue.length} card(s) uploaded successfully!`, 'success');
+        }
+    }
+
+    // --- EDIT MODULE ---
+    function openEditModal(card) {
+        selectedCardForEdit = card;
+        const preview = document.getElementById('ic-edit-img-preview');
+        const input = document.getElementById('ic-edit-value-input');
+
+        if (preview) preview.src = card.imageData || '';
+        if (input) {
+            input.value = card.label || '';
+            setTimeout(() => input.focus(), 150);
+        }
+
+        document.getElementById('ic-edit-modal-backdrop').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('ic-edit-modal-backdrop').style.display = 'none';
+        selectedCardForEdit = null;
+    }
+
+    function saveEditChanges() {
+        if (!selectedCardForEdit) return;
+        const inputVal = document.getElementById('ic-edit-value-input')?.value.trim();
+        const preview = document.getElementById('ic-edit-img-preview');
+
+        const data = loadData();
+        const index = (data[currentTenure] || []).findIndex(c => c.id === selectedCardForEdit.id);
+
+        if (index > -1) {
+            data[currentTenure][index].label = cleanAndFormatLabel(inputVal) || (currentTenure + ' Card');
+            data[currentTenure][index].imageData = preview.src; // preserves possibly replaced image
+            saveData(data);
+            calculateAndRenderGallery();
+            closeEditModal();
+            if (typeof showNotification === 'function') showNotification('Card updated successfully!', 'success');
+        }
+    }
+
+    // --- DELETE DIALOG MODULE ---
+    function openDeleteConfirmation(card) {
+        selectedCardForDelete = card;
+        document.getElementById('ic-delete-dialog-backdrop').style.display = 'flex';
+    }
+
+    function closeDeleteConfirmation() {
+        document.getElementById('ic-delete-dialog-backdrop').style.display = 'none';
+        selectedCardForDelete = null;
+    }
+
+    function confirmDeleteCard() {
+        if (!selectedCardForDelete) return;
+
+        const data = loadData();
+        data[currentTenure] = (data[currentTenure] || []).filter(c => c.id !== selectedCardForDelete.id);
+        
+        saveData(data);
+        calculateAndRenderGallery();
+        closeDeleteConfirmation();
+
+        if (typeof showNotification === 'function') showNotification('Card deleted successfully!', 'success');
+    }
+
+    // --- SHARE POPOVER MENU ---
+    function openSharePopover(e, card) {
+        selectedCardForShare = card;
+        const popover = document.getElementById('ic-share-popover-menu');
+        if (!popover) return;
+
+        popover.style.display = 'block';
+
+        // Position popover near the clicked share button
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        popover.style.left = (rect.left + scrollLeft - 120) + 'px';
+        popover.style.top = (rect.bottom + scrollTop + 8) + 'px';
+
+        // Close on next document click
+        setTimeout(() => {
+            const closePopover = () => {
+                popover.style.display = 'none';
+                document.removeEventListener('click', closePopover);
+            };
+            document.addEventListener('click', closePopover);
+        }, 50);
+    }
+
     function dataURLtoFile(dataUrl, filename) {
-        var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        const arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), u8arr = new Uint8Array(bstr.length);
+        let n = bstr.length;
         while (n--) u8arr[n] = bstr.charCodeAt(n);
         return new File([u8arr], filename, { type: mime });
     }
 
-    async function shareImageFile(file, title) {
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try { await navigator.share({ title: title, files: [file] }); }
-            catch (err) { if (err.name !== 'AbortError') alert('Could not share. Please try again.'); }
-        } else {
-            var url = URL.createObjectURL(file);
-            window.open(url, '_blank');
-            setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
-            if (typeof showNotification === 'function') showNotification('Opened image in new tab - save and share manually.', 'info');
+    // Copies base64 card image to clipboard as PNG
+    async function copyCardToClipboard(card) {
+        if (!card || !card.imageData) return;
+
+        try {
+            // Draw JPEG to PNG Canvas to support standard clipboards
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob(async function(blob) {
+                    try {
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([item]);
+                        if (typeof showNotification === 'function') showNotification('Image copied to clipboard!', 'success');
+                    } catch(err) {
+                        console.error('Clipboard write failed:', err);
+                        if (typeof showNotification === 'function') showNotification('Failed to copy to clipboard', 'error');
+                    }
+                }, 'image/png');
+            };
+            img.src = card.imageData;
+        } catch(e) {
+            console.error('Copy failure:', e);
+            if (typeof showNotification === 'function') showNotification('Copying not supported on this browser', 'warning');
         }
     }
 
-    function shareCard(card) {
-        if (!card.imageData) { alert('Please upload a card image first.'); return; }
-        shareImageFile(dataURLtoFile(card.imageData, (card.label || 'card') + '.jpg'), (currentTenure || '') + ' ' + (card.label || 'card') + ' Scheme Card');
+    // Download Card Image
+    function downloadCardImage(card) {
+        if (!card || !card.imageData) return;
+        const link = document.createElement('a');
+        link.href = card.imageData;
+        const filename = (card.label || 'scheme_card').replace(/[^a-zA-Z0-9]/g, '_') + '.jpg';
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        if (typeof showNotification === 'function') showNotification('Image download started!', 'info');
     }
 
-    async function shareAllCards() {
-        var d = loadData();
-        var cards = (d[currentTenure] || []).filter(function(c) { return !!c.imageData; });
-        if (!cards.length) { alert('No card images uploaded yet.'); return; }
-
-        // Sort cards by value first
-        cards.sort(function(a, b) {
-            return parseValueLabel(a.label) - parseValueLabel(b.label);
-        });
-
-        if (typeof showNotification === 'function') showNotification('Preparing images for sharing...', 'info');
-
-        // Convert base64 data to File objects for separate sharing
-        var files = cards.map(function(card, index) {
-            var sanitizedLabel = (card.label || 'card').replace(/[^a-zA-Z0-9]/g, '_');
-            return dataURLtoFile(card.imageData, (index + 1) + '_' + sanitizedLabel + '.jpg');
-        });
-
-        // Use native Navigator share to send all files together (as separate images) if supported
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: files })) {
-            try {
-                await navigator.share({
-                    title: currentTenure + ' Scheme Cards',
-                    files: files
-                });
-            } catch (err) {
+    // Individual Native WhatsApp share helper
+    async function shareImageFileNative(file, title) {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try { await navigator.share({ title: title, files: [file] }); }
+            catch (err) { 
                 if (err.name !== 'AbortError') {
-                    console.warn('Native group share failed, falling back to sequential windows.', err);
-                    await shareSeparatelyFallback(files);
+                    openTabFallback(file);
                 }
             }
         } else {
-            await shareSeparatelyFallback(files);
+            openTabFallback(file);
         }
     }
 
-    async function shareSeparatelyFallback(files) {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const url = URL.createObjectURL(file);
-            window.open(url, '_blank');
-            await new Promise(resolve => setTimeout(resolve, 300));
-        }
-        if (typeof showNotification === 'function') {
-            showNotification('Opened ' + files.length + ' cards in new tabs. Save and share them.', 'info');
-        }
+    function openTabFallback(file) {
+        const url = URL.createObjectURL(file);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+        if (typeof showNotification === 'function') showNotification('Opened image in a new tab. Save and share manually.', 'info');
     }
 
-    function processNextInUploadQueue() {
-        var addCardInput = document.getElementById('ic-add-card-file-input');
-        if (uploadQueue.length === 0) {
-            if (addCardInput) addCardInput.value = '';
+    // Share all cards sequentially (WhatsApp Gallery style)
+    async function shareAllCards() {
+        const data = loadData();
+        const cards = (data[currentTenure] || []).filter(c => !!c.imageData);
+        if (!cards.length) {
+            alert('No card images uploaded yet.');
             return;
         }
 
-        var currentIdx = totalUploadCount - uploadQueue.length + 1;
-        var item = uploadQueue[0];
-        var title = "Add Card (" + currentIdx + " of " + totalUploadCount + ")";
+        // Sort by value ascending
+        cards.sort((a, b) => parseValueLabel(a.label) - parseValueLabel(b.label));
 
-        openValuePromptModal(title, item.dataUrl, "", function(enteredValue) {
-            if (enteredValue !== null) {
-                var d = loadData();
-                if (!d[currentTenure]) d[currentTenure] = [];
-                d[currentTenure].push({
-                    id: uid(),
-                    label: enteredValue || (currentTenure + ' Card'),
-                    imageData: item.dataUrl
+        if (typeof showNotification === 'function') showNotification('Preparing images to share individually...', 'info');
+
+        const files = cards.map((c, index) => {
+            const name = `${index + 1}_${(c.label || 'card').replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
+            return dataURLtoFile(c.imageData, name);
+        });
+
+        // Trigger native file sharing if available (sends files as list of separate assets)
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: files })) {
+            try {
+                await navigator.share({
+                    title: (currentTenure === '12M' ? '12 Month' : '20 Month') + ' Scheme Cards',
+                    files: files
                 });
-                saveData(d);
-                renderCards();
+            } catch(e) {
+                if (e.name !== 'AbortError') {
+                    await sequentialShareFallback(files);
+                }
             }
-            // Remove current item and recurse to process next in queue
-            uploadQueue.shift();
-            processNextInUploadQueue();
+        } else {
+            await sequentialShareFallback(files);
+        }
+    }
+
+    async function sequentialShareFallback(files) {
+        for (let i = 0; i < files.length; i++) {
+            openTabFallback(files[i]);
+            await new Promise(res => setTimeout(res, 350));
+        }
+    }
+
+    // --- SETUP WIZARD FILE READERS & DRAG OVER HANDLERS ---
+    function setupDragAndDrop() {
+        const dropzone = document.getElementById('ic-wizard-dropzone');
+        if (!dropzone) return;
+
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        if (wizardMode === 'bulk') fileInput.multiple = true;
+        dropzone.appendChild(fileInput);
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+            if (files.length) handleSelectedFiles(files);
+        });
+
+        fileInput.addEventListener('change', () => {
+            const files = Array.from(fileInput.files);
+            if (files.length) handleSelectedFiles(files);
         });
     }
 
+    function handleSelectedFiles(files) {
+        if (wizardMode === 'single') {
+            files = [files[0]];
+        }
+
+        if (typeof showNotification === 'function') showNotification('Processing & compressing images...', 'info');
+
+        wizardQueue = [];
+        let processedCount = 0;
+
+        files.forEach(file => {
+            compressImage(file, (compressedDataUrl) => {
+                wizardQueue.push({
+                    file: file,
+                    dataUrl: compressedDataUrl,
+                    valueStr: ''
+                });
+
+                processedCount++;
+                if (processedCount === files.length) {
+                    wizardIndex = 0;
+                    advanceWizardStep('ic-wizard-step-value');
+                }
+            });
+        });
+    }
+
+    // Setup events and elements initialisation
     function init() {
-        document.addEventListener('click', function(e) {
+        // Switch view event hooks
+        document.addEventListener('click', (e) => {
             if (e.target.closest('[data-target="screen-cards"]')) {
-                setTimeout(showTenureSelector, 60);
+                setTimeout(showTenureSelector, 80);
             }
         });
 
-        var backTenureBtn = document.getElementById('btn-ic-back-tenure');
-        if (backTenureBtn) backTenureBtn.addEventListener('click', showTenureSelector);
+        // Open tenure slides (Page 1 click)
+        const slide12 = document.getElementById('card-scheme-12M');
+        const slide20 = document.getElementById('card-scheme-20M');
 
-        document.querySelectorAll('.ic-tenure-slide').forEach(function(btn) {
-            btn.addEventListener('click', function() { openTenureCards(btn.dataset.tenure); });
+        if (slide12) slide12.addEventListener('click', () => openTenureCards('12M'));
+        if (slide20) slide20.addEventListener('click', () => openTenureCards('20M'));
+
+        // Selection Cards Open buttons
+        document.querySelectorAll('.ic-scheme-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const tenure = btn.closest('.ic-scheme-card').dataset.tenure;
+                openTenureCards(tenure);
+            });
         });
 
-        var addCardBtn   = document.getElementById('btn-ic-add-card');
-        var addCardInput = document.getElementById('ic-add-card-file-input');
-        if (addCardBtn && addCardInput) {
-            addCardBtn.addEventListener('click', function() { addCardInput.click(); });
-            addCardInput.addEventListener('change', function() {
-                var files = Array.from(addCardInput.files);
-                if (files.length === 0) return;
+        // Grid Top navigation back button
+        const backBtn = document.getElementById('btn-ic-back-tenure');
+        if (backBtn) backBtn.addEventListener('click', showTenureSelector);
 
-                uploadQueue = [];
-                totalUploadCount = files.length;
-                var loadedCount = 0;
+        // Upload top and FAB upload triggers
+        const uploadTop = document.getElementById('btn-ic-add-card-top');
+        const uploadFab = document.getElementById('ic-fab-upload');
+        if (uploadTop) uploadTop.addEventListener('click', openUploadWizard);
+        if (uploadFab) uploadFab.addEventListener('click', openUploadWizard);
 
-                if (typeof showNotification === 'function') showNotification('Processing images...', 'info');
+        // Toolbar controls listeners
+        const searchInput = document.getElementById('ic-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => renderGalleryItems());
+        }
+        const filterSelect = document.getElementById('ic-filter-select');
+        if (filterSelect) {
+            filterSelect.addEventListener('change', () => renderGalleryItems());
+        }
+        const sortSelect = document.getElementById('ic-sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', () => renderGalleryItems());
+        }
 
-                files.forEach(function(file) {
-                    var reader = new FileReader();
-                    reader.onload = function(ev) {
-                        var img = new Image();
-                        img.onload = function() {
-                            var canvas = document.createElement('canvas');
-                            var MAX_WIDTH = 1000;
-                            var MAX_HEIGHT = 1000;
-                            var width = img.width;
-                            var height = img.height;
-                            if (width > height) {
-                                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                            } else {
-                                if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                            }
-                            canvas.width = width; canvas.height = height;
-                            var ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        // --- WIZARD BTNS SETUP ---
+        const closeWizard = document.getElementById('btn-close-ic-wizard');
+        const cancelWizard = document.getElementById('btn-wizard-cancel');
+        if (closeWizard) closeWizard.addEventListener('click', closeUploadWizard);
+        if (cancelWizard) cancelWizard.addEventListener('click', closeUploadWizard);
 
-                            uploadQueue.push({ file: file, dataUrl: dataUrl });
-                            loadedCount++;
-                            if (loadedCount === files.length) {
-                                processNextInUploadQueue();
-                            }
-                        };
-                        img.src = ev.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                });
+        // Upload Wizard Type choices
+        const btnSingle = document.getElementById('btn-wizard-type-single');
+        const btnBulk = document.getElementById('btn-wizard-type-bulk');
+
+        if (btnSingle) {
+            btnSingle.addEventListener('click', () => {
+                wizardMode = 'single';
+                advanceWizardStep('ic-wizard-step-file');
+                setupDragAndDrop();
+            });
+        }
+        if (btnBulk) {
+            btnBulk.addEventListener('click', () => {
+                wizardMode = 'bulk';
+                advanceWizardStep('ic-wizard-step-file');
+                setupDragAndDrop();
             });
         }
 
-        var shareAllBtn = document.getElementById('btn-ic-share-all');
-        if (shareAllBtn) shareAllBtn.addEventListener('click', shareAllCards);
+        // Wizard Suggestion Pills handler
+        document.querySelectorAll('#ic-upload-wizard-backdrop .ic-suggestion-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const input = document.getElementById('ic-wizard-value-input');
+                if (input) {
+                    input.value = pill.textContent;
+                    input.focus();
+                }
+            });
+        });
+
+        // Wizard next/review buttons
+        const btnNext = document.getElementById('btn-wizard-next');
+        const btnBack = document.getElementById('btn-wizard-back');
+
+        if (btnNext) {
+            btnNext.addEventListener('click', () => {
+                const step = document.querySelector('.ic-wizard-step.active');
+                if (step.id === 'ic-wizard-step-value') {
+                    // Save input text
+                    const valInput = document.getElementById('ic-wizard-value-input')?.value.trim();
+                    wizardQueue[wizardIndex].valueStr = valInput;
+
+                    if (wizardIndex < wizardQueue.length - 1) {
+                        wizardIndex++;
+                        loadWizardImageValueStep();
+                    } else {
+                        advanceWizardStep('ic-wizard-step-review');
+                    }
+                } else if (step.id === 'ic-wizard-step-review') {
+                    submitWizardUploads();
+                }
+            });
+        }
+
+        if (btnBack) {
+            btnBack.addEventListener('click', () => {
+                const step = document.querySelector('.ic-wizard-step.active');
+                if (step.id === 'ic-wizard-step-file') {
+                    advanceWizardStep('ic-wizard-step-type');
+                } else if (step.id === 'ic-wizard-step-value') {
+                    if (wizardIndex > 0) {
+                        wizardIndex--;
+                        loadWizardImageValueStep();
+                    } else {
+                        advanceWizardStep('ic-wizard-step-file');
+                    }
+                } else if (step.id === 'ic-wizard-step-review') {
+                    wizardIndex = wizardQueue.length - 1;
+                    advanceWizardStep('ic-wizard-step-value');
+                }
+            });
+        }
+
+        // --- EDIT MODAL EVENTS ---
+        const closeEdit = document.getElementById('btn-close-ic-edit');
+        const cancelEdit = document.getElementById('btn-edit-cancel');
+        const saveEdit = document.getElementById('btn-edit-save');
+        const replaceEditImg = document.getElementById('btn-edit-replace-img');
+        const fileEditInput = document.getElementById('ic-edit-file-input');
+
+        if (closeEdit) closeEdit.addEventListener('click', closeEditModal);
+        if (cancelEdit) cancelEdit.addEventListener('click', closeEditModal);
+        if (saveEdit) saveEdit.addEventListener('click', saveEditChanges);
+
+        if (replaceEditImg && fileEditInput) {
+            replaceEditImg.addEventListener('click', () => fileEditInput.click());
+            fileEditInput.addEventListener('change', () => {
+                const file = fileEditInput.files[0];
+                if (file) {
+                    compressImage(file, (dataUrl) => {
+                        const preview = document.getElementById('ic-edit-img-preview');
+                        if (preview) preview.src = dataUrl;
+                    });
+                }
+            });
+        }
+
+        document.querySelectorAll('#ic-edit-modal-backdrop .ic-suggestion-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const input = document.getElementById('ic-edit-value-input');
+                if (input) {
+                    input.value = pill.textContent;
+                    input.focus();
+                }
+            });
+        });
+
+        // --- DELETE DIALOG EVENTS ---
+        const btnDeleteConfirm = document.getElementById('btn-delete-confirm');
+        const btnDeleteCancel = document.getElementById('btn-delete-cancel');
+        if (btnDeleteConfirm) btnDeleteConfirm.addEventListener('click', confirmDeleteCard);
+        if (btnDeleteCancel) btnDeleteCancel.addEventListener('click', closeDeleteConfirmation);
+
+        // Click outside to close for delete confirm and modals
+        const deleteBackdrop = document.getElementById('ic-delete-dialog-backdrop');
+        if (deleteBackdrop) {
+            deleteBackdrop.addEventListener('click', (e) => {
+                if (e.target === deleteBackdrop) closeDeleteConfirmation();
+            });
+        }
+        
+        // ESC key handles close on Delete Confirm and Modals
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (deleteBackdrop && deleteBackdrop.style.display === 'flex') {
+                    closeDeleteConfirmation();
+                }
+                const editBackdrop = document.getElementById('ic-edit-modal-backdrop');
+                if (editBackdrop && editBackdrop.style.display === 'flex') {
+                    closeEditModal();
+                }
+                const uploadBackdrop = document.getElementById('ic-upload-wizard-backdrop');
+                if (uploadBackdrop && uploadBackdrop.style.display === 'flex') {
+                    closeUploadWizard();
+                }
+            }
+        });
+
+        // --- SHARE POPOVER ACTIONS ---
+        const btnShareWA = document.getElementById('btn-share-whatsapp');
+        const btnShareDL = document.getElementById('btn-share-download');
+        const btnShareCopy = document.getElementById('btn-share-copy');
+
+        if (btnShareWA) {
+            btnShareWA.addEventListener('click', () => {
+                if (selectedCardForShare) {
+                    const filename = (selectedCardForShare.label || 'card').replace(/[^a-zA-Z0-9]/g, '_') + '.jpg';
+                    const file = dataURLtoFile(selectedCardForShare.imageData, filename);
+                    shareImageFileNative(file, `${currentTenure} ${selectedCardForShare.label || ''} Scheme Card`);
+                }
+            });
+        }
+        if (btnShareDL) {
+            btnShareDL.addEventListener('click', () => {
+                if (selectedCardForShare) downloadCardImage(selectedCardForShare);
+            });
+        }
+        if (btnShareCopy) {
+            btnShareCopy.addEventListener('click', () => {
+                if (selectedCardForShare) copyCardToClipboard(selectedCardForShare);
+            });
+        }
+
+        // Ripple clicks bind
+        document.querySelectorAll('.ic-ripple').forEach(button => {
+            button.addEventListener('click', createRipple);
+        });
+
+        // Initialize Lightbox event listeners
+        initLightboxEvents();
+
+        // Boot selection counters
+        updateSelectionStats();
+    }
+
+    // Ripple click handler implementation
+    function createRipple(event) {
+        const button = event.currentTarget;
+        const circle = document.createElement("span");
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        const radius = diameter / 2;
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+        circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+        circle.classList.add("ic-ripple-circle");
+
+        const ripple = button.getElementsByClassName("ic-ripple-circle")[0];
+        if (ripple) {
+            ripple.remove();
+        }
+
+        button.appendChild(circle);
     }
 
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
