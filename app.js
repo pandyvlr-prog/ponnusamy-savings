@@ -5874,22 +5874,44 @@ async function deleteGroup() {
         addBtn.type = 'button';
         addBtn.className = 'ic-suggestion-pill ic-add-pill';
         addBtn.innerHTML = `<i data-lucide="plus" style="width:14px;height:14px;stroke-width:3;"></i> Add`;
-        addBtn.addEventListener('click', () => {
-            const customVal = prompt('Enter custom card value (e.g. 30K, 35K, 1.5L):');
-            if (customVal && customVal.trim()) {
-                const formatted = customVal.trim().toUpperCase();
-                const current = getCustomPills();
-                if (!current.includes(formatted) && !defaultPills.includes(formatted)) {
-                    current.push(formatted);
-                    saveCustomPills(current);
-                    renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
-                    renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
-                }
-            }
-        });
+        addBtn.addEventListener('click', openCustomPresetModal);
 
         container.appendChild(addBtn);
         if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Custom Preset Modal Handlers
+    function openCustomPresetModal() {
+        const modal = document.getElementById('ic-custom-value-modal-backdrop');
+        const input = document.getElementById('ic-custom-val-input');
+        if (modal) {
+            modal.style.display = 'flex';
+            if (input) {
+                input.value = '';
+                setTimeout(() => input.focus(), 150);
+            }
+        }
+    }
+
+    function closeCustomPresetModal() {
+        const modal = document.getElementById('ic-custom-value-modal-backdrop');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function submitCustomPreset() {
+        const input = document.getElementById('ic-custom-val-input');
+        const val = (input?.value || '').trim();
+        if (val) {
+            const formatted = val.toUpperCase();
+            const current = getCustomPills();
+            if (!current.includes(formatted) && !defaultPills.includes(formatted)) {
+                current.push(formatted);
+                saveCustomPills(current);
+                renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
+                renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
+            }
+            closeCustomPresetModal();
+        }
     }
 
     // Load value screen for current wizard queue index
@@ -6403,9 +6425,25 @@ async function deleteGroup() {
             });
         }
         
+        // --- CUSTOM PRESET MODAL EVENTS ---
+        const closeCustomVal = document.getElementById('btn-close-custom-val');
+        const cancelCustomVal = document.getElementById('btn-custom-val-cancel');
+        const saveCustomVal = document.getElementById('btn-custom-val-save');
+        const inputCustomVal = document.getElementById('ic-custom-val-input');
+
+        if (closeCustomVal) closeCustomVal.addEventListener('click', closeCustomPresetModal);
+        if (cancelCustomVal) cancelCustomVal.addEventListener('click', closeCustomPresetModal);
+        if (saveCustomVal) saveCustomVal.addEventListener('click', submitCustomPreset);
+        if (inputCustomVal) {
+            inputCustomVal.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') submitCustomPreset();
+            });
+        }
+
         // ESC key handles close on Delete Confirm and Modals
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                closeCustomPresetModal();
                 if (deleteBackdrop && deleteBackdrop.style.display === 'flex') {
                     closeDeleteConfirmation();
                 }
