@@ -5848,15 +5848,18 @@ async function deleteGroup() {
             btn.className = 'ic-suggestion-pill' + (isCustom ? ' is-custom-pill' : '');
             
             if (isCustom) {
-                btn.innerHTML = `<span>${pillText}</span><span class="ic-pill-delete-x" title="Delete custom pill">&times;</span>`;
+                btn.innerHTML = `<span>${pillText}</span><span class="ic-pill-delete-x" data-pill="${pillText}" title="Delete ${pillText}">&times;</span>`;
             } else {
                 btn.textContent = pillText;
             }
 
             btn.addEventListener('click', (e) => {
-                if (e.target.classList.contains('ic-pill-delete-x')) {
+                const deleteBtn = e.target.closest('.ic-pill-delete-x');
+                if (deleteBtn) {
                     e.stopPropagation();
-                    const updated = customPills.filter(p => p !== pillText);
+                    e.preventDefault();
+                    const targetPill = deleteBtn.getAttribute('data-pill') || pillText;
+                    const updated = getCustomPills().filter(p => p !== targetPill);
                     saveCustomPills(updated);
                     renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
                     renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
@@ -6047,21 +6050,27 @@ async function deleteGroup() {
         const popover = document.getElementById('ic-share-popover-menu');
         if (!popover) return;
 
-        popover.style.display = 'block';
+        const btn = e.currentTarget || e.target;
+        const rect = btn.getBoundingClientRect();
 
-        // Position popover near the clicked share button
-        const rect = e.currentTarget.getBoundingClientRect();
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        let left = rect.left - 60;
+        let top = rect.bottom + 8;
 
-        popover.style.left = (rect.left + scrollLeft - 120) + 'px';
-        popover.style.top = (rect.bottom + scrollTop + 8) + 'px';
+        if (left < 10) left = 10;
+        if (left + 220 > window.innerWidth) left = window.innerWidth - 230;
+        if (top + 140 > window.innerHeight) top = rect.top - 140;
 
-        // Close on next document click
+        popover.style.position = 'fixed';
+        popover.style.left = left + 'px';
+        popover.style.top = top + 'px';
+        popover.style.display = 'flex';
+
         setTimeout(() => {
-            const closePopover = () => {
-                popover.style.display = 'none';
-                document.removeEventListener('click', closePopover);
+            const closePopover = (evt) => {
+                if (!popover.contains(evt.target) && !btn.contains(evt.target)) {
+                    popover.style.display = 'none';
+                    document.removeEventListener('click', closePopover);
+                }
             };
             document.addEventListener('click', closePopover);
         }, 50);

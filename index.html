@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=169">
+    <link rel="stylesheet" href="style.css?v=170">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -698,20 +698,24 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 18px !important;
-    height: 18px !important;
+    width: 20px !important;
+    height: 20px !important;
     border-radius: 50% !important;
-    background: rgba(0, 0, 0, 0.25) !important;
-    color: #000000 !important;
-    font-size: 13px !important;
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-size: 14px !important;
     font-weight: 900 !important;
-    margin-left: 4px !important;
-    transition: background 0.2s, color 0.2s !important;
+    margin-left: 6px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4) !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
 }
 
 .ic-pill-delete-x:hover {
-    background: #ef4444 !important;
-    color: #ffffff !important;
+    transform: scale(1.25) !important;
+    background: #dc2626 !important;
 }
 
 /* Make icons non-interactive to ensure button click handlers fire reliably */
