@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=166">
+    <link rel="stylesheet" href="style.css?v=167">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -477,29 +477,173 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 #ic-cards-grid-view .ic-share:hover { background: rgba(212,175,55,.1) !important; border-color: rgba(212,175,55,.3) !important; color: #D4AF37 !important; }
 #ic-cards-grid-view .ic-delete:hover { background: rgba(239,68,68,.1) !important; border-color: rgba(239,68,68,.3) !important; color: #ef4444 !important; }
 
-/* Modal Overlays & Backdrops - High Priority Z-Index Overrides */
+/* Modal Overlays & Backdrops - High Priority Position & Z-Index Overrides */
 .ic-modal-backdrop-premium,
 .ic-share-popover,
 .ic-lightbox-backdrop {
-    z-index: 999999 !important;
+    display: none !important;
 }
 
 .ic-modal-backdrop-premium[style*="display: flex"],
-.ic-modal-backdrop-premium[style*="display:flex"] {
+.ic-modal-backdrop-premium[style*="display:flex"],
+.ic-modal-backdrop-premium[style*="display: block"],
+.ic-modal-backdrop-premium[style*="display:block"] {
     display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.78) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     z-index: 999999 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+}
+
+.ic-lightbox-backdrop[style*="display: flex"],
+.ic-lightbox-backdrop[style*="display:flex"],
+.ic-lightbox-backdrop[style*="display: block"],
+.ic-lightbox-backdrop[style*="display:block"] {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.92) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    z-index: 999999 !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .ic-share-popover[style*="display: block"],
 .ic-share-popover[style*="display:block"] {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: absolute !important;
     z-index: 999999 !important;
+    background: var(--bg-surface-elevated, #1c1c28) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    padding: 8px !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5) !important;
+    min-width: 200px !important;
 }
 
-.ic-lightbox-backdrop[style*="display: flex"],
-.ic-lightbox-backdrop[style*="display:flex"] {
+[data-theme="light"] .ic-share-popover[style*="display: block"],
+[data-theme="light"] .ic-share-popover[style*="display:block"] {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+/* Modal Dialog Box styling */
+.ic-modal-premium {
+    width: 100% !important;
+    max-width: 480px !important;
+    background: #1a1a24 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8) !important;
+    overflow: hidden !important;
     display: flex !important;
-    z-index: 999999 !important;
+    flex-direction: column !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+[data-theme="light"] .ic-modal-premium {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+.ic-modal-premium-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 20px 24px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="light"] .ic-modal-premium-header {
+    border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.ic-modal-premium-header h3 {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    color: var(--text-main, #ffffff) !important;
+    margin: 0 !important;
+}
+
+.ic-modal-close-premium {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: none !important;
+    color: var(--text-main, #ffffff) !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+}
+
+[data-theme="light"] .ic-modal-close-premium {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #333333 !important;
+}
+
+.ic-modal-premium-body {
+    padding: 24px !important;
+    overflow-y: auto !important;
+    max-height: 70vh !important;
+}
+
+.ic-modal-premium-footer {
+    padding: 16px 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="light"] .ic-modal-premium-footer {
+    border-top-color: rgba(0, 0, 0, 0.06) !important;
+    background: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Edit Modal Preview Box Fix */
+.ic-wizard-preview-area {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin-bottom: 16px !important;
+    position: relative !important;
+    height: 200px !important;
+    background: #000000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.ic-wizard-preview-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
 }
 
 /* Suggestion Pills */
