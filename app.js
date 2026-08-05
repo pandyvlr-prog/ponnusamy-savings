@@ -6063,36 +6063,38 @@ async function deleteGroup() {
         if (typeof showNotification === 'function') showNotification('Card deleted successfully!', 'success');
     }
 
-    // --- SHARE POPOVER MENU ---
-    function openSharePopover(e, card) {
-        selectedCardForShare = card;
-        const popover = document.getElementById('ic-share-popover-menu');
-        if (!popover) return;
+    // --- DIRECT WHATSAPP SHARE ENGINE ---
+    function shareCardToWhatsApp(card) {
+        if (!card || !card.imageData) return;
 
-        const btn = e.currentTarget || e.target;
-        const rect = btn.getBoundingClientRect();
+        const file = dataURLtoFile(card.imageData, (card.label || 'Scheme_Card').replace(/[^a-zA-Z0-9]/g, '_') + '.jpg');
+        const textMsg = `*Ponnusamy Savings Scheme Card*\nValue: *${card.label || ''}*\nTenure: *${currentTenure === '12M' ? '12 Month' : '20 Month'} Scheme*`;
 
-        let left = rect.left - 60;
-        let top = rect.bottom + 8;
-
-        if (left < 10) left = 10;
-        if (left + 220 > window.innerWidth) left = window.innerWidth - 230;
-        if (top + 140 > window.innerHeight) top = rect.top - 140;
-
-        popover.style.position = 'fixed';
-        popover.style.left = left + 'px';
-        popover.style.top = top + 'px';
-        popover.style.display = 'flex';
-
-        setTimeout(() => {
-            const closePopover = (evt) => {
-                if (!popover.contains(evt.target) && !btn.contains(evt.target)) {
-                    popover.style.display = 'none';
-                    document.removeEventListener('click', closePopover);
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+                title: card.label || 'Scheme Card',
+                text: textMsg,
+                files: [file]
+            }).catch(err => {
+                if (err.name !== 'AbortError') {
+                    openWhatsAppUrl(textMsg);
                 }
-            };
-            document.addEventListener('click', closePopover);
-        }, 50);
+            });
+        } else {
+            openWhatsAppUrl(textMsg);
+        }
+    }
+
+    function openWhatsAppUrl(textMsg) {
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(textMsg)}`;
+        window.open(waUrl, '_blank');
+        if (typeof showNotification === 'function') {
+            showNotification('Opened WhatsApp sharing!', 'success');
+        }
+    }
+
+    function openSharePopover(e, card) {
+        shareCardToWhatsApp(card);
     }
 
     function dataURLtoFile(dataUrl, filename) {
