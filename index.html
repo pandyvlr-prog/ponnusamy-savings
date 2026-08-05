@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=161">
+    <link rel="stylesheet" href="style.css?v=162">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -57,12 +57,13 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     will-change: opacity, transform;
 }
 
-/* !! IMPORTANT: screen-cards must NOT use contain:paint or it clips the dark bg child !! */
+/* screen-cards: hidden overflow so child pages cannot bleed into each other on over-scroll */
 #screen-cards {
     contain: none !important;
-    overflow-y: auto !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
+    position: relative !important;
 }
 
 .app-device-shell {
@@ -75,16 +76,24 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
    Works regardless of CDN cache or theme
    ═══════════════════════════════════════════ */
 
+/* Force JS display: none to override display !important */
+#ic-tenure-selector[style*="display: none"],
+#ic-cards-grid-view[style*="display: none"] {
+    display: none !important;
+}
+
 /* PAGE 1 — SCHEME SELECTION: OWN DARK BACKGROUND */
 #ic-tenure-selector {
-    flex: 1 !important;
+    position: absolute !important;
+    inset: 0 !important;
     width: 100% !important;
+    height: 100% !important;
     box-sizing: border-box !important;
     padding: 40px 28px 80px !important;
     background: linear-gradient(160deg, #0f0f14 0%, #131318 50%, #0c0c10 100%) !important;
-    min-height: 100% !important;
     overflow-y: auto !important;
     display: block !important;
+    z-index: 1 !important;
 }
 #ic-tenure-selector .ic-landing-title {
     font-size: clamp(2rem,5vw,3rem) !important;
@@ -230,9 +239,17 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 
 /* PAGE 2 — GALLERY VIEW */
 #ic-cards-grid-view {
-    flex: 1 !important; overflow-y: auto !important;
-    display: flex !important; flex-direction: column !important;
-    padding: 20px 20px 80px !important; box-sizing: border-box !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px 20px 80px !important;
+    box-sizing: border-box !important;
+    background: var(--bg-primary, #0f0f14) !important;
+    z-index: 2 !important;
 }
 #ic-cards-grid-view .ic-gallery-nav {
     display: flex !important; align-items: center !important;
