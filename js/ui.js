@@ -257,6 +257,10 @@ function switchView(viewId) {
                 renderPnLDashboard();
                 State.isDirty.pnl = false;
             }
+        } else if (viewId === 'screen-cards') {
+            if (window.showTenureSelector) {
+                window.showTenureSelector();
+            }
         }
     }
 }

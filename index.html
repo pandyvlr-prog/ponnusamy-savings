@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=162">
+    <link rel="stylesheet" href="style.css?v=163">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -76,9 +76,11 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
    Works regardless of CDN cache or theme
    ═══════════════════════════════════════════ */
 
-/* Force JS display: none to override display !important */
+/* Force JS display: none to override base CSS rules */
 #ic-tenure-selector[style*="display: none"],
-#ic-cards-grid-view[style*="display: none"] {
+#ic-tenure-selector[style*="display:none"],
+#ic-cards-grid-view[style*="display: none"],
+#ic-cards-grid-view[style*="display:none"] {
     display: none !important;
 }
 

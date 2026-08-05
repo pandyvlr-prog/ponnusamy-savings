@@ -5201,6 +5201,7 @@ async function deleteGroup() {
         updateSelectionStats();
         if (window.lucide) window.lucide.createIcons();
     }
+    window.showTenureSelector = showTenureSelector;
 
     // Page 2 gallery page navigation handler
     function openTenureCards(tenure) {
