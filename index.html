@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=164">
+    <link rel="stylesheet" href="style.css?v=165">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -336,59 +336,143 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     font-weight: 600 !important; cursor: pointer !important; min-width: 110px !important;
 }
 
-/* Gallery grid */
-#ic-cards-grid-view .ic-gallery-grid {
+/* Gallery 3x3 Grid Layout & Reduced Card Image Size */
+.ic-premium-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill,minmax(230px,1fr)) !important;
-    gap: 16px !important; flex: 1 !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+    margin-top: 16px !important;
+    align-items: start !important;
+    width: 100% !important;
 }
-#ic-cards-grid-view .ic-card-item {
-    border-radius: 18px !important; overflow: hidden !important;
-    background: var(--bg-surface-elevated,#fff) !important;
-    border: 1px solid rgba(0,0,0,.07) !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,.08) !important;
-    transition: transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s,border-color .3s !important;
-    cursor: pointer !important; display: flex !important; flex-direction: column !important;
+@media (max-width: 1024px) {
+    .ic-premium-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
 }
-#ic-cards-grid-view .ic-card-item:hover {
+@media (max-width: 640px) {
+    .ic-premium-grid {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}
+
+.ic-premium-card-item {
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    background: var(--bg-surface-elevated, #ffffff) !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
+    transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s, border-color .3s !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+}
+[data-theme="dark"] .ic-premium-card-item {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
+}
+.ic-premium-card-item:hover {
     transform: translateY(-6px) scale(1.01) !important;
-    border-color: rgba(212,175,55,.4) !important;
-    box-shadow: 0 16px 40px rgba(0,0,0,.15),0 0 20px rgba(212,175,55,.1) !important;
+    border-color: rgba(212,175,55,.5) !important;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.12), 0 0 20px rgba(212,175,55,.15) !important;
 }
-#ic-cards-grid-view .ic-card-img-wrap {
-    width: 100% !important; height: 180px !important;
-    overflow: hidden !important; background: rgba(0,0,0,.06) !important; position: relative !important;
+
+.ic-premium-image-wrap {
+    width: 100% !important;
+    height: 190px !important;
+    overflow: hidden !important;
+    background: rgba(0,0,0,0.04) !important;
+    position: relative !important;
+    border-bottom: 1px solid rgba(0,0,0,0.06) !important;
 }
-#ic-cards-grid-view .ic-card-img-wrap img {
-    width: 100% !important; height: 100% !important;
-    object-fit: cover !important; display: block !important;
-    transition: transform .4s !important;
+[data-theme="dark"] .ic-premium-image-wrap {
+    background: rgba(0,0,0,0.2) !important;
+    border-bottom-color: rgba(255,255,255,0.06) !important;
 }
-#ic-cards-grid-view .ic-card-item:hover .ic-card-img-wrap img { transform: scale(1.06) !important; }
-#ic-cards-grid-view .ic-card-value-badge {
-    position: absolute !important; top: 10px !important; left: 10px !important;
-    padding: 4px 12px !important; border-radius: 20px !important;
+.ic-premium-card-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    transition: transform .4s cubic-bezier(.16,1,.3,1) !important;
+}
+.ic-premium-card-item:hover .ic-premium-card-img {
+    transform: scale(1.06) !important;
+}
+
+.ic-premium-value-badge {
+    position: absolute !important;
+    top: 10px !important;
+    left: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 5px 12px !important;
+    border-radius: 20px !important;
     background: linear-gradient(135deg,#D4AF37,#B8860B) !important;
-    color: #000 !important; -webkit-text-fill-color: #000 !important;
-    font-weight: 800 !important; font-size: .82rem !important;
-    box-shadow: 0 2px 8px rgba(212,175,55,.5) !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    font-weight: 800 !important;
+    font-size: 0.8rem !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+    z-index: 2 !important;
 }
-#ic-cards-grid-view .ic-card-meta {
-    padding: 11px 14px !important; display: flex !important;
-    align-items: center !important; justify-content: space-between !important;
-    border-top: 1px solid rgba(0,0,0,.05) !important;
+
+.ic-premium-card-footer {
+    padding: 12px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
 }
-#ic-cards-grid-view .ic-card-date { font-size: .76rem !important; color: var(--text-muted) !important; }
-#ic-cards-grid-view .ic-card-actions { display: flex !important; gap: 8px !important; padding: 0 14px 14px !important; }
-#ic-cards-grid-view .ic-edit,
-#ic-cards-grid-view .ic-share,
-#ic-cards-grid-view .ic-delete {
-    flex: 1 !important; padding: 7px 8px !important; border-radius: 10px !important;
-    border: 1px solid rgba(0,0,0,.08) !important; background: rgba(0,0,0,.03) !important;
-    color: #555 !important; font-size: .76rem !important; font-weight: 600 !important;
-    cursor: pointer !important; display: flex !important; align-items: center !important;
-    justify-content: center !important; gap: 4px !important; transition: all .2s !important;
+.ic-premium-card-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    overflow: hidden !important;
 }
+.ic-premium-card-title {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: var(--text-main, #111111) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.ic-premium-card-date {
+    font-size: 0.76rem !important;
+    color: var(--text-muted, #777777) !important;
+}
+
+.ic-premium-card-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+}
+.ic-premium-icon-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    background: rgba(0,0,0,0.03) !important;
+    color: #555555 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all .2s !important;
+}
+[data-theme="dark"] .ic-premium-icon-btn {
+    background: rgba(255,255,255,0.06) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #cccccc !important;
+}
+.ic-premium-icon-btn.ic-edit:hover { background: rgba(59,130,246,0.12) !important; border-color: rgba(59,130,246,0.3) !important; color: #3b82f6 !important; }
+.ic-premium-icon-btn.ic-share:hover { background: rgba(212,175,55,0.12) !important; border-color: rgba(212,175,55,0.3) !important; color: #D4AF37 !important; }
+.ic-premium-icon-btn.ic-delete:hover { background: rgba(239,68,68,0.1) !important; border-color: rgba(239,68,68,0.3) !important; color: #ef4444 !important; }
 #ic-cards-grid-view .ic-edit:hover { background: rgba(59,130,246,.1) !important; border-color: rgba(59,130,246,.3) !important; color: #3b82f6 !important; }
 #ic-cards-grid-view .ic-share:hover { background: rgba(212,175,55,.1) !important; border-color: rgba(212,175,55,.3) !important; color: #D4AF37 !important; }
 #ic-cards-grid-view .ic-delete:hover { background: rgba(239,68,68,.1) !important; border-color: rgba(239,68,68,.3) !important; color: #ef4444 !important; }
