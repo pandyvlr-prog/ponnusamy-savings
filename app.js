@@ -5737,15 +5737,15 @@ async function deleteGroup() {
         });
     }
 
-    // Compression utility (Canvas scale to 1000px max, quality 0.7 JPEG)
+    // Compression utility (Canvas scale to 750px max, quality 0.65 JPEG for lightweight cloud sync)
     function compressImage(file, callback) {
         const reader = new FileReader();
         reader.onload = function(ev) {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1000;
-                const MAX_HEIGHT = 1000;
+                const MAX_WIDTH = 750;
+                const MAX_HEIGHT = 750;
                 let width = img.width;
                 let height = img.height;
                 
@@ -5759,13 +5759,48 @@ async function deleteGroup() {
                 
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
                 callback(dataUrl);
             };
             img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
     }
+
+    // Auto-optimize existing card images to push lightweight payloads to Supabase Cloud
+    function optimizeExistingCardsForCloudSync() {
+        const data = loadData();
+        ['12M', '20M'].forEach(tenure => {
+            const cards = data[tenure] || [];
+            cards.forEach(card => {
+                if (card.imageData && card.imageData.length > 120000) {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 750;
+                        const MAX_HEIGHT = 750;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        card.imageData = canvas.toDataURL('image/jpeg', 0.65);
+                        saveData(data);
+                    };
+                    img.src = card.imageData;
+                }
+            });
+        });
+    }
+
+    setTimeout(optimizeExistingCardsForCloudSync, 1000);
 
     // --- UPLOAD WIZARD ENGINE ---
     function updateWizardStepper(stepNum) {
