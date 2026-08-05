@@ -5345,17 +5345,51 @@ async function deleteGroup() {
 
         // Empty state check
         if (cards.length === 0) {
+            list.style.display = 'flex';
+            list.style.flexDirection = 'column';
+            list.style.alignItems = 'center';
+            list.style.justifyContent = 'center';
+            
             list.innerHTML = `
-                <div class="ic-empty-gallery">
-                    <svg class="ic-empty-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                        <circle cx="9" cy="9" r="2"/>
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                    </svg>
-                    <h3 class="ic-empty-title">No Scheme Cards Uploaded</h3>
-                    <p class="ic-empty-subtitle">Upload your first card to get started. Organize, sort, and share them securely.</p>
-                    <button class="ic-scheme-btn" style="max-width: 200px;" id="btn-ic-empty-upload">
-                        <i data-lucide="plus" style="width:18px;height:18px;color:#000;"></i> Upload Cards
+                <style>
+                @keyframes ic-fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+                </style>
+                <div style="
+                    display: flex; flex-direction: column; align-items: center; justify-content: center;
+                    padding: 80px 20px; width: 100%; max-width: 440px; margin: 20px auto;
+                    animation: ic-fade-up 0.5s ease both; text-align: center;
+                ">
+                    <div style="
+                        width: 90px; height: 90px; border-radius: 50%;
+                        background: var(--bg-surface-elevated, rgba(212,175,55,0.06));
+                        border: 1px dashed rgba(212,175,55,0.25);
+                        display: flex; align-items: center; justify-content: center;
+                        margin-bottom: 24px; box-shadow: 0 8px 24px rgba(212,175,55,0.05);
+                    ">
+                        <i data-lucide="image-plus" style="width: 42px; height: 42px; color: #D4AF37; opacity: 0.85;"></i>
+                    </div>
+
+                    <h2 style="
+                        font-size: 1.5rem; font-weight: 800; color: var(--text-main);
+                        margin: 0 0 12px; letter-spacing: -0.5px;
+                    ">No Cards Uploaded Yet</h2>
+                    
+                    <p style="
+                        font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;
+                        margin: 0 0 32px;
+                    ">Start tracking your payments beautifully. Upload your first installment card.</p>
+
+                    <button id="btn-ic-empty-upload" style="
+                        display: inline-flex; align-items: center; gap: 10px;
+                        background: #D4AF37; color: #000;
+                        font-weight: 700; font-size: 1rem;
+                        border: none; border-radius: 50px; padding: 16px 36px;
+                        cursor: pointer; box-shadow: 0 6px 20px rgba(212,175,55,0.25);
+                        transition: all 0.2s ease;
+                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(212,175,55,0.35)';"
+                       onmouseout="this.style.transform=''; this.style.boxShadow='0 6px 20px rgba(212,175,55,0.25)';">
+                        <i data-lucide="upload" style="width: 18px; height: 18px;"></i>
+                        Upload Cards
                     </button>
                 </div>
             `;
@@ -5366,6 +5400,12 @@ async function deleteGroup() {
             if (window.lucide) window.lucide.createIcons();
             return;
         }
+
+        // Reset grid display when cards exist
+        list.style.display = 'grid';
+        list.style.flexDirection = '';
+        list.style.alignItems = '';
+        list.style.justifyContent = '';
 
         // Show Skeleton loaders first if image is big (simulated soft skeletons)
         cards.forEach(card => {

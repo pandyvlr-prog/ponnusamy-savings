@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=182">
+    <link rel="stylesheet" href="style.css?v=186">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -2414,44 +2414,25 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         </div>
                     </div>
 
-                    <!-- Statistics Dashboard Row -->
-                    <div class="ic-stats-panel">
-                        <!-- Total Cards -->
-                        <div class="ic-stat-card-premium">
-                            <i data-lucide="credit-card" class="ic-stat-icon-bg"></i>
-                            <span class="ic-stat-label-premium">Total Cards</span>
-                            <span class="ic-stat-val-premium" id="gallery-stat-total-cards">0</span>
+                    <!-- Professional Gallery Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0 0 4px;">Uploaded Cards</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">View and manage your scheme payments</p>
                         </div>
-                        <!-- Total Value -->
-                        <div class="ic-stat-card-premium">
-                            <i data-lucide="indian-rupee" class="ic-stat-icon-bg"></i>
-                            <span class="ic-stat-label-premium">Total Value</span>
-                            <span class="ic-stat-val-premium" id="gallery-stat-total-value">₹0</span>
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--bg-surface-glass); border: 1px solid var(--border); padding: 8px 16px; border-radius: 12px; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Total Cards</span>
+                            <span id="gallery-stat-total-cards" style="font-size: 1.1rem; font-weight: 800; color: #D4AF37;">0</span>
                         </div>
-                        <!-- Highest Value -->
-                        <div class="ic-stat-card-premium">
-                            <i data-lucide="trending-up" class="ic-stat-icon-bg"></i>
-                            <span class="ic-stat-label-premium">Highest Value</span>
-                            <span class="ic-stat-val-premium" id="gallery-stat-highest-value">₹0</span>
-                        </div>
-                        <!-- Lowest Value -->
-                        <div class="ic-stat-card-premium">
-                            <i data-lucide="trending-down" class="ic-stat-icon-bg"></i>
-                            <span class="ic-stat-label-premium">Lowest Value</span>
-                            <span class="ic-stat-val-premium" id="gallery-stat-lowest-value">₹0</span>
-                        </div>
-                        <!-- Average Value -->
-                        <div class="ic-stat-card-premium">
-                            <i data-lucide="bar-chart-3" class="ic-stat-icon-bg"></i>
-                            <span class="ic-stat-label-premium">Avg Card Value</span>
-                            <span class="ic-stat-val-premium" id="gallery-stat-avg-value">₹0</span>
-                        </div>
-                        <!-- Storage Used -->
-                        <div class="ic-stat-card-premium">
-                            <i data-lucide="hard-drive" class="ic-stat-icon-bg"></i>
-                            <span class="ic-stat-label-premium">Storage Used</span>
-                            <span class="ic-stat-val-premium" id="gallery-stat-storage-used">0 KB</span>
-                        </div>
+                    </div>
+
+                    <!-- Hidden old stats for JS compatibility -->
+                    <div style="display: none;">
+                        <span id="gallery-stat-total-value">₹0</span>
+                        <span id="gallery-stat-highest-value">₹0</span>
+                        <span id="gallery-stat-lowest-value">₹0</span>
+                        <span id="gallery-stat-avg-value">₹0</span>
+                        <span id="gallery-stat-storage-used">0 KB</span>
                     </div>
 
                     <!-- Toolbar Controls -->
@@ -3844,11 +3825,11 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             </div>
         </div>
     <!-- Application Core Scripts with Cache Busting -->
-    <script src="js/ui.js?v=182"></script>
-    <script src="js/pnl.js?v=182"></script>
-    <script src="js/pdf.js?v=182"></script>
-    <script src="js/settings.js?v=182"></script>
-    <script src="app.js?v=182"></script>
+    <script src="js/ui.js?v=186"></script>
+    <script src="js/pnl.js?v=186"></script>
+    <script src="js/pdf.js?v=186"></script>
+    <script src="js/settings.js?v=186"></script>
+    <script src="app.js?v=186"></script>
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
