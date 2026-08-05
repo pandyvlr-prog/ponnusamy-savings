@@ -5971,19 +5971,40 @@ async function deleteGroup() {
         if (!container) return;
         container.innerHTML = '';
 
-        wizardQueue.forEach(item => {
+        if (!wizardQueue.length) {
+            container.innerHTML = `<p style="color:var(--text-secondary); text-align:center; padding:20px;">No cards selected.</p>`;
+            return;
+        }
+
+        wizardQueue.forEach((item, index) => {
+            const formattedVal = cleanAndFormatLabel(item.valueStr) || (currentTenure + ' Card');
             const cardItem = document.createElement('div');
             cardItem.className = 'ic-wizard-review-item';
             cardItem.innerHTML = `
-                <div class="ic-wizard-review-thumb">
-                    <img src="${item.dataUrl}" alt="Thumb">
+                <div class="ic-wizard-review-left">
+                    <div class="ic-wizard-review-thumb">
+                        <img src="${item.dataUrl}" alt="Thumb">
+                    </div>
+                    <div class="ic-wizard-review-info">
+                        <span class="ic-wizard-review-index">Card ${index + 1} of ${wizardQueue.length}</span>
+                        <span class="ic-wizard-review-val-badge">${formattedVal}</span>
+                    </div>
                 </div>
-                <div class="ic-wizard-review-info">
-                    <span class="ic-wizard-review-name">${item.valueStr || 'Unnamed Value'}</span>
-                    <span class="ic-wizard-review-tag">${cleanAndFormatLabel(item.valueStr)}</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <button type="button" class="btn btn-secondary ic-review-edit-btn" data-index="${index}" style="padding:6px 12px; border-radius:10px; font-size:0.78rem; font-weight:700; cursor:pointer;" title="Edit Value">Edit</button>
                 </div>
             `;
             container.appendChild(cardItem);
+        });
+
+        container.querySelectorAll('.ic-review-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+                if (!isNaN(idx)) {
+                    wizardIndex = idx;
+                    advanceWizardStep('ic-wizard-step-value');
+                }
+            });
         });
     }
 
