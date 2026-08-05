@@ -7,8 +7,14 @@ $headers = @{
 }
 
 $columnsToTest = @(
+    "groups_data",
     "members_data",
-    "templates_data"
+    "templates_data",
+    "notes_data",
+    "workspace_notepad",
+    "installment_cards_data",
+    "custom_pills",
+    "deleted_pills"
 )
 
 foreach ($col in $columnsToTest) {

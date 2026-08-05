@@ -561,27 +561,24 @@ async function loadState() {
                 State.templates = data.templates_data || [];
                 State.savedNotes = data.notes_data || [];
                 
-                // Restore Workspace Notepad
+                // Restore Workspace Notepad, Installment Cards & Value Pills
                 if (data.workspace_notepad) {
-                    localStorage.setItem('pms_workspace_notepad', JSON.stringify(data.workspace_notepad));
-                    if (typeof loadNotes === 'function') loadNotes(); // Refresh UI if function exists
+                    const wp = data.workspace_notepad;
+                    if (Array.isArray(wp)) {
+                        localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp));
+                    } else if (typeof wp === 'object' && wp !== null) {
+                        if (wp.notes) localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp.notes));
+                        if (wp.installment_cards) localStorage.setItem('pms_installment_cards', JSON.stringify(wp.installment_cards));
+                        if (wp.custom_pills) localStorage.setItem('pms_custom_value_pills', JSON.stringify(wp.custom_pills));
+                        if (wp.deleted_pills) localStorage.setItem('pms_deleted_value_pills', JSON.stringify(wp.deleted_pills));
+                    }
+                    if (typeof loadNotes === 'function') loadNotes();
                 }
                 
                 // Sync backup email from user metadata
                 if (window.AuthState?.currentUser?.user_metadata?.backupEmail !== undefined) {
                     State.backupEmail = window.AuthState.currentUser.user_metadata.backupEmail;
                     localStorage.setItem('ponnusamy_backup_email', State.backupEmail);
-                }
-                
-                // Restore Installment Cards & Value Pills
-                if (data.installment_cards_data) {
-                    localStorage.setItem('pms_installment_cards', JSON.stringify(data.installment_cards_data));
-                }
-                if (data.custom_pills) {
-                    localStorage.setItem('pms_custom_value_pills', JSON.stringify(data.custom_pills));
-                }
-                if (data.deleted_pills) {
-                    localStorage.setItem('pms_deleted_value_pills', JSON.stringify(data.deleted_pills));
                 }
 
                 // Trigger UI refresh for Scheme Cards if functions exist
@@ -660,17 +657,16 @@ function setupRealtimeSync() {
                         localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
                     }
                     if (newRow.workspace_notepad) {
-                        localStorage.setItem('pms_workspace_notepad', JSON.stringify(newRow.workspace_notepad));
+                        const wp = newRow.workspace_notepad;
+                        if (Array.isArray(wp)) {
+                            localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp));
+                        } else if (typeof wp === 'object' && wp !== null) {
+                            if (wp.notes) localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp.notes));
+                            if (wp.installment_cards) localStorage.setItem('pms_installment_cards', JSON.stringify(wp.installment_cards));
+                            if (wp.custom_pills) localStorage.setItem('pms_custom_value_pills', JSON.stringify(wp.custom_pills));
+                            if (wp.deleted_pills) localStorage.setItem('pms_deleted_value_pills', JSON.stringify(wp.deleted_pills));
+                        }
                         if (typeof loadNotes === 'function') loadNotes();
-                    }
-                    if (newRow.installment_cards_data) {
-                        localStorage.setItem('pms_installment_cards', JSON.stringify(newRow.installment_cards_data));
-                    }
-                    if (newRow.custom_pills) {
-                        localStorage.setItem('pms_custom_value_pills', JSON.stringify(newRow.custom_pills));
-                    }
-                    if (newRow.deleted_pills) {
-                        localStorage.setItem('pms_deleted_value_pills', JSON.stringify(newRow.deleted_pills));
                     }
 
                     // Trigger UI re-renders on remote changes across all modules
@@ -704,28 +700,26 @@ async function commitState(skipBanner = false) {
         
         // If authenticated with Supabase, sync to cloud
         if (window.supabaseClient && window.AuthState?.isAuthenticated && window.AuthState.currentUser?.id) {
-            let workspaceNotepadData = [];
+            let workspaceNotepadData = {};
             try {
                 const storedNotepad = localStorage.getItem('pms_workspace_notepad');
-                if (storedNotepad) workspaceNotepadData = JSON.parse(storedNotepad);
-            } catch (e) {}
-
-            let installmentCardsData = {};
-            try {
+                const notepadContent = storedNotepad ? JSON.parse(storedNotepad) : [];
+                
                 const storedCards = localStorage.getItem('pms_installment_cards');
-                if (storedCards) installmentCardsData = JSON.parse(storedCards);
-            } catch (e) {}
-
-            let customPillsData = [];
-            try {
+                const cardsContent = storedCards ? JSON.parse(storedCards) : {};
+                
                 const storedPills = localStorage.getItem('pms_custom_value_pills');
-                if (storedPills) customPillsData = JSON.parse(storedPills);
-            } catch (e) {}
-
-            let deletedPillsData = [];
-            try {
+                const pillsContent = storedPills ? JSON.parse(storedPills) : [];
+                
                 const storedDelPills = localStorage.getItem('pms_deleted_value_pills');
-                if (storedDelPills) deletedPillsData = JSON.parse(storedDelPills);
+                const delPillsContent = storedDelPills ? JSON.parse(storedDelPills) : [];
+
+                workspaceNotepadData = {
+                    notes: notepadContent,
+                    installment_cards: cardsContent,
+                    custom_pills: pillsContent,
+                    deleted_pills: delPillsContent
+                };
             } catch (e) {}
 
             const cloudIcon = document.getElementById('cloud-sync-icon');
@@ -746,9 +740,6 @@ async function commitState(skipBanner = false) {
                     templates_data: State.templates,
                     notes_data: State.savedNotes,
                     workspace_notepad: workspaceNotepadData,
-                    installment_cards_data: installmentCardsData,
-                    custom_pills: customPillsData,
-                    deleted_pills: deletedPillsData,
                     updated_at: new Date().toISOString()
                 });
                 
