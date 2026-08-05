@@ -562,13 +562,17 @@ async function loadState() {
                 State.savedNotes = data.notes_data || [];
                 
                 // Restore Workspace Notepad, Installment Cards & Value Pills
+                let cloudHasCards = false;
                 if (data.workspace_notepad) {
                     const wp = data.workspace_notepad;
                     if (Array.isArray(wp)) {
                         localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp));
                     } else if (typeof wp === 'object' && wp !== null) {
                         if (wp.notes) localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp.notes));
-                        if (wp.installment_cards) localStorage.setItem('pms_installment_cards', JSON.stringify(wp.installment_cards));
+                        if (wp.installment_cards && Object.keys(wp.installment_cards).length > 0) {
+                            localStorage.setItem('pms_installment_cards', JSON.stringify(wp.installment_cards));
+                            cloudHasCards = true;
+                        }
                         if (wp.custom_pills) localStorage.setItem('pms_custom_value_pills', JSON.stringify(wp.custom_pills));
                         if (wp.deleted_pills) localStorage.setItem('pms_deleted_value_pills', JSON.stringify(wp.deleted_pills));
                     }
@@ -587,8 +591,9 @@ async function loadState() {
                     if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
                 };
                 refreshGalleryUI();
-                setTimeout(refreshGalleryUI, 200);
-                setTimeout(refreshGalleryUI, 800);
+                setTimeout(refreshGalleryUI, 300);
+                setTimeout(refreshGalleryUI, 1000);
+                setTimeout(refreshGalleryUI, 2500);
                 
                 // Save to local storage for offline use
                 localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
@@ -596,12 +601,25 @@ async function loadState() {
                 localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates));
                 localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
 
+                // If cloud had NO cards but local has cards, push local to cloud
+                if (!cloudHasCards) {
+                    setTimeout(() => { if (typeof window.forceCloudSync === 'function') window.forceCloudSync(); }, 3000);
+                }
+
                 // Subscribe to Realtime Cross-Device updates
                 setupRealtimeSync();
             } else if (error && error.code === 'PGRST116') {
-                // No cloud data yet (row not found). Let's push our local data!
-                await commitState(true); 
+                // No cloud data yet (row not found).
+                // Wait 3 seconds for app.js to initialize cards into localStorage, THEN push
                 setupRealtimeSync();
+                setTimeout(async () => {
+                    await commitState(true);
+                    const refreshGalleryUI = () => {
+                        if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
+                        if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
+                    };
+                    refreshGalleryUI();
+                }, 3000);
             } else if (error) {
                 console.error("Supabase load error:", error);
             }
@@ -847,3 +865,22 @@ function getMonthLabel(group, monthNum) {
     return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+// ============================================================
+// GLOBAL: Force push all local data (including cards) to cloud
+// Called after app.js initializes cards into localStorage
+// ============================================================
+window.forceCloudSync = async function() {
+    if (!window.supabaseClient || !window.AuthState?.isAuthenticated || !window.AuthState?.currentUser?.id) {
+        console.warn('forceCloudSync: Not authenticated, skipping.');
+        return;
+    }
+    try {
+        await commitState(true);
+        // After push, refresh the gallery UI
+        if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
+        if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
+        console.log('forceCloudSync: Done. Cards pushed to Supabase.');
+    } catch(e) {
+        console.error('forceCloudSync error:', e);
+    }
+};

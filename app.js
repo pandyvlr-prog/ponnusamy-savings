@@ -6617,6 +6617,15 @@ async function deleteGroup() {
     }
 
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
+
+    // After full app init, push cards + pills to cloud (ensures cards are in localStorage first)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { if (typeof window.forceCloudSync === 'function') window.forceCloudSync(); }, 4000);
+        });
+    } else {
+        setTimeout(() => { if (typeof window.forceCloudSync === 'function') window.forceCloudSync(); }, 4000);
+    }
 })();
 /* ============================================================
    END SCHEME CARD MODULE
