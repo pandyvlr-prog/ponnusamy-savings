@@ -650,6 +650,18 @@ function setupRealtimeSync() {
                         State.members = newRow.members_data;
                         localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
                     }
+                    if (newRow.templates_data) {
+                        State.templates = newRow.templates_data;
+                        localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates));
+                    }
+                    if (newRow.notes_data) {
+                        State.savedNotes = newRow.notes_data;
+                        localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
+                    }
+                    if (newRow.workspace_notepad) {
+                        localStorage.setItem('pms_workspace_notepad', JSON.stringify(newRow.workspace_notepad));
+                        if (typeof loadNotes === 'function') loadNotes();
+                    }
                     if (newRow.installment_cards_data) {
                         localStorage.setItem('pms_installment_cards', JSON.stringify(newRow.installment_cards_data));
                     }
@@ -660,10 +672,19 @@ function setupRealtimeSync() {
                         localStorage.setItem('pms_deleted_value_pills', JSON.stringify(newRow.deleted_pills));
                     }
 
-                    // Trigger UI re-renders on remote changes
+                    // Trigger UI re-renders on remote changes across all modules
+                    if (typeof renderDashboard === 'function') renderDashboard();
+                    if (typeof renderGroupDetails === 'function' && State.selectedGroupId) {
+                        renderGroupDetails();
+                        const member = State.members.find(m => m.id === State.selectedMemberId);
+                        const group = State.groups.find(g => g.id === State.selectedGroupId);
+                        if (member && group && typeof renderChecklist === 'function') {
+                            renderChecklist(member, group);
+                        }
+                    }
                     if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
                     if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
-                    if (typeof renderDashboard === 'function') renderDashboard();
+                    if (typeof renderPnLSummary === 'function') renderPnLSummary();
                 }
             })
             .subscribe();
@@ -757,7 +778,6 @@ async function commitState(skipBanner = false) {
 }
 
 async function saveState() {
-    // [PHASE 4] Mark all views as dirty so they re-render on next visit
     State.isDirty = {
         dashboard: true,
         pnl: true,
@@ -765,15 +785,8 @@ async function saveState() {
         members: true
     };
     
-    if (!originalStateSnapshot) {
-        return commitState(true);
-    }
-    const currentStr = JSON.stringify(State);
-    if (currentStr !== originalStateSnapshot) {
-        showSaveDiscardBanner();
-    } else {
-        hideSaveDiscardBanner();
-    }
+    // Immediately auto-commit to Supabase Cloud for real-time cross-device sync!
+    return commitState(true);
 }
 
 function discardState() {
