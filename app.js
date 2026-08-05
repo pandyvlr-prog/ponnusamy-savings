@@ -5832,6 +5832,19 @@ async function deleteGroup() {
         localStorage.setItem('pms_custom_value_pills', JSON.stringify(pills));
     }
 
+    function getDeletedPills() {
+        try {
+            const saved = localStorage.getItem('pms_deleted_value_pills');
+            return saved ? JSON.parse(saved) : [];
+        } catch(e) {
+            return [];
+        }
+    }
+
+    function saveDeletedPills(pills) {
+        localStorage.setItem('pms_deleted_value_pills', JSON.stringify(pills));
+    }
+
     function renderPillsIntoContainer(containerId, inputId) {
         const container = document.getElementById(containerId);
         const inputEl = document.getElementById(inputId);
@@ -5839,19 +5852,15 @@ async function deleteGroup() {
 
         container.innerHTML = '';
         const customPills = getCustomPills();
-        const allPills = [...defaultPills, ...customPills];
+        const deletedPills = getDeletedPills();
+        const combined = [...defaultPills, ...customPills];
+        const activePills = Array.from(new Set(combined)).filter(p => !deletedPills.includes(p));
 
-        allPills.forEach((pillText, idx) => {
-            const isCustom = idx >= defaultPills.length;
+        activePills.forEach((pillText) => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'ic-suggestion-pill' + (isCustom ? ' is-custom-pill' : '');
-            
-            if (isCustom) {
-                btn.innerHTML = `<span>${pillText}</span><span class="ic-pill-delete-x" data-pill="${pillText}" title="Delete ${pillText}">&times;</span>`;
-            } else {
-                btn.textContent = pillText;
-            }
+            btn.className = 'ic-suggestion-pill';
+            btn.innerHTML = `<span>${pillText}</span><span class="ic-pill-delete-x" data-pill="${pillText}" title="Delete ${pillText}">&times;</span>`;
 
             btn.addEventListener('click', (e) => {
                 const deleteBtn = e.target.closest('.ic-pill-delete-x');
@@ -5859,8 +5868,15 @@ async function deleteGroup() {
                     e.stopPropagation();
                     e.preventDefault();
                     const targetPill = deleteBtn.getAttribute('data-pill') || pillText;
-                    const updated = getCustomPills().filter(p => p !== targetPill);
-                    saveCustomPills(updated);
+                    
+                    const deleted = getDeletedPills();
+                    if (!deleted.includes(targetPill)) {
+                        deleted.push(targetPill);
+                        saveDeletedPills(deleted);
+                    }
+                    const custom = getCustomPills().filter(p => p !== targetPill);
+                    saveCustomPills(custom);
+
                     renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
                     renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
                     return;
@@ -5906,13 +5922,16 @@ async function deleteGroup() {
         const val = (input?.value || '').trim();
         if (val) {
             const formatted = val.toUpperCase();
+            const deleted = getDeletedPills().filter(p => p !== formatted);
+            saveDeletedPills(deleted);
+
             const current = getCustomPills();
-            if (!current.includes(formatted) && !defaultPills.includes(formatted)) {
+            if (!current.includes(formatted)) {
                 current.push(formatted);
                 saveCustomPills(current);
-                renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
-                renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
             }
+            renderPillsIntoContainer('ic-wizard-suggestions-grid', 'ic-wizard-value-input');
+            renderPillsIntoContainer('ic-edit-suggestions-grid', 'ic-edit-value-input');
             closeCustomPresetModal();
         }
     }

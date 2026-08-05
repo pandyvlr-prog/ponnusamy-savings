@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=170">
+    <link rel="stylesheet" href="style.css?v=171">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -526,25 +526,29 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     justify-content: center !important;
 }
 
+.ic-share-popover[style*="display: flex"],
+.ic-share-popover[style*="display:flex"],
 .ic-share-popover[style*="display: block"],
 .ic-share-popover[style*="display:block"] {
     display: flex !important;
     flex-direction: column !important;
-    position: absolute !important;
+    position: fixed !important;
     z-index: 999999 !important;
-    background: var(--bg-surface-elevated, #1c1c28) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: #1c1c28 !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
     border-radius: 16px !important;
     padding: 8px !important;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.5) !important;
-    min-width: 200px !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.65) !important;
+    min-width: 210px !important;
 }
 
+[data-theme="light"] .ic-share-popover[style*="display: flex"],
+[data-theme="light"] .ic-share-popover[style*="display:flex"],
 [data-theme="light"] .ic-share-popover[style*="display: block"],
 [data-theme="light"] .ic-share-popover[style*="display:block"] {
     background: #ffffff !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.25) !important;
 }
 
 /* Modal Dialog Box styling */
@@ -3527,10 +3531,13 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <button id="btn-action-cancel-edit" class="btn btn-secondary" style="width: 100%; margin-top: 8px;">Cancel</button>
             </div>
         </div>
-    </div>
-
+    <!-- Application Core Scripts with Cache Busting -->
+    <script src="js/ui.js?v=171"></script>
+    <script src="js/pnl.js?v=171"></script>
+    <script src="js/pdf.js?v=171"></script>
+    <script src="js/settings.js?v=171"></script>
+    <script src="app.js?v=171"></script>
 </body>
-</html>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
 
