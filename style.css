@@ -8372,3 +8372,513 @@ html, body, .app-device-shell {
 /* ============================================================
    END CRITICAL DISPLAY FIXES
    ============================================================ */
+
+/* ============================================================
+   SCHEME CARD SCREEN - PREMIUM UNIVERSAL OVERRIDES v161
+   Theme-agnostic: works in both light AND dark mode
+   ============================================================ */
+
+/* Fix screen-cards container */
+#screen-cards {
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* ─────────────────────────────────────────────
+   PAGE 1: SCHEME SELECTION — OWN DARK BACKGROUND
+   Always premium regardless of app theme
+   ───────────────────────────────────────────── */
+#ic-tenure-selector.ic-landing-container {
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px 28px 80px !important;
+    /* Rich dark gradient – overrides app light/dark theme */
+    background: linear-gradient(160deg, #0f0f14 0%, #131318 50%, #0c0c10 100%) !important;
+    min-height: 100%;
+    overflow-y: auto;
+}
+
+/* Title – always white + gold on dark bg */
+#ic-tenure-selector .ic-landing-title {
+    font-size: clamp(2rem, 5vw, 3rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -1.5px !important;
+    background: linear-gradient(135deg, #ffffff 30%, #D4AF37 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    margin-bottom: 10px !important;
+    line-height: 1.1 !important;
+}
+#ic-tenure-selector .ic-landing-subtitle {
+    color: rgba(255,255,255,0.55) !important;
+    font-size: 1.05rem !important;
+    font-weight: 500 !important;
+    -webkit-text-fill-color: rgba(255,255,255,0.55) !important;
+}
+
+/* Grid */
+#ic-tenure-selector .ic-scheme-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 24px !important;
+    margin-top: 32px !important;
+}
+
+/* Cards – glass panels on dark bg */
+#ic-tenure-selector .ic-scheme-card {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 24px !important;
+    padding: 28px !important;
+    min-height: 360px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s, border-color 0.35s !important;
+}
+#ic-tenure-selector .ic-scheme-card:hover {
+    transform: translateY(-8px) scale(1.01) !important;
+    border-color: rgba(212,175,55,0.5) !important;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.1), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"]:hover {
+    border-color: rgba(34,197,94,0.5) !important;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 30px rgba(34,197,94,0.1), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+
+/* Glow orbs */
+#ic-tenure-selector .ic-scheme-card[data-tenure="12M"]::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"]::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,197,94,0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Header row */
+#ic-tenure-selector .ic-scheme-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 24px !important;
+}
+
+/* Icon */
+#ic-tenure-selector .ic-scheme-icon-wrap {
+    width: 52px !important; height: 52px !important;
+    border-radius: 15px !important;
+    background: rgba(212,175,55,0.12) !important;
+    border: 1px solid rgba(212,175,55,0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-icon-wrap {
+    background: rgba(34,197,94,0.12) !important;
+    border-color: rgba(34,197,94,0.3) !important;
+}
+#ic-tenure-selector .ic-scheme-icon-wrap svg,
+#ic-tenure-selector .ic-scheme-icon-wrap i {
+    width: 24px !important; height: 24px !important;
+    color: #D4AF37 !important; stroke: #D4AF37 !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-icon-wrap svg,
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-icon-wrap i {
+    color: #22c55e !important; stroke: #22c55e !important;
+}
+
+/* Badge */
+#ic-tenure-selector .ic-scheme-badge {
+    width: 56px !important; height: 56px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #D4AF37, #B8860B) !important;
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+    font-size: 1.5rem !important;
+    font-weight: 900 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 16px rgba(212,175,55,0.45) !important;
+    flex-shrink: 0 !important;
+}
+
+/* Title/desc */
+#ic-tenure-selector .ic-scheme-title {
+    font-size: 1.7rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    margin-bottom: 6px !important;
+    letter-spacing: -0.5px !important;
+}
+#ic-tenure-selector .ic-scheme-desc {
+    color: rgba(255,255,255,0.5) !important;
+    -webkit-text-fill-color: rgba(255,255,255,0.5) !important;
+    font-size: 0.88rem !important;
+    margin-bottom: 20px !important;
+}
+
+/* Stats */
+#ic-tenure-selector .ic-scheme-stats-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-bottom: 24px !important;
+    padding: 16px !important;
+    background: rgba(255,255,255,0.04) !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    flex: 1 !important;
+}
+#ic-tenure-selector .ic-scheme-stat-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+#ic-tenure-selector .ic-scheme-stat-label {
+    color: rgba(255,255,255,0.45) !important;
+    -webkit-text-fill-color: rgba(255,255,255,0.45) !important;
+    font-size: 0.82rem !important;
+}
+#ic-tenure-selector .ic-scheme-stat-val {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Button */
+#ic-tenure-selector .ic-scheme-btn {
+    display: block !important;
+    width: 100% !important;
+    padding: 15px 24px !important;
+    border-radius: 14px !important;
+    border: none !important;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%) !important;
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    box-shadow: 0 4px 16px rgba(212,175,55,0.4) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    letter-spacing: 0.3px !important;
+}
+#ic-tenure-selector .ic-scheme-btn:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 28px rgba(212,175,55,0.6) !important;
+}
+
+/* Trust footer */
+.ic-trust-footer {
+    text-align: center !important;
+    margin-top: 40px !important;
+    color: rgba(255,255,255,0.35) !important;
+    -webkit-text-fill-color: rgba(255,255,255,0.35) !important;
+    font-size: 0.8rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+/* ─────────────────────────────────────────────
+   PAGE 2: GALLERY VIEW – UNIVERSAL OVERRIDE
+   ───────────────────────────────────────────── */
+#ic-cards-grid-view.ic-gallery-container {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px 20px 80px !important;
+    box-sizing: border-box !important;
+}
+
+/* Nav bar */
+#ic-cards-grid-view .ic-gallery-nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 20px !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 14px 18px !important;
+    background: var(--bg-surface-elevated, rgba(255,255,255,0.06)) !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+}
+[data-theme="light"] #ic-cards-grid-view .ic-gallery-nav {
+    background: #ffffff !important;
+    border-color: rgba(0,0,0,0.07) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
+}
+
+/* Back button */
+#ic-cards-grid-view .ic-back-btn-premium,
+#btn-ic-back-tenure {
+    width: 44px !important; height: 44px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(212,175,55,0.25) !important;
+    background: rgba(212,175,55,0.08) !important;
+    color: #D4AF37 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: all 0.2s !important;
+}
+#ic-cards-grid-view .ic-back-btn-premium:hover,
+#btn-ic-back-tenure:hover {
+    background: #D4AF37 !important;
+    color: #000 !important;
+    transform: translateX(-3px) !important;
+}
+
+/* Upload button */
+#btn-ic-add-card-top {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 20px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    background: linear-gradient(135deg, #D4AF37, #B8860B) !important;
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(212,175,55,0.35) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    white-space: nowrap !important;
+}
+#btn-ic-add-card-top:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(212,175,55,0.5) !important;
+}
+
+/* Stats panel */
+#ic-cards-grid-view .ic-stats-panel {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+}
+#ic-cards-grid-view .ic-stat-card-premium {
+    background: var(--bg-surface-elevated, rgba(255,255,255,0.06)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 14px !important;
+    padding: 14px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    min-height: 76px !important;
+    transition: transform 0.2s !important;
+}
+[data-theme="light"] #ic-cards-grid-view .ic-stat-card-premium {
+    background: #ffffff !important;
+    border-color: rgba(0,0,0,0.07) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+}
+#ic-cards-grid-view .ic-stat-card-premium:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(212,175,55,0.3) !important;
+}
+#ic-cards-grid-view .ic-stat-label-premium {
+    font-size: 0.72rem !important;
+    color: var(--text-muted) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+}
+#ic-cards-grid-view .ic-stat-val-premium {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: var(--text-main) !important;
+    display: block !important;
+    line-height: 1.2 !important;
+}
+
+/* Toolbar */
+#ic-cards-grid-view .ic-toolbar {
+    display: flex !important;
+    gap: 10px !important;
+    margin-bottom: 20px !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+#ic-cards-grid-view .ic-search-input {
+    width: 100% !important;
+    padding: 10px 16px 10px 44px !important;
+    border-radius: 12px !important;
+    background: var(--bg-surface-elevated, #fff) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--text-main) !important;
+    font-size: 0.88rem !important;
+    outline: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    box-sizing: border-box !important;
+}
+[data-theme="light"] #ic-cards-grid-view .ic-search-input {
+    background: #fff !important;
+    border-color: rgba(0,0,0,0.1) !important;
+    color: #222 !important;
+}
+#ic-cards-grid-view .ic-search-input:focus {
+    border-color: #D4AF37 !important;
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.15) !important;
+}
+#ic-cards-grid-view select {
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+    background: var(--bg-surface-elevated, #fff) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--text-main) !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    outline: none !important;
+    cursor: pointer !important;
+    min-width: 110px !important;
+}
+[data-theme="light"] #ic-cards-grid-view select {
+    background: #fff !important;
+    border-color: rgba(0,0,0,0.1) !important;
+    color: #222 !important;
+}
+
+/* Gallery grid */
+#ic-cards-grid-view .ic-gallery-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+    gap: 18px !important;
+    flex: 1 !important;
+}
+
+/* Gallery cards */
+#ic-cards-grid-view .ic-card-item {
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    background: var(--bg-surface-elevated, rgba(255,255,255,0.06)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s, border-color 0.3s !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+[data-theme="light"] #ic-cards-grid-view .ic-card-item {
+    background: #ffffff !important;
+    border-color: rgba(0,0,0,0.07) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+}
+#ic-cards-grid-view .ic-card-item:hover {
+    transform: translateY(-6px) scale(1.01) !important;
+    border-color: rgba(212,175,55,0.4) !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.2), 0 0 20px rgba(212,175,55,0.1) !important;
+}
+#ic-cards-grid-view .ic-card-img-wrap {
+    width: 100% !important;
+    height: 180px !important;
+    overflow: hidden !important;
+    background: rgba(0,0,0,0.08) !important;
+    position: relative !important;
+}
+#ic-cards-grid-view .ic-card-img-wrap img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.4s ease !important;
+    display: block !important;
+}
+#ic-cards-grid-view .ic-card-item:hover .ic-card-img-wrap img {
+    transform: scale(1.06) !important;
+}
+#ic-cards-grid-view .ic-card-value-badge {
+    position: absolute !important;
+    top: 10px !important; left: 10px !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    background: linear-gradient(135deg, #D4AF37, #B8860B) !important;
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+    font-weight: 800 !important;
+    font-size: 0.82rem !important;
+    box-shadow: 0 2px 8px rgba(212,175,55,0.5) !important;
+}
+#ic-cards-grid-view .ic-card-meta {
+    padding: 12px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-top: 1px solid rgba(255,255,255,0.05) !important;
+}
+[data-theme="light"] #ic-cards-grid-view .ic-card-meta {
+    border-top-color: rgba(0,0,0,0.06) !important;
+}
+#ic-cards-grid-view .ic-card-date {
+    font-size: 0.76rem !important;
+    color: var(--text-muted) !important;
+}
+#ic-cards-grid-view .ic-card-actions {
+    display: flex !important;
+    gap: 8px !important;
+    padding: 0 14px 14px !important;
+}
+#ic-cards-grid-view .ic-card-action-btn,
+#ic-cards-grid-view .ic-edit,
+#ic-cards-grid-view .ic-share,
+#ic-cards-grid-view .ic-delete {
+    flex: 1 !important;
+    padding: 7px 8px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    background: rgba(255,255,255,0.04) !important;
+    color: var(--text-secondary, #aaa) !important;
+    font-size: 0.76rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    transition: all 0.2s !important;
+}
+[data-theme="light"] #ic-cards-grid-view .ic-card-action-btn,
+[data-theme="light"] #ic-cards-grid-view .ic-edit,
+[data-theme="light"] #ic-cards-grid-view .ic-share,
+[data-theme="light"] #ic-cards-grid-view .ic-delete {
+    background: rgba(0,0,0,0.03) !important;
+    border-color: rgba(0,0,0,0.08) !important;
+    color: #555 !important;
+}
+#ic-cards-grid-view .ic-edit:hover { background: rgba(59,130,246,0.12) !important; border-color: rgba(59,130,246,0.3) !important; color: #3b82f6 !important; }
+#ic-cards-grid-view .ic-share:hover { background: rgba(212,175,55,0.12) !important; border-color: rgba(212,175,55,0.3) !important; color: #D4AF37 !important; }
+#ic-cards-grid-view .ic-delete:hover { background: rgba(239,68,68,0.1) !important; border-color: rgba(239,68,68,0.3) !important; color: #ef4444 !important; }
+
+/* ============================================================
+   END PREMIUM UNIVERSAL OVERRIDES v161
+   ============================================================ */
