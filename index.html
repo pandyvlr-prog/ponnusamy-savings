@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=165">
+    <link rel="stylesheet" href="style.css?v=166">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -476,6 +476,58 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 #ic-cards-grid-view .ic-edit:hover { background: rgba(59,130,246,.1) !important; border-color: rgba(59,130,246,.3) !important; color: #3b82f6 !important; }
 #ic-cards-grid-view .ic-share:hover { background: rgba(212,175,55,.1) !important; border-color: rgba(212,175,55,.3) !important; color: #D4AF37 !important; }
 #ic-cards-grid-view .ic-delete:hover { background: rgba(239,68,68,.1) !important; border-color: rgba(239,68,68,.3) !important; color: #ef4444 !important; }
+
+/* Modal Overlays & Backdrops - High Priority Z-Index Overrides */
+.ic-modal-backdrop-premium,
+.ic-share-popover,
+.ic-lightbox-backdrop {
+    z-index: 999999 !important;
+}
+
+.ic-modal-backdrop-premium[style*="display: flex"],
+.ic-modal-backdrop-premium[style*="display:flex"] {
+    display: flex !important;
+    z-index: 999999 !important;
+}
+
+.ic-share-popover[style*="display: block"],
+.ic-share-popover[style*="display:block"] {
+    display: block !important;
+    z-index: 999999 !important;
+}
+
+.ic-lightbox-backdrop[style*="display: flex"],
+.ic-lightbox-backdrop[style*="display:flex"] {
+    display: flex !important;
+    z-index: 999999 !important;
+}
+
+/* Suggestion Pills */
+.ic-suggestion-pill {
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(212,175,55,0.3) !important;
+    background: rgba(212,175,55,0.08) !important;
+    color: #D4AF37 !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.ic-suggestion-pill:hover {
+    background: #D4AF37 !important;
+    color: #000000 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(212,175,55,0.3) !important;
+}
+
+/* Make icons non-interactive to ensure button click handlers fire reliably */
+.ic-premium-icon-btn *,
+.ic-card-action-btn * {
+    pointer-events: none !important;
+}
 </style>
 </head>
 <body data-app-state="loading">
@@ -1859,9 +1911,14 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <p id="ic-grid-tenure-sub">Premium Cards Gallery</p>
                             </div>
                         </div>
-                        <button id="btn-ic-add-card-top" class="ic-btn-upload-top">
-                            <i data-lucide="plus"></i> Upload Cards
-                        </button>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="btn-ic-share-all" class="ic-btn-share-all" style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); background: rgba(212,175,55,0.12); color: #D4AF37; font-weight: 700; font-size: 0.88rem; cursor: pointer;" title="Share All Cards">
+                                <i data-lucide="share-2"></i> Share All
+                            </button>
+                            <button id="btn-ic-add-card-top" class="ic-btn-upload-top">
+                                <i data-lucide="plus"></i> Upload Cards
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Statistics Dashboard Row -->

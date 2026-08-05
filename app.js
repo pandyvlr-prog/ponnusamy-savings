@@ -6181,6 +6181,8 @@ async function deleteGroup() {
         const uploadFab = document.getElementById('ic-fab-upload');
         if (uploadTop) uploadTop.addEventListener('click', openUploadWizard);
         if (uploadFab) uploadFab.addEventListener('click', openUploadWizard);
+        const shareAllTop = document.getElementById('btn-ic-share-all');
+        if (shareAllTop) shareAllTop.addEventListener('click', shareAllCards);
 
         // Toolbar controls listeners
         const searchInput = document.getElementById('ic-search-input');
