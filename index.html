@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=172">
+    <link rel="stylesheet" href="style.css?v=173">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -726,6 +726,187 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 .ic-premium-icon-btn *,
 .ic-card-action-btn * {
     pointer-events: none !important;
+}
+
+/* ═══════════════════════════════════════════
+   PREMIUM MULTI-STEP UPLOAD WIZARD REDESIGN
+   ═══════════════════════════════════════════ */
+
+/* STRICT STEP ISOLATION */
+.ic-wizard-step {
+    display: none !important;
+}
+
+.ic-wizard-step.active {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    animation: icWizardFadeIn 0.3s ease-out forwards !important;
+}
+
+@keyframes icWizardFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* WIZARD MODAL CONTAINER */
+#ic-upload-wizard-backdrop .ic-modal-premium {
+    max-width: 520px !important;
+    border-radius: 28px !important;
+    overflow: hidden !important;
+    background: var(--bg-surface-elevated, #1a1a24) !important;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 40px rgba(212,175,55,0.15) !important;
+    border: 1px solid rgba(212,175,55,0.25) !important;
+}
+
+[data-theme="light"] #ic-upload-wizard-backdrop .ic-modal-premium {
+    background: #ffffff !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18), 0 0 30px rgba(212,175,55,0.2) !important;
+    border-color: rgba(212,175,55,0.35) !important;
+}
+
+/* STEPPER INDICATOR BAR */
+.ic-wizard-stepper-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 24px !important;
+    background: rgba(0,0,0,0.2) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+[data-theme="light"] .ic-wizard-stepper-bar {
+    background: rgba(0,0,0,0.03) !important;
+    border-bottom-color: rgba(0,0,0,0.06) !important;
+}
+
+.ic-stepper-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    color: var(--text-secondary, #94a3b8) !important;
+    transition: all 0.3s ease !important;
+}
+
+.ic-stepper-item.active {
+    color: #D4AF37 !important;
+}
+
+.ic-stepper-number {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.1) !important;
+    color: inherit !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+}
+
+.ic-stepper-item.active .ic-stepper-number {
+    background: linear-gradient(135deg, #D4AF37, #B8860B) !important;
+    color: #000000 !important;
+    box-shadow: 0 0 10px rgba(212,175,55,0.5) !important;
+}
+
+/* STEP 1: TYPE SELECTION CARDS */
+.ic-wizard-selector-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+    margin-top: 8px !important;
+}
+
+.ic-wizard-type-card {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1.5px solid rgba(255,255,255,0.1) !important;
+    border-radius: 20px !important;
+    padding: 24px 20px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+[data-theme="light"] .ic-wizard-type-card {
+    background: rgba(0,0,0,0.02) !important;
+    border-color: rgba(0,0,0,0.08) !important;
+}
+
+.ic-wizard-type-card:hover {
+    background: rgba(212,175,55,0.1) !important;
+    border-color: #D4AF37 !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 30px rgba(212,175,55,0.25) !important;
+}
+
+.ic-wizard-type-card svg {
+    width: 38px !important;
+    height: 38px !important;
+    color: #D4AF37 !important;
+    stroke-width: 2 !important;
+}
+
+.ic-wizard-type-card h4 {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    color: var(--text-main, #ffffff) !important;
+}
+
+.ic-wizard-type-card p {
+    font-size: 0.8rem !important;
+    color: var(--text-secondary, #94a3b8) !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+}
+
+/* STEP 2: DROPZONE DESIGN */
+.ic-wizard-dropzone {
+    border: 2px dashed rgba(212,175,55,0.45) !important;
+    border-radius: 20px !important;
+    background: rgba(212,175,55,0.04) !important;
+    padding: 36px 20px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+.ic-wizard-dropzone:hover {
+    background: rgba(212,175,55,0.12) !important;
+    border-color: #D4AF37 !important;
+    transform: scale(1.01) !important;
+}
+
+.ic-wizard-dropzone svg {
+    width: 44px !important;
+    height: 44px !important;
+    color: #D4AF37 !important;
+}
+
+.ic-wizard-dropzone h4 {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: var(--text-main, #ffffff) !important;
+    margin: 0 !important;
+}
+
+.ic-wizard-dropzone p {
+    font-size: 0.85rem !important;
+    color: var(--text-secondary, #94a3b8) !important;
+    margin: 0 !important;
 }
 </style>
 </head>
@@ -2209,6 +2390,24 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <i data-lucide="x"></i>
                         </button>
                     </div>
+                    <div class="ic-wizard-stepper-bar">
+                        <div class="ic-stepper-item active" id="ic-stepper-1">
+                            <span class="ic-stepper-number">1</span>
+                            <span>Type</span>
+                        </div>
+                        <div class="ic-stepper-item" id="ic-stepper-2">
+                            <span class="ic-stepper-number">2</span>
+                            <span>Upload</span>
+                        </div>
+                        <div class="ic-stepper-item" id="ic-stepper-3">
+                            <span class="ic-stepper-number">3</span>
+                            <span>Values</span>
+                        </div>
+                        <div class="ic-stepper-item" id="ic-stepper-4">
+                            <span class="ic-stepper-number">4</span>
+                            <span>Review</span>
+                        </div>
+                    </div>
                     <div class="ic-modal-premium-body">
                         <!-- Step 1: Upload Type Selector -->
                         <div class="ic-wizard-step active" id="ic-wizard-step-type">
@@ -3532,11 +3731,11 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             </div>
         </div>
     <!-- Application Core Scripts with Cache Busting -->
-    <script src="js/ui.js?v=172"></script>
-    <script src="js/pnl.js?v=172"></script>
-    <script src="js/pdf.js?v=172"></script>
-    <script src="js/settings.js?v=172"></script>
-    <script src="app.js?v=172"></script>
+    <script src="js/ui.js?v=173"></script>
+    <script src="js/pnl.js?v=173"></script>
+    <script src="js/pdf.js?v=173"></script>
+    <script src="js/settings.js?v=173"></script>
+    <script src="app.js?v=173"></script>
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>

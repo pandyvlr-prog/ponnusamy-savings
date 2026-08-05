@@ -5766,6 +5766,12 @@ async function deleteGroup() {
     }
 
     // --- UPLOAD WIZARD ENGINE ---
+    function updateWizardStepper(stepNum) {
+        document.querySelectorAll('.ic-stepper-item').forEach(item => item.classList.remove('active'));
+        const activeItem = document.getElementById(`ic-stepper-${stepNum}`);
+        if (activeItem) activeItem.classList.add('active');
+    }
+
     function openUploadWizard() {
         wizardQueue = [];
         wizardIndex = 0;
@@ -5773,6 +5779,7 @@ async function deleteGroup() {
         // Reset steps
         document.querySelectorAll('.ic-wizard-step').forEach(step => step.classList.remove('active'));
         document.getElementById('ic-wizard-step-type').classList.add('active');
+        updateWizardStepper(1);
 
         // Hide back btn, show cancel
         document.getElementById('btn-wizard-back').style.display = 'none';
@@ -5789,7 +5796,13 @@ async function deleteGroup() {
 
     function advanceWizardStep(stepId) {
         document.querySelectorAll('.ic-wizard-step').forEach(step => step.classList.remove('active'));
-        document.getElementById(stepId).classList.add('active');
+        const targetStep = document.getElementById(stepId);
+        if (targetStep) targetStep.classList.add('active');
+
+        if (stepId === 'ic-wizard-step-type') updateWizardStepper(1);
+        else if (stepId === 'ic-wizard-step-file') updateWizardStepper(2);
+        else if (stepId === 'ic-wizard-step-value') updateWizardStepper(3);
+        else if (stepId === 'ic-wizard-step-review') updateWizardStepper(4);
 
         // Back button toggles
         const backBtn = document.getElementById('btn-wizard-back');
