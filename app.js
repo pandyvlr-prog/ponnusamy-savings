@@ -5213,21 +5213,9 @@ async function deleteGroup() {
         const sub = document.getElementById('ic-grid-tenure-sub');
         const fab = document.getElementById('ic-fab-upload');
 
-        // Transition animations
-        const clickedCard = document.getElementById('card-scheme-' + tenure);
-        if (clickedCard) {
-            document.getElementById('screen-cards').classList.add('ic-transitioning');
-            clickedCard.style.transform = 'scale(1.05)';
-            clickedCard.style.boxShadow = '0 0 40px var(--primary-glow)';
-        }
+        // Removed the scale transition animation on the card as requested by the user
 
         setTimeout(() => {
-            if (clickedCard) {
-                clickedCard.style.transform = '';
-                clickedCard.style.boxShadow = '';
-            }
-            document.getElementById('screen-cards').classList.remove('ic-transitioning');
-
             if (selectorView) selectorView.style.display = 'none';
             if (cardsGridView) {
                 cardsGridView.style.display = 'block';
@@ -6401,8 +6389,7 @@ async function deleteGroup() {
         const slide12 = document.getElementById('card-scheme-12M');
         const slide20 = document.getElementById('card-scheme-20M');
 
-        if (slide12) slide12.addEventListener('click', () => openTenureCards('12M'));
-        if (slide20) slide20.addEventListener('click', () => openTenureCards('20M'));
+        // Removed whole-card click listeners as per user request to only use the Open Scheme button.
 
         // Selection Cards Open buttons
         document.querySelectorAll('.ic-scheme-btn').forEach(btn => {
