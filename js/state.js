@@ -573,9 +573,23 @@ async function loadState() {
                     localStorage.setItem('ponnusamy_backup_email', State.backupEmail);
                 }
                 
-                // Restore Installment Cards
+                // Restore Installment Cards & Value Pills
                 if (data.installment_cards_data) {
                     localStorage.setItem('pms_installment_cards', JSON.stringify(data.installment_cards_data));
+                }
+                if (data.custom_pills) {
+                    localStorage.setItem('pms_custom_value_pills', JSON.stringify(data.custom_pills));
+                }
+                if (data.deleted_pills) {
+                    localStorage.setItem('pms_deleted_value_pills', JSON.stringify(data.deleted_pills));
+                }
+
+                // Trigger UI refresh for Scheme Cards if functions exist
+                if (typeof window.updateSelectionStats === 'function') {
+                    window.updateSelectionStats();
+                }
+                if (typeof window.calculateAndRenderGallery === 'function') {
+                    window.calculateAndRenderGallery();
                 }
                 
                 // Save to local storage for offline use
@@ -583,9 +597,13 @@ async function loadState() {
                 localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
                 localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates));
                 localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
+
+                // Subscribe to Realtime Cross-Device updates
+                setupRealtimeSync();
             } else if (error && error.code === 'PGRST116') {
                 // No cloud data yet (row not found). Let's push our local data!
                 await commitState(true); 
+                setupRealtimeSync();
             } else if (error) {
                 console.error("Supabase load error:", error);
             }
@@ -600,6 +618,57 @@ async function loadState() {
         originalStateSnapshot = JSON.stringify(State);
     } catch (e) {
         console.error('Error loading state:', e);
+    }
+}
+
+// --- REALTIME CROSS-DEVICE CLOUD SYNC ENGINE ---
+let realtimeSyncChannel = null;
+
+function setupRealtimeSync() {
+    if (!window.supabaseClient || !window.AuthState?.isAuthenticated || !window.AuthState.currentUser?.id) return;
+    if (realtimeSyncChannel) return;
+
+    const userId = window.AuthState.currentUser.id;
+
+    try {
+        realtimeSyncChannel = window.supabaseClient
+            .channel('public:user_data:' + userId)
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'user_data',
+                filter: `user_id=eq.${userId}`
+            }, (payload) => {
+                if (payload && payload.new) {
+                    const newRow = payload.new;
+                    
+                    if (newRow.groups_data) {
+                        State.groups = newRow.groups_data;
+                        localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
+                    }
+                    if (newRow.members_data) {
+                        State.members = newRow.members_data;
+                        localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
+                    }
+                    if (newRow.installment_cards_data) {
+                        localStorage.setItem('pms_installment_cards', JSON.stringify(newRow.installment_cards_data));
+                    }
+                    if (newRow.custom_pills) {
+                        localStorage.setItem('pms_custom_value_pills', JSON.stringify(newRow.custom_pills));
+                    }
+                    if (newRow.deleted_pills) {
+                        localStorage.setItem('pms_deleted_value_pills', JSON.stringify(newRow.deleted_pills));
+                    }
+
+                    // Trigger UI re-renders on remote changes
+                    if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
+                    if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
+                    if (typeof renderDashboard === 'function') renderDashboard();
+                }
+            })
+            .subscribe();
+    } catch (e) {
+        console.warn('Realtime channel subscription fallback:', e);
     }
 }
 
@@ -625,12 +694,24 @@ async function commitState(skipBanner = false) {
                 if (storedCards) installmentCardsData = JSON.parse(storedCards);
             } catch (e) {}
 
+            let customPillsData = [];
+            try {
+                const storedPills = localStorage.getItem('pms_custom_value_pills');
+                if (storedPills) customPillsData = JSON.parse(storedPills);
+            } catch (e) {}
+
+            let deletedPillsData = [];
+            try {
+                const storedDelPills = localStorage.getItem('pms_deleted_value_pills');
+                if (storedDelPills) deletedPillsData = JSON.parse(storedDelPills);
+            } catch (e) {}
+
             const cloudIcon = document.getElementById('cloud-sync-icon');
             const cloudBtn = document.getElementById('cloud-sync-status-btn');
             if (cloudIcon) {
                 cloudIcon.setAttribute('data-lucide', 'refresh-cw');
                 cloudIcon.classList.add('lucide-spin');
-                if (cloudBtn) cloudBtn.style.color = '#f59e0b'; // Amber for syncing
+                if (cloudBtn) cloudBtn.style.color = '#f59e0b';
                 if (window.lucide) window.lucide.createIcons({ icons: { 'refresh-cw': window.lucide.icons.RefreshCw }, nameAttr: 'data-lucide', attrs: { class: 'lucide-spin' } });
             }
 
@@ -644,6 +725,8 @@ async function commitState(skipBanner = false) {
                     notes_data: State.savedNotes,
                     workspace_notepad: workspaceNotepadData,
                     installment_cards_data: installmentCardsData,
+                    custom_pills: customPillsData,
+                    deleted_pills: deletedPillsData,
                     updated_at: new Date().toISOString()
                 });
                 

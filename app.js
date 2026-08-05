@@ -5179,6 +5179,7 @@ async function deleteGroup() {
             }
         });
     }
+    window.updateSelectionStats = updateSelectionStats;
 
     // Page 1 selector screen navigation handler
     function showTenureSelector() {
@@ -5300,6 +5301,7 @@ async function deleteGroup() {
         // Render card items
         renderGalleryItems();
     }
+    window.calculateAndRenderGallery = calculateAndRenderGallery;
 
     // Filter, sort & render individual cards
     function renderGalleryItems() {
