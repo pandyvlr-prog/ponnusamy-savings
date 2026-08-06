@@ -637,6 +637,26 @@ async function loadState() {
     }
 }
 
+// --- DEEP EQUAL HELPER ---
+function deepEqual(obj1, obj2) {
+    if (obj1 === obj2) return true;
+    if (obj1 == null || typeof obj1 !== 'object' || obj2 == null || typeof obj2 !== 'object') return false;
+
+    if (Array.isArray(obj1) !== Array.isArray(obj2)) return false;
+    
+    let keys1 = Object.keys(obj1);
+    let keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) return false;
+
+    for (let key of keys1) {
+        if (!keys2.includes(key)) return false;
+        if (!deepEqual(obj1[key], obj2[key])) return false;
+    }
+
+    return true;
+}
+
 // --- REALTIME CROSS-DEVICE CLOUD SYNC ENGINE ---
 let realtimeSyncChannel = null;
 
@@ -657,49 +677,94 @@ function setupRealtimeSync() {
             }, (payload) => {
                 if (payload && payload.new) {
                     const newRow = payload.new;
+                    let hasChanges = false;
                     
-                    if (newRow.groups_data) {
+                    if (newRow.groups_data && !deepEqual(State.groups, newRow.groups_data)) {
                         State.groups = newRow.groups_data;
                         localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
+                        hasChanges = true;
                     }
-                    if (newRow.members_data) {
+                    if (newRow.members_data && !deepEqual(State.members, newRow.members_data)) {
                         State.members = newRow.members_data;
                         localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
+                        hasChanges = true;
                     }
-                    if (newRow.templates_data) {
+                    if (newRow.templates_data && !deepEqual(State.templates, newRow.templates_data)) {
                         State.templates = newRow.templates_data;
                         localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates));
+                        hasChanges = true;
                     }
-                    if (newRow.notes_data) {
+                    if (newRow.notes_data && !deepEqual(State.savedNotes, newRow.notes_data)) {
                         State.savedNotes = newRow.notes_data;
                         localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes));
+                        hasChanges = true;
                     }
                     if (newRow.workspace_notepad) {
                         const wp = newRow.workspace_notepad;
+                        let notepadHasChanges = false;
+                        
                         if (Array.isArray(wp)) {
-                            localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp));
+                            const storedNotepad = localStorage.getItem('pms_workspace_notepad');
+                            const currentNotepad = storedNotepad ? JSON.parse(storedNotepad) : [];
+                            if (!deepEqual(currentNotepad, wp)) {
+                                localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp));
+                                notepadHasChanges = true;
+                            }
                         } else if (typeof wp === 'object' && wp !== null) {
-                            if (wp.notes) localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp.notes));
-                            if (wp.installment_cards) localStorage.setItem('pms_installment_cards', JSON.stringify(wp.installment_cards));
-                            if (wp.custom_pills) localStorage.setItem('pms_custom_value_pills', JSON.stringify(wp.custom_pills));
-                            if (wp.deleted_pills) localStorage.setItem('pms_deleted_value_pills', JSON.stringify(wp.deleted_pills));
+                            if (wp.notes) {
+                                const storedNotepad = localStorage.getItem('pms_workspace_notepad');
+                                const currentNotepad = storedNotepad ? JSON.parse(storedNotepad) : [];
+                                if (!deepEqual(currentNotepad, wp.notes)) {
+                                    localStorage.setItem('pms_workspace_notepad', JSON.stringify(wp.notes));
+                                    notepadHasChanges = true;
+                                }
+                            }
+                            if (wp.installment_cards) {
+                                const storedCards = localStorage.getItem('pms_installment_cards');
+                                const currentCards = storedCards ? JSON.parse(storedCards) : {};
+                                if (!deepEqual(currentCards, wp.installment_cards)) {
+                                    localStorage.setItem('pms_installment_cards', JSON.stringify(wp.installment_cards));
+                                    notepadHasChanges = true;
+                                }
+                            }
+                            if (wp.custom_pills) {
+                                const storedPills = localStorage.getItem('pms_custom_value_pills');
+                                const currentPills = storedPills ? JSON.parse(storedPills) : [];
+                                if (!deepEqual(currentPills, wp.custom_pills)) {
+                                    localStorage.setItem('pms_custom_value_pills', JSON.stringify(wp.custom_pills));
+                                    notepadHasChanges = true;
+                                }
+                            }
+                            if (wp.deleted_pills) {
+                                const storedDelPills = localStorage.getItem('pms_deleted_value_pills');
+                                const currentDelPills = storedDelPills ? JSON.parse(storedDelPills) : [];
+                                if (!deepEqual(currentDelPills, wp.deleted_pills)) {
+                                    localStorage.setItem('pms_deleted_value_pills', JSON.stringify(wp.deleted_pills));
+                                    notepadHasChanges = true;
+                                }
+                            }
                         }
-                        if (typeof loadNotes === 'function') loadNotes();
+                        if (notepadHasChanges) {
+                            hasChanges = true;
+                            if (typeof loadNotes === 'function') loadNotes();
+                        }
                     }
 
-                    // Trigger UI re-renders on remote changes across all modules
-                    if (typeof renderDashboard === 'function') renderDashboard();
-                    if (typeof renderGroupDetails === 'function' && State.selectedGroupId) {
-                        renderGroupDetails();
-                        const member = State.members.find(m => m.id === State.selectedMemberId);
-                        const group = State.groups.find(g => g.id === State.selectedGroupId);
-                        if (member && group && typeof renderChecklist === 'function') {
-                            renderChecklist(member, group);
+                    // Trigger UI re-renders ONLY IF data actually changed across any module
+                    if (hasChanges) {
+                        if (typeof renderDashboard === 'function') renderDashboard();
+                        if (typeof renderGroupDetails === 'function' && State.selectedGroupId) {
+                            renderGroupDetails(State.selectedGroupId);
+                            const member = State.members.find(m => m.id === State.selectedMemberId);
+                            const group = State.groups.find(g => g.id === State.selectedGroupId);
+                            if (member && group && typeof renderChecklist === 'function') {
+                                renderChecklist(member, group);
+                            }
                         }
+                        if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
+                        if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
+                        if (typeof renderPnLSummary === 'function') renderPnLSummary();
                     }
-                    if (typeof window.updateSelectionStats === 'function') window.updateSelectionStats();
-                    if (typeof window.calculateAndRenderGallery === 'function') window.calculateAndRenderGallery();
-                    if (typeof renderPnLSummary === 'function') renderPnLSummary();
                 }
             })
             .subscribe();
