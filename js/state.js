@@ -644,8 +644,8 @@ function deepEqual(obj1, obj2) {
 
     if (Array.isArray(obj1) !== Array.isArray(obj2)) return false;
     
-    let keys1 = Object.keys(obj1);
-    let keys2 = Object.keys(obj2);
+    let keys1 = Object.keys(obj1).filter(k => obj1[k] !== undefined);
+    let keys2 = Object.keys(obj2).filter(k => obj2[k] !== undefined);
 
     if (keys1.length !== keys2.length) return false;
 
