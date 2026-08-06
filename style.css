@@ -159,6 +159,7 @@ body {
     overflow-x: hidden;
     overflow-y: hidden;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 [data-theme="light"] body {
@@ -205,6 +206,7 @@ body {
     position: relative;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     background-color: var(--bg-primary);
     display: flex;
     flex-direction: row; /* Desktop defaults to row to accommodate sidebar */
