@@ -3026,6 +3026,9 @@ body {
     .desktop-only-col {
         display: none !important;
     }
+    .mobile-card-view {
+        display: block !important;
+    }
     .dashboard-member-row {
         background-color: transparent !important;
         border: none !important;
@@ -3112,8 +3115,8 @@ body {
 /* Show fields when expanded - REMOVED */
 
 /* Render layout inline for card fields on mobile */
-.dashboard-member-row > span,
-.dashboard-member-row > div {
+.dashboard-member-row > span.desktop-only-col,
+.dashboard-member-row > div.desktop-only-col {
     display: flex;
     align-items: center;
     width: 100%;
