@@ -983,6 +983,16 @@ function setupEventListeners() {
                 : '<i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>';
             if (window.lucide) window.lucide.createIcons();
         });
+
+        // Auto-hide when a button is clicked
+        const quickBtns = appHeaderRow2.querySelectorAll('.header-quick-btn');
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                appHeaderRow2.style.display = 'none';
+                btnToggleToolbar.innerHTML = '<i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>';
+                if (window.lucide) window.lucide.createIcons();
+            });
+        });
     }
 
     // Global Privacy Mode Toggle Button
@@ -3521,12 +3531,11 @@ function renderDashboardMembersList(searchQuery = '') {
                 statusBadgePill = `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">N/A</span>`;
             }
 
-            let mobilePayoutBadgeHTML = '';
-            if (item.hasTakenPayout) {
-                let payoutMethodText = item.payoutMethod ? item.payoutMethod.substring(0,1).toUpperCase() : 'C';
-                mobilePayoutBadgeHTML = `<span style="background: var(--bg-surface-elevated, #faf5ff); color: #9333ea; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">₹${item.payoutVal.toLocaleString('en-IN')} / ${payoutMethodText}</span>`;
-            } else {
-                mobilePayoutBadgeHTML = `<span style="font-weight:700;color:var(--text-main);">---</span>`;
+            let mobileGroupNameHtml = groupNameHtml;
+            if (groupNameParts.length === 2) {
+                const start = groupNameParts[0].trim();
+                const end = groupNameParts[1].trim();
+                mobileGroupNameHtml = `<div style="color: var(--green-dark); font-weight: 900; font-size: 0.85rem; line-height: 1.2;">${start}</div><div style="color: var(--red-dark); font-weight: 900; font-size: 0.85rem; line-height: 1.2;">- ${end}</div>`;
             }
 
             row.innerHTML = `
@@ -3541,28 +3550,26 @@ function renderDashboardMembersList(searchQuery = '') {
                     </div>
                 </div>
 
-                <div style="display:flex;gap:6px;margin-bottom:14px;">
-                    <div style="flex:1;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--bg-surface-elevated);">
-                        <div style="width:26px;height:26px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                <div style="display:grid; grid-template-columns: 1.1fr 0.9fr 1fr; gap:6px; margin-bottom:14px;">
+                    <div style="border:1px solid var(--border);border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-surface-elevated);text-align:center;">
+                        <div style="width:22px;height:22px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
+                            <i data-lucide="calendar" style="width:10px;height:10px;"></i>
                         </div>
-                        <div style="min-width:0;">
-                            <div style="font-size:0.5rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;white-space:nowrap;">DURATION</div>
-                            <div style="font-size:0.6rem;font-weight:800;background:linear-gradient(90deg, var(--green-dark), var(--red-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${groupNameHtml}</div>
-                        </div>
+                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">DURATION</div>
+                        <div>${mobileGroupNameHtml}</div>
                     </div>
-                    <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--yellow-light, #fffbeb);">
-                        <div style="width:26px;height:26px;border-radius:50%;background:var(--yellow-light, #fffbeb);color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                    
+                    <div style="border:1px solid var(--border);border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow-light, #fffbeb);text-align:center;">
+                        <div style="width:22px;height:22px;border-radius:50%;background:rgba(217,119,6,0.1);color:#d97706;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
+                            <i data-lucide="calendar" style="width:10px;height:10px;"></i>
                         </div>
-                        <div>
-                            <div style="font-size:0.5rem;color:var(--text-muted);font-weight:700;white-space:nowrap;">${item.relativeMonthNum}th DUE</div>
-                            <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
-                        </div>
+                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">${item.relativeMonthNum}th DUE</div>
+                        <div style="font-size:1.2rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
                     </div>
-                    <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;background:var(--green-light);display:flex;flex-direction:column;justify-content:center;">
-                        <div style="font-size:0.5rem;color:var(--text-muted);font-weight:700;white-space:nowrap;">SCHEME</div>
-                        <div style="font-size:0.7rem;font-weight:900;color:var(--green-dark);white-space:nowrap;">${schemeText}</div>
+
+                    <div style="border:1px solid var(--border);border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--green-light);text-align:center;">
+                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">SCHEME</div>
+                        <div style="font-size:0.75rem;font-weight:900;color:var(--green-dark);line-height:1.2;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
                     </div>
                 </div>
 
@@ -3594,26 +3601,7 @@ function renderDashboardMembersList(searchQuery = '') {
                         </div>
                         <span>${statusBadgePill}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:var(--bg-surface-elevated, #faf5ff);color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="coins" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">PAYOUT</span>
-                        </div>
-                        <span>${mobilePayoutBadgeHTML}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:var(--red-light);color:var(--red-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="landmark" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">SCHEME</span>
-                        </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:var(--text-main);">${schemeText}</span>
-                    </div>
                 </div>
-                <button class="pmc2-fab-btn mobile-fab-btn" style="position: absolute; bottom: -16px; right: 16px; width: 48px; height: 48px; border-radius: 50%; background: #d4af37; color: white; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4); cursor: pointer;"><i data-lucide="plus"></i></button>
             `;
         } else {
             row.innerHTML = `
@@ -3640,8 +3628,7 @@ function renderDashboardMembersList(searchQuery = '') {
         if (item.isApplicable) {
             if (isMobile) {
                 const statusRow = row.querySelector('.mobile-status-row');
-                const fabBtn = row.querySelector('.mobile-fab-btn');
-                [statusRow, fabBtn].forEach(el => {
+                [statusRow].forEach(el => {
                     if (el) {
                         el.addEventListener('click', (e) => {
                             e.stopPropagation();
