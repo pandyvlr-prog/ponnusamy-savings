@@ -497,7 +497,8 @@ body {
     50% { transform: scale(1.12); opacity: 0; }
 }
 
-/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Row 2: Mobile quick-action bar ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+/* ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ Row 2: Mobile quick-action bar ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ */
+/* ── Row 2: Mobile quick-action bar ── */
 .app-header-row2 {
     display: none; /* shown only on mobile via media query */
     align-items: center;
@@ -506,6 +507,206 @@ body {
     border-top: 1px solid var(--border);
     gap: 4px;
 }
+}
+
+/* --- PREMIUM MEMBER CARD v2 (MOCKUP EXACT MATCH) --- */
+.pmc2-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+.pmc2-title-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.pmc2-number {
+    color: #d97706;
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+.pmc2-name {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #111827;
+    margin: 0;
+    text-transform: uppercase;
+}
+.pmc2-new-badge {
+    background: #d97706;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.pmc2-avatar {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pmc2-info-boxes {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.pmc2-box {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+}
+.pmc2-box-outline {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+}
+.pmc2-box-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pmc2-icon-green { background: #ecfdf5; color: #059669; }
+.pmc2-icon-orange { background: #fffbeb; color: #d97706; }
+.pmc2-icon-blue { background: #eff6ff; color: #2563eb; }
+.pmc2-icon-purple { background: #faf5ff; color: #9333ea; }
+.pmc2-icon-red { background: #fef2f2; color: #dc2626; }
+
+.pmc2-box-text {
+    display: flex;
+    flex-direction: column;
+}
+.pmc2-box-label {
+    font-size: 0.6rem;
+    color: #6b7280;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.pmc2-box-val {
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+.pmc2-val-gradient {
+    background: -webkit-linear-gradient(0deg, #059669, #dc2626);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.pmc2-val-orange { color: #d97706; font-size: 1.1rem !important; }
+.pmc2-val-green { color: #059669; }
+
+.pmc2-rows {
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    background: #ffffff;
+}
+.pmc2-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+.pmc2-row:last-child {
+    border-bottom: none;
+}
+.pmc2-row-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.pmc2-row-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pmc2-row-icon i { width: 14px; height: 14px; }
+.pmc2-row-label {
+    font-size: 0.75rem;
+    color: #4b5563;
+    font-weight: 700;
+}
+.pmc2-row-right {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #111827;
+}
+.pmc2-val-green-bold { color: #059669; font-weight: 800; }
+.pmc2-val-blue-bold { color: #2563eb; font-weight: 800; }
+
+.pmc2-badge-paid {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.pmc2-badge-pending {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+.pmc2-badge-payout {
+    background: #faf5ff;
+    color: #9333ea;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.premium-member-card {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    position: relative;
+    color: #111827;
+}
+
+.pmc2-fab-btn {
+    position: absolute;
+    bottom: -16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #d4af37;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+    cursor: pointer;
+}
+.pmc2-fab-btn i { width: 24px; height: 24px; }
+.toolbar-toggle-btn { display: none; }
 .header-quick-btn {
     display: flex;
     flex-direction: column;
@@ -9267,3 +9468,5 @@ html, body, .app-device-shell {
     border: 3px solid var(--bg-primary);
     z-index: 10;
 }
+. t o o l b a r - t o g g l e - b t n   {   d i s p l a y :   n o n e ;   }  
+ 
