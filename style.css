@@ -3021,6 +3021,23 @@ body {
     transform: translateY(-4px);
 }
 
+/* --- New Tabular Mobile Card --- */
+.dashboard-mobile-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: block !important;
+}
+
+.dashboard-mobile-card:active { 
+    transform: scale(0.98); 
+}
+
 /* --- Mobile View Details Expand Logic --- */
 .mobile-expand-btn {
     position: absolute;

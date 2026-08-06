@@ -3397,11 +3397,13 @@ function renderDashboardMembersList(searchQuery = '') {
         return;
     }
 
+    const isMobile = window.innerWidth < 768;
+    
     filteredList.forEach((item, index) => {
         const row = document.createElement('div');
-        row.className = 'dashboard-member-row';
+        row.className = isMobile ? 'dashboard-mobile-card' : 'dashboard-member-row';
         row.style.cursor = item.isApplicable ? 'pointer' : 'default';
-        row.style.backgroundColor = item.currentMonthPaid ? 'rgba(48, 209, 88, 0.03)' : 'transparent';
+        row.style.backgroundColor = (item.currentMonthPaid && !isMobile) ? 'rgba(48, 209, 88, 0.03)' : 'transparent';
         
         let monthNoText = item.relativeMonthNum;
         let dueAmountText = item.dueAmount === 0 ? '--' : `₹${item.dueAmount.toLocaleString('en-IN')}`;
@@ -3504,34 +3506,159 @@ function renderDashboardMembersList(searchQuery = '') {
             groupNameHtml = `<span style="color: var(--green-dark) !important; font-weight: 900 !important; font-size: 0.95rem !important;">${start}</span> - <span style="color: var(--red-dark) !important; font-weight: 900 !important; font-size: 0.95rem !important;">${end}</span>`;
         }
 
-        row.innerHTML = `
-            <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
-            <span class="member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
-            <span style="font-size: 0.95rem; color: var(--text-main); font-weight: 800; text-align: center; justify-content: center; width: 100%;">${groupNameHtml}</span>
-            <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
-            <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
-            <span style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center;">${paidDateHtml}</span>
-            <div style="display: flex; justify-content: center; align-items: center;">
-                ${checkboxHtml}
-            </div>
-            <div style="display: flex; justify-content: center; align-items: center;">
-                ${chitTakenHtml}
-            </div>
-            <div style="display: flex; justify-content: center; align-items: center;">
-                ${contactMenuHtml || '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>'}
-            </div>
-        `;
+        if (isMobile) {
+            let statusBadgePill = '';
+            if (item.isApplicable) {
+                if (item.currentMonthPaid) {
+                    let methodText = item.paymentMethodThisMonth ? item.paymentMethodThisMonth.substring(0,1).toUpperCase() : 'G';
+                    statusBadgePill = `<span style="background-color: var(--green-light); color: var(--green-dark); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;"><i data-lucide="check" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:2px;"></i> PAID / ${methodText}</span>`;
+                } else if (item.paidAmount > 0) {
+                    statusBadgePill = `<span style="background-color: var(--yellow-light, #fef9c3); color: var(--yellow-dark, #854d0e); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">PARTIAL</span>`;
+                } else {
+                    statusBadgePill = `<span style="background-color: var(--red-light); color: var(--red-dark); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">PENDING</span>`;
+                }
+            } else {
+                statusBadgePill = `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">N/A</span>`;
+            }
+
+            let mobilePayoutBadgeHTML = '';
+            if (item.hasTakenPayout) {
+                let payoutMethodText = item.payoutMethod ? item.payoutMethod.substring(0,1).toUpperCase() : 'C';
+                mobilePayoutBadgeHTML = `<span style="background: var(--bg-surface-elevated, #faf5ff); color: #9333ea; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">₹${item.payoutVal.toLocaleString('en-IN')} / ${payoutMethodText}</span>`;
+            } else {
+                mobilePayoutBadgeHTML = `<span style="font-weight:700;color:var(--text-main);">---</span>`;
+            }
+
+            row.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="color:#d97706;font-size:1.1rem;font-weight:900;">${index + 1}</span>
+                        <h3 style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0;text-transform:uppercase;">${item.member.name}</h3>
+                        ${item.member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        ${contactMenuHtml ? contactMenuHtml : `<div style="background:var(--green-light);color:var(--green-dark);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="user" style="width:16px;height:16px;"></i></div>`}
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:6px;margin-bottom:14px;">
+                    <div style="flex:1;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--bg-surface-elevated);">
+                        <div style="width:26px;height:26px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                        </div>
+                        <div style="min-width:0;">
+                            <div style="font-size:0.5rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;white-space:nowrap;">DURATION</div>
+                            <div style="font-size:0.6rem;font-weight:800;background:linear-gradient(90deg, var(--green-dark), var(--red-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${groupNameHtml}</div>
+                        </div>
+                    </div>
+                    <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--yellow-light, #fffbeb);">
+                        <div style="width:26px;height:26px;border-radius:50%;background:var(--yellow-light, #fffbeb);color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:0.5rem;color:var(--text-muted);font-weight:700;white-space:nowrap;">${item.relativeMonthNum}th DUE</div>
+                            <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
+                        </div>
+                    </div>
+                    <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;background:var(--green-light);display:flex;flex-direction:column;justify-content:center;">
+                        <div style="font-size:0.5rem;color:var(--text-muted);font-weight:700;white-space:nowrap;">SCHEME</div>
+                        <div style="font-size:0.7rem;font-weight:900;color:var(--green-dark);white-space:nowrap;">${schemeText}</div>
+                    </div>
+                </div>
+
+                <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-surface);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">DUE AMOUNT</span>
+                        </div>
+                        <span style="font-size:0.85rem;font-weight:800;color:var(--green-dark);">&#8377;${item.dueAmount.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:var(--bg-surface-elevated, #eff6ff);color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">PAID DATE</span>
+                        </div>
+                        <span style="font-size:0.85rem;font-weight:800;color:#2563eb;">${paidDateText}</span>
+                    </div>
+                    <div class="mobile-status-row" style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);cursor:${item.isApplicable ? 'pointer' : 'default'};">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">STATUS</span>
+                        </div>
+                        <span>${statusBadgePill}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:var(--bg-surface-elevated, #faf5ff);color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="coins" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">PAYOUT</span>
+                        </div>
+                        <span>${mobilePayoutBadgeHTML}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:var(--red-light);color:var(--red-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="landmark" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">SCHEME</span>
+                        </div>
+                        <span style="font-size:0.85rem;font-weight:800;color:var(--text-main);">${schemeText}</span>
+                    </div>
+                </div>
+                <button class="pmc2-fab-btn mobile-fab-btn" style="position: absolute; bottom: -16px; right: 16px; width: 48px; height: 48px; border-radius: 50%; background: #d4af37; color: white; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4); cursor: pointer;"><i data-lucide="plus"></i></button>
+            `;
+        } else {
+            row.innerHTML = `
+                <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
+                <span class="member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
+                <span style="font-size: 0.95rem; color: var(--text-main); font-weight: 800; text-align: center; justify-content: center; width: 100%;">${groupNameHtml}</span>
+                <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
+                <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
+                <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
+                <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
+                <span style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center;">${paidDateHtml}</span>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    ${checkboxHtml}
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    ${chitTakenHtml}
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    ${contactMenuHtml || '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>'}
+                </div>
+            `;
+        }
 
         if (item.isApplicable) {
-            const chk = row.querySelector('.status-badge-pill.paid, .status-badge-pill.partial, .status-badge-pill.pending');
-            if (chk) {
-                chk.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    State.selectedGroupId = item.group.id;
-                    openPaymentModal(item.member.id, 'single_month', item.relativeMonthNum);
+            if (isMobile) {
+                const statusRow = row.querySelector('.mobile-status-row');
+                const fabBtn = row.querySelector('.mobile-fab-btn');
+                [statusRow, fabBtn].forEach(el => {
+                    if (el) {
+                        el.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            State.selectedGroupId = item.group.id;
+                            openPaymentModal(item.member.id, 'single_month', item.relativeMonthNum);
+                        });
+                    }
                 });
+            } else {
+                const chk = row.querySelector('.status-badge-pill.paid, .status-badge-pill.partial, .status-badge-pill.pending');
+                if (chk) {
+                    chk.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        State.selectedGroupId = item.group.id;
+                        openPaymentModal(item.member.id, 'single_month', item.relativeMonthNum);
+                    });
+                }
             }
 
             const contactBtn = row.querySelector('.contact-action-btn');
