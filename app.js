@@ -3523,81 +3523,115 @@ function renderDashboardMembersList(searchQuery = '') {
                 </div>
                 <div class="pmc2-avatar contact-action-wrapper" style="position:relative; cursor:pointer;">
                     <div class="contact-action-btn" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"><i data-lucide="user"></i></div>
-                    <div class="contact-action-menu" style="display: none; position: absolute; right: 100%; top: 50%; transform: translateY(-50%); margin-right: 12px; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 8px; z-index: 50; flex-direction: row; gap: 8px; align-items: center;">
-                        <button class="contact-call-btn" data-phone="${item.member.mobileNo}" title="Call" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #eff6ff; border: 1px solid #bfdbfe; color: #3b82f6; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);">
-                            <i data-lucide="phone" style="width: 16px; height: 16px;"></i>
-                        </button>
-                        <button class="contact-wa-btn" data-member-id="${item.member.id}" title="WhatsApp" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #dcfce7; border: 1px solid #bbf7d0; color: #22c55e; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="pmc2-info-boxes">
-                <div class="pmc2-box">
-                    <div class="pmc2-box-icon pmc2-icon-green"><i data-lucide="users"></i></div>
-                    <div class="pmc2-box-text">
-                        <div class="pmc2-box-label">GROUP</div>
-                        <div class="pmc2-box-val pmc2-val-gradient" style="font-size:0.75rem;">${groupNameHtml}</div>
-                    </div>
-                </div>
-                <div class="pmc2-box">
-                    <div class="pmc2-box-icon pmc2-icon-orange"><i data-lucide="calendar"></i></div>
-                    <div class="pmc2-box-text">
-                        <div class="pmc2-box-label">${monthNoText === '--' ? 'MONTH' : monthNoText + ' MONTH DUE'}</div>
-                        <div class="pmc2-box-val pmc2-val-orange">${monthNoText}</div>
-                    </div>
-                </div>
-                <div class="pmc2-box pmc2-box-outline">
-                    <div class="pmc2-box-label" style="margin-bottom:2px;">SCHEME VALUE</div>
-                    <div class="pmc2-box-val pmc2-val-green" style="font-size:0.85rem;">${schemeText}</div>
-                </div>
-            </div>
+        const isMobileView = window.innerWidth <= 767 && !document.body.classList.contains('force-desktop');
 
-            <div class="pmc2-rows">
-                <div class="pmc2-row">
-                    <div class="pmc2-row-left">
-                        <div class="pmc2-row-icon pmc2-icon-green"><i data-lucide="indian-rupee"></i></div>
-                        <span class="pmc2-row-label">DUE AMOUNT</span>
+        if (isMobileView) {
+            row.innerHTML = `
+                <div class="pmc2-header">
+                    <div class="pmc2-title-area">
+                        <span class="pmc2-number">${index + 1}</span>
+                        <h3 class="pmc2-name member-name">${item.member.name}</h3>
+                        ${item.member.customerType === 'New' ? '<span class="pmc2-new-badge">NEW</span>' : ''}
                     </div>
-                    <div class="pmc2-row-right pmc2-val-green-bold">${dueAmountText}</div>
-                </div>
-                <div class="pmc2-row">
-                    <div class="pmc2-row-left">
-                        <div class="pmc2-row-icon pmc2-icon-blue"><i data-lucide="calendar"></i></div>
-                        <span class="pmc2-row-label">PAID DATE</span>
+                    <div class="pmc2-avatar contact-action-wrapper" style="position:relative; cursor:pointer;">
+                        <div class="contact-action-btn" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"><i data-lucide="user"></i></div>
+                        <div class="contact-action-menu" style="display: none; position: absolute; right: 100%; top: 50%; transform: translateY(-50%); margin-right: 12px; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 8px; z-index: 50; flex-direction: row; gap: 8px; align-items: center;">
+                            <button class="contact-call-btn" data-phone="${item.member.mobileNo}" title="Call" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #eff6ff; border: 1px solid #bfdbfe; color: #3b82f6; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);">
+                                <i data-lucide="phone" style="width: 16px; height: 16px;"></i>
+                            </button>
+                            <button class="contact-wa-btn" data-member-id="${item.member.id}" title="WhatsApp" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #dcfce7; border: 1px solid #bbf7d0; color: #22c55e; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="pmc2-row-right pmc2-val-blue-bold">${displayPaidDateRaw}</div>
                 </div>
-                <div class="pmc2-row">
-                    <div class="pmc2-row-left">
-                        <div class="pmc2-row-icon pmc2-icon-green"><i data-lucide="check-circle"></i></div>
-                        <span class="pmc2-row-label">STATUS</span>
+                
+                <div class="pmc2-info-boxes">
+                    <div class="pmc2-box">
+                        <div class="pmc2-box-icon pmc2-icon-green"><i data-lucide="users"></i></div>
+                        <div class="pmc2-box-text">
+                            <div class="pmc2-box-label">GROUP</div>
+                            <div class="pmc2-box-val pmc2-val-gradient" style="font-size:0.75rem;">${groupNameHtml}</div>
+                        </div>
                     </div>
-                    <div class="pmc2-row-right chk-status-btn" style="cursor:pointer;">${statusBadgeHTML}</div>
-                </div>
-                <div class="pmc2-row">
-                    <div class="pmc2-row-left">
-                        <div class="pmc2-row-icon pmc2-icon-purple"><i data-lucide="check-circle"></i></div>
-                        <span class="pmc2-row-label">PAYOUT</span>
+                    <div class="pmc2-box">
+                        <div class="pmc2-box-icon pmc2-icon-orange"><i data-lucide="calendar"></i></div>
+                        <div class="pmc2-box-text">
+                            <div class="pmc2-box-label">${monthNoText === '--' ? 'MONTH' : monthNoText + ' MONTH DUE'}</div>
+                            <div class="pmc2-box-val pmc2-val-orange">${monthNoText}</div>
+                        </div>
                     </div>
-                    <div class="pmc2-row-right chit-taken-badge" style="cursor:pointer;">${payoutBadgeHTML}</div>
-                </div>
-                <div class="pmc2-row">
-                    <div class="pmc2-row-left">
-                        <div class="pmc2-row-icon pmc2-icon-red"><i data-lucide="indian-rupee"></i></div>
-                        <span class="pmc2-row-label">PAID AMOUNT</span>
+                    <div class="pmc2-box pmc2-box-outline">
+                        <div class="pmc2-box-label" style="margin-bottom:2px;">SCHEME VALUE</div>
+                        <div class="pmc2-box-val pmc2-val-green" style="font-size:0.85rem;">${schemeText}</div>
                     </div>
-                    <div class="pmc2-row-right" style="font-weight:800;color:var(--text-main);">${paidAmountText}</div>
                 </div>
-            </div>
-        `;
-        
-        row.className = 'dashboard-card-wrapper premium-member-card';
+
+                <div class="pmc2-rows">
+                    <div class="pmc2-row">
+                        <div class="pmc2-row-left">
+                            <div class="pmc2-row-icon pmc2-icon-green"><i data-lucide="indian-rupee"></i></div>
+                            <span class="pmc2-row-label">DUE AMOUNT</span>
+                        </div>
+                        <div class="pmc2-row-right pmc2-val-green-bold">${dueAmountText}</div>
+                    </div>
+                    <div class="pmc2-row">
+                        <div class="pmc2-row-left">
+                            <div class="pmc2-row-icon pmc2-icon-blue"><i data-lucide="calendar"></i></div>
+                            <span class="pmc2-row-label">PAID DATE</span>
+                        </div>
+                        <div class="pmc2-row-right pmc2-val-blue-bold">${displayPaidDateRaw}</div>
+                    </div>
+                    <div class="pmc2-row">
+                        <div class="pmc2-row-left">
+                            <div class="pmc2-row-icon pmc2-icon-green"><i data-lucide="check-circle"></i></div>
+                            <span class="pmc2-row-label">STATUS</span>
+                        </div>
+                        <div class="pmc2-row-right chk-status-btn" style="cursor:pointer;">${statusBadgeHTML}</div>
+                    </div>
+                    <div class="pmc2-row">
+                        <div class="pmc2-row-left">
+                            <div class="pmc2-row-icon pmc2-icon-purple"><i data-lucide="check-circle"></i></div>
+                            <span class="pmc2-row-label">PAYOUT</span>
+                        </div>
+                        <div class="pmc2-row-right chit-taken-badge" style="cursor:pointer;">${payoutBadgeHTML}</div>
+                    </div>
+                    <div class="pmc2-row">
+                        <div class="pmc2-row-left">
+                            <div class="pmc2-row-icon pmc2-icon-red"><i data-lucide="indian-rupee"></i></div>
+                            <span class="pmc2-row-label">PAID AMOUNT</span>
+                        </div>
+                        <div class="pmc2-row-right" style="font-weight:800;color:var(--text-main);">${paidAmountText}</div>
+                    </div>
+                </div>
+            `;
+            
+            row.className = 'dashboard-card-wrapper premium-member-card';
+        } else {
+            row.innerHTML = `
+                <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
+                <span class="member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
+                <span style="font-size: 0.95rem; color: var(--text-main); font-weight: 800; text-align: center; justify-content: center; width: 100%;">${groupNameHtml}</span>
+                <span style="text-align: center;"><span class="status-badge-pill" style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); text-transform: none; font-size: 0.72rem;">${schemeText}</span></span>
+                <span style="font-size: 1.05rem; font-weight: 800; color: var(--primary); text-align: center;">${monthNoText}</span>
+                <span style="font-size: 1.05rem; font-weight: 800; color: ${dueColor}; text-align: left;">${dueAmountText}</span>
+                <span style="font-size: 1.05rem; font-weight: 800; color: ${paidColor}; text-align: left;">${paidAmountText}</span>
+                <span style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center;">${paidDateHtml}</span>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    ${checkboxHtml}
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    ${chitTakenHtml}
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    ${contactMenuHtml || '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>'}
+                </div>
+            `;
+            row.className = 'dashboard-member-row';
+        }
 
         if (item.isApplicable) {
-            const chk = row.querySelector('.chk-status-btn');
+            const chk = row.querySelector('.chk-status-btn, .status-badge-pill.paid, .status-badge-pill.partial, .status-badge-pill.pending');
             if (chk) {
                 chk.addEventListener('click', (e) => {
                     e.stopPropagation();
