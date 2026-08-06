@@ -1002,6 +1002,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 
     .desktop-sidebar-logo {
         height: 69px !important; /* Perfectly match app-header (48px avatar + 20px padding + 1px border) */
+        width: calc(100% + 1px) !important; /* Overlap the right border of sidebar */
+        z-index: 20 !important; /* Ensure it covers the sidebar border */
         padding: 0 !important;
         margin-bottom: 0 !important;
         flex-shrink: 0 !important;
@@ -1025,8 +1027,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     }
 
     .desktop-sidebar-logo img {
-        width: 46px !important;
-        height: 46px !important;
+        width: 58px !important; /* Increased size to make PMS text readable */
+        height: 58px !important;
         object-fit: contain !important; /* Prevent cropping the internal gold ring */
         border-radius: 50% !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; /* Softer shadow */
