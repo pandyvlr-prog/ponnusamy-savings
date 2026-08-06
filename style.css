@@ -668,15 +668,21 @@ body {
     border: 1px solid #f0f0f0;
     border-radius: 16px;
     padding: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 36px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     position: relative;
     color: #111827;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+.premium-member-card:active { transform: scale(0.98); }
 
 /* Responsive Member Card Views */
 .member-card-desktop-view {
     display: none !important;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 .member-card-mobile-view {
     display: block !important;
@@ -708,7 +714,10 @@ body {
     cursor: pointer;
 }
 .pmc2-fab-btn i { width: 24px; height: 24px; }
-.toolbar-toggle-btn { display: none; }
+.toolbar-toggle-btn { display: none !important; }
+@media (max-width: 767px) {
+    .toolbar-toggle-btn { display: flex !important; }
+}
 .header-quick-btn {
     display: flex;
     flex-direction: column;
@@ -9362,23 +9371,6 @@ html, body, .app-device-shell {
 }
 
 /* ---- Premium Member Cards ---- */
-.premium-member-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    position: relative;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-}
-.premium-member-card:active {
-    transform: scale(0.98);
-}
 .pmc-header {
     display: flex;
     justify-content: space-between;

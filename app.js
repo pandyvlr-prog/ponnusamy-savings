@@ -3882,7 +3882,7 @@ function filterAndRenderMembers() {
 
         // Desktop layout (Old simple layout)
         const desktopHTML = `
-            <div class="member-card-desktop-view" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div class="member-card-desktop-view" style="justify-content: space-between; width: 100%;">
                 <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                     <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.9rem; min-width: 24px;">${index + 1}.</span>
                     <div class="member-card-details" style="display: flex; flex-direction: column; gap: 2px;">
