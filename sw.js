@@ -3,7 +3,7 @@
  * Ensures all devices ALWAYS load the latest UI from server without stale cache!
  */
 
-const CACHE_VERSION = 'pms-v178-flush';
+const CACHE_VERSION = 'pms-v179-flush';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 

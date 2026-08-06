@@ -181,6 +181,7 @@ body {
 
 /* STATIC PERFORMANCE BACKGROUND */
 #app-bg {
+    transition: background-color 0.4s ease, background-image 0.4s ease;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: -2;
@@ -193,6 +194,7 @@ body {
 }
 
 [data-theme="light"] #app-bg {
+    transition: background-color 0.4s ease, background-image 0.4s ease;
     background-color: #D2CDC6;
     background-image:
         radial-gradient(ellipse at 50% -20%, rgba(184, 134, 11, 0.15) 0%, transparent 70%),

@@ -78,18 +78,18 @@ function setupTheme() {
     setIcons(savedTheme);
     
     const toggleTheme = () => {
-        document.documentElement.classList.add('theme-switching');
+        // removed theme-switching for smooth transition
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('ponnusamy_theme', newTheme);
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', newTheme === 'light' ? '#C8C4BE' : '#000000');
         setIcons(newTheme);
         
         // Force reflow and remove class
-        setTimeout(() => {
-            document.documentElement.classList.remove('theme-switching');
-        }, 50);
+        // removed setTimeout for theme-switching
         
         showNotification(`Switched to ${newTheme} mode!`, 'info');
     };
