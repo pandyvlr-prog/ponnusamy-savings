@@ -1001,9 +1001,41 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     }
 
     .desktop-sidebar-logo {
-        padding: 12px 0 10px !important;
-        margin-bottom: 4px !important;
+        height: 61px !important; /* Match app-header height */
+        padding: 0 !important; /* Remove old padding */
+        margin-bottom: 0 !important; /* Remove margin to let border touch */
         flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-bottom: 1px solid var(--border) !important;
+        position: relative !important;
+        background: var(--bg-surface) !important; /* Ensure it matches header */
+    }
+    
+    /* Add the matching gold accent line to the top of the sidebar */
+    .desktop-sidebar-logo::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: var(--primary-gradient, linear-gradient(90deg, #d4af37, #ffd700));
+        z-index: 10;
+    }
+
+    .desktop-sidebar-logo img {
+        width: 40px !important;
+        height: 40px !important;
+        object-fit: cover !important; /* Avoid distortion */
+        border-radius: 50% !important; /* Perfect circle */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important; /* Soft shadow */
+        background: var(--bg-surface-elevated) !important; 
+        border: 2px solid var(--border) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .desktop-sidebar-logo img:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2) !important;
     }
 
     .desktop-sidebar-links {
@@ -1036,7 +1068,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         
         <aside id="desktop-sidebar" class="desktop-sidebar">
             <div class="desktop-sidebar-logo">
-                <img src="logo-dark.jpg" alt="Logo">
+                <img src="logo-light.png" alt="Logo">
             </div>
             <div class="desktop-sidebar-links">
                 <button class="sidebar-nav-item active" data-target="screen-dashboard" title="Home">
@@ -1094,7 +1126,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <!-- Left: Hamburger + Logo + Brand -->
                         <div class="app-header-brand">
 
-                            <img src="logo-dark.jpg" class="header-logo-img" alt="PMS Logo">
+                            <img src="logo-light.png" class="header-logo-img" alt="PMS Logo">
                             <div class="header-brand-text">
                                 <h1 class="app-title">PMS</h1>
                                 <div class="header-datetime">
