@@ -3832,33 +3832,60 @@ function filterAndRenderMembers() {
         }
 
         const card = document.createElement('div');
-        card.className = 'member-card';
-        card.style.display = 'flex';
-        card.style.alignItems = 'center';
-        card.style.justifyContent = 'space-between';
-        card.style.width = '100%';
-        card.style.padding = '12px 16px';
-        card.style.marginBottom = '8px';
+        card.className = 'premium-member-card';
+        
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let startM = (group.startMonth || 1) - 1; 
+        let startY = group.startYear || new Date().getFullYear();
+        let endM = (startM + group.duration - 1) % 12;
+        let endY = startY + Math.floor((startM + group.duration - 1) / 12);
+        let durationStr = `${monthNames[startM]} ${startY} - ${monthNames[endM]} ${endY}`;
+        
+        let newBadge = member.customerType === 'New' ? '<span class="pmc-badge-new">NEW</span>' : '';
+        let dueAmount = group.installments && group.installments[group.currentMonth] !== undefined ? group.installments[group.currentMonth] : group.monthlyInstallment;
+        let paymentData = member.payments[group.currentMonth];
+        let paidDateStr = (paymentData && paymentData.paid && paymentData.paidAt) ? new Date(paymentData.paidAt).toLocaleDateString('en-GB') : '---';
+        
+        let statusStr = currentMonthPaid ? 'PAID / ' + (paymentData.method ? paymentData.method.substring(0,1).toUpperCase() : 'C') : 'PENDING';
+        let statusClass = currentMonthPaid ? 'pmc-value-green' : 'pmc-value-red';
+        
+        let payoutValStr = '---';
+        if (paymentData && paymentData.payoutClaimed) {
+            let pVal = group.chitAmount;
+            if (group.payouts && group.payouts[group.currentMonth]) pVal = group.payouts[group.currentMonth];
+            payoutValStr = '₹' + formatNumberIndian(pVal) + ' / ' + (paymentData.payoutMethod ? paymentData.payoutMethod.substring(0,1).toUpperCase() : 'C');
+        }
         
         card.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.9rem; min-width: 24px;">${index + 1}.</span>
-                <div class="member-card-details" style="display: flex; flex-direction: column; gap: 2px;">
-                    <span class="member-name" style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">${member.name}</span>
-                    <div class="member-stats" style="display: flex; gap: 8px; font-size: 0.72rem;">
-                        <span class="member-stats-paid" style="color: var(--primary); font-weight: 600;">${paidMonthsCount} Paid</span>
-                        <span class="member-stats-pending" style="color: var(--text-muted);">${remainingMonths} Left</span>
-                    </div>
+            <div class="pmc-header">
+                <div class="pmc-name-row">
+                    <span>${index + 1}</span> ${member.name} ${newBadge}
+                </div>
+                <div class="pmc-user-icon"><i data-lucide="user"></i></div>
+            </div>
+            <div class="pmc-subheader">
+                <div><i data-lucide="calendar"></i> ${durationStr}</div>
+                <div>${group.currentMonth} MONTH DUE | SCH VALUE ${formatNumberIndian(group.chitAmount)}</div>
+            </div>
+            <div class="pmc-grid">
+                <div class="pmc-grid-item">
+                    <span class="pmc-label"><i data-lucide="indian-rupee"></i> DUE AMOUNT</span>
+                    <span class="pmc-value pmc-value-red">₹${formatNumberIndian(dueAmount)}</span>
+                </div>
+                <div class="pmc-grid-item">
+                    <span class="pmc-label"><i data-lucide="calendar-check"></i> PAID DATE</span>
+                    <span class="pmc-value">${paidDateStr}</span>
+                </div>
+                <div class="pmc-grid-item">
+                    <span class="pmc-label"><i data-lucide="check-circle"></i> STATUS</span>
+                    <span class="pmc-value ${statusClass}">${statusStr}</span>
+                </div>
+                <div class="pmc-grid-item">
+                    <span class="pmc-label"><i data-lucide="target"></i> PAYOUT</span>
+                    <span class="pmc-value pmc-value-purple">${payoutValStr}</span>
                 </div>
             </div>
-            
-            <div class="member-card-right" style="display: flex; align-items: center; gap: 8px;">
-                ${reminderBtnHtml}
-                <div class="member-card-status-badge ${currentMonthPaid ? 'paid' : 'pending'}" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: ${currentMonthPaid ? 'var(--green-light)' : 'var(--red-light)'}; color: ${currentMonthPaid ? 'var(--green-dark)' : 'var(--red-dark)'};" title="${currentMonthPaid ? 'Paid this month' : 'Pending this month'}">
-                    <i data-lucide="${currentMonthPaid ? 'check' : 'alert-circle'}" style="width: 14px; height: 14px;"></i>
-                </div>
-                <span class="member-status-pill active" style="font-size: 0.65rem;">Active</span>
-            </div>
+            <div class="pmc-fab-add"><i data-lucide="plus"></i></div>
         `;
         
         // Card click opens payment modal
