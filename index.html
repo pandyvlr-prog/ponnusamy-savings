@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- FORCE CACHE CLEAR: visit /?clear to bust old service worker -->
+    <script>
+    (function(){
+        if(location.search.indexOf('clear')!==-1){
+            if('serviceWorker' in navigator){
+                navigator.serviceWorker.getRegistrations().then(function(regs){
+                    return Promise.all(regs.map(function(r){return r.unregister();}));
+                }).then(function(){
+                    return caches.keys().then(function(ks){
+                        return Promise.all(ks.map(function(k){return caches.delete(k);}));
+                    });
+                }).then(function(){ window.location.replace('/'); });
+            } else { window.location.replace('/'); }
+        }
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PMS - Simple Chit Management</title>
