@@ -998,11 +998,29 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         padding: 0 !important;
         box-sizing: border-box !important;
         overflow-y: auto !important;
+        border-right: none !important; /* Remove full height border */
+        position: relative !important;
+    }
+    
+    /* Draw the vertical sidebar border only below the 69px logo area so the horizontal line connects perfectly */
+    .desktop-sidebar::after {
+        content: '';
+        position: absolute;
+        top: 69px;
+        bottom: 0;
+        right: 0;
+        width: 1px;
+        background: var(--border);
+        z-index: 5;
+    }
+    
+    [data-theme='light'] .desktop-sidebar::after {
+        background: #B0AAA3 !important; /* Match light theme border color */
     }
 
     .desktop-sidebar-logo {
         height: 69px !important; /* Perfectly match app-header (48px avatar + 20px padding + 1px border) */
-        width: calc(100% + 1px) !important; /* Overlap the right border of sidebar */
+        width: 100% !important;
         z-index: 20 !important; /* Ensure it covers the sidebar border */
         padding: 0 !important;
         margin-bottom: 0 !important;
