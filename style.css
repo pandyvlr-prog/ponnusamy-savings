@@ -1,4 +1,4 @@
-﻿/* Design System: Colors, Fonts, & Tokens (Ultra-Premium SaaS Theme) */
+/* Design System: Colors, Fonts, & Tokens (Ultra-Premium SaaS Theme) */
 :root {
     /* --- DESIGN TOKENS --- */
     
@@ -337,7 +337,7 @@ body {
     z-index: 10;
 }
 
-/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Row 1 ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+/* Ã¢â‚¬ Ã¢â€šÂ¬Ã¢â‚¬ Ã¢â€šÂ¬ Row 1 Ã¢â‚¬ Ã¢â€šÂ¬Ã¢â‚¬ Ã¢â€šÂ¬ */
 .app-header-row1 {
     display: flex;
     align-items: center;
@@ -376,43 +376,30 @@ body {
     flex-direction: column;
     min-width: 0;
 }
+
+/* --- Header Datetime Pill Style --- */
 .header-datetime {
-    display: flex;
+    background: #1f2937;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 1px;
-    background: var(--bg-surface-elevated);
-    border: 1px solid var(--border);
-    padding: 6px 14px;
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(8px);
+    gap: 4px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    margin-right: 8px;
 }
 .header-date {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    color: var(--primary);
-    white-space: nowrap;
+}
+.header-date::after {
+    content: ",";
+    margin-right: 2px;
 }
 .header-clock {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--text-main);
-    white-space: nowrap;
-    background: rgba(255, 215, 0, 0.15);
-    padding: 3px 10px;
-    border-radius: var(--radius-full);
-    border: 1px solid rgba(255, 215, 0, 0.25);
-}
-[data-theme='light'] .header-clock {
-    background: rgba(184, 134, 11, 0.15);
-    border-color: rgba(184, 134, 11, 0.4);
-    color: var(--text-main) !important;
-    font-weight: 900;
-}
-[data-theme='light'] .header-date {
-    color: var(--text-main) !important;
-    font-weight: 800;
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
 /* Right cluster */
@@ -497,10 +484,9 @@ body {
     50% { transform: scale(1.12); opacity: 0; }
 }
 
-/* ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ Row 2: Mobile quick-action bar ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬Â Ã¢â€šÂ¬ */
 /* ── Row 2: Mobile quick-action bar ── */
 .app-header-row2 {
-    display: none; /* shown only on mobile via media query */
+    display: none; /* hidden by default, toggled via JS */
     align-items: center;
     justify-content: space-around;
     padding: 6px 12px 8px;
@@ -686,6 +672,23 @@ body {
     box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     position: relative;
     color: #111827;
+}
+
+/* Responsive Member Card Views */
+.member-card-desktop-view {
+    display: none !important;
+}
+.member-card-mobile-view {
+    display: block !important;
+}
+
+@media (min-width: 768px) {
+    .member-card-mobile-view {
+        display: none !important;
+    }
+    .member-card-desktop-view {
+        display: flex !important;
+    }
 }
 
 .pmc2-fab-btn {
@@ -9467,5 +9470,6 @@ html, body, .app-device-shell {
     border: 3px solid var(--bg-primary);
     z-index: 10;
 }
-. t o o l b a r - t o g g l e - b t n   {   d i s p l a y :   n o n e ;   }  
+. t o o l b a r - t o g g l e - b t n   {   d i s p l a y :   n o n e ;   } 
+ 
  
