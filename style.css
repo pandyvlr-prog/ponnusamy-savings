@@ -3265,7 +3265,7 @@ body {
         background-color: rgba(184,134,11,0.04);
     }
 
-    .dashboard-member-row > span {
+    .dashboard-member-row > span.desktop-only-col {
         display: flex !important;
         align-items: center;
         border-right: 1px solid var(--border-table) !important;
@@ -3279,7 +3279,7 @@ body {
         text-overflow: ellipsis;
     }
     
-    .dashboard-member-row > div {
+    .dashboard-member-row > div.desktop-only-col {
         display: flex !important;
         align-items: center;
         justify-content: center;
