@@ -3904,77 +3904,96 @@ function filterAndRenderMembers() {
             </div>
         `;
 
-        // Mobile layout (New pmc2 layout)
+        // Mobile layout (New pmc2 layout) — fully inline styled for reliability
         const mobileHTML = `
-            <div class="member-card-mobile-view">
-                <div class="pmc2-header">
-                    <div class="pmc2-title-area">
-                        <span class="pmc2-number">${index + 1}</span>
-                        <h3 class="pmc2-name">${member.name}</h3>
-                        ${member.customerType === 'New' ? '<span class="pmc2-new-badge">NEW</span>' : ''}
+            <div class="member-card-mobile-view" style="display:block;">
+                <!-- Header: Number + Name + Avatar -->
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span style="color:#d97706; font-size:1.1rem; font-weight:900;">${index + 1}</span>
+                        <h3 style="font-size:1.1rem; font-weight:900; color:#111827; margin:0; text-transform:uppercase;">${member.name}</h3>
+                        ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;">NEW</span>' : ''}
                     </div>
-                    <div class="pmc2-avatar"><i data-lucide="user"></i></div>
-                </div>
-                
-                <div class="pmc2-info-boxes">
-                    <div class="pmc2-box">
-                        <div class="pmc2-box-icon pmc2-icon-green"><i data-lucide="calendar"></i></div>
-                        <div class="pmc2-box-text">
-                            <div class="pmc2-box-label">DURATION</div>
-                            <div class="pmc2-box-val pmc2-val-gradient">${durationStr}</div>
-                        </div>
-                    </div>
-                    <div class="pmc2-box">
-                        <div class="pmc2-box-icon pmc2-icon-orange"><i data-lucide="calendar"></i></div>
-                        <div class="pmc2-box-text">
-                            <div class="pmc2-box-label">${group.currentMonth} MONTH DUE</div>
-                            <div class="pmc2-box-val pmc2-val-orange">${group.currentMonth}</div>
-                        </div>
-                    </div>
-                    <div class="pmc2-box pmc2-box-outline">
-                        <div class="pmc2-box-label" style="margin-bottom:2px;">SCHEME VALUE</div>
-                        <div class="pmc2-box-val pmc2-val-green" style="font-size:0.85rem;">${schemeLabelStr}</div>
+                    <div style="background:#ecfdf5;color:#059669;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                        <i data-lucide="user" style="width:18px;height:18px;"></i>
                     </div>
                 </div>
 
-                <div class="pmc2-rows">
-                    <div class="pmc2-row">
-                        <div class="pmc2-row-left">
-                            <div class="pmc2-row-icon pmc2-icon-green"><i data-lucide="indian-rupee"></i></div>
-                            <span class="pmc2-row-label">DUE AMOUNT</span>
+                <!-- Info Boxes Row -->
+                <div style="display:flex; gap:6px; margin-bottom:14px;">
+                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:6px;background:#f9fafb;">
+                        <div style="width:28px;height:28px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="calendar" style="width:13px;height:13px;"></i>
                         </div>
-                        <div class="pmc2-row-right pmc2-val-green-bold">₹${formatNumberIndian(dueAmount)}</div>
+                        <div>
+                            <div style="font-size:0.55rem;color:#6b7280;font-weight:700;text-transform:uppercase;">DURATION</div>
+                            <div style="font-size:0.68rem;font-weight:800;background:-webkit-linear-gradient(0deg,#059669,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${durationStr}</div>
+                        </div>
                     </div>
-                    <div class="pmc2-row">
-                        <div class="pmc2-row-left">
-                            <div class="pmc2-row-icon pmc2-icon-blue"><i data-lucide="calendar"></i></div>
-                            <span class="pmc2-row-label">PAID DATE</span>
+                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:6px;background:#f9fafb;">
+                        <div style="width:28px;height:28px;border-radius:50%;background:#fffbeb;color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="calendar" style="width:13px;height:13px;"></i>
                         </div>
-                        <div class="pmc2-row-right pmc2-val-blue-bold">${paidDateStr}</div>
+                        <div>
+                            <div style="font-size:0.55rem;color:#6b7280;font-weight:700;text-transform:uppercase;">${group.currentMonth} MONTH DUE</div>
+                            <div style="font-size:1rem;font-weight:900;color:#d97706;">${group.currentMonth}</div>
+                        </div>
                     </div>
-                    <div class="pmc2-row">
-                        <div class="pmc2-row-left">
-                            <div class="pmc2-row-icon pmc2-icon-green"><i data-lucide="check-circle"></i></div>
-                            <span class="pmc2-row-label">STATUS</span>
-                        </div>
-                        <div class="pmc2-row-right">${statusBadgeHTML}</div>
-                    </div>
-                    <div class="pmc2-row">
-                        <div class="pmc2-row-left">
-                            <div class="pmc2-row-icon pmc2-icon-purple"><i data-lucide="check-circle"></i></div>
-                            <span class="pmc2-row-label">PAYOUT AMOUNT</span>
-                        </div>
-                        <div class="pmc2-row-right">${payoutBadgeHTML}</div>
-                    </div>
-                    <div class="pmc2-row">
-                        <div class="pmc2-row-left">
-                            <div class="pmc2-row-icon pmc2-icon-red"><i data-lucide="indian-rupee"></i></div>
-                            <span class="pmc2-row-label">SCHEME</span>
-                        </div>
-                        <div class="pmc2-row-right" style="font-weight:800;">${schemeLabelStr}</div>
+                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;background:#f9fafb;display:flex;flex-direction:column;justify-content:center;">
+                        <div style="font-size:0.55rem;color:#6b7280;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME VALUE</div>
+                        <div style="font-size:0.75rem;font-weight:900;color:#059669;">${schemeLabelStr}</div>
                     </div>
                 </div>
-                
+
+                <!-- Data Rows -->
+                <div style="border:1px solid #f3f4f6;border-radius:12px;background:#fff;overflow:hidden;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;">
+                                <i data-lucide="indian-rupee" style="width:12px;height:12px;"></i>
+                            </div>
+                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">DUE AMOUNT</span>
+                        </div>
+                        <span style="font-size:0.88rem;font-weight:800;color:#059669;">₹${formatNumberIndian(dueAmount)}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;">
+                                <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                            </div>
+                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">PAID DATE</span>
+                        </div>
+                        <span style="font-size:0.88rem;font-weight:800;color:#2563eb;">${paidDateStr}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;">
+                                <i data-lucide="check-circle" style="width:12px;height:12px;"></i>
+                            </div>
+                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">STATUS</span>
+                        </div>
+                        <span>${statusBadgeHTML}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;">
+                                <i data-lucide="coins" style="width:12px;height:12px;"></i>
+                            </div>
+                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">PAYOUT AMOUNT</span>
+                        </div>
+                        <span>${payoutBadgeHTML}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;">
+                                <i data-lucide="indian-rupee" style="width:12px;height:12px;"></i>
+                            </div>
+                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">SCHEME</span>
+                        </div>
+                        <span style="font-size:0.88rem;font-weight:800;color:#111827;">${schemeLabelStr}</span>
+                    </div>
+                </div>
+
                 <button class="pmc2-fab-btn"><i data-lucide="plus"></i></button>
             </div>
         `;
