@@ -2181,8 +2181,10 @@ function _renderDashboard() {
         });
         
         mNames.forEach((monthName, idx) => {
+            const isMobile = window.innerWidth < 768;
             const card = document.createElement('div');
             card.className = 'wizard-month-card';
+            card.style.cssText = 'background:#ffffff;border:1px solid #f0f0f0;border-radius:16px;padding:16px;margin-bottom:36px;box-shadow:0 4px 20px rgba(0,0,0,0.04);position:relative;color:#111827;cursor:pointer;';
             if (!activeMonths.has(idx)) {
                 card.classList.add('disabled');
             }
@@ -3880,117 +3882,116 @@ function filterAndRenderMembers() {
             ? `<span class="pmc2-badge-payout">₹${formatNumberIndian(paymentData.payoutClaimed === true ? (group.payouts && group.payouts[group.currentMonth] ? group.payouts[group.currentMonth] : group.chitAmount) : paymentData.payoutClaimed)} / ${paymentData.payoutMethod ? paymentData.payoutMethod.substring(0,1).toUpperCase() : 'C'}</span>`
             : `<span style="font-weight:700;color:var(--text-main);">---</span>`;
 
-        // Desktop layout (Old simple layout)
+        // Detect mobile once
+        const isMobile = window.innerWidth < 768;
+
+        // Desktop layout (simple row layout)
         const desktopHTML = `
-            <div class="member-card-desktop-view" style="justify-content: space-between; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                    <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.9rem; min-width: 24px;">${index + 1}.</span>
-                    <div class="member-card-details" style="display: flex; flex-direction: column; gap: 2px;">
-                        <span class="member-name" style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">${member.name}</span>
-                        <div class="member-stats" style="display: flex; gap: 8px; font-size: 0.72rem;">
-                            <span class="member-stats-paid" style="color: var(--primary); font-weight: 600;">${paidMonthsCount} Paid</span>
-                            <span class="member-stats-pending" style="color: var(--text-muted);">${remainingMonths} Left</span>
+            <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                <div style="display:flex; align-items:center; gap:12px; flex:1;">
+                    <span style="font-weight:700; color:var(--text-secondary); font-size:0.9rem; min-width:24px;">${index + 1}.</span>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <span style="font-weight:600; font-size:0.95rem; color:var(--text-main);">${member.name}</span>
+                        <div style="display:flex; gap:8px; font-size:0.72rem;">
+                            <span style="color:var(--primary); font-weight:600;">${paidMonthsCount} Paid</span>
+                            <span style="color:var(--text-muted);">${remainingMonths} Left</span>
                         </div>
                     </div>
                 </div>
-                
-                <div class="member-card-right" style="display: flex; align-items: center; gap: 8px;">
+                <div style="display:flex; align-items:center; gap:8px;">
                     ${reminderBtnHtml}
-                    <div class="member-card-status-badge ${currentMonthPaid ? 'paid' : 'pending'}" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: ${currentMonthPaid ? 'var(--green-light)' : 'var(--red-light)'}; color: ${currentMonthPaid ? 'var(--green-dark)' : 'var(--red-dark)'};" title="${currentMonthPaid ? 'Paid this month' : 'Pending this month'}">
-                        <i data-lucide="${currentMonthPaid ? 'check' : 'alert-circle'}" style="width: 14px; height: 14px;"></i>
+                    <div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:${currentMonthPaid ? 'var(--green-light)' : 'var(--red-light)'};color:${currentMonthPaid ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                        <i data-lucide="${currentMonthPaid ? 'check' : 'alert-circle'}" style="width:14px;height:14px;"></i>
                     </div>
-                    <span class="member-status-pill active" style="font-size: 0.65rem;">Active</span>
+                    <span style="font-size:0.65rem;">Active</span>
                 </div>
             </div>
         `;
 
-        // Mobile layout (New pmc2 layout) — fully inline styled for reliability
+        // Mobile layout — fully inline styled, no CSS classes needed for layout
         const mobileHTML = `
-            <div class="member-card-mobile-view" style="display:block;">
-                <!-- Header: Number + Name + Avatar -->
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                        <span style="color:#d97706; font-size:1.1rem; font-weight:900;">${index + 1}</span>
-                        <h3 style="font-size:1.1rem; font-weight:900; color:#111827; margin:0; text-transform:uppercase;">${member.name}</h3>
-                        ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;">NEW</span>' : ''}
+            <div style="display:block;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="color:#d97706;font-size:1.1rem;font-weight:900;">${index + 1}</span>
+                        <h3 style="font-size:1.1rem;font-weight:900;color:#111827;margin:0;text-transform:uppercase;">${member.name}</h3>
+                        ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
                     </div>
-                    <div style="background:#ecfdf5;color:#059669;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                        <i data-lucide="user" style="width:18px;height:18px;"></i>
-                    </div>
-                </div>
-
-                <!-- Info Boxes Row -->
-                <div style="display:flex; gap:6px; margin-bottom:14px;">
-                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:6px;background:#f9fafb;">
-                        <div style="width:28px;height:28px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="calendar" style="width:13px;height:13px;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:0.55rem;color:#6b7280;font-weight:700;text-transform:uppercase;">DURATION</div>
-                            <div style="font-size:0.68rem;font-weight:800;background:-webkit-linear-gradient(0deg,#059669,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${durationStr}</div>
-                        </div>
-                    </div>
-                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:6px;background:#f9fafb;">
-                        <div style="width:28px;height:28px;border-radius:50%;background:#fffbeb;color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="calendar" style="width:13px;height:13px;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:0.55rem;color:#6b7280;font-weight:700;text-transform:uppercase;">${group.currentMonth} MONTH DUE</div>
-                            <div style="font-size:1rem;font-weight:900;color:#d97706;">${group.currentMonth}</div>
-                        </div>
-                    </div>
-                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;background:#f9fafb;display:flex;flex-direction:column;justify-content:center;">
-                        <div style="font-size:0.55rem;color:#6b7280;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME VALUE</div>
-                        <div style="font-size:0.75rem;font-weight:900;color:#059669;">${schemeLabelStr}</div>
+                    <div style="background:#ecfdf5;color:#059669;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i data-lucide="user" style="width:16px;height:16px;"></i>
                     </div>
                 </div>
 
-                <!-- Data Rows -->
-                <div style="border:1px solid #f3f4f6;border-radius:12px;background:#fff;overflow:hidden;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;">
-                                <i data-lucide="indian-rupee" style="width:12px;height:12px;"></i>
-                            </div>
-                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">DUE AMOUNT</span>
+                <div style="display:flex;gap:6px;margin-bottom:14px;">
+                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:#f9fafb;">
+                        <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
                         </div>
-                        <span style="font-size:0.88rem;font-weight:800;color:#059669;">₹${formatNumberIndian(dueAmount)}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;">
-                                <i data-lucide="calendar" style="width:12px;height:12px;"></i>
-                            </div>
-                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">PAID DATE</span>
+                        <div style="min-width:0;">
+                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;text-transform:uppercase;white-space:nowrap;">DURATION</div>
+                            <div style="font-size:0.6rem;font-weight:800;background:linear-gradient(90deg,#059669,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${durationStr}</div>
                         </div>
-                        <span style="font-size:0.88rem;font-weight:800;color:#2563eb;">${paidDateStr}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;">
-                                <i data-lucide="check-circle" style="width:12px;height:12px;"></i>
+                    <div style="flex:0 0 auto;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:#fffbeb;">
+                        <div style="width:26px;height:26px;border-radius:50%;background:#fffbeb;color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;white-space:nowrap;">${group.currentMonth}th DUE</div>
+                            <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${group.currentMonth}</div>
+                        </div>
+                    </div>
+                    <div style="flex:0 0 auto;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;background:#f0fdf4;display:flex;flex-direction:column;justify-content:center;">
+                        <div style="font-size:0.5rem;color:#6b7280;font-weight:700;white-space:nowrap;">SCHEME</div>
+                        <div style="font-size:0.7rem;font-weight:900;color:#059669;white-space:nowrap;">${schemeLabelStr}</div>
+                    </div>
+                </div>
+
+                <div style="border:1px solid #f0f0f0;border-radius:12px;overflow:hidden;background:#fff;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
                             </div>
-                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">STATUS</span>
+                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">DUE AMOUNT</span>
+                        </div>
+                        <span style="font-size:0.85rem;font-weight:800;color:#059669;">&#8377;${formatNumberIndian(dueAmount)}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAID DATE</span>
+                        </div>
+                        <span style="font-size:0.85rem;font-weight:800;color:#2563eb;">${paidDateStr}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">STATUS</span>
                         </div>
                         <span>${statusBadgeHTML}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;">
-                                <i data-lucide="coins" style="width:12px;height:12px;"></i>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="coins" style="width:11px;height:11px;"></i>
                             </div>
-                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">PAYOUT AMOUNT</span>
+                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAYOUT</span>
                         </div>
                         <span>${payoutBadgeHTML}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;">
-                                <i data-lucide="indian-rupee" style="width:12px;height:12px;"></i>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="landmark" style="width:11px;height:11px;"></i>
                             </div>
-                            <span style="font-size:0.72rem;color:#4b5563;font-weight:700;">SCHEME</span>
+                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">SCHEME</span>
                         </div>
-                        <span style="font-size:0.88rem;font-weight:800;color:#111827;">${schemeLabelStr}</span>
+                        <span style="font-size:0.85rem;font-weight:800;color:#111827;">${schemeLabelStr}</span>
                     </div>
                 </div>
 
@@ -3998,7 +3999,7 @@ function filterAndRenderMembers() {
             </div>
         `;
 
-        card.innerHTML = desktopHTML + mobileHTML;
+        card.innerHTML = isMobile ? mobileHTML : desktopHTML;
         
         // Card click opens payment modal
         card.addEventListener('click', () => {
