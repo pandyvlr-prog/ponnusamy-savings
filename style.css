@@ -454,7 +454,7 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* Avatar button —  ALWAYS visible & prominent */
+/* Avatar button — ALWAYS visible & prominent */
 .header-avatar-btn {
     position: relative;
     width: 48px;
@@ -9467,8 +9467,5 @@ html, body, .app-device-shell {
     border: 3px solid var(--bg-primary);
     z-index: 10;
 }
-. t o o l b a r - t o g g l e - b t n   {   d i s p l a y :   n o n e ;   } 
+. t o o l b a r - t o g g l e - b t n   {   d i s p l a y :   n o n e ;   }  
  
- 
-
-#dashboard-members-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
