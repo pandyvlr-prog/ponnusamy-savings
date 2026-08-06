@@ -3021,6 +3021,56 @@ body {
     transform: translateY(-4px);
 }
 
+/* --- Responsive Dashboard Row Switching --- */
+@media (max-width: 767px) {
+    .desktop-only-col {
+        display: none !important;
+    }
+    .dashboard-member-row {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        margin-bottom: 0 !important;
+        display: block !important;
+    }
+    .dashboard-member-row:hover {
+        transform: none !important;
+    }
+}
+@media (min-width: 768px) {
+    .mobile-card-view {
+        display: none !important;
+    }
+}
+
+/* --- Premium Scheme Box --- */
+.premium-scheme-box {
+    border-radius: 8px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-surface-elevated) 0%, var(--bg-surface) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.1);
+    text-align: center;
+}
+.premium-scheme-box .scheme-title {
+    font-size: 0.45rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.premium-scheme-box .scheme-value {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #d4af37;
+    line-height: 1.2;
+}
+
 /* --- New Tabular Mobile Card --- */
 .dashboard-mobile-card {
     background-color: var(--bg-surface);
