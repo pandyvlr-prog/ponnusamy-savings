@@ -3579,7 +3579,7 @@ function renderDashboardMembersList(searchQuery = '') {
                         <div style="width:22px;height:22px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
                             <i data-lucide="calendar" style="width:10px;height:10px;"></i>
                         </div>
-                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">DURATION</div>
+                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
                         <div>${mobileGroupNameHtml}</div>
                     </div>
                     
@@ -3587,13 +3587,13 @@ function renderDashboardMembersList(searchQuery = '') {
                         <div style="width:22px;height:22px;border-radius:50%;background:rgba(217,119,6,0.1);color:#d97706;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
                             <i data-lucide="calendar" style="width:10px;height:10px;"></i>
                         </div>
-                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">${item.relativeMonthNum}th DUE</div>
+                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Month</div>
                         <div style="font-size:1.2rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
                     </div>
 
-                    <div class="premium-scheme-box">
-                        <div class="scheme-title">SCHEME</div>
-                        <div class="scheme-value">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
+                    <div class="premium-scheme-box" style="border: 2px solid #6366f1; background: #eef2ff;">
+                        <div class="scheme-title" style="color: #4338ca; font-weight: 900;">SCHEME</div>
+                        <div class="scheme-value" style="color: #4f46e5; font-weight: 900;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
                     </div>
                 </div>
 
@@ -4087,7 +4087,7 @@ function filterAndRenderMembers() {
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i>
                         </div>
                         <div style="min-width:0;">
-                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;text-transform:uppercase;white-space:nowrap;">DURATION</div>
+                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;text-transform:uppercase;white-space:nowrap;">GROUP</div>
                             <div style="font-size:0.6rem;font-weight:800;background:linear-gradient(90deg,#059669,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${durationStr}</div>
                         </div>
                     </div>
@@ -4095,8 +4095,8 @@ function filterAndRenderMembers() {
                         <div style="width:26px;height:26px;border-radius:50%;background:#fffbeb;color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i>
                         </div>
-                        <div>
-                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;white-space:nowrap;">${group.currentMonth}th DUE</div>
+                        <div style="min-width:0;text-align:center;">
+                            <div style="font-size:0.45rem;color:#d97706;font-weight:700;text-transform:uppercase;white-space:nowrap;">Due Month</div>
                             <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${group.currentMonth}</div>
                         </div>
                     </div>
