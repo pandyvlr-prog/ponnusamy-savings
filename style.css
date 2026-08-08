@@ -9825,7 +9825,8 @@ html, body, .app-device-shell {
         box-shadow: none !important;
         border: none !important;
         border-radius: 8px !important;
-        aspect-ratio: 1 / 1 !important;
+        aspect-ratio: auto !important; /* Let it grow for the tag */
+        align-items: center !important;
     }
     [data-theme="light"] .ic-premium-card-item {
         background: transparent !important;
@@ -9833,29 +9834,50 @@ html, body, .app-device-shell {
     }
     .ic-premium-image-wrap {
         width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
         border-radius: 8px !important;
         position: relative !important;
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
-        justify-content: center !important;
-        background: rgba(0,0,0,0.05) !important;
+        justify-content: flex-start !important;
+        background: transparent !important;
         padding: 0 !important;
         box-sizing: border-box !important;
-        overflow: hidden !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+        overflow: visible !important;
+        box-shadow: none !important;
     }
     .ic-premium-card-img {
         width: 100% !important;
-        height: 100% !important;
+        height: 75px !important; /* Fixed height for icon */
         border-radius: 8px !important;
         object-fit: cover !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
     }
     
-    /* Hide tags and footers in grid completely */
+    /* Show tag below the image */
     .ic-premium-value-badge {
-        display: none !important;
+        display: inline-flex !important;
+        position: static !important;
+        margin-top: 6px !important;
+        background: var(--bg-surface-elevated, #fff) !important;
+        color: var(--text-main) !important;
+        border: 1px solid rgba(0,0,0,0.08) !important;
+        font-size: 0.7rem !important;
+        padding: 2px 6px !important;
+        border-radius: 6px !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+        font-weight: 700 !important;
+        width: auto !important;
+        height: auto !important;
     }
+    [data-theme="dark"] .ic-premium-value-badge {
+        background: #2a2a2a !important;
+        border-color: rgba(255,255,255,0.1) !important;
+        color: #fff !important;
+    }
+    
+    /* Hide footers in grid completely */
     .ic-premium-card-footer {
         display: none !important;
     }
