@@ -261,6 +261,11 @@ function setupAuthListeners() {
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign Up'; }
                         return;
                     }
+                    if (authResult.data && !authResult.data.session) {
+                        if (typeof showNotification === 'function') showNotification('Account created! Please check your email to verify.', 'success');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign Up'; }
+                        return;
+                    }
                 } else {
                     // Attempt real sign-in first
                     authResult = await supabaseClient.auth.signInWithPassword({ email, password });
@@ -273,6 +278,12 @@ function setupAuthListeners() {
                             return;
                         }
                         authResult = signUpResult;
+                        
+                        if (authResult.data && !authResult.data.session) {
+                            if (typeof showNotification === 'function') showNotification('Account created! Please check your email to verify.', 'success');
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                            return;
+                        }
                     }
                 }
             } else {
