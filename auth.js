@@ -1,3 +1,6 @@
+// Capture OAuth redirect state before Supabase consumes the URL
+const wasOAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+
 // Supabase Configuration
 const supabaseUrl = 'https://ypkmtmmmsjcdmnarkmhf.supabase.co';
 const supabaseAnonKey = 'sb_publishable_qtUyeCpKdqAYYQsIDKiStQ_8ZM39iIU';
@@ -20,7 +23,6 @@ const AuthState = {
     theme: 'light'
 };
 window.AuthState = AuthState;
-const wasOAuthRedirect = window.location.hash.includes('access_token');
 
 async function initAuth() {
     function navigateToLastScreen() {
@@ -108,7 +110,8 @@ async function initAuth() {
 
     // Listen for auth changes (like returning from Google login redirect)
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
+        // If they just returned from OAuth, Supabase might fire INITIAL_SESSION instead of SIGNED_IN
+        if ((event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && wasOAuthRedirect)) && session) {
             // Force network fetch to get the absolute latest user_metadata across devices
             const { data: { user }, error } = await supabaseClient.auth.getUser();
             const activeUser = user || session.user;
@@ -129,7 +132,8 @@ async function initAuth() {
             const isLoginScreen = document.getElementById('screen-login') && document.getElementById('screen-login').classList.contains('active');
             
             if (isLoginScreen || wasOAuthRedirect) {
-                const isGoogle = wasOAuthRedirect || (session.user && session.user.app_metadata && session.user.app_metadata.provider === 'google');
+                // We only animate the Google button if we are returning from an OAuth redirect
+                const isGoogle = wasOAuthRedirect;
                 
                 // Force show login screen for animation if returning from OAuth
                 if (wasOAuthRedirect) navigateTo('screen-login');

@@ -1254,7 +1254,8 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
 }
 
 /* --- LOGIN SUCCESS ANIMATION --- */
-.premium-submit-btn.btn-success-anim {
+.premium-submit-btn.btn-success-anim,
+.premium-social-btn.btn-success-anim {
     width: 50px !important;
     height: 50px !important;
     border-radius: 50% !important;
@@ -1270,7 +1271,9 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
     justify-content: center;
 }
 .premium-submit-btn.btn-success-anim span, 
-.premium-submit-btn.btn-success-anim .btn-glow {
+.premium-submit-btn.btn-success-anim .btn-glow,
+.premium-social-btn.btn-success-anim span,
+.premium-social-btn.btn-success-anim svg {
     display: none !important;
 }
 
