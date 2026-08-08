@@ -539,20 +539,48 @@ function setupAuthListeners() {
     document.getElementById('btn-cancel-change-password').addEventListener('click', () => {
         pwModal.classList.remove('active');
     });
-    document.getElementById('btn-save-change-password').addEventListener('click', () => {
-        // Show success and close
-        if (typeof showNotification === 'function') {
-            showNotification('Password updated successfully!', 'success');
-        } else {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            if (toast && toastMsg) {
-                toastMsg.textContent = 'Password updated successfully!';
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            }
+    document.getElementById('btn-save-change-password').addEventListener('click', async () => {
+        const newPassword = document.getElementById('new-password-input').value;
+        const confirmPassword = document.getElementById('confirm-password-input').value;
+
+        if (!newPassword || newPassword.length < 8) {
+            if (typeof showNotification === 'function') showNotification('Password must be at least 8 characters.', 'error');
+            else alert('Password must be at least 8 characters.');
+            return;
         }
-        pwModal.classList.remove('active');
+
+        if (newPassword !== confirmPassword) {
+            if (typeof showNotification === 'function') showNotification('Passwords do not match.', 'error');
+            else alert('Passwords do not match.');
+            return;
+        }
+
+        const btn = document.getElementById('btn-save-change-password');
+        const originalText = btn.textContent;
+        btn.textContent = 'Updating...';
+        btn.disabled = true;
+
+        try {
+            const { data, error } = await supabaseClient.auth.updateUser({ password: newPassword });
+            
+            if (error) {
+                if (typeof showNotification === 'function') showNotification(error.message, 'error');
+                else alert('Error: ' + error.message);
+            } else {
+                if (typeof showNotification === 'function') showNotification('Password updated successfully!', 'success');
+                else alert('Password updated successfully!');
+                
+                document.getElementById('new-password-input').value = '';
+                document.getElementById('confirm-password-input').value = '';
+                pwModal.classList.remove('active');
+            }
+        } catch (err) {
+            console.error(err);
+            if (typeof showNotification === 'function') showNotification('An unexpected error occurred.', 'error');
+        } finally {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
     });
 }
 
