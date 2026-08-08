@@ -50,6 +50,27 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize Lucide Icons
     lucide.createIcons();
+
+    // Auto-sync when app returns to foreground (wake up from sleep/background)
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+            // Re-fetch state from cloud if authenticated
+            if (window.supabaseClient && window.AuthState?.isAuthenticated) {
+                console.log("App woke up. Syncing with cloud...");
+                loadState();
+                
+                // Also explicitly reconnect realtime channel if disconnected
+                if (window.supabaseClient.getChannels) {
+                    const channels = window.supabaseClient.getChannels();
+                    channels.forEach(ch => {
+                        if (ch.state === 'closed' || ch.state === 'errored') {
+                            ch.subscribe();
+                        }
+                    });
+                }
+            }
+        }
+    });
 });
 
 // --- Event Listeners Setup ---
@@ -6746,6 +6767,21 @@ async function deleteGroup() {
         const slide20 = document.getElementById('card-scheme-20M');
 
         // Removed whole-card click listeners as per user request to only use the Open Scheme button.
+        // Re-added: whole-card click so mobile compact layout still works (button may be out of view)
+        if (slide12) {
+            slide12.addEventListener('click', (e) => {
+                if (!e.target.closest('.ic-scheme-btn')) {
+                    openTenureCards('12M');
+                }
+            });
+        }
+        if (slide20) {
+            slide20.addEventListener('click', (e) => {
+                if (!e.target.closest('.ic-scheme-btn')) {
+                    openTenureCards('20M');
+                }
+            });
+        }
 
         // Selection Cards Open buttons
         document.querySelectorAll('.ic-scheme-btn').forEach(btn => {
