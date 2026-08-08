@@ -720,9 +720,16 @@
 
 @media (max-width: 900px) {
     .login-brand-side { display: none; }
-    .login-form-side { padding: 20px; }
+    .login-modern-layout { min-height: 100%; }
+    .login-form-side { 
+        padding: 40px 20px;
+        align-items: flex-start; 
+    }
     .mobile-logo-wrap { display: block; }
-    .login-glass-card { padding: 32px 24px; }
+    .login-glass-card { 
+        padding: 32px 24px; 
+        margin: auto 0;
+    }
     .premium-text-gradient { font-size: 3rem; }
 }
 
