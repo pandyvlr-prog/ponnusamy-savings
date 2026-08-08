@@ -20,6 +20,7 @@ const AuthState = {
     theme: 'light'
 };
 window.AuthState = AuthState;
+const wasOAuthRedirect = window.location.hash.includes('access_token');
 
 async function initAuth() {
     function navigateToLastScreen() {
@@ -78,7 +79,8 @@ async function initAuth() {
             localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
 
             // [PHASE 1] Only navigate if we didn't use cache, otherwise we just update profile silently
-            if (!usedCache) {
+            // Skip navigation if OAuth redirect, because onAuthStateChange will handle it with animation
+            if (!usedCache && !wasOAuthRedirect) {
                 navigateToLastScreen();
             }
             updateProfileUI();
@@ -125,11 +127,22 @@ async function initAuth() {
 
             // [NEW] SUCCESS ANIMATION
             const isLoginScreen = document.getElementById('screen-login') && document.getElementById('screen-login').classList.contains('active');
-            if (isLoginScreen) {
-                const btn = document.querySelector('.premium-submit-btn');
+            
+            if (isLoginScreen || wasOAuthRedirect) {
+                const isGoogle = wasOAuthRedirect || (session.user && session.user.app_metadata && session.user.app_metadata.provider === 'google');
+                
+                // Force show login screen for animation if returning from OAuth
+                if (wasOAuthRedirect) navigateTo('screen-login');
+                
+                const btnClass = isGoogle ? '#google-login-btn' : '.premium-submit-btn';
+                const btn = document.querySelector(btnClass);
+                
                 if (btn) {
+                    const originalHTML = btn.innerHTML;
                     btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
                     btn.classList.add('btn-success-anim');
+                    if (isGoogle) btn.style.border = 'none';
+                    
                     await new Promise(r => setTimeout(r, 600)); // wait for button anim
                     
                     const card = document.querySelector('.login-glass-card');
@@ -138,26 +151,20 @@ async function initAuth() {
                     if (imgSide) imgSide.classList.add('bg-fade-anim');
                     
                     await new Promise(r => setTimeout(r, 600)); // wait for card expand
+                    
+                    // Cleanup in background
+                    setTimeout(() => {
+                        btn.classList.remove('btn-success-anim');
+                        btn.innerHTML = originalHTML;
+                        if (isGoogle) btn.style.border = '';
+                        if (card) card.classList.remove('card-expand-anim');
+                        if (imgSide) imgSide.classList.remove('bg-fade-anim');
+                    }, 500);
                 }
             }
 
             navigateToLastScreen();
             updateProfileUI();
-
-            // Cleanup animation classes
-            if (isLoginScreen) {
-                setTimeout(() => {
-                    const btn = document.querySelector('.premium-submit-btn');
-                    const card = document.querySelector('.login-glass-card');
-                    const imgSide = document.querySelector('.login-image-side');
-                    if (btn) {
-                        btn.classList.remove('btn-success-anim');
-                        btn.innerHTML = '<span id="auth-submit-text">Sign In</span><div class="btn-glow"></div>';
-                    }
-                    if (card) card.classList.remove('card-expand-anim');
-                    if (imgSide) imgSide.classList.remove('bg-fade-anim');
-                }, 500);
-            }
 
             if (typeof loadState === 'function') await loadState();
             // [PHASE 1] Removed duplicate renderDashboard() call.
