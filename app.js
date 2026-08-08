@@ -3586,64 +3586,79 @@ function renderDashboardMembersList(searchQuery = '') {
                 ${contactMenuHtml || '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>'}
             </div>
 
-            <div class="mobile-card-view dashboard-mobile-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span style="color:#d97706;font-size:1.1rem;font-weight:900;">${index + 1}</span>
-                        <h3 class="member-name" style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0;text-transform:uppercase;">${item.member.name}</h3>
-                        ${item.member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
+            <div class="mobile-card-view dashboard-mobile-card" style="padding:0;overflow:hidden;border-radius:16px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.12);border:1px solid rgba(0,0,0,0.06);">
+                <!-- Gold gradient header with name -->
+                <div style="background:linear-gradient(135deg,#c9a227 0%,#f0c040 45%,#d4a017 100%);padding:10px 14px 10px 14px;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-size:0.48rem;color:rgba(0,0,0,0.55);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px;">MEMBER NAME</div>
+                        <div class="member-name" style="font-size:1.05rem;font-weight:900;color:#1a1200;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;">${item.member.name}${item.member.customerType === 'New' ? '<span style="background:#1a1200;color:#f0c040;font-size:0.48rem;font-weight:800;padding:1px 5px;border-radius:3px;vertical-align:middle;margin-left:6px;">NEW</span>' : ''}</div>
                     </div>
-                    <div style="display:flex; align-items:center;">
-                        ${contactMenuHtml ? contactMenuHtml : `<div style="background:var(--green-light);color:var(--green-dark);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="user" style="width:16px;height:16px;"></i></div>`}
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1.1fr 0.9fr 1fr; gap:6px; margin-bottom:14px;">
-                    <div style="border:1px solid var(--border);border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-surface-elevated);text-align:center;">
-                        <div style="width:22px;height:22px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
-                            <i data-lucide="calendar" style="width:10px;height:10px;"></i>
-                        </div>
-                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
-                        <div>${mobileGroupNameHtml}</div>
-                    </div>
-                    
-                    <div style="border:1px solid var(--border);border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow-light, #fffbeb);text-align:center;">
-                        <div style="width:22px;height:22px;border-radius:50%;background:rgba(217,119,6,0.1);color:#d97706;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
-                            <i data-lucide="calendar" style="width:10px;height:10px;"></i>
-                        </div>
-                        <div style="font-size:0.45rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Month</div>
-                        <div style="font-size:1.2rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
-                    </div>
-
-                    <div class="premium-scheme-box" style="border: 1px solid var(--border); background: var(--bg-surface-elevated);">
-                        <div class="scheme-title" style="color: #111827; font-weight: 900;">SCHEME</div>
-                        <div class="scheme-value" style="color: #B8860B; font-weight: 900; text-shadow: 0 1px 2px rgba(184,134,11,0.2);">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <div style="background:rgba(0,0,0,0.15);color:#1a1200;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;">${index + 1}</div>
+                        ${contactMenuHtml ? contactMenuHtml : ''}
                     </div>
                 </div>
 
-                <div style="border-radius:10px;overflow:hidden;background:var(--bg-surface);border:1px solid var(--border);">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;">
-                        <div style="padding:7px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);">
-                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Due Amt</div>
-                            <div style="font-size:0.88rem;font-weight:900;color:#dc2626;">&#8377;${formatNumberIndian(item.dueAmount)}</div>
-                        </div>
-                        <div style="padding:7px 10px;border-bottom:1px solid var(--border);">
-                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Paid Amt</div>
-                            <div style="font-size:0.88rem;font-weight:900;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : 'var(--text-muted)'}">&#8377;${formatNumberIndian(item.paidAmount)}</div>
-                        </div>
-                        <div style="padding:7px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);">
-                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Paid Date</div>
-                            <div style="font-size:0.78rem;font-weight:800;color:#2563eb;">${paidDateText || '--'}</div>
-                        </div>
-                        <div style="padding:7px 10px;border-bottom:1px solid var(--border);">
-                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Payout</div>
-                            <div style="font-size:0.78rem;font-weight:800;">${mobilePayoutBadgeHTML}</div>
-                        </div>
+                <!-- Info chips row: Group | Month | Scheme -->
+                <div style="display:grid;grid-template-columns:1.1fr 0.7fr 0.9fr;gap:0;border-bottom:1px solid #eee;">
+                    <div style="padding:7px 8px;border-right:1px solid #eee;text-align:center;">
+                        <div style="font-size:0.48rem;color:#6b7280;font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
+                        ${mobileGroupNameHtml}
                     </div>
-                    <div class="mobile-status-row" style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;cursor:${item.isApplicable ? 'pointer' : 'default'};background:${item.currentMonthPaid ? 'rgba(5,150,105,0.05)' : item.paidAmount > 0 ? 'rgba(217,119,6,0.05)' : 'rgba(220,38,38,0.04)'};">
-                        <span style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;">Status</span>
-                        <span>${statusBadgePill}</span>
+                    <div style="padding:7px 8px;border-right:1px solid #eee;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                        <div style="font-size:0.48rem;color:#6b7280;font-weight:700;text-transform:uppercase;margin-bottom:2px;">MONTH</div>
+                        <div style="font-size:1.4rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
                     </div>
+                    <div style="padding:7px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffdf0;">
+                        <div style="font-size:0.48rem;color:#6b7280;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME</div>
+                        <div style="font-size:0.82rem;font-weight:900;color:#92650a;line-height:1.2;">${schemeAmountStr}<br><span style="font-size:0.7rem;">/${item.group.duration}M</span></div>
+                    </div>
+                </div>
+
+                <!-- 2x2 Metric Tiles -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+                    <!-- Due Amount — Red -->
+                    <div style="background:linear-gradient(135deg,#ef4444,#b91c1c);padding:9px 12px;border-right:1px solid rgba(255,255,255,0.2);border-bottom:1px solid rgba(255,255,255,0.15);">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+                            <div style="background:rgba(255,255,255,0.2);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"><i data-lucide="indian-rupee" style="width:8px;height:8px;color:#fff;"></i></div>
+                            <span style="font-size:0.5rem;color:rgba(255,255,255,0.85);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">DUE</span>
+                        </div>
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.7);font-weight:600;text-transform:uppercase;margin-bottom:2px;">AMOUNT DUE</div>
+                        <div style="font-size:1.05rem;font-weight:900;color:#fff;">&#8377;${formatNumberIndian(item.dueAmount)}</div>
+                    </div>
+                    <!-- Paid Amount — Green -->
+                    <div style="background:linear-gradient(135deg,#10b981,#047857);padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.15);">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+                            <div style="background:rgba(255,255,255,0.2);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"><i data-lucide="wallet" style="width:8px;height:8px;color:#fff;"></i></div>
+                            <span style="font-size:0.5rem;color:rgba(255,255,255,0.85);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">PAID</span>
+                        </div>
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.7);font-weight:600;text-transform:uppercase;margin-bottom:2px;">TOTAL PAID</div>
+                        <div style="font-size:1.05rem;font-weight:900;color:#fff;">&#8377;${formatNumberIndian(item.paidAmount)}</div>
+                    </div>
+                    <!-- Paid Date — Blue -->
+                    <div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);padding:9px 12px;border-right:1px solid rgba(255,255,255,0.2);">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+                            <div style="background:rgba(255,255,255,0.2);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"><i data-lucide="calendar-check" style="width:8px;height:8px;color:#fff;"></i></div>
+                            <span style="font-size:0.5rem;color:rgba(255,255,255,0.85);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">DATE</span>
+                        </div>
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.7);font-weight:600;text-transform:uppercase;margin-bottom:2px;">LAST PAYMENT</div>
+                        <div style="font-size:0.9rem;font-weight:900;color:#fff;">${paidDateText || '--'}</div>
+                    </div>
+                    <!-- Payout — Purple -->
+                    <div style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);padding:9px 12px;">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+                            <div style="background:rgba(255,255,255,0.2);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"><i data-lucide="coins" style="width:8px;height:8px;color:#fff;"></i></div>
+                            <span style="font-size:0.5rem;color:rgba(255,255,255,0.85);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">PAYOUT</span>
+                        </div>
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.7);font-weight:600;text-transform:uppercase;margin-bottom:2px;">EST. PAYOUT</div>
+                        <div style="font-size:0.88rem;font-weight:900;color:#fff;">${item.hasTakenPayout ? `&#8377;${item.payoutVal.toLocaleString('en-IN')} / ${item.payoutMethod ? item.payoutMethod.substring(0,1).toUpperCase() : 'C'}` : '---'}</div>
+                    </div>
+                </div>
+
+                <!-- Status bar -->
+                <div class="mobile-status-row" style="background:#fef9e7;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;cursor:${item.isApplicable ? 'pointer' : 'default'};">
+                    <span style="font-size:0.55rem;color:#92650a;font-weight:700;text-transform:uppercase;letter-spacing:1px;">CARD STATUS</span>
+                    <span>${statusBadgePill}</span>
                 </div>
             </div>
         `;
