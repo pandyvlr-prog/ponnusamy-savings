@@ -3565,7 +3565,7 @@ function renderDashboardMembersList(searchQuery = '') {
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="color:#d97706;font-size:1.1rem;font-weight:900;">${index + 1}</span>
-                        <h3 style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0;text-transform:uppercase;">${item.member.name}</h3>
+                        <h3 class="member-name" style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0;text-transform:uppercase;">${item.member.name}</h3>
                         ${item.member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
                     </div>
                     <div style="display:flex; align-items:center;">
@@ -3648,50 +3648,55 @@ function renderDashboardMembersList(searchQuery = '') {
                 });
             }
 
-            // Desktop listener
-            const chk = row.querySelector('.status-badge-pill.paid, .status-badge-pill.partial, .status-badge-pill.pending');
-            if (chk) {
+            // Desktop and Mobile listeners
+            const chkNodes = row.querySelectorAll('.status-badge-pill.paid, .status-badge-pill.partial, .status-badge-pill.pending');
+            chkNodes.forEach(chk => {
                 chk.addEventListener('click', (e) => {
                     e.stopPropagation();
                     State.selectedGroupId = item.group.id;
                     openPaymentModal(item.member.id, 'single_month', item.relativeMonthNum);
                 });
-            }
+            });
 
-            const contactBtn = row.querySelector('.contact-action-btn');
-            const contactMenu = row.querySelector('.contact-action-menu');
-            if (contactBtn && contactMenu) {
-                contactBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    // Close all other open menus
-                    document.querySelectorAll('.contact-action-menu').forEach(menu => {
-                        if (menu !== contactMenu) menu.style.display = 'none';
+            const contactBtns = row.querySelectorAll('.contact-action-btn');
+            const contactMenus = row.querySelectorAll('.contact-action-menu');
+            contactBtns.forEach((contactBtn, index) => {
+                const contactMenu = contactMenus[index];
+                if (contactBtn && contactMenu) {
+                    contactBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // Close all other open menus
+                        document.querySelectorAll('.contact-action-menu').forEach(menu => {
+                            if (menu !== contactMenu) menu.style.display = 'none';
+                        });
+                        const isVisible = contactMenu.style.display === 'flex';
+                        contactMenu.style.display = isVisible ? 'none' : 'flex';
                     });
-                    const isVisible = contactMenu.style.display === 'flex';
-                    contactMenu.style.display = isVisible ? 'none' : 'flex';
-                });
-            }
+                }
+            });
 
-            const callBtn = row.querySelector('.contact-call-btn');
-            if (callBtn) {
+            const callBtns = row.querySelectorAll('.contact-call-btn');
+            callBtns.forEach((callBtn, index) => {
                 callBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     window.location.href = `tel:${callBtn.dataset.phone}`;
+                    const contactMenu = contactMenus[index];
                     if (contactMenu) contactMenu.style.display = 'none';
                 });
-            }
+            });
 
-            const waBtn = row.querySelector('.contact-wa-btn');
-            if (waBtn) {
+            const waBtns = row.querySelectorAll('.contact-wa-btn');
+            waBtns.forEach((waBtn, index) => {
                 waBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     sendWhatsAppReminder(item.member.id);
+                    const contactMenu = contactMenus[index];
                     if (contactMenu) contactMenu.style.display = 'none';
                 });
-            }
+            });
 
-            const nameEl = row.querySelector('.member-name');
-            if (nameEl) {
+            const nameEls = row.querySelectorAll('.member-name');
+            nameEls.forEach(nameEl => {
                 nameEl.style.cursor = 'pointer';
                 nameEl.style.textDecoration = 'underline';
                 nameEl.style.textDecorationColor = 'transparent';
@@ -3709,16 +3714,16 @@ function renderDashboardMembersList(searchQuery = '') {
                     State.selectedGroupId = item.group.id;
                     openPaymentModal(item.member.id);
                 });
-            }
+            });
 
-            const chitBadgeEl = row.querySelector('.chit-taken-badge');
-            if (chitBadgeEl) {
+            const chitBadgeEls = row.querySelectorAll('.chit-taken-badge');
+            chitBadgeEls.forEach(chitBadgeEl => {
                 chitBadgeEl.addEventListener('click', (e) => {
                     e.stopPropagation();
                     State.selectedGroupId = item.group.id;
                     openPaymentModal(item.member.id, 'single_month', item.payoutMonthNum);
                 });
-            }
+            });
         }
 
         fragment.appendChild(row);
