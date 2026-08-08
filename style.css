@@ -9686,12 +9686,12 @@ html, body, .app-device-shell {
         font-size: 0.85rem !important;
     }
     
-    /* Grid for uploaded cards (4 columns - ultra small icons) */
+    /* Grid for uploaded cards (1 column list) */
     .ic-premium-grid {
         display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 6px !important;
-        padding: 8px !important;
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+        padding: 16px !important;
     }
 
     /* Lightbox Card Preview Redesign - Beautiful UI */
@@ -9707,7 +9707,7 @@ html, body, .app-device-shell {
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        z-index: 10 !important;
+        z-index: 10005 !important;
         background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%) !important;
         padding: 24px 20px 40px !important;
         display: flex !important;
@@ -9715,6 +9715,7 @@ html, body, .app-device-shell {
         align-items: center !important;
         gap: 20px !important;
         border: none !important;
+        pointer-events: auto !important;
     }
     .ic-lightbox-info {
         text-align: center !important;
@@ -9816,72 +9817,56 @@ html, body, .app-device-shell {
 
     /* Additional Tweaks */
     
-    /* Ultra small icon grid cards */
+    /* Standard Card style for mobile list */
     .ic-premium-card-item {
         flex-direction: column !important;
         height: auto !important;
         padding: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 8px !important;
-        aspect-ratio: auto !important; /* Let it grow for the tag */
-        align-items: center !important;
+        background: var(--bg-surface) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+        border: 1px solid var(--border-subtle) !important;
+        border-radius: 12px !important;
+        aspect-ratio: auto !important;
+        align-items: stretch !important;
     }
     [data-theme="light"] .ic-premium-card-item {
-        background: transparent !important;
-        border-color: transparent !important;
+        background: #ffffff !important;
+        border-color: rgba(0,0,0,0.05) !important;
     }
     .ic-premium-image-wrap {
         width: 100% !important;
-        height: auto !important;
-        border-radius: 8px !important;
+        height: 200px !important;
+        border-radius: 12px 12px 0 0 !important;
         position: relative !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
+        display: block !important;
         background: transparent !important;
         padding: 0 !important;
         box-sizing: border-box !important;
-        overflow: visible !important;
+        overflow: hidden !important;
         box-shadow: none !important;
     }
     .ic-premium-card-img {
         width: 100% !important;
-        height: 75px !important; /* Fixed height for icon */
-        border-radius: 8px !important;
+        height: 100% !important;
+        border-radius: 0 !important;
         object-fit: cover !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+        box-shadow: none !important;
     }
     
-    /* Show tag below the image */
+    /* Hide the overlay price tag entirely, let it show in footer */
     .ic-premium-value-badge {
-        display: inline-flex !important;
-        position: static !important;
-        margin-top: 6px !important;
-        background: var(--bg-surface-elevated, #fff) !important;
-        color: var(--text-main) !important;
-        border: 1px solid rgba(0,0,0,0.08) !important;
-        font-size: 0.7rem !important;
-        padding: 2px 6px !important;
-        border-radius: 6px !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
-        font-weight: 700 !important;
-        width: auto !important;
-        height: auto !important;
-    }
-    [data-theme="dark"] .ic-premium-value-badge {
-        background: #2a2a2a !important;
-        border-color: rgba(255,255,255,0.1) !important;
-        color: #fff !important;
-    }
-    
-    /* Hide footers in grid completely */
-    .ic-premium-card-footer {
         display: none !important;
     }
-    .ic-premium-card-details, .ic-premium-card-actions {
+    
+    /* Show footer but hide actions */
+    .ic-premium-card-footer {
+        display: flex !important;
+        padding: 16px !important;
+    }
+    .ic-premium-card-details {
+        display: flex !important;
+    }
+    .ic-premium-card-actions {
         display: none !important;
     }
     
