@@ -332,6 +332,26 @@
     .hero-3d-illustration { max-width: 80%; }
 }
 
+@media (max-width: 768px) {
+    .landing-hero-section {
+        min-height: auto;
+        padding: 24px 20px;
+        justify-content: flex-start;
+    }
+    .hero-image-content {
+        display: none !important;
+    }
+    .hero-split {
+        gap: 0;
+    }
+    .landing-title {
+        font-size: 2.5rem;
+    }
+    .scroll-indicator {
+        display: none;
+    }
+}
+
 .premium-btn-large {
     font-size: 1.1rem;
     padding: 16px 40px;
