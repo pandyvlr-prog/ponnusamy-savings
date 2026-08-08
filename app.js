@@ -3522,7 +3522,7 @@ function renderDashboardMembersList(searchQuery = '') {
             } else if (item.paidAmount > 0) {
                 statusBadgePill = `<span style="background-color: var(--yellow-light, #fef9c3); color: var(--yellow-dark, #854d0e); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">PARTIAL</span>`;
             } else {
-                statusBadgePill = `<span style="background-color: var(--red-light); color: var(--red-dark); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">PENDING</span>`;
+                statusBadgePill = `<span style="background-color: var(--red-light); color: var(--red-dark); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">DUE</span>`;
             }
         } else {
             statusBadgePill = `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">N/A</span>`;
@@ -3600,12 +3600,21 @@ function renderDashboardMembersList(searchQuery = '') {
                 <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-surface);">
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
                             </div>
-                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">DUE AMOUNT</span>
+                            <span style="font-size:0.7rem;color:#dc2626;font-weight:700;">DUE AMOUNT</span>
                         </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:var(--green-dark);">&#8377;${item.dueAmount.toLocaleString('en-IN')}</span>
+                        <span style="font-size:0.85rem;font-weight:800;color:#dc2626;">&#8377;${formatNumberIndian(item.dueAmount)}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#ecfdf5' : '#fffbeb') : '#f3f4f6'};color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="wallet" style="width:11px;height:11px;"></i>
+                            </div>
+                            <span style="font-size:0.7rem;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};font-weight:700;">PAID AMOUNT</span>
+                        </div>
+                        <span style="font-size:0.85rem;font-weight:800;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};">&#8377;${formatNumberIndian(item.paidAmount)}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
