@@ -4447,7 +4447,14 @@ function renderChecklist(member, group) {
                 <span style="font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap;">📅 ${monthYearStr}</span>
             </div>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
-            <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${isPaid ? '' : formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%;">
+                <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${isPaid ? '' : formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
+                <select class="custom-payment-partial-method" data-month="${m}" style="display: ${!isPaid && payment.partialPaid > 0 ? 'block' : 'none'}; padding: 2px 4px; font-size: 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;">
+                    <option value="" disabled ${!payment.partialMethod ? 'selected' : ''}>TYPE</option>
+                    <option value="cash" ${payment.partialMethod === 'cash' ? 'selected' : ''}>CASH</option>
+                    <option value="gpay" ${payment.partialMethod === 'gpay' ? 'selected' : ''}>GPAY</option>
+                </select>
+            </div>
             ${payoutHtml}
             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div class="row-checkbox-wrapper ${isPaid ? 'paid' : ''}" style="width: 20px; height: 20px; border-radius: 40%; border: 2px solid ${isPaid ? 'var(--green-dark)' : 'var(--text-muted)'}; background-color: ${isPaid ? 'var(--green-dark)' : 'transparent'}; color: ${isPaid ? '#fff' : 'transparent'}; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all var(--transition-fast);">
@@ -4466,9 +4473,18 @@ function renderChecklist(member, group) {
 
         // Listen to Partial amount input changes
         const partialInput = row.querySelector('.custom-payment-partial-input');
+        const partialMethodSelect = row.querySelector('.custom-payment-partial-method');
+        
         partialInput.addEventListener('input', (e) => {
             const val = e.target.value !== '' ? parseFloat(e.target.value) : null;
             member.payments[m].partialPaid = val;
+            
+            if (val > 0) {
+                if (partialMethodSelect) partialMethodSelect.style.display = 'block';
+            } else {
+                if (partialMethodSelect) partialMethodSelect.style.display = 'none';
+            }
+            
             saveState();
             
             // Live calculate summary box numbers
@@ -4512,6 +4528,13 @@ function renderChecklist(member, group) {
                 }
             }
         });
+
+        if (partialMethodSelect) {
+            partialMethodSelect.addEventListener('change', (e) => {
+                member.payments[m].partialMethod = e.target.value;
+                saveState();
+            });
+        }
         
         // Listen to Checkbox toggle clicks
         const chk = row.querySelector('.row-checkbox-wrapper');
