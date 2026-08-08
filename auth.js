@@ -267,23 +267,12 @@ function setupAuthListeners() {
                         return;
                     }
                 } else {
-                    // Attempt real sign-in first
+                    // Attempt real sign-in
                     authResult = await supabaseClient.auth.signInWithPassword({ email, password });
-                    if (authResult.error && authResult.error.message && authResult.error.message.toLowerCase().includes('invalid login')) {
-                        // Auto-register if user doesn't exist
-                        const signUpResult = await supabaseClient.auth.signUp({ email, password });
-                        if (signUpResult.error) {
-                            if (typeof showNotification === 'function') showNotification(signUpResult.error.message, 'error');
-                            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
-                            return;
-                        }
-                        authResult = signUpResult;
-                        
-                        if (authResult.data && !authResult.data.session) {
-                            if (typeof showNotification === 'function') showNotification('Account created! Please check your email to verify.', 'success');
-                            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
-                            return;
-                        }
+                    if (authResult.error) {
+                        if (typeof showNotification === 'function') showNotification('Invalid login credentials.', 'error');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                        return;
                     }
                 }
             } else {
