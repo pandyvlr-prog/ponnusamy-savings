@@ -675,6 +675,9 @@ body {
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+.premium-member-card:last-child {
+    margin-bottom: 16px; /* Just enough space for the FAB button */
+}
 .premium-member-card:active { transform: scale(0.98); }
 
 /* Responsive Member Card Views */
