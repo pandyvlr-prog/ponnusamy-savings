@@ -769,7 +769,7 @@ body {
 /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Mobile overrides ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
 @media (max-width: 767px) {
     .header-action-chips { display: none; } /* moved to Row 2 */
-    .app-header-row2 { display: flex; }
+    .app-header-row2.expanded { display: flex; }
     .header-logo-img { width: 36px; height: 36px; }
     .app-header-row1 { padding: 8px 14px; }
 }

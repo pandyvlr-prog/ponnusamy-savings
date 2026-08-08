@@ -220,6 +220,26 @@ function setupEventListeners() {
         });
     }
 
+    // --- Toolbar Toggle (Mobile) ---
+    const btnToggleToolbarM = document.getElementById('btn-toggle-toolbar-m');
+    const appHeaderRow2 = document.getElementById('app-header-row2');
+    if (btnToggleToolbarM && appHeaderRow2) {
+        btnToggleToolbarM.addEventListener('click', () => {
+            appHeaderRow2.classList.toggle('expanded');
+            const icon = btnToggleToolbarM.querySelector('i');
+            if (icon) {
+                if (appHeaderRow2.classList.contains('expanded')) {
+                    icon.setAttribute('data-lucide', 'chevron-up');
+                } else {
+                    icon.setAttribute('data-lucide', 'chevron-down');
+                }
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        });
+    }
+
     // --- Global Document Clicks ---
     document.addEventListener('click', (e) => {
         // Handle Custom Month Dropdown Click Outside
