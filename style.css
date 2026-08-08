@@ -9634,5 +9634,65 @@ html, body, .app-device-shell {
         font-size: 0.62rem !important;
         padding: 2px 5px !important;
     }
+
+    /* Shrink search + filter section on mobile */
+    .search-filter-section {
+        gap: 6px !important;
+        margin-bottom: 8px !important;
+    }
+    #dashboard-member-search {
+        padding: 5px 32px 5px 30px !important;
+        font-size: 0.75rem !important;
+        height: 30px !important;
+    }
+    .search-input-wrapper .search-icon {
+        width: 13px !important;
+        height: 13px !important;
+        top: 8px !important;
+    }
+    /* Filter & month buttons */
+    #filter-dropdown-btn,
+    #custom-month-dropdown-btn,
+    #btn-open-date-range {
+        height: 30px !important;
+        padding: 4px 8px !important;
+        font-size: 0.72rem !important;
+    }
+    #filter-dropdown-btn i,
+    #custom-month-dropdown-btn i,
+    #btn-open-date-range i {
+        width: 12px !important;
+        height: 12px !important;
+    }
+    /* Calendar date icon button */
+    #date-dropdown-btn {
+        width: 28px !important;
+        height: 30px !important;
+    }
+    #date-dropdown-month-text {
+        font-size: 6px !important;
+    }
+    #date-dropdown-selected-number {
+        font-size: 11px !important;
+    }
+    /* Report download button */
+    #btn-quick-dashboard-report {
+        width: 30px !important;
+        height: 30px !important;
+    }
+    #btn-quick-dashboard-report i {
+        width: 15px !important;
+        height: 15px !important;
+    }
+    /* Reset button */
+    #btn-reset-dashboard-filters {
+        width: 30px !important;
+        height: 30px !important;
+        flex: 0 0 30px !important;
+    }
+    #btn-reset-dashboard-filters i {
+        width: 13px !important;
+        height: 13px !important;
+    }
 }
 
