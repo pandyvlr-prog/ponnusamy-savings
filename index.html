@@ -109,7 +109,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     box-sizing: border-box !important;
     padding: 70px 28px 20px !important;
     background: radial-gradient(circle at top left, #1a1a24 0%, #0c0c10 50%, #000000 100%) !important;
-    overflow: hidden !important;
+    overflow-y: auto !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -147,18 +147,23 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 #ic-tenure-selector .ic-scheme-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 24px !important;
     margin-top: 0 !important;
     align-items: start !important;
-    max-width: 900px !important;
+    max-width: 1000px !important;
     width: 100%;
+}
+@media (max-width: 800px) {
+    #ic-tenure-selector .ic-scheme-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
 #ic-tenure-selector .ic-scheme-card {
     background: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 24px !important;
-    padding: 28px !important;
+    padding: 24px !important;
     display: flex !important;
     flex-direction: column !important;
     position: relative !important;
@@ -254,17 +259,17 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 #ic-tenure-selector .ic-scheme-desc {
     color: rgba(255,255,255,.5) !important;
     -webkit-text-fill-color: rgba(255,255,255,.5) !important;
-    font-size: 0.95rem !important; margin-bottom: 30px !important;
+    font-size: 0.95rem !important; margin-bottom: 16px !important;
 }
 #ic-tenure-selector .ic-scheme-meta { margin-bottom: 16px; display: none; }
 #ic-tenure-selector .ic-scheme-stats-list {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 14px !important;
-    margin-bottom: 30px !important;
+    margin-bottom: 20px !important;
 }
 #ic-tenure-selector .ic-scheme-stats-list .ic-scheme-stat-box:last-child:nth-child(odd) {
-    grid-column: span 2 !important;
+    grid-column: span 1 !important;
 }
 #ic-tenure-selector .ic-scheme-stat-box {
     background: rgba(0,0,0,0.2) !important;
