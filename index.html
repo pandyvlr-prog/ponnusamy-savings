@@ -107,66 +107,95 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     width: 100% !important;
     height: 100% !important;
     box-sizing: border-box !important;
-    padding: 40px 28px 80px !important;
-    background: linear-gradient(160deg, #0f0f14 0%, #131318 50%, #0c0c10 100%) !important;
+    padding: 60px 28px 80px !important;
+    background: radial-gradient(circle at top left, #1a1a24 0%, #0c0c10 50%, #000000 100%) !important;
     overflow-y: auto !important;
     display: block !important;
     z-index: 1 !important;
 }
 #ic-tenure-selector .ic-landing-title {
-    font-size: clamp(2rem,5vw,3rem) !important;
+    font-size: clamp(2.5rem, 6vw, 3.5rem) !important;
     font-weight: 900 !important;
     letter-spacing: -1.5px !important;
-    background: linear-gradient(135deg,#fff 30%,#D4AF37 100%) !important;
+    background: linear-gradient(135deg, #ffffff 10%, #D4AF37 50%, #ffffff 90%) !important;
+    background-size: 200% auto !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 12px !important;
+    animation: icShine 4s linear infinite !important;
+}
+@keyframes icShine {
+    to { background-position: 200% center; }
 }
 #ic-tenure-selector .ic-landing-subtitle {
-    color: rgba(255,255,255,.55) !important;
-    -webkit-text-fill-color: rgba(255,255,255,.55) !important;
-    font-size: 1rem !important;
+    color: rgba(255,255,255,.6) !important;
+    -webkit-text-fill-color: rgba(255,255,255,.6) !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    max-width: 450px !important;
+    margin: 0 auto !important;
+    line-height: 1.5 !important;
 }
 #ic-tenure-selector .ic-landing-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
 }
 #ic-tenure-selector .ic-scheme-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr)) !important;
-    gap: 24px !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 32px !important;
     margin-top: 8px !important;
     align-items: start !important;
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
-/* SCHEME CARDS */
 #ic-tenure-selector .ic-scheme-card {
-    background: rgba(255,255,255,.05) !important;
-    border: 1px solid rgba(255,255,255,.12) !important;
-    border-radius: 24px !important;
-    padding: 24px !important;
-    height: auto !important;
-    min-height: auto !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 28px !important;
+    padding: 32px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
     position: relative !important;
     overflow: hidden !important;
     cursor: pointer !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08) !important;
-    transition: transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s,border-color .35s !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-sizing: border-box !important;
+    z-index: 1 !important;
+}
+#ic-tenure-selector .ic-scheme-card::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -50px !important;
+    right: -50px !important;
+    width: 180px !important;
+    height: 180px !important;
+    background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%) !important;
+    border-radius: 50% !important;
+    z-index: -1 !important;
+    transition: all 0.5s ease !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"]::before {
+    background: radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%) !important;
 }
 #ic-tenure-selector .ic-scheme-card:hover {
-    transform: translateY(-8px) scale(1.01) !important;
-    border-color: rgba(212,175,55,.5) !important;
-    box-shadow: 0 24px 48px rgba(0,0,0,.6),0 0 30px rgba(212,175,55,.12) !important;
+    transform: translateY(-10px) scale(1.02) !important;
+    border-color: rgba(212,175,55,0.4) !important;
+    box-shadow: 0 24px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.15) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+#ic-tenure-selector .ic-scheme-card:hover::before {
+    transform: scale(1.5) !important;
+    opacity: 0.8 !important;
 }
 #ic-tenure-selector .ic-scheme-card[data-tenure="20M"]:hover {
-    border-color: rgba(34,197,94,.5) !important;
-    box-shadow: 0 24px 48px rgba(0,0,0,.6),0 0 30px rgba(34,197,94,.12) !important;
+    border-color: rgba(34,197,94,0.4) !important;
+    box-shadow: 0 24px 50px rgba(0,0,0,0.6), 0 0 40px rgba(34,197,94,0.15) !important;
 }
 #ic-tenure-selector .ic-scheme-card-header {
     display: flex !important;
@@ -175,19 +204,24 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     margin-bottom: 24px !important;
 }
 #ic-tenure-selector .ic-scheme-icon-wrap {
-    width: 52px !important; height: 52px !important;
-    border-radius: 15px !important;
-    background: rgba(212,175,55,.12) !important;
-    border: 1px solid rgba(212,175,55,.3) !important;
+    width: 56px !important; height: 56px !important;
+    border-radius: 18px !important;
+    background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%) !important;
+    border: 1px solid rgba(212,175,55,0.3) !important;
     display: flex !important; align-items: center !important; justify-content: center !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+    transition: transform 0.3s ease !important;
+}
+#ic-tenure-selector .ic-scheme-card:hover .ic-scheme-icon-wrap {
+    transform: scale(1.1) rotate(5deg) !important;
 }
 #ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-icon-wrap {
-    background: rgba(34,197,94,.12) !important;
-    border-color: rgba(34,197,94,.3) !important;
+    background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(34,197,94,0.05) 100%) !important;
+    border-color: rgba(34,197,94,0.3) !important;
 }
 #ic-tenure-selector .ic-scheme-icon-wrap svg,
 #ic-tenure-selector .ic-scheme-icon-wrap i {
-    width: 24px !important; height: 24px !important;
+    width: 26px !important; height: 26px !important;
     color: #D4AF37 !important; stroke: #D4AF37 !important;
 }
 #ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-icon-wrap svg,
@@ -195,67 +229,119 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     color: #22c55e !important; stroke: #22c55e !important;
 }
 #ic-tenure-selector .ic-scheme-badge {
-    width: 56px !important; height: 56px !important;
-    border-radius: 16px !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
     background: linear-gradient(135deg,#D4AF37,#B8860B) !important;
     color: #000 !important; -webkit-text-fill-color: #000 !important;
-    font-size: 1.5rem !important; font-weight: 900 !important;
+    font-size: 1.2rem !important; font-weight: 900 !important;
     display: flex !important; align-items: center !important; justify-content: center !important;
-    box-shadow: 0 4px 16px rgba(212,175,55,.45) !important;
+    box-shadow: 0 4px 16px rgba(212,175,55,.4) !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-badge {
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    box-shadow: 0 4px 16px rgba(34,197,94,.4) !important;
 }
 #ic-tenure-selector .ic-scheme-title {
-    font-size: 1.7rem !important; font-weight: 800 !important;
+    font-size: 2.2rem !important; font-weight: 800 !important;
     color: #fff !important; -webkit-text-fill-color: #fff !important;
-    margin-bottom: 4px !important; letter-spacing: -.5px !important;
+    margin-bottom: 6px !important; letter-spacing: -.5px !important;
 }
 #ic-tenure-selector .ic-scheme-desc {
     color: rgba(255,255,255,.5) !important;
     -webkit-text-fill-color: rgba(255,255,255,.5) !important;
-    font-size: .88rem !important; margin-bottom: 16px !important;
+    font-size: 0.95rem !important; margin-bottom: 30px !important;
 }
-#ic-tenure-selector .ic-scheme-meta { margin-bottom: 16px; }
+#ic-tenure-selector .ic-scheme-meta { margin-bottom: 16px; display: none; }
 #ic-tenure-selector .ic-scheme-stats-list {
-    flex: none !important;
-    display: flex !important; flex-direction: column !important; gap: 10px !important;
-    margin-bottom: 20px !important; padding: 16px !important;
-    background: rgba(255,255,255,.04) !important;
-    border-radius: 14px !important; border: 1px solid rgba(255,255,255,.06) !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+    margin-bottom: 30px !important;
 }
-#ic-tenure-selector .ic-scheme-stat-row {
-    display: flex !important; justify-content: space-between !important; align-items: center !important;
+#ic-tenure-selector .ic-scheme-stats-list .ic-scheme-stat-box:last-child:nth-child(odd) {
+    grid-column: span 2 !important;
+}
+#ic-tenure-selector .ic-scheme-stat-box {
+    background: rgba(0,0,0,0.2) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    transition: all 0.3s ease !important;
+}
+#ic-tenure-selector .ic-scheme-card:hover .ic-scheme-stat-box {
+    background: rgba(0,0,0,0.3) !important;
+    border-color: rgba(255,255,255,0.1) !important;
 }
 #ic-tenure-selector .ic-scheme-stat-label {
     color: rgba(255,255,255,.45) !important;
     -webkit-text-fill-color: rgba(255,255,255,.45) !important;
-    font-size: .82rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
 }
 #ic-tenure-selector .ic-scheme-stat-val {
     color: #fff !important; -webkit-text-fill-color: #fff !important;
-    font-weight: 700 !important; font-size: .9rem !important;
+    font-weight: 800 !important; font-size: 1.15rem !important;
 }
 #ic-tenure-selector .ic-scheme-btn {
-    display: block !important; width: 100% !important;
-    padding: 15px 24px !important; border-radius: 14px !important; border: none !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100% !important;
+    padding: 16px 24px !important; border-radius: 16px !important; border: none !important;
     background: linear-gradient(135deg,#D4AF37 0%,#B8860B 100%) !important;
     color: #000 !important; -webkit-text-fill-color: #000 !important;
-    font-weight: 700 !important; font-size: 1rem !important; cursor: pointer !important;
-    text-align: center !important;
-    box-shadow: 0 4px 16px rgba(212,175,55,.4) !important;
-    transition: transform .2s,box-shadow .2s !important;
-    margin-top: 0 !important;
+    font-weight: 800 !important; font-size: 1.05rem !important; cursor: pointer !important;
+    box-shadow: 0 8px 24px rgba(212,175,55,.3) !important;
+    transition: all .3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    margin-top: auto !important;
     letter-spacing: .3px !important;
+    gap: 10px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-btn {
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    box-shadow: 0 8px 24px rgba(34,197,94,0.3) !important;
+}
+#ic-tenure-selector .ic-scheme-btn::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: -100% !important;
+    width: 100% !important; height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent) !important;
+    transition: all 0.5s ease !important;
+}
+#ic-tenure-selector .ic-scheme-btn:hover::after {
+    left: 100% !important;
+}
+#ic-tenure-selector .ic-scheme-btn i,
+#ic-tenure-selector .ic-scheme-btn svg {
+    transition: transform 0.3s ease !important;
+    width: 18px !important;
+    height: 18px !important;
 }
 #ic-tenure-selector .ic-scheme-btn:hover {
     transform: translateY(-3px) !important;
-    box-shadow: 0 8px 28px rgba(212,175,55,.6) !important;
+    box-shadow: 0 12px 32px rgba(212,175,55,.5) !important;
+}
+#ic-tenure-selector .ic-scheme-card[data-tenure="20M"] .ic-scheme-btn:hover {
+    box-shadow: 0 12px 32px rgba(34,197,94,.5) !important;
+}
+#ic-tenure-selector .ic-scheme-btn:hover i,
+#ic-tenure-selector .ic-scheme-btn:hover svg {
+    transform: translateX(6px) !important;
 }
 .ic-trust-footer {
     display: flex !important; align-items: center !important;
-    justify-content: center !important; gap: 6px !important;
-    margin-top: 36px !important;
-    color: rgba(255,255,255,.35) !important;
-    -webkit-text-fill-color: rgba(255,255,255,.35) !important;
-    font-size: .8rem !important;
+    justify-content: center !important; gap: 8px !important;
+    margin-top: 48px !important;
+    color: rgba(255,255,255,.4) !important;
+    -webkit-text-fill-color: rgba(255,255,255,.4) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
 }
 
 /* PAGE 2 — GALLERY VIEW */
@@ -2436,25 +2522,23 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 </div>
                                 <div class="ic-scheme-badge">12</div>
                             </div>
-                            <div class="ic-scheme-meta">
-                                <h3 class="ic-scheme-title">Month Scheme</h3>
-                                <p class="ic-scheme-desc">Manage 12 Month Scheme Cards</p>
-                            </div>
+                            <h3 class="ic-scheme-title">12 Month Scheme</h3>
+                            <p class="ic-scheme-desc">Manage 12 Month Scheme Cards</p>
                             <div class="ic-scheme-stats-list">
-                                <div class="ic-scheme-stat-row">
+                                <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Total Cards</span>
                                     <span class="ic-scheme-stat-val" id="stats-12M-count">0</span>
                                 </div>
-                                <div class="ic-scheme-stat-row">
+                                <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Total Value</span>
                                     <span class="ic-scheme-stat-val" id="stats-12M-value">₹0</span>
                                 </div>
-                                <div class="ic-scheme-stat-row">
+                                <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Last Updated</span>
                                     <span class="ic-scheme-stat-val" id="stats-12M-updated">N/A</span>
                                 </div>
                             </div>
-                            <button class="ic-scheme-btn">Open Scheme &rarr;</button>
+                            <button class="ic-scheme-btn">Open Scheme <i data-lucide="arrow-right"></i></button>
                         </div>
                         
                         <!-- 20 Month Scheme Card -->
@@ -2465,25 +2549,23 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 </div>
                                 <div class="ic-scheme-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a);">20</div>
                             </div>
-                            <div class="ic-scheme-meta">
-                                <h3 class="ic-scheme-title">Month Scheme</h3>
-                                <p class="ic-scheme-desc">Manage 20 Month Scheme Cards</p>
-                            </div>
+                            <h3 class="ic-scheme-title">20 Month Scheme</h3>
+                            <p class="ic-scheme-desc">Manage 20 Month Scheme Cards</p>
                             <div class="ic-scheme-stats-list">
-                                <div class="ic-scheme-stat-row">
+                                <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Total Cards</span>
                                     <span class="ic-scheme-stat-val" id="stats-20M-count">0</span>
                                 </div>
-                                <div class="ic-scheme-stat-row">
+                                <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Total Value</span>
                                     <span class="ic-scheme-stat-val" id="stats-20M-value">₹0</span>
                                 </div>
-                                <div class="ic-scheme-stat-row">
+                                <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Last Updated</span>
                                     <span class="ic-scheme-stat-val" id="stats-20M-updated">N/A</span>
                                 </div>
                             </div>
-                            <button class="ic-scheme-btn" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">Open Scheme &rarr;</button>
+                            <button class="ic-scheme-btn">Open Scheme <i data-lucide="arrow-right"></i></button>
                         </div>
                     </div>
 
