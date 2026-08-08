@@ -380,7 +380,7 @@ function setupAuthListeners() {
 
             // Open Modal
             forgotModal.style.display = 'flex';
-            if (lucide && lucide.createIcons) lucide.createIcons(); // ensure icon renders
+            if (window.lucide && window.lucide.createIcons) window.lucide.createIcons(); // ensure icon renders
 
             // Close Modal
             const closeModal = () => {
