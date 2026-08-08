@@ -3586,7 +3586,7 @@ function renderDashboardMembersList(searchQuery = '') {
                 ${contactMenuHtml || '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">--</span>'}
             </div>
 
-            <div class="mobile-card-view dashboard-mobile-card" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.07);padding:0;">
+            <div class="mobile-card-view dashboard-mobile-card" style="background:#f8f9fa;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.07);padding:0;">
 
                 <!-- Name header -->
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #f0f0f0;">
@@ -3603,16 +3603,16 @@ function renderDashboardMembersList(searchQuery = '') {
                 <!-- Info boxes: Group | Month | Scheme -->
                 <div style="display:grid;grid-template-columns:1.1fr 0.9fr 1fr;gap:6px;padding:8px;border-bottom:1px solid #f0f0f0;">
                     <div style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
-                        <div style="font-size:0.45rem;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
+                        <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
                         <div>${mobileGroupNameHtml}</div>
                     </div>
                     <div style="border:1px solid #fde68a;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffbeb;text-align:center;">
-                        <div style="font-size:0.45rem;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:2px;">MONTH</div>
+                        <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">MONTH</div>
                         <div style="font-size:1.4rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
                     </div>
-                    <div style="border:2px solid #818cf8;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#eef2ff;text-align:center;">
-                        <div style="font-size:0.45rem;color:#6366f1;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME</div>
-                        <div style="font-size:0.82rem;font-weight:900;color:#4f46e5;line-height:1.2;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
+                    <div style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
+                        <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME</div>
+                        <div style="font-size:0.82rem;font-weight:900;color:#b45309;line-height:1.2;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
                     </div>
                 </div>
 

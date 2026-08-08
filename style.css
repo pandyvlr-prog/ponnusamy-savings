@@ -488,10 +488,16 @@ body {
 .app-header-row2 {
     display: none; /* hidden by default, toggled via JS */
     align-items: center;
-    justify-content: space-around;
+    justify-content: flex-start;
     padding: 6px 12px 8px;
-    border-top: 1px solid var(--border);
-    gap: 4px;
+    border-top: none;
+    background: transparent;
+    gap: 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.app-header-row2::-webkit-scrollbar {
+    display: none;
 }
 
 /* --- PREMIUM MEMBER CARD v2 (MOCKUP EXACT MATCH) --- */
