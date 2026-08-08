@@ -3197,6 +3197,16 @@ body {
 
 /* Desktop layout styles (Min width 768px overrides cards to grid table) */
 @media (min-width: 768px) {
+    .search-filter-section {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    .mobile-filter-row {
+        display: contents !important;
+    }
+
     .member-list-scroll-wrapper {
         width: 100%;
     }
