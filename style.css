@@ -254,8 +254,16 @@ body {
     .app-device-shell {
         flex-direction: column;
     }
-    .app-container {
+    /* Only reserve bottom-nav space when the dashboard is active.
+       Login and Landing screens have no bottom nav, so they must NOT
+       get the 64px padding — that empty space is what causes the grey
+       rectangle at the bottom of the login page on mobile. */
+    body[data-app-state="dashboard"] .app-container {
         padding-bottom: calc(64px + var(--safe-bottom)); /* Exact space for bottom nav */
+    }
+    body[data-app-state="login"] .app-container,
+    body[data-app-state="landing"] .app-container {
+        padding-bottom: 0;
     }
 }
 
