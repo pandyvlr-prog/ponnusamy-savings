@@ -9612,5 +9612,26 @@ html, body, .app-device-shell {
     .dashboard-summary-header {
         margin-bottom: 8px !important;
     }
+
+    /* Reduce All Group Members section header size on mobile */
+    .section-header {
+        margin-bottom: 8px !important;
+    }
+    .section-header .section-title {
+        font-size: 0.95rem !important;
+    }
+    #btn-toggle-to-groups {
+        width: 26px !important;
+        height: 26px !important;
+        padding: 4px !important;
+    }
+    #btn-toggle-to-groups i {
+        width: 13px !important;
+        height: 13px !important;
+    }
+    #member-total-badge {
+        font-size: 0.7rem !important;
+        padding: 3px 7px !important;
+    }
 }
 
