@@ -243,22 +243,37 @@ function setupAuthListeners() {
         }
 
         const submitBtn = e.target.querySelector('[type="submit"]');
-        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing in…'; }
+        const isRegistering = document.getElementById('name-group') && document.getElementById('name-group').style.display === 'block';
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = isRegistering ? 'Signing up…' : 'Signing in…'; }
 
         try {
             let authResult;
             if (password) {
-                // Attempt real sign-in first
-                authResult = await supabaseClient.auth.signInWithPassword({ email, password });
-                if (authResult.error && authResult.error.message && authResult.error.message.toLowerCase().includes('invalid login')) {
-                    // Auto-register if user doesn't exist
-                    const signUpResult = await supabaseClient.auth.signUp({ email, password });
-                    if (signUpResult.error) {
-                        if (typeof showNotification === 'function') showNotification(signUpResult.error.message, 'error');
-                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                if (isRegistering) {
+                    const name = document.getElementById('register-name').value.trim();
+                    authResult = await supabaseClient.auth.signUp({ 
+                        email, 
+                        password,
+                        options: { data: { name: name || 'New User' } }
+                    });
+                    if (authResult.error) {
+                        if (typeof showNotification === 'function') showNotification(authResult.error.message, 'error');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign Up'; }
                         return;
                     }
-                    authResult = signUpResult;
+                } else {
+                    // Attempt real sign-in first
+                    authResult = await supabaseClient.auth.signInWithPassword({ email, password });
+                    if (authResult.error && authResult.error.message && authResult.error.message.toLowerCase().includes('invalid login')) {
+                        // Auto-register if user doesn't exist
+                        const signUpResult = await supabaseClient.auth.signUp({ email, password });
+                        if (signUpResult.error) {
+                            if (typeof showNotification === 'function') showNotification(signUpResult.error.message, 'error');
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                            return;
+                        }
+                        authResult = signUpResult;
+                    }
                 }
             } else {
                 // No password field (legacy form): send magic link
@@ -284,15 +299,35 @@ function setupAuthListeners() {
         }
     });
 
-    // Mock Registration
+    let isRegisterMode = false;
     document.getElementById('register-new-link').addEventListener('click', (e) => {
         e.preventDefault();
-        AuthState.isAuthenticated = true;
-        AuthState.currentUser = { name: 'New User', email: 'newuser@example.com' };
-        localStorage.setItem('ps_auth', JSON.stringify(AuthState));
-        navigateTo('screen-dashboard');
-        updateProfileUI();
-        // [PROD] Removed duplicate renderDashboard() — navigateTo triggers it via switchView
+        isRegisterMode = !isRegisterMode;
+        
+        const title = document.getElementById('auth-title');
+        const subtitleText = document.getElementById('auth-subtitle-text');
+        const nameGroup = document.getElementById('name-group');
+        const submitBtnText = document.getElementById('auth-submit-text');
+        const forgotLink = document.getElementById('forgot-password-link');
+        const registerLink = document.getElementById('register-new-link');
+        
+        if (isRegisterMode) {
+            title.textContent = 'Create Account';
+            subtitleText.textContent = 'Already have an account?';
+            registerLink.textContent = 'Sign in';
+            nameGroup.style.display = 'block';
+            document.getElementById('register-name').required = true;
+            submitBtnText.textContent = 'Sign Up';
+            forgotLink.style.display = 'none';
+        } else {
+            title.textContent = 'Welcome Back';
+            subtitleText.textContent = "Don't have an account?";
+            registerLink.textContent = 'Create one';
+            nameGroup.style.display = 'none';
+            document.getElementById('register-name').required = false;
+            submitBtnText.textContent = 'Sign In';
+            forgotLink.style.display = 'block';
+        }
     });
 
     // Mock Google Login

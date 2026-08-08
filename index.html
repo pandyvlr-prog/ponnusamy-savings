@@ -1353,11 +1353,16 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <img src="logo-dark.jpg" class="app-logo">
                             </div>
                             <div class="login-header">
-                                <h2 class="login-title">Welcome Back</h2>
-                                <p class="login-subtitle">Don't have an account? <a href="#" class="premium-link" id="register-new-link">Create one</a></p>
+                                <h2 class="login-title" id="auth-title">Welcome Back</h2>
+                                <p class="login-subtitle"><span id="auth-subtitle-text">Don't have an account?</span> <a href="#" class="premium-link" id="register-new-link">Create one</a></p>
                             </div>
                             
                             <form id="login-form" class="premium-form">
+                                <div class="premium-input-group" id="name-group" style="display: none;">
+                                    <input type="text" id="register-name" class="premium-input" placeholder=" ">
+                                    <label for="register-name" class="premium-label">Full Name</label>
+                                    <div class="input-highlight"></div>
+                                </div>
                                 <div class="premium-input-group">
                                     <input type="email" id="login-email" class="premium-input" required placeholder=" ">
                                     <label for="login-email" class="premium-label">Email Address</label>
@@ -1371,7 +1376,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary premium-submit-btn">
-                                    <span>Sign In</span>
+                                    <span id="auth-submit-text">Sign In</span>
                                     <div class="btn-glow"></div>
                                 </button>
                             </form>
