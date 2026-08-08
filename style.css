@@ -3819,7 +3819,7 @@ button:not(.filter-pill):active, .filter-pill:active, .btn:active {
 
 /* Fixes for mobile display */
 @media (max-width: 767px) {
-    .fab-btn { bottom: 110px !important; right: 20px !important; }
+    .fab-btn { bottom: calc(84px + var(--safe-bottom)) !important; right: 20px !important; }
     .header-actions-row { gap: 4px !important; }
     .app-header { padding: 12px 16px; }
 }
