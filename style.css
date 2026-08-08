@@ -9694,5 +9694,15 @@ html, body, .app-device-shell {
         width: 13px !important;
         height: 13px !important;
     }
+
+    /* Hide PMS word in header on mobile */
+    .app-title {
+        display: none !important;
+    }
+    .header-logo-img {
+        width: 32px !important;
+        height: 32px !important;
+    }
 }
+
 

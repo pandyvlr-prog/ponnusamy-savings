@@ -3615,57 +3615,34 @@ function renderDashboardMembersList(searchQuery = '') {
                         <div style="font-size:1.2rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
                     </div>
 
-                    <div class="premium-scheme-box" style="border: 2px solid #6366f1; background: #eef2ff;">
-                        <div class="scheme-title" style="color: #4338ca; font-weight: 900;">SCHEME</div>
-                        <div class="scheme-value" style="color: #4f46e5; font-weight: 900;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
+                    <div class="premium-scheme-box" style="border: 1px solid var(--border); background: var(--bg-surface-elevated);">
+                        <div class="scheme-title" style="color: #111827; font-weight: 900;">SCHEME</div>
+                        <div class="scheme-value" style="color: #B8860B; font-weight: 900; text-shadow: 0 1px 2px rgba(184,134,11,0.2);">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
                     </div>
                 </div>
 
-                <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-surface);">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:#dc2626;font-weight:700;">DUE AMOUNT</span>
+                <div style="border-radius:10px;overflow:hidden;background:var(--bg-surface);border:1px solid var(--border);">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;">
+                        <div style="padding:7px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);">
+                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Due Amt</div>
+                            <div style="font-size:0.88rem;font-weight:900;color:#dc2626;">&#8377;${formatNumberIndian(item.dueAmount)}</div>
                         </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:#dc2626;">&#8377;${formatNumberIndian(item.dueAmount)}</span>
+                        <div style="padding:7px 10px;border-bottom:1px solid var(--border);">
+                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Paid Amt</div>
+                            <div style="font-size:0.88rem;font-weight:900;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : 'var(--text-muted)'}">&#8377;${formatNumberIndian(item.paidAmount)}</div>
+                        </div>
+                        <div style="padding:7px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);">
+                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Paid Date</div>
+                            <div style="font-size:0.78rem;font-weight:800;color:#2563eb;">${paidDateText || '--'}</div>
+                        </div>
+                        <div style="padding:7px 10px;border-bottom:1px solid var(--border);">
+                            <div style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:2px;">Payout</div>
+                            <div style="font-size:0.78rem;font-weight:800;">${mobilePayoutBadgeHTML}</div>
+                        </div>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#ecfdf5' : '#fffbeb') : '#f3f4f6'};color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="wallet" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};font-weight:700;">PAID AMOUNT</span>
-                        </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};">&#8377;${formatNumberIndian(item.paidAmount)}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:var(--bg-surface-elevated, #eff6ff);color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">PAID DATE</span>
-                        </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:#2563eb;">${paidDateText}</span>
-                    </div>
-                    <div class="mobile-status-row" style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);cursor:${item.isApplicable ? 'pointer' : 'default'};">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">STATUS</span>
-                        </div>
+                    <div class="mobile-status-row" style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;cursor:${item.isApplicable ? 'pointer' : 'default'};background:${item.currentMonthPaid ? 'rgba(5,150,105,0.05)' : item.paidAmount > 0 ? 'rgba(217,119,6,0.05)' : 'rgba(220,38,38,0.04)'};">
+                        <span style="font-size:0.58rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;">Status</span>
                         <span>${statusBadgePill}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:var(--bg-surface-elevated, #faf5ff);color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="coins" style="width:11px;height:11px;"></i>
-                            </div>
-                            <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:600;">PAYOUT</span>
-                        </div>
-                        <span>${mobilePayoutBadgeHTML}</span>
                     </div>
                 </div>
             </div>
