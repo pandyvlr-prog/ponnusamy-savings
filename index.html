@@ -107,9 +107,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     width: 100% !important;
     height: 100% !important;
     box-sizing: border-box !important;
-    padding: 80px 28px 40px !important;
+    padding: 70px 28px 20px !important;
     background: radial-gradient(circle at top left, #1a1a24 0%, #0c0c10 50%, #000000 100%) !important;
-    overflow-y: auto !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -142,14 +142,14 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 #ic-tenure-selector .ic-landing-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     width: 100%;
 }
 #ic-tenure-selector .ic-scheme-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
-    gap: 32px !important;
-    margin-top: 8px !important;
+    gap: 24px !important;
+    margin-top: 0 !important;
     align-items: start !important;
     max-width: 900px !important;
     width: 100%;
@@ -157,8 +157,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 #ic-tenure-selector .ic-scheme-card {
     background: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 28px !important;
-    padding: 32px !important;
+    border-radius: 24px !important;
+    padding: 28px !important;
     display: flex !important;
     flex-direction: column !important;
     position: relative !important;
@@ -170,6 +170,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-sizing: border-box !important;
     z-index: 1 !important;
+    height: auto !important;
+    min-height: auto !important;
 }
 #ic-tenure-selector .ic-scheme-card::before {
     content: '' !important;
@@ -340,7 +342,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 .ic-trust-footer {
     display: flex !important; align-items: center !important;
     justify-content: center !important; gap: 8px !important;
-    margin-top: 32px !important;
+    margin-top: 24px !important;
     color: rgba(255,255,255,.4) !important;
     -webkit-text-fill-color: rgba(255,255,255,.4) !important;
     font-size: 0.85rem !important;
