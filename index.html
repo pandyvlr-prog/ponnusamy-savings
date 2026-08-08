@@ -155,28 +155,17 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     width: 100%;
 }
 @media (max-width: 768px) {
-    /* Mobile: vertical scroll allowed, horizontal slider for cards */
+    /* Mobile: reset container so slider isn't clipped */
     #ic-tenure-selector {
         justify-content: flex-start !important;
         align-items: flex-start !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        padding: 70px 0 90px !important;
+        overflow: hidden !important;
+        padding: 70px 0 20px !important;
     }
     #ic-tenure-selector .ic-landing-header {
-        padding: 12px 20px 0 !important;
-        margin-bottom: 12px !important;
+        padding: 0 20px;
+        margin-bottom: 16px !important;
         width: 100%;
-        box-sizing: border-box;
-    }
-    #ic-tenure-selector .ic-landing-title {
-        font-size: 1.8rem !important;
-        margin-bottom: 4px !important;
-        letter-spacing: -0.5px !important;
-    }
-    #ic-tenure-selector .ic-landing-subtitle {
-        font-size: 0.85rem !important;
     }
     #ic-tenure-selector .ic-scheme-grid {
         display: flex !important;
@@ -185,7 +174,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         overflow-y: visible !important;
         scroll-snap-type: x mandatory !important;
         gap: 16px !important;
-        padding: 4px 20px 16px !important;
+        padding: 0 20px 24px !important;
         margin-top: 0 !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -200,21 +189,17 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         flex: 0 0 calc(100vw - 56px) !important;
         max-width: calc(100vw - 56px) !important;
         scroll-snap-align: center !important;
-        padding: 20px !important;
     }
     #ic-tenure-selector .ic-scheme-stats-list {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-        margin-bottom: 16px !important;
     }
     #ic-tenure-selector .ic-scheme-stats-list .ic-scheme-stat-box:last-child:nth-child(odd) {
         grid-column: span 2 !important;
     }
     #ic-tenure-selector .ic-trust-footer {
-        padding: 8px 20px;
+        padding: 0 20px;
         width: 100%;
         box-sizing: border-box;
-        margin-top: 8px !important;
     }
 }
 #ic-tenure-selector .ic-scheme-card {
