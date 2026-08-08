@@ -107,7 +107,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     width: 100% !important;
     height: 100% !important;
     box-sizing: border-box !important;
-    padding: 40px 28px !important;
+    padding: 100px 28px 40px !important;
     background: radial-gradient(circle at top left, #1a1a24 0%, #0c0c10 50%, #000000 100%) !important;
     overflow-y: auto !important;
     display: flex !important;
@@ -141,8 +141,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 #ic-tenure-selector .ic-landing-header {
     text-align: center;
-    margin-bottom: 50px;
-    margin-top: auto !important;
+    margin-bottom: 40px;
     width: 100%;
 }
 #ic-tenure-selector .ic-scheme-grid {
@@ -150,9 +149,10 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
     gap: 32px !important;
     margin-top: 8px !important;
-    align-items: start !important;
+    align-items: stretch !important;
     max-width: 900px !important;
     width: 100%;
+    flex-grow: 1 !important;
 }
 #ic-tenure-selector .ic-scheme-card {
     background: rgba(255, 255, 255, 0.03) !important;
@@ -340,8 +340,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 .ic-trust-footer {
     display: flex !important; align-items: center !important;
     justify-content: center !important; gap: 8px !important;
-    margin-top: 48px !important;
-    margin-bottom: auto !important;
+    margin-top: 32px !important;
     color: rgba(255,255,255,.4) !important;
     -webkit-text-fill-color: rgba(255,255,255,.4) !important;
     font-size: 0.85rem !important;
