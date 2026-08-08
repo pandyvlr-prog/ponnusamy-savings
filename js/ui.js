@@ -19,14 +19,13 @@ function updateStatusBarClock() {
     if (dateEl) {
         const now = new Date();
         const daysList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         
         const dayName = daysList[now.getDay()];
-        const dateDay = now.getDate();
-        const monthName = monthNames[now.getMonth()];
-        const yearVal = now.getFullYear();
+        const dateNum = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const yearShort = String(now.getFullYear()).slice(-2);
         
-        dateEl.textContent = `${dayName}, ${dateDay} ${monthName} ${yearVal}`;
+        dateEl.textContent = `${dayName}, ${dateNum}/${month}/${yearShort}`;
     }
     
     // Live clock replacing tagline

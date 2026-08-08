@@ -9567,3 +9567,50 @@ html, body, .app-device-shell {
     transform: rotate(180deg);
 }
 
+/* =====================================================
+   MOBILE-ONLY OVERRIDES (max-width 767px)
+   These changes apply ONLY on mobile screens and do
+   NOT affect the desktop/web version.
+   ===================================================== */
+@media (max-width: 767px) {
+
+    /* 1. Reduce bottom navigation bar size */
+    .bottom-nav {
+        height: calc(52px + var(--safe-bottom)) !important;
+    }
+    .bottom-nav-item {
+        gap: 2px !important;
+        min-width: 48px !important;
+    }
+    .bottom-nav-item i {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    .bottom-nav-item span {
+        font-size: 0.62rem !important;
+    }
+
+    /* 2. Hide "Summary" word — show only "Dashboard" */
+    .desktop-only-text {
+        display: none !important;
+    }
+
+    /* 3. Reduce the target badge / dashboard card size */
+    #dashboard-target-collection-badge {
+        padding: 5px 10px !important;
+        font-size: 0.82rem !important;
+        border-radius: 8px !important;
+        gap: 5px !important;
+    }
+    #dashboard-target-collection-badge i {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    .dashboard-card {
+        padding: 10px 12px !important;
+    }
+    .dashboard-summary-header {
+        margin-bottom: 8px !important;
+    }
+}
+
