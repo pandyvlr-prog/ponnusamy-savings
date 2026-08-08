@@ -183,6 +183,30 @@ function initCreateGroupForm() {
 }
 
 function setupEventListeners() {
+    // --- Dashboard Summary Collapsible ---
+    const dashboardHeader = document.getElementById('dashboard-summary-header');
+    if (dashboardHeader) {
+        dashboardHeader.addEventListener('click', () => {
+            const card = dashboardHeader.closest('.dashboard-card');
+            if (card) {
+                card.classList.toggle('collapsed');
+                // Store preference in localStorage if desired
+                localStorage.setItem('pms_dashboard_collapsed', card.classList.contains('collapsed'));
+            }
+        });
+        
+        // Initial state from mobile default plan: keep it collapsed by default on load
+        const card = dashboardHeader.closest('.dashboard-card');
+        const savedState = localStorage.getItem('pms_dashboard_collapsed');
+        if (card) {
+            if (savedState === 'true' || (savedState === null && window.innerWidth <= 768)) {
+                card.classList.add('collapsed');
+            } else if (savedState === 'false') {
+                card.classList.remove('collapsed');
+            }
+        }
+    }
+
     // --- Note Management ---
     const btnAddNote = document.getElementById('btn-add-note');
     const btnDelNote = document.getElementById('btn-delete-note');
