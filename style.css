@@ -9788,11 +9788,11 @@ html, body, .app-device-shell {
         font-size: 0.85rem !important;
     }
     
-    /* Grid for uploaded cards */
+    /* Grid for uploaded cards (3 columns) */
     .ic-premium-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 16px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
     }
 
     /* 3. Lightbox Card Preview Redesign */
@@ -9883,9 +9883,15 @@ html, body, .app-device-shell {
         flex-direction: column !important;
         height: auto !important;
         padding: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
+        background: var(--bg-surface) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        border-radius: 8px !important;
+        aspect-ratio: auto !important;
+    }
+    [data-theme="light"] .ic-premium-card-item {
+        background: #ffffff !important;
+        border-color: rgba(0,0,0,0.05) !important;
     }
     .ic-premium-image-wrap {
         width: 100% !important;
@@ -9895,24 +9901,28 @@ html, body, .app-device-shell {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        background: transparent !important;
+        padding: 4px !important;
+        box-sizing: border-box !important;
     }
     .ic-premium-card-img {
         width: 100% !important;
-        height: 140px !important;
-        border-radius: 16px !important;
+        height: 80px !important;
+        border-radius: 6px !important;
         object-fit: cover !important;
     }
     .ic-premium-value-badge {
         position: static !important;
-        margin-top: 8px !important;
+        margin-top: 6px !important;
         align-self: center !important;
-        background: rgba(212, 175, 55, 0.15) !important;
-        color: #D4AF37 !important;
-        border: 1px solid rgba(212, 175, 55, 0.4) !important;
-        font-size: 0.95rem !important;
-        padding: 6px 12px !important;
-        border-radius: 8px !important;
+        background: transparent !important;
+        color: var(--text-main) !important;
+        border: none !important;
+        font-size: 0.8rem !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
         box-shadow: none !important;
+        font-weight: 700 !important;
     }
     .ic-premium-card-footer {
         display: none !important;
