@@ -112,7 +112,12 @@
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
-    background: #050505; /* Deep black for dark theme */
+    background: #050505;
+}
+@media (max-width: 768px) {
+    #screen-landing {
+        overflow: hidden !important;
+    }
 }
 
 [data-theme='light'] #screen-landing {
@@ -334,9 +339,9 @@
 
 @media (max-width: 768px) {
     .landing-hero-section {
-        min-height: auto;
-        padding: 24px 20px;
-        justify-content: flex-start;
+        min-height: 100%;
+        padding: 16px 20px;
+        justify-content: center;
     }
     .hero-image-content {
         display: none !important;
@@ -345,10 +350,25 @@
         gap: 0;
     }
     .landing-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        margin-bottom: 16px;
+    }
+    .landing-subtitle {
+        font-size: 1rem;
+        margin-bottom: 28px;
     }
     .scroll-indicator {
-        display: none;
+        display: none !important;
+    }
+    /* Hide all sections below hero on mobile */
+    .landing-features-section,
+    .landing-how-it-works,
+    .landing-footer {
+        display: none !important;
+    }
+    .landing-scroller {
+        height: 100%;
+        overflow: hidden !important;
     }
 }
 

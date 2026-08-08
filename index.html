@@ -159,13 +159,21 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     #ic-tenure-selector {
         justify-content: flex-start !important;
         align-items: flex-start !important;
-        overflow: hidden !important;
-        padding: 70px 0 20px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding: 70px 0 80px !important;
     }
     #ic-tenure-selector .ic-landing-header {
         padding: 0 20px;
-        margin-bottom: 16px !important;
+        margin-bottom: 12px !important;
         width: 100%;
+    }
+    #ic-tenure-selector .ic-landing-title {
+        font-size: 2rem !important;
+        margin-bottom: 6px !important;
+    }
+    #ic-tenure-selector .ic-landing-subtitle {
+        font-size: 0.9rem !important;
     }
     #ic-tenure-selector .ic-scheme-grid {
         display: flex !important;
@@ -174,7 +182,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         overflow-y: visible !important;
         scroll-snap-type: x mandatory !important;
         gap: 16px !important;
-        padding: 0 20px 24px !important;
+        padding: 4px 20px 24px !important;
         margin-top: 0 !important;
         max-width: 100% !important;
         width: 100% !important;
