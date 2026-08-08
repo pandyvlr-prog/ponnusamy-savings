@@ -1248,79 +1248,95 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </header>
     <div class="app-screens-wrapper">
 <!-- SCREEN: LANDING PAGE -->
-            <!-- SCREEN: LANDING PAGE (REDESIGN) -->
+            <!-- SCREEN: LANDING PAGE (REDESIGN 2.0) -->
             <section id="screen-landing" class="app-screen">
-                <!-- Smooth Parallax Background Layer -->
                 <div class="landing-bg-layer"></div>
                 
-                <!-- Sticky Navigation -->
                 <header class="landing-header premium-nav">
                     <div class="landing-header-left">
-                        <div class="nav-logo-wrap">
-                            <img src="logo-dark.jpg" class="app-logo">
-                        </div>
+                        <div class="nav-logo-wrap"><img src="logo-dark.jpg" class="app-logo"></div>
                         <span class="landing-header-title">PMS</span>
                     </div>
                     <div class="landing-header-right">
                         <button class="btn btn-text nav-login" id="nav-login-btn">Sign In</button>
                         <button class="btn btn-primary nav-get-started premium-glow" id="nav-get-started-btn">Get Started</button>
-                        <button class="header-quick-btn" id="btn-toggle-desktop-m" title="Rotate View">
-                            <i data-lucide="monitor" id="desktop-icon-m"></i>
-                            <span id="desktop-label-m">Rotate</span>
-                        </button>
                     </div>
                 </header>
 
                 <div class="landing-scroller">
-                    <!-- Hero Section -->
+                    <!-- 2.0 Hero Section -->
                     <div class="landing-hero-section reveal-on-scroll">
-                        <div class="hero-content">
-                            <div class="hero-logo-container premium-float">
-                                <img src="logo-dark.jpg" class="app-logo hero-main-logo">
-                                <div class="hero-logo-glow"></div>
+                        <div class="hero-split">
+                            <div class="hero-text-content">
+                                <div class="hero-badge">PMS 2.0 IS HERE</div>
+                                <h1 class="landing-title premium-text-gradient">Master Your<br>Wealth.</h1>
+                                <p class="landing-subtitle">The ultimate premium experience for tracking chit groups. Elegant, seamless, and remarkably powerful. Designed for modern financial management.</p>
+                                <div class="hero-actions">
+                                    <button class="btn btn-primary premium-btn-large" id="btn-goto-login">
+                                        Enter Dashboard <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <h1 class="landing-title premium-text-gradient">Master Your Wealth</h1>
-                            <p class="landing-subtitle">The ultimate premium experience for tracking chit groups.<br>Elegant, seamless, and remarkably powerful.</p>
-                            <div class="hero-actions">
-                                <button class="btn btn-primary premium-btn-large" id="btn-goto-login">
-                                    Enter Dashboard <i data-lucide="arrow-right"></i>
-                                </button>
+                            <div class="hero-image-content premium-float">
+                                <img src="hero_illustration.png" class="hero-3d-illustration" alt="Corporate Dashboard">
                             </div>
                         </div>
-                        
                         <div class="scroll-indicator">
                             <span class="scroll-text">Discover More</span>
                             <div class="scroll-arrow"><i data-lucide="chevron-down"></i></div>
                         </div>
                     </div>
 
-                    <!-- Features Section -->
+                    <!-- 2.0 Features Section -->
                     <div class="landing-features-section reveal-on-scroll delay-1">
                         <div class="section-header">
                             <h2 class="section-title">Designed for Excellence</h2>
-                            <p class="section-subtitle">Everything you need to manage finances like a pro, wrapped in a beautiful interface.</p>
+                            <p class="section-subtitle">Everything you need to manage finances like a pro, wrapped in a beautiful, Google-inspired interface.</p>
                         </div>
-                        
                         <div class="premium-feature-grid">
                             <div class="premium-feature-card glass-panel">
                                 <div class="pf-icon"><i data-lucide="activity"></i></div>
                                 <h3>Real-Time Tracking</h3>
-                                <p>Instantly update collections and keep perfect track of monthly pending dues.</p>
+                                <p>Instantly update collections and keep perfect track of monthly pending dues across all your groups.</p>
                             </div>
                             <div class="premium-feature-card glass-panel">
                                 <div class="pf-icon"><i data-lucide="layers"></i></div>
                                 <h3>Smart Templates</h3>
-                                <p>Organize multiple chits easily with fully customizable term and scheme templates.</p>
+                                <p>Organize multiple chits easily with fully customizable term and scheme templates built for speed.</p>
                             </div>
                             <div class="premium-feature-card glass-panel">
                                 <div class="pf-icon"><i data-lucide="shield-check"></i></div>
-                                <h3>Secure Backups</h3>
-                                <p>Keep your financial records perfectly safe with local JSON exports and direct email backups.</p>
+                                <h3>Bank-Grade Security</h3>
+                                <p>Keep your financial records safe with advanced encryption, local JSON exports, and secure backups.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2.0 How it Works Section -->
+                    <div class="landing-how-it-works reveal-on-scroll delay-1">
+                        <div class="section-header">
+                            <h2 class="section-title">Seamless Workflow</h2>
+                            <p class="section-subtitle">Start managing your groups in three simple steps.</p>
+                        </div>
+                        <div class="how-it-works-steps">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <h3>Create Group</h3>
+                                <p>Set up your chit parameters, prize amounts, and duration instantly.</p>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <h3>Add Members</h3>
+                                <p>Import or add members quickly to assign them to your new group.</p>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <h3>Track Automatically</h3>
+                                <p>Let the dashboard calculate dues, collections, and pending balances for you.</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Footer Section -->
                     <div class="landing-footer reveal-on-scroll delay-2">
                         <div class="footer-content">
                             <img src="logo-dark.jpg" class="app-logo footer-logo">
@@ -1330,25 +1346,17 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </div>
             </section>
 
-            <!-- SCREEN: LOGIN PAGE (REDESIGN) -->
+            <!-- SCREEN: LOGIN PAGE (REDESIGN 2.0) -->
             <section id="screen-login" class="app-screen">
                 <div class="login-modern-layout">
-                    <!-- Left Side: Interactive Brand Area -->
-                    <div class="login-brand-side">
-                        <div class="brand-content-wrapper">
-                            <div class="brand-logo-large premium-float delay-1">
-                                <img src="logo-dark.jpg" class="app-logo">
-                            </div>
-                            <h2 class="brand-slogan premium-text-gradient">Your Financial<br>Command Center</h2>
-                            <p class="brand-description">Experience the gold standard in group tracking and monthly collections.</p>
-                        </div>
-                        <div class="brand-decor-circle decor-1"></div>
-                        <div class="brand-decor-circle decor-2"></div>
+                    <!-- Left Side: Full Image Illustration -->
+                    <div class="login-brand-side login-image-side">
+                        <!-- Image is applied via CSS background -->
                     </div>
                     
-                    <!-- Right Side: Frosted Glass Login Form -->
+                    <!-- Right Side: Clean Material Form -->
                     <div class="login-form-side">
-                        <div class="login-glass-card">
+                        <div class="login-glass-card material-card">
                             <div class="mobile-logo-wrap">
                                 <img src="logo-dark.jpg" class="app-logo">
                             </div>
@@ -1375,7 +1383,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     <a href="#" class="forgot-link" id="forgot-password-link">Forgot?</a>
                                 </div>
                                 
-                                <button type="submit" class="btn btn-primary premium-submit-btn">
+                                <button type="submit" class="btn btn-primary premium-submit-btn material-btn">
                                     <span id="auth-submit-text">Sign In</span>
                                     <div class="btn-glow"></div>
                                 </button>
@@ -1385,7 +1393,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <span>Or continue with</span>
                             </div>
                             
-                            <button class="btn btn-outline premium-social-btn" id="google-login-btn">
+                            <button class="btn btn-outline premium-social-btn material-social" id="google-login-btn">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                                 <span>Sign in with Google</span>
                             </button>
