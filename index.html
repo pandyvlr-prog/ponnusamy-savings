@@ -1435,108 +1435,102 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                     </div>
 
                     <!-- Search Filter Row -->
-                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; width: 100%; overflow-x: visible;">
-                        <!-- Row 1: Search -->
-                        <div style="display: flex; gap: 8px; width: 100%;">
-                            <div class="search-input-wrapper" style="flex: 1; position: relative;">
-                                <i data-lucide="search" class="search-icon"></i>
-                                <input type="text" id="dashboard-member-search" placeholder="Search members by name..." style="padding: 8px 36px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%;">
-                                <button id="btn-clear-dashboard-search" class="btn-clear-search" title="Clear Search">
-                                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Row 2: Tag Filter, Date Dropdown, Report Export -->
-                        <div style="display: flex; gap: 8px; width: 100%; flex-wrap: wrap; overflow-x: visible; padding-bottom: 2px;">
-                            <!-- Custom Filter Dropdown -->
-                            <div class="tag-select-wrapper" style="position: relative; display: inline-block; flex: 1; min-width: 140px;">
-                                <button id="filter-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; text-align: left; height: 38px; outline: none;">
-                                    <span id="filter-dropdown-selected-text">Filter</span>
-                                    <i data-lucide="sliders-horizontal" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--primary);"></i>
-                                </button>
-                                <div id="filter-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 190px; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-                                    <!-- Items will be dynamically generated in app.js -->
-                                </div>
-                                <select id="dashboard-tag-filter" style="display: none;">
-                                    <option value="all">All</option>
-                                    <option value="paid">Paid</option>
-                                    <option value="partial">Partial</option>
-                                    <option value="pending">Due</option>
-                                    <option value="chit_taken">Chit Taken</option>
-                                    <option value="new_customer_month">New Customer</option>
-                                    <option value="new_customer">All New Customer</option>
-                                    <option value="gpay">Gpay</option>
-                                    <option value="cash">Cash</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Custom Date Filter Dropdown -->
-                            <div class="date-select-wrapper" style="position: relative; display: inline-block; flex: 0 0 auto;">
-                                <button id="date-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: #ffffff; cursor: pointer; width: 36px; height: 38px; outline: none; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;" title="Filter by Date">
-                                    <div id="date-dropdown-month-text" style="background: linear-gradient(180deg, #ef4444, #dc2626); color: #fff; width: 100%; text-align: center; font-size: 8px; font-weight: 800; padding: 2px 0; letter-spacing: 0.5px; line-height: 1; border-bottom: 1px solid #b91c1c;">ALL</div>
-                                    <div id="date-dropdown-selected-number" style="color: #111827; flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; font-family: sans-serif; margin-top: -1px; width: 100%;">ALL</div>
-                                    <div style="position: absolute; top: -3px; left: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
-                                    <div style="position: absolute; top: -3px; right: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
-                                </button>
-                                <div id="date-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; padding: 10px; min-width: 220px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-                                    <div style="margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: center;">
-                                        <button class="btn btn-text-link" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; border: none; background: transparent;" id="btn-clear-date-filter">
-                                            Clear Date Filter
-                                        </button>
-                                    </div>
-                                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;" id="date-dropdown-grid">
-                                    </div>
-                                </div>
-                                <select id="dashboard-date-filter" style="display: none;">
-                                    <option value="">Date Wise</option>
-                                    <option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option><option value="6">6th</option><option value="7">7th</option><option value="8">8th</option><option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option><option value="13">13th</option><option value="14">14th</option><option value="15">15th</option><option value="16">16th</option><option value="17">17th</option><option value="18">18th</option><option value="19">19th</option><option value="20">20th</option><option value="21">21st</option><option value="22">22nd</option><option value="23">23rd</option><option value="24">24th</option><option value="25">25th</option><option value="26">26th</option><option value="27">27th</option><option value="28">28th</option><option value="29">29th</option><option value="30">30th</option><option value="31">31st</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Quick Report Download Dropdown -->
-                            <div class="quick-report-wrapper" style="position: relative; display: inline-block; flex: 0 0 auto;">
-                                <button id="btn-quick-dashboard-report" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; width: 38px; height: 38px; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: var(--primary); transition: all 0.2s;" title="Download Report for selected Month & Date">
-                                    <i data-lucide="file-down" style="width: 20px; height: 20px;"></i>
-                                </button>
-                                <div id="quick-report-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 150px; padding: 6px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-                                    <button class="btn btn-text-link" id="btn-quick-report-download" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px;">
-                                        <i data-lucide="download" style="width: 16px; height: 16px; color: var(--primary);"></i> Download PDF
-                                    </button>
-                                    <button class="btn btn-text-link" id="btn-quick-report-share" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px; margin-top: 2px;">
-                                        <i data-lucide="share-2" style="width: 16px; height: 16px; color: var(--primary);"></i> Share PDF
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Row 3: Month Selector, Date Range, Reset -->
-                        <div style="display: flex; gap: 8px; width: 100%; align-items: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 2px;">
-                            <div class="custom-month-select-wrapper" style="position: relative; display: inline-block; flex: 1; min-width: 160px;">
-                                <button id="custom-month-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; text-align: left; height: 38px; outline: none;" title="Select Month">
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <i data-lucide="calendar" style="width: 15px; height: 15px; color: var(--primary);"></i>
-                                        <span id="custom-month-dropdown-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">Current Month</span>
-                                    </div>
-                                    <i data-lucide="chevron-down" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--text-muted);"></i>
-                                </button>
-                                <div id="custom-month-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 180px; max-height: 300px; overflow-y: auto; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-                                    <!-- Dynamically populated by JS -->
-                                </div>
-                                <select id="dashboard-month-select" style="display: none;">
-                                    <option value="current">Current Month</option>
-                                </select>
-                            </div>
-                            
-                            <button id="btn-open-date-range" title="Custom Date Range Filter" style="flex: 1; display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
-                                <i data-lucide="calendar-range" style="width: 15px; height: 15px; color: var(--primary);"></i>
-                                <span id="btn-date-range-label">Date Range</span>
-                            </button>
-
-                            <button id="btn-reset-dashboard-filters" title="Reset All Filters" style="flex: 0 0 38px; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;">
-                                <i data-lucide="rotate-ccw" style="width: 16px; height: 16px; color: var(--danger); transition: transform 0.3s ease;"></i>
+                    <div class="search-filter-section" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; overflow-x: visible;">
+                        <div class="search-input-wrapper" style="flex: 1; min-width: 200px; position: relative;">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="dashboard-member-search" placeholder="Search members by name..." style="padding: 8px 36px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; width: 100%;">
+                            <button id="btn-clear-dashboard-search" class="btn-clear-search" title="Clear Search">
+                                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                             </button>
                         </div>
+
+                        <!-- Custom Filter Dropdown -->
+                        <div class="tag-select-wrapper" style="position: relative; display: inline-block; flex: 0 0 auto; min-width: 140px;">
+                            <button id="filter-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; text-align: left; height: 38px; outline: none;">
+                                <span id="filter-dropdown-selected-text">Filter</span>
+                                <i data-lucide="sliders-horizontal" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--primary);"></i>
+                            </button>
+                            <div id="filter-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 190px; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <!-- Items will be dynamically generated in app.js -->
+                            </div>
+                            <select id="dashboard-tag-filter" style="display: none;">
+                                <option value="all">All</option>
+                                <option value="paid">Paid</option>
+                                <option value="partial">Partial</option>
+                                <option value="pending">Due</option>
+                                <option value="chit_taken">Chit Taken</option>
+                                <option value="new_customer_month">New Customer</option>
+                                <option value="new_customer">All New Customer</option>
+                                <option value="gpay">Gpay</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Custom Date Filter Dropdown -->
+                        <div class="date-select-wrapper" style="position: relative; display: inline-block; flex: 0 0 auto;">
+                            <button id="date-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: #ffffff; cursor: pointer; width: 36px; height: 38px; outline: none; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;" title="Filter by Date">
+                                <div id="date-dropdown-month-text" style="background: linear-gradient(180deg, #ef4444, #dc2626); color: #fff; width: 100%; text-align: center; font-size: 8px; font-weight: 800; padding: 2px 0; letter-spacing: 0.5px; line-height: 1; border-bottom: 1px solid #b91c1c;">ALL</div>
+                                <div id="date-dropdown-selected-number" style="color: #111827; flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; font-family: sans-serif; margin-top: -1px; width: 100%;">ALL</div>
+                                <div style="position: absolute; top: -3px; left: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
+                                <div style="position: absolute; top: -3px; right: 6px; width: 4px; height: 8px; background: #cbd5e1; border-radius: 4px; border: 1px solid #94a3b8; box-shadow: 0 1px 1px rgba(0,0,0,0.3);"></div>
+                            </button>
+                            <div id="date-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; padding: 10px; min-width: 220px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <div style="margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: center;">
+                                    <button class="btn btn-text-link" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; border: none; background: transparent;" id="btn-clear-date-filter">
+                                        Clear Date Filter
+                                    </button>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;" id="date-dropdown-grid">
+                                </div>
+                            </div>
+                            <select id="dashboard-date-filter" style="display: none;">
+                                <option value="">Date Wise</option>
+                                <option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option><option value="6">6th</option><option value="7">7th</option><option value="8">8th</option><option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option><option value="13">13th</option><option value="14">14th</option><option value="15">15th</option><option value="16">16th</option><option value="17">17th</option><option value="18">18th</option><option value="19">19th</option><option value="20">20th</option><option value="21">21st</option><option value="22">22nd</option><option value="23">23rd</option><option value="24">24th</option><option value="25">25th</option><option value="26">26th</option><option value="27">27th</option><option value="28">28th</option><option value="29">29th</option><option value="30">30th</option><option value="31">31st</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Quick Report Download Dropdown -->
+                        <div class="quick-report-wrapper" style="position: relative; display: inline-block; flex: 0 0 auto;">
+                            <button id="btn-quick-dashboard-report" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 6px; border: 1px solid var(--border); background-color: var(--bg-surface-elevated); cursor: pointer; width: 38px; height: 38px; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: var(--primary); transition: all 0.2s;" title="Download Report for selected Month & Date">
+                                <i data-lucide="file-down" style="width: 20px; height: 20px;"></i>
+                            </button>
+                            <div id="quick-report-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 150px; padding: 6px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <button class="btn btn-text-link" id="btn-quick-report-download" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px;">
+                                    <i data-lucide="download" style="width: 16px; height: 16px; color: var(--primary);"></i> Download PDF
+                                </button>
+                                <button class="btn btn-text-link" id="btn-quick-report-share" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; border: none; background: transparent; cursor: pointer; border-radius: 4px; margin-top: 2px;">
+                                    <i data-lucide="share-2" style="width: 16px; height: 16px; color: var(--primary);"></i> Share PDF
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Month Selector -->
+                        <div class="custom-month-select-wrapper" style="position: relative; display: inline-block; flex: 0 0 auto; min-width: 160px;">
+                            <button id="custom-month-dropdown-btn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; text-align: left; height: 38px; outline: none;" title="Select Month">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="calendar" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                                    <span id="custom-month-dropdown-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">Current Month</span>
+                                </div>
+                                <i data-lucide="chevron-down" style="width: 15px; height: 15px; flex-shrink: 0; color: var(--text-muted);"></i>
+                            </button>
+                            <div id="custom-month-dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background-color: var(--bg-surface-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; min-width: 180px; max-height: 300px; overflow-y: auto; padding: 6px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+                                <!-- Dynamically populated by JS -->
+                            </div>
+                            <select id="dashboard-month-select" style="display: none;">
+                                <option value="current">Current Month</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Date Range Filter -->
+                        <button id="btn-open-date-range" title="Custom Date Range Filter" style="flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
+                            <i data-lucide="calendar-range" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                            <span id="btn-date-range-label">Date Range</span>
+                        </button>
+
+                        <!-- Reset Filters -->
+                        <button id="btn-reset-dashboard-filters" title="Reset All Filters" style="flex: 0 0 38px; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;">
+                            <i data-lucide="rotate-ccw" style="width: 16px; height: 16px; color: var(--danger); transition: transform 0.3s ease;"></i>
+                        </button>
                     </div>
                     
                     <!-- Dashboard Filter Pills (Hidden, kept for JS reference counters) -->
