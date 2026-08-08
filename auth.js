@@ -358,8 +358,50 @@ function setupAuthListeners() {
                 }
                 return;
             }
-            const email = prompt("Enter your email address to receive a password reset link:");
-            if (email) {
+            const forgotModal = document.getElementById('forgot-password-modal');
+            const closeForgotBtn = document.getElementById('close-forgot-modal');
+            const forgotForm = document.getElementById('forgot-password-form');
+            const forgotEmailInput = document.getElementById('forgot-email-input');
+            const forgotSubmitBtn = document.getElementById('forgot-submit-btn');
+            const submitTextSpan = forgotSubmitBtn.querySelector('span');
+
+            if (!forgotModal) {
+                // Fallback if modal isn't loaded yet
+                const email = prompt("Enter your email address to receive a password reset link:");
+                if (email) {
+                    supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin })
+                        .then(({error}) => {
+                            if(error) { if(typeof showNotification === 'function') showNotification(error.message, 'error'); else alert(error.message); }
+                            else { if(typeof showNotification === 'function') showNotification('Reset email sent!', 'success'); else alert('Reset email sent!'); }
+                        });
+                }
+                return;
+            }
+
+            // Open Modal
+            forgotModal.style.display = 'flex';
+            if (lucide && lucide.createIcons) lucide.createIcons(); // ensure icon renders
+
+            // Close Modal
+            const closeModal = () => {
+                forgotModal.style.display = 'none';
+                forgotForm.reset();
+            };
+            
+            closeForgotBtn.onclick = closeModal;
+            forgotModal.onclick = (event) => {
+                if (event.target === forgotModal) closeModal();
+            };
+
+            // Handle Submit
+            forgotForm.onsubmit = async (event) => {
+                event.preventDefault();
+                const email = forgotEmailInput.value.trim();
+                if (!email) return;
+
+                forgotSubmitBtn.disabled = true;
+                submitTextSpan.textContent = 'Sending...';
+
                 try {
                     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                         redirectTo: window.location.origin
@@ -368,14 +410,18 @@ function setupAuthListeners() {
                         if (typeof showNotification === 'function') showNotification(error.message, 'error');
                         else alert('Error: ' + error.message);
                     } else {
-                        if (typeof showNotification === 'function') showNotification('Password reset email sent!', 'success');
+                        if (typeof showNotification === 'function') showNotification('Password reset email sent! Please check your inbox.', 'success');
                         else alert('Password reset email sent! Check your inbox.');
+                        closeModal();
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('Error sending reset link.');
+                    if (typeof showNotification === 'function') showNotification('Error sending reset link.', 'error');
+                } finally {
+                    forgotSubmitBtn.disabled = false;
+                    submitTextSpan.textContent = 'Send Reset Link';
                 }
-            }
+            };
         });
     }
 

@@ -3930,6 +3930,33 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             </div>
         </div>
 
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal-backdrop" style="display: none; align-items: center; justify-content: center;">
+        <div class="login-glass-card material-card" style="width: 100%; max-width: 400px; padding: 40px; text-align: center; position: relative;">
+            <button id="close-forgot-modal" class="btn-close-modal" style="position: absolute; top: 16px; right: 16px; font-size: 1.5rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer;">&times;</button>
+            
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(212,175,55,0.1); color: #FFD700; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                <i data-lucide="key" style="width: 32px; height: 32px;"></i>
+            </div>
+            
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; color: #fff;" class="theme-text">Reset Password</h3>
+            <p style="font-size: 0.95rem; color: rgba(255,255,255,0.6); margin-bottom: 32px;" class="theme-text-muted">Enter your email address and we'll send you a secure link to reset your password.</p>
+            
+            <form id="forgot-password-form" class="premium-form">
+                <div class="premium-input-group">
+                    <input type="email" id="forgot-email-input" class="premium-input" required placeholder=" ">
+                    <label for="forgot-email-input" class="premium-label">Email Address</label>
+                    <div class="input-highlight"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary premium-submit-btn material-btn" id="forgot-submit-btn" style="margin-top: 8px;">
+                    <span>Send Reset Link</span>
+                    <div class="btn-glow"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+    
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
