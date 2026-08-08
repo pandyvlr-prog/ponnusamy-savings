@@ -9615,23 +9615,24 @@ html, body, .app-device-shell {
 
     /* Reduce All Group Members section header size on mobile */
     .section-header {
-        margin-bottom: 8px !important;
+        margin-bottom: 5px !important;
     }
     .section-header .section-title {
-        font-size: 0.95rem !important;
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
     }
     #btn-toggle-to-groups {
-        width: 26px !important;
-        height: 26px !important;
-        padding: 4px !important;
+        width: 22px !important;
+        height: 22px !important;
+        padding: 2px !important;
     }
     #btn-toggle-to-groups i {
-        width: 13px !important;
-        height: 13px !important;
+        width: 11px !important;
+        height: 11px !important;
     }
     #member-total-badge {
-        font-size: 0.7rem !important;
-        padding: 3px 7px !important;
+        font-size: 0.62rem !important;
+        padding: 2px 5px !important;
     }
 }
 
