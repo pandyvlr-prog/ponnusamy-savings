@@ -6989,6 +6989,8 @@ async function deleteGroup() {
         circle.style.width = circle.style.height = `${diameter}px`;
         circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
         circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+        circle.style.position = 'absolute';
+        circle.style.pointerEvents = 'none';
         circle.classList.add("ic-ripple-circle");
 
         const ripple = button.getElementsByClassName("ic-ripple-circle")[0];
