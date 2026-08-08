@@ -154,9 +154,30 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     max-width: 1000px !important;
     width: 100%;
 }
-@media (max-width: 800px) {
+@media (max-width: 768px) {
     #ic-tenure-selector .ic-scheme-grid {
-        grid-template-columns: 1fr !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        gap: 16px !important;
+        padding-bottom: 24px !important;
+        margin-top: 16px !important;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+    }
+    #ic-tenure-selector .ic-scheme-grid::-webkit-scrollbar {
+        display: none !important;
+    }
+    #ic-tenure-selector .ic-scheme-card {
+        flex: 0 0 88vw !important;
+        scroll-snap-align: center !important;
+    }
+    #ic-tenure-selector .ic-scheme-stats-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    #ic-tenure-selector .ic-scheme-stats-list .ic-scheme-stat-box:last-child:nth-child(odd) {
+        grid-column: span 2 !important;
     }
 }
 #ic-tenure-selector .ic-scheme-card {
