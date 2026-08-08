@@ -107,10 +107,12 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     width: 100% !important;
     height: 100% !important;
     box-sizing: border-box !important;
-    padding: 60px 28px 80px !important;
+    padding: 40px 28px !important;
     background: radial-gradient(circle at top left, #1a1a24 0%, #0c0c10 50%, #000000 100%) !important;
     overflow-y: auto !important;
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
     z-index: 1 !important;
 }
 #ic-tenure-selector .ic-landing-title {
@@ -139,7 +141,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 #ic-tenure-selector .ic-landing-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
+    margin-top: auto !important;
+    width: 100%;
 }
 #ic-tenure-selector .ic-scheme-grid {
     display: grid !important;
@@ -148,8 +152,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     margin-top: 8px !important;
     align-items: start !important;
     max-width: 900px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    width: 100%;
 }
 #ic-tenure-selector .ic-scheme-card {
     background: rgba(255, 255, 255, 0.03) !important;
@@ -338,6 +341,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     display: flex !important; align-items: center !important;
     justify-content: center !important; gap: 8px !important;
     margin-top: 48px !important;
+    margin-bottom: auto !important;
     color: rgba(255,255,255,.4) !important;
     -webkit-text-fill-color: rgba(255,255,255,.4) !important;
     font-size: 0.85rem !important;
