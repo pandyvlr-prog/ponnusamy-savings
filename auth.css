@@ -194,6 +194,14 @@
     align-items: center;
     width: 100%;
 }
+@media (max-width: 768px) {
+    .landing-scroller {
+        flex: 1;
+        height: 100%;
+        overflow: hidden !important;
+        justify-content: center;
+    }
+}
 
 /* Hero Section */
 .landing-hero-section {
@@ -339,7 +347,9 @@
 
 @media (max-width: 768px) {
     .landing-hero-section {
-        min-height: 100%;
+        min-height: 0;
+        flex: 1;
+        height: 100%;
         padding: 16px 20px;
         justify-content: center;
     }
@@ -365,10 +375,6 @@
     .landing-how-it-works,
     .landing-footer {
         display: none !important;
-    }
-    .landing-scroller {
-        height: 100%;
-        overflow: hidden !important;
     }
 }
 
