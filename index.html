@@ -155,51 +155,111 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     width: 100%;
 }
 @media (max-width: 768px) {
-    /* Mobile: reset container so slider isn't clipped */
+    /* ========== MOBILE COMPLETE REDESIGN ========== */
     #ic-tenure-selector {
         justify-content: flex-start !important;
-        align-items: flex-start !important;
+        align-items: center !important;
         overflow: hidden !important;
-        padding: 70px 0 20px !important;
+        padding: 68px 16px 72px !important;
+        gap: 0 !important;
     }
+
+    /* Compact Header */
     #ic-tenure-selector .ic-landing-header {
-        padding: 0 20px;
-        margin-bottom: 16px !important;
+        text-align: center;
+        margin-bottom: 14px !important;
         width: 100%;
+        flex-shrink: 0;
     }
+    #ic-tenure-selector .ic-landing-title {
+        font-size: 1.6rem !important;
+        letter-spacing: -0.5px !important;
+        margin-bottom: 4px !important;
+    }
+    #ic-tenure-selector .ic-landing-subtitle {
+        font-size: 0.78rem !important;
+    }
+
+    /* Vertical stack grid */
     #ic-tenure-selector .ic-scheme-grid {
         display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        overflow-y: visible !important;
-        scroll-snap-type: x mandatory !important;
-        gap: 16px !important;
-        padding: 0 20px 24px !important;
-        margin-top: 0 !important;
-        max-width: 100% !important;
+        flex-direction: column !important;
+        gap: 12px !important;
         width: 100% !important;
-        -ms-overflow-style: none !important;
-        scrollbar-width: none !important;
-        box-sizing: border-box !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        margin-top: 0 !important;
+        flex: 1;
     }
-    #ic-tenure-selector .ic-scheme-grid::-webkit-scrollbar {
-        display: none !important;
-    }
+
+    /* Each card fills width */
     #ic-tenure-selector .ic-scheme-card {
-        flex: 0 0 calc(100vw - 56px) !important;
-        max-width: calc(100vw - 56px) !important;
-        scroll-snap-align: center !important;
+        flex: 1 1 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 16px 18px !important;
+        border-radius: 18px !important;
+        scroll-snap-align: unset !important;
+        min-height: 0 !important;
     }
+
+    /* Compact card header row */
+    #ic-tenure-selector .ic-scheme-card-header {
+        margin-bottom: 10px !important;
+    }
+    #ic-tenure-selector .ic-scheme-icon-wrap {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 12px !important;
+    }
+    #ic-tenure-selector .ic-scheme-icon-wrap i,
+    #ic-tenure-selector .ic-scheme-icon-wrap svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    #ic-tenure-selector .ic-scheme-badge {
+        padding: 5px 12px !important;
+        font-size: 0.95rem !important;
+        border-radius: 14px !important;
+    }
+
+    /* Smaller title */
+    #ic-tenure-selector .ic-scheme-title {
+        font-size: 1.3rem !important;
+        margin-bottom: 2px !important;
+    }
+    #ic-tenure-selector .ic-scheme-desc {
+        font-size: 0.78rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Stats in one row */
     #ic-tenure-selector .ic-scheme-stats-list {
-        grid-template-columns: repeat(2, 1fr) !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
     }
     #ic-tenure-selector .ic-scheme-stats-list .ic-scheme-stat-box:last-child:nth-child(odd) {
-        grid-column: span 2 !important;
+        grid-column: span 1 !important;
     }
+    #ic-tenure-selector .ic-scheme-stat-box {
+        padding: 10px 8px !important;
+        border-radius: 10px !important;
+    }
+
+    /* Compact button */
+    #ic-tenure-selector .ic-scheme-btn {
+        padding: 10px 16px !important;
+        font-size: 0.85rem !important;
+        border-radius: 12px !important;
+    }
+
+    /* Trust footer */
     #ic-tenure-selector .ic-trust-footer {
-        padding: 0 20px;
-        width: 100%;
-        box-sizing: border-box;
+        margin-top: 10px !important;
+        font-size: 0.75rem !important;
+        flex-shrink: 0;
     }
 }
 #ic-tenure-selector .ic-scheme-card {
