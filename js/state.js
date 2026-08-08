@@ -595,6 +595,19 @@ async function loadState() {
                 setTimeout(refreshGalleryUI, 1000);
                 setTimeout(refreshGalleryUI, 2500);
                 
+                // Set dirty flags to true so views re-render with cloud data
+                State.isDirty = {
+                    dashboard: true,
+                    pnl: true,
+                    notes: true,
+                    members: true
+                };
+                
+                // Force a UI refresh of the currently active view
+                if (typeof switchView === 'function' && State.currentView) {
+                    switchView(State.currentView);
+                }
+                
                 // Save to local storage for offline use
                 localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
                 localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
