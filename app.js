@@ -3602,15 +3602,15 @@ function renderDashboardMembersList(searchQuery = '') {
 
                 <!-- Info boxes: Group | Month | Scheme -->
                 <div style="display:grid;grid-template-columns:1.1fr 0.9fr 1fr;gap:6px;padding:8px;border-bottom:1px solid #f0f0f0;">
-                    <div style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
+                    <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
                         <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
                         <div>${mobileGroupNameHtml}</div>
                     </div>
-                    <div style="border:1px solid #fde68a;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffbeb;text-align:center;">
+                    <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffbeb;text-align:center;">
                         <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">MONTH</div>
                         <div style="font-size:1.4rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
                     </div>
-                    <div style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
+                    <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
                         <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME</div>
                         <div style="font-size:0.82rem;font-weight:900;color:#b45309;line-height:1.2;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
                     </div>
