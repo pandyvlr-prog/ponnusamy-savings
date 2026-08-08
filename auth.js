@@ -123,8 +123,42 @@ async function initAuth() {
             // [PHASE 1] Save session to cache
             localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
 
+            // [NEW] SUCCESS ANIMATION
+            const isLoginScreen = document.getElementById('screen-login') && document.getElementById('screen-login').classList.contains('active');
+            if (isLoginScreen) {
+                const btn = document.querySelector('.premium-submit-btn');
+                if (btn) {
+                    btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    btn.classList.add('btn-success-anim');
+                    await new Promise(r => setTimeout(r, 600)); // wait for button anim
+                    
+                    const card = document.querySelector('.login-glass-card');
+                    const imgSide = document.querySelector('.login-image-side');
+                    if (card) card.classList.add('card-expand-anim');
+                    if (imgSide) imgSide.classList.add('bg-fade-anim');
+                    
+                    await new Promise(r => setTimeout(r, 600)); // wait for card expand
+                }
+            }
+
             navigateToLastScreen();
             updateProfileUI();
+
+            // Cleanup animation classes
+            if (isLoginScreen) {
+                setTimeout(() => {
+                    const btn = document.querySelector('.premium-submit-btn');
+                    const card = document.querySelector('.login-glass-card');
+                    const imgSide = document.querySelector('.login-image-side');
+                    if (btn) {
+                        btn.classList.remove('btn-success-anim');
+                        btn.innerHTML = '<span id="auth-submit-text">Sign In</span><div class="btn-glow"></div>';
+                    }
+                    if (card) card.classList.remove('card-expand-anim');
+                    if (imgSide) imgSide.classList.remove('bg-fade-anim');
+                }, 500);
+            }
+
             if (typeof loadState === 'function') await loadState();
             // [PHASE 1] Removed duplicate renderDashboard() call.
         } else if (event === 'SIGNED_OUT') {
@@ -243,8 +277,13 @@ function setupAuthListeners() {
         }
 
         const submitBtn = e.target.querySelector('[type="submit"]');
+        const submitTextSpan = document.getElementById('auth-submit-text');
         const isRegistering = document.getElementById('name-group') && document.getElementById('name-group').style.display === 'block';
-        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = isRegistering ? 'Signing up…' : 'Signing in…'; }
+        if (submitBtn) { 
+            submitBtn.disabled = true; 
+            if (submitTextSpan) submitTextSpan.textContent = isRegistering ? 'Signing up…' : 'Signing in…';
+            else submitBtn.textContent = isRegistering ? 'Signing up…' : 'Signing in…'; 
+        }
 
         try {
             let authResult;
@@ -258,12 +297,12 @@ function setupAuthListeners() {
                     });
                     if (authResult.error) {
                         if (typeof showNotification === 'function') showNotification(authResult.error.message, 'error');
-                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign Up'; }
+                        if (submitBtn) { submitBtn.disabled = false; if(submitTextSpan) submitTextSpan.textContent = 'Sign Up'; else submitBtn.textContent = 'Sign Up'; }
                         return;
                     }
                     if (authResult.data && !authResult.data.session) {
                         if (typeof showNotification === 'function') showNotification('Account created! Please check your email to verify.', 'success');
-                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign Up'; }
+                        if (submitBtn) { submitBtn.disabled = false; if(submitTextSpan) submitTextSpan.textContent = 'Sign Up'; else submitBtn.textContent = 'Sign Up'; }
                         return;
                     }
                 } else {
@@ -271,7 +310,7 @@ function setupAuthListeners() {
                     authResult = await supabaseClient.auth.signInWithPassword({ email, password });
                     if (authResult.error) {
                         if (typeof showNotification === 'function') showNotification('Invalid login credentials.', 'error');
-                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                        if (submitBtn) { submitBtn.disabled = false; if(submitTextSpan) submitTextSpan.textContent = 'Sign In'; else submitBtn.textContent = 'Sign In'; }
                         return;
                     }
                 }
@@ -281,13 +320,13 @@ function setupAuthListeners() {
                 if (!authResult.error) {
                     if (typeof showNotification === 'function') showNotification('Magic link sent! Check your email.', 'success');
                 }
-                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                if (submitBtn) { submitBtn.disabled = false; if(submitTextSpan) submitTextSpan.textContent = 'Sign In'; else submitBtn.textContent = 'Sign In'; }
                 return;
             }
 
             if (authResult.error) {
                 if (typeof showNotification === 'function') showNotification(authResult.error.message, 'error');
-                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+                if (submitBtn) { submitBtn.disabled = false; if(submitTextSpan) submitTextSpan.textContent = 'Sign In'; else submitBtn.textContent = 'Sign In'; }
                 return;
             }
 
@@ -295,7 +334,7 @@ function setupAuthListeners() {
         } catch (err) {
             console.error('Login error:', err);
             if (typeof showNotification === 'function') showNotification('Login failed. Please try again.', 'error');
-            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+            if (submitBtn) { submitBtn.disabled = false; if(submitTextSpan) submitTextSpan.textContent = 'Sign In'; else submitBtn.textContent = 'Sign In'; }
         }
     });
 

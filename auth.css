@@ -1253,3 +1253,37 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
     transform: none !important;
 }
 
+/* --- LOGIN SUCCESS ANIMATION --- */
+.premium-submit-btn.btn-success-anim {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    background: #10b981 !important; /* Green */
+    color: white !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    margin: 0 auto;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.premium-submit-btn.btn-success-anim span, 
+.premium-submit-btn.btn-success-anim .btn-glow {
+    display: none !important;
+}
+
+/* Card expands to fill screen */
+.login-glass-card.card-expand-anim {
+    transform: scale(20) !important;
+    opacity: 0 !important;
+    transition: all 0.8s ease-in-out !important;
+    pointer-events: none;
+}
+
+.login-image-side.bg-fade-anim {
+    opacity: 0 !important;
+    transition: opacity 0.6s ease-in-out !important;
+}
+
