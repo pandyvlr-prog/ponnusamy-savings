@@ -1,4 +1,4 @@
-﻿// --- PDF Generation Logic ---
+// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -224,19 +224,19 @@ async function generatePdfReport() {
                 : ``;
                 
             const chitPill = memberHasTakenChit
-                ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;">${chitAmountStr} / ${chitModeStr}</span>`
+                ? `<span style="background-color: #f3e8ff; color: #581c87; padding: 4px 10px; border-radius: 99px; font-size: 13px; font-weight: 900;">${chitAmountStr} / ${chitModeStr}</span>`
                 : ``;
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 10px 4px; color: #000000; font-weight: 900; font-size: 12px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${member.name}</td>
-                    <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
+                    <td style="padding: 10px 4px; color: #1e3a8a; font-weight: 900; font-size: 13.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${member.name}</td>
+                    <td style="padding: 10px 4px; color: #111827; font-size: 12px; font-weight: 900; text-align: center; border: 1px solid #475569;">${group.name}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
                     </td>
                     <td style="padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;">${monthNum}</td>
-                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 15px; border: 1px solid #475569;">${rowDueText}</td>
                     
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
@@ -477,6 +477,8 @@ async function generateGlobalPdfReport(mode = 'download') {
     const ROWS_PER_PAGE = await calculateDynamicRowsPerPage(monthTitle);
     let chunkPagesHtml = [];
     
+    allMembersFlattened.sort((a, b) => a.name.localeCompare(b.name));
+    
     for (let i = 0; i < allMembersFlattened.length; i += ROWS_PER_PAGE) {
         const chunk = allMembersFlattened.slice(i, i + ROWS_PER_PAGE);
         let chunkRowsHtml = '';
@@ -494,19 +496,19 @@ async function generateGlobalPdfReport(mode = 'download') {
                 : ``;
                 
             const chitPill = row.hasTakenChit
-                ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;">${row.chitTakenDisplay}</span>`
+                ? `<span style="background-color: #f3e8ff; color: #581c87; padding: 4px 10px; border-radius: 99px; font-size: 13px; font-weight: 900;">${row.chitTakenDisplay}</span>`
                 : ``;
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 10px 4px; color: #000000; font-weight: 900; font-size: 12px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${row.name}</td>
-                    <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
+                    <td style="padding: 10px 4px; color: #1e3a8a; font-weight: 900; font-size: 13.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${row.name}</td>
+                    <td style="padding: 10px 4px; color: #111827; font-size: 12px; font-weight: 900; text-align: center; border: 1px solid #475569;">${row.groupName}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                     </td>
                     <td style="padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
-                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 15px; border: 1px solid #475569;">${rowDueText}</td>
                     
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
@@ -1872,6 +1874,7 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
 
