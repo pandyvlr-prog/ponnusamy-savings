@@ -203,41 +203,40 @@ function switchView(viewId) {
     }
     
     if (targetScreen) {
-        if (activeScreen && activeScreen.id === viewId) {
-            // [PHASE 3] Prevent duplicate rendering if already on the same screen
-            return;
-        }
-
-        if (activeScreen && activeScreen.id !== viewId) {
-            // [PHASE 3] Slide out active by just removing class. CSS display:none handles the rest.
-            activeScreen.classList.remove('active');
-            // Clean up any old inline styles that might conflict
-            activeScreen.style.transform = '';
-            activeScreen.style.opacity = '';
-            activeScreen.style.pointerEvents = '';
-        }
+        let isSameScreen = (activeScreen && activeScreen.id === viewId);
         
-        // [PHASE 3] Slide in target
-        targetScreen.classList.add('active');
-        targetScreen.style.pointerEvents = '';
-        targetScreen.style.transform = '';
-        targetScreen.style.opacity = '';
-        
-        State.currentView = viewId;
-        localStorage.setItem('pms_last_active_screen', viewId);
-        if (viewId === 'screen-group-details' && State.selectedGroupId) {
-            localStorage.setItem('pms_last_active_group', State.selectedGroupId);
-        }
-        
-        // Highlight active navigation links (Sidebar & Bottom Nav)
-        const allNavLinks = document.querySelectorAll('.sidebar-link, .bottom-nav-item, .sidebar-nav-item');
-        allNavLinks.forEach(link => {
-            if (link.dataset.target === viewId) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
+        if (!isSameScreen) {
+            if (activeScreen) {
+                // [PHASE 3] Slide out active by just removing class. CSS display:none handles the rest.
+                activeScreen.classList.remove('active');
+                // Clean up any old inline styles that might conflict
+                activeScreen.style.transform = '';
+                activeScreen.style.opacity = '';
+                activeScreen.style.pointerEvents = '';
             }
-        });
+            
+            // [PHASE 3] Slide in target
+            targetScreen.classList.add('active');
+            targetScreen.style.pointerEvents = '';
+            targetScreen.style.transform = '';
+            targetScreen.style.opacity = '';
+            
+            State.currentView = viewId;
+            localStorage.setItem('pms_last_active_screen', viewId);
+            if (viewId === 'screen-group-details' && State.selectedGroupId) {
+                localStorage.setItem('pms_last_active_group', State.selectedGroupId);
+            }
+            
+            // Highlight active navigation links (Sidebar & Bottom Nav)
+            const allNavLinks = document.querySelectorAll('.sidebar-link, .bottom-nav-item, .sidebar-nav-item');
+            allNavLinks.forEach(link => {
+                if (link.dataset.target === viewId) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
         
         // Contextual trigger on screen load
         // [PHASE 4] Smart caching: Only re-render if data has changed (isDirty)
