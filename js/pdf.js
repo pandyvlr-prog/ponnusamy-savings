@@ -206,7 +206,7 @@ async function generatePdfReport() {
                 if (member.payments[j] && member.payments[j].payoutClaimed) {
                     memberHasTakenChit = true;
                     const payoutVal = group.payouts && group.payouts[j] !== undefined ? group.payouts[j] : 0;
-                    chitAmountStr = `â‚¹${formatNumberIndian(payoutVal)}`;
+                    chitAmountStr = `₹${formatNumberIndian(payoutVal)}`;
                     chitModeStr = member.payments[j].paymentMode ? member.payments[j].paymentMode.substring(0,1).toUpperCase() : 'C';
                     break;
                 }
@@ -216,8 +216,8 @@ async function generatePdfReport() {
             const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
             let rowDueColor = !isPaid ? '#dc2626' : 'transparent';
             let rowPaidColor = isPaid ? '#15803d' : 'transparent';
-            let rowDueText = isPaid ? '' : `â‚¹${formatNumberIndian(installmentVal)}`;
-            let rowPaidText = !isPaid ? '' : `â‚¹${formatNumberIndian(installmentVal)}`;
+            let rowDueText = isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
+            let rowPaidText = !isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
             
             const dateBox = datePaidText !== '--' 
                 ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${datePaidText}</div>`
@@ -485,8 +485,8 @@ async function generateGlobalPdfReport(mode = 'download') {
             const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
             let rowDueColor = row.dueAmount > 0 ? '#dc2626' : 'transparent';
             let rowPaidColor = row.paidAmount > 0 ? '#15803d' : 'transparent';
-            let rowDueText = row.dueAmount === 0 ? '' : `â‚¹${formatNumberIndian(row.dueAmount)}`;
-            let rowPaidText = row.paidAmount === 0 ? '' : `â‚¹${formatNumberIndian(row.paidAmount)}`;
+            let rowDueText = row.dueAmount === 0 ? '' : `₹${formatNumberIndian(row.dueAmount)}`;
+            let rowPaidText = row.paidAmount === 0 ? '' : `₹${formatNumberIndian(row.paidAmount)}`;
             
             const dateBox = row.paidDate !== '--' 
                 ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${row.paidDate}</div>`
