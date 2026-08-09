@@ -79,6 +79,8 @@ async function generatePdfReport() {
             pendingMembers.push(member);
         }
         
+    });
+        
     const dateObj = new Date();
     const monthNameDisplay = dateObj.toLocaleString('default', { month: 'long' });
     const monthTitle = `${monthNameDisplay} ${dateObj.getFullYear()}`;
@@ -93,15 +95,8 @@ async function generatePdfReport() {
         
         chunk.forEach((member, idx) => {
             const index = i + idx;
-            const payment = member.payments[relMonthNum];
+            const payment = member.payments[monthNum];
             const isPaid = payment && payment.paid;
-            
-            if (hasTakenChit && idx === 0 && i === 0) {
-               // We just need the loops below to execute normally, the outer counters (collected, pending etc) 
-               // should only be counted ONCE. We already calculated them before this loop!
-               // Wait, the original code calculates 'collected' and 'pending' inside the rendering loop. 
-               // I need to make sure I don't break the global counters.
-            }
             
             let datePaidText = '--';
             if (isPaid) {
