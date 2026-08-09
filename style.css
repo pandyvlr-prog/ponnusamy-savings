@@ -6101,7 +6101,7 @@ body.hide-navigation .bottom-nav {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 18px;
-    padding: 4px 32px 120px;
+    padding: 4px 32px 20px;
     align-content: start;
 }
 
@@ -6375,7 +6375,7 @@ body.hide-navigation .bottom-nav {
 /* ========= Responsive ========= */
 @media (max-width: 768px) {
     .calc-screen-prm { 
-        padding: 16px 12px 100px 12px; /* Extra bottom padding for mobile nav */
+        padding: 16px 12px 20px 12px; /* Extra bottom padding for mobile nav */
         align-items: flex-start; /* Prevent vertical centering from pushing top off screen */
         overflow-y: auto;
     }
@@ -6390,7 +6390,7 @@ body.hide-navigation .bottom-nav {
     .notes-header-text h1 { font-size: 1.8rem; }
     .notes-search-prm { padding: 0 16px; }
     .notes-search-prm > i { left: 36px; }
-    .notes-grid-prm { padding: 4px 16px 120px; grid-template-columns: 1fr; }
+    .notes-grid-prm { padding: 4px 16px 20px; grid-template-columns: 1fr; }
 
     .editor-title-prm { font-size: 1.9rem; padding: 20px 16px 0; }
     .editor-content-prm { padding: 16px; }
@@ -9353,7 +9353,7 @@ html, body, .app-device-shell {
     cursor: pointer;
 }
 .db-members-list {
-    padding: 0 20px 100px;
+    padding: 0 20px 20px;
 }
 
 /* ---- Premium Member Cards ---- */
@@ -9643,7 +9643,7 @@ html, body, .app-device-shell {
     
     /* 2. Gallery View Redesign */
     .ic-gallery-container {
-        padding: 16px 16px 100px !important;
+        padding: 16px 16px 20px !important;
     }
     .ic-gallery-nav {
         flex-direction: column !important;
