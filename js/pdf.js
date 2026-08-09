@@ -21,6 +21,73 @@ async function loadHtml2Pdf() {
     });
 }
 
+async function calculateDynamicRowsPerPage(monthTitle) {
+    const testHtml = `
+        <div id="pdf-dynamic-container" style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+            <div style="padding: 20px 30px 10px 30px; display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
+                    <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                </div>
+                <div style="text-align: right;">
+                    <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
+                </div>
+            </div>
+            <div style="height: 2px; background-color: #d97706; margin: 0 30px 10px 30px;"></div>
+            <div style="padding: 0 30px 20px 30px; background: white;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; border: 1px solid #111827;">
+                    <thead>
+                        <tr style="background-color: #111827;">
+                            <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Test</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="pdf-dynamic-row" style="background-color: #ffffff;">
+                            <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">Test Row Data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    const wrapper = document.createElement('div');
+    wrapper.style.width = '1400px';
+    wrapper.style.position = 'absolute';
+    wrapper.style.left = '-9999px';
+    wrapper.style.top = '0';
+    wrapper.innerHTML = testHtml;
+    document.body.appendChild(wrapper);
+
+    await new Promise(r => setTimeout(r, 50));
+
+    const container = document.getElementById('pdf-dynamic-container');
+    const row = document.getElementById('pdf-dynamic-row');
+    
+    if (!container || !row) {
+        document.body.removeChild(wrapper);
+        return 15; // fallback
+    }
+
+    const totalHeight = container.offsetHeight;
+    const rowHeight = row.offsetHeight || 45; // fallback 45px
+    
+    // Static height is total minus one row
+    const staticHeightPx = totalHeight - rowHeight;
+    document.body.removeChild(wrapper);
+
+    // Scaling ratio used in rendering
+    const mmPerPx = 277 / 1400; 
+    
+    // Available height in mm (A4 height 210mm - 25mm footer reserved)
+    const availableHeightMm = 210 - 25; 
+    const availableHeightPx = availableHeightMm / mmPerPx;
+    
+    const maxContentPx = availableHeightPx - staticHeightPx;
+    const maxRows = Math.floor(maxContentPx / rowHeight);
+    
+    return maxRows > 0 ? maxRows : 1;
+}
 async function generatePdfReport() {
     const group = State.groups.find(g => g.id === State.selectedGroupId);
     if (!group) return;
@@ -91,8 +158,11 @@ async function generatePdfReport() {
     const monthNameDisplay = dateObj.toLocaleString('default', { month: 'long' });
     const monthTitle = `${monthNameDisplay} ${dateObj.getFullYear()}`;
     
-    // We will render all members in one chunk to fit on a single page
-    const ROWS_PER_PAGE = members.length || 1;
+    const overlay = document.getElementById('pdf-loading-overlay');
+    if (overlay) overlay.style.display = 'flex';
+    
+    // Dynamically calculate optimal rows per page based on current CSS/DOM
+    const ROWS_PER_PAGE = await calculateDynamicRowsPerPage(monthTitle);
     let chunkPagesHtml = [];
     
     for (let i = 0; i < members.length; i += ROWS_PER_PAGE) {
@@ -208,8 +278,7 @@ async function generatePdfReport() {
             chunkPagesHtml.push(chunkPageHtml);
         }
 
-    const overlay = document.getElementById('pdf-loading-overlay');
-    if (overlay) overlay.style.display = 'flex';
+
     
     try {
         await loadHtml2Pdf();
@@ -393,7 +462,10 @@ async function generateGlobalPdfReport(mode = 'download') {
     const monthName = dateObj.toLocaleString('default', { month: 'long' });
     const monthTitle = `${monthName} ${selYear}`;
 
-    const ROWS_PER_PAGE = allMembersFlattened.length || 1;
+    const overlay = document.getElementById('pdf-loading-overlay');
+    if (overlay) overlay.style.display = 'flex';
+    
+    const ROWS_PER_PAGE = await calculateDynamicRowsPerPage(monthTitle);
     let chunkPagesHtml = [];
     
     for (let i = 0; i < allMembersFlattened.length; i += ROWS_PER_PAGE) {
@@ -479,8 +551,7 @@ async function generateGlobalPdfReport(mode = 'download') {
             chunkPagesHtml.push(chunkPageHtml);
         }
 
-    const overlay = document.getElementById('pdf-loading-overlay');
-    if (overlay) overlay.style.display = 'flex';
+
     
     try {
         await loadHtml2Pdf();
