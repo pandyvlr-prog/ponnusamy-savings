@@ -206,7 +206,7 @@ async function generatePdfReport() {
     if (overlay) overlay.style.display = 'flex';
     
     const wrapper = document.createElement('div');
-    wrapper.style.width = '1100px';
+    wrapper.style.width = '1600px';
     wrapper.innerHTML = pagesHtml;
     const htmlContent = wrapper.outerHTML;
 
@@ -461,7 +461,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     if (overlay) overlay.style.display = 'flex';
     
     const wrapper = document.createElement('div');
-    wrapper.style.width = '1100px';
+    wrapper.style.width = '1600px';
     wrapper.innerHTML = pagesHtml;
     const htmlContent = wrapper.outerHTML;
 
