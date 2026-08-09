@@ -6540,6 +6540,12 @@ html, body, .app-device-shell {
         width: 100%;
     }
 
+    /* Remove outer table borders on mobile to prevent double-border cards */
+    [data-theme='light'] .pnl-table, .pnl-table {
+        border: none !important;
+        background: transparent !important;
+    }
+
     /* Style Rows as Cards */
     .pnl-table tr {
         margin-bottom: 16px;
@@ -6982,6 +6988,11 @@ html, body, .app-device-shell {
     .pnl-table, .pnl-table tbody, .pnl-table tr, .pnl-table td {
         display: block;
         width: 100%;
+    }
+    /* Remove outer table borders on mobile to prevent double-border cards */
+    [data-theme='light'] .pnl-table, .pnl-table {
+        border: none !important;
+        background: transparent !important;
     }
     .pnl-table tr {
         background: var(--bg-surface);
