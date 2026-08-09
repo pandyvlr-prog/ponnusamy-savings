@@ -1,4 +1,4 @@
-// --- Initializing App ---
+﻿// --- Initializing App ---
 document.addEventListener('DOMContentLoaded', () => {
     // [PHASE 4] Debounce lucide.createIcons to prevent main thread freezing
     if (typeof lucide !== 'undefined' && typeof window.lucideOriginalCreateIcons === 'undefined') {
@@ -1228,7 +1228,7 @@ function setupEventListeners() {
             }
         });
         
-        async function handleQuickReport(mode, btnElement) {
+        async function handleQuickReport(mode, btnElement, paperSize = 'a4') {
             if (btnElement && btnElement.isGenerating) return;
             
             let originalHtml, originalOpacity, originalPointerEvents;
@@ -7148,3 +7148,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 300);
 });
+

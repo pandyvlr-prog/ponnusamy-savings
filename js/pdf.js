@@ -1,4 +1,4 @@
-﻿// --- PDF Generation Logic ---
+// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -96,7 +96,7 @@ async function calculateDynamicRowsPerPage(monthTitle) {
     
     return maxRows > 2 ? maxRows - 2 : 1;
 }
-async function generatePdfReport() {
+async function generatePdfReport(paperSize = 'a4') {
     const group = State.groups.find(g => g.id === State.selectedGroupId);
     if (!group) return;
     
@@ -170,7 +170,7 @@ async function generatePdfReport() {
     if (overlay) overlay.style.display = 'flex';
     
     // Dynamically calculate optimal rows per page based on current CSS/DOM
-    const ROWS_PER_PAGE = 25;
+    const ROWS_PER_PAGE = paperSize === 'custom' ? 12 : 25;
     let chunkPagesHtml = [];
     
     for (let i = 0; i < members.length; i += ROWS_PER_PAGE) {
@@ -291,9 +291,15 @@ async function generatePdfReport() {
     try {
         await loadHtml2Pdf();
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-        const A4_WIDTH = 210;
-        const A4_HEIGHT = 297;
+        let pdfFormat = 'a4';
+        let PAGE_WIDTH = 210;
+        let PAGE_HEIGHT = 297;
+        if (paperSize === 'custom') {
+            pdfFormat = [190, 155];
+            PAGE_WIDTH = 190;
+            PAGE_HEIGHT = 155;
+        }
+        const doc = new jsPDF({ unit: 'mm', format: pdfFormat, orientation: 'portrait' });
         const totalPagesExpected = chunkPagesHtml.length || 1;
 
         for (let idx = 0; idx < chunkPagesHtml.length; idx++) {
@@ -311,13 +317,13 @@ async function generatePdfReport() {
             const imgData = canvas.toDataURL('image/jpeg', 0.98);
             const imgProps = doc.getImageProperties(imgData);
             
-            let pdfWidth = A4_WIDTH - 20; // 10mm margins
+            let pdfWidth = PAGE_WIDTH - 20; // 10mm margins
             let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
             
             // Constrain height to reserve 25mm for footer
-            const maxPdfHeight = A4_HEIGHT - 20;
-            // Removed shrinking logic so width is always exactly A4_WIDTH - 20
-            const xOffset = (A4_WIDTH - pdfWidth) / 2;
+            const maxPdfHeight = PAGE_HEIGHT - 20;
+            // Removed shrinking logic so width is always exactly PAGE_WIDTH - 20
+            const xOffset = (PAGE_WIDTH - pdfWidth) / 2;
             
             if (idx > 0) doc.addPage();
             
@@ -326,7 +332,7 @@ async function generatePdfReport() {
             doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(150);
-            doc.text(`${idx + 1}`, A4_WIDTH / 2, 7, { align: 'center' });
+            doc.text(`${idx + 1}`, PAGE_WIDTH / 2, 7, { align: 'center' });
         }
         
         doc.save(`${group.name.replace(/\s+/g, '_')}_Month_${monthNum}_Report.pdf`);
@@ -341,7 +347,7 @@ async function generatePdfReport() {
     }
 }
 
-async function generateGlobalPdfReport(mode = 'download') {
+async function generateGlobalPdfReport(mode = 'download', paperSize = 'a4') {
     const selectedMonthKey = document.getElementById('global-pdf-export-month-select').value;
     const selectedDayValue = document.getElementById('global-pdf-export-day-select') ? document.getElementById('global-pdf-export-day-select').value : 'all';
     if (!selectedMonthKey) return;
@@ -471,7 +477,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
     
-    const ROWS_PER_PAGE = 25;
+    const ROWS_PER_PAGE = paperSize === 'custom' ? 12 : 25;
     let chunkPagesHtml = [];
     
     allMembersFlattened.sort((a, b) => a.name.localeCompare(b.name));
@@ -563,9 +569,15 @@ async function generateGlobalPdfReport(mode = 'download') {
     try {
         await loadHtml2Pdf();
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-        const A4_WIDTH = 210;
-        const A4_HEIGHT = 297;
+        let pdfFormat = 'a4';
+        let PAGE_WIDTH = 210;
+        let PAGE_HEIGHT = 297;
+        if (paperSize === 'custom') {
+            pdfFormat = [190, 155];
+            PAGE_WIDTH = 190;
+            PAGE_HEIGHT = 155;
+        }
+        const doc = new jsPDF({ unit: 'mm', format: pdfFormat, orientation: 'portrait' });
         const totalPagesExpected = chunkPagesHtml.length || 1;
         const filename = `Global_Report_${monthName}_${selYear}.pdf`;
 
@@ -584,13 +596,13 @@ async function generateGlobalPdfReport(mode = 'download') {
             const imgData = canvas.toDataURL('image/jpeg', 0.98);
             const imgProps = doc.getImageProperties(imgData);
             
-            let pdfWidth = A4_WIDTH - 20; // 10mm margins
+            let pdfWidth = PAGE_WIDTH - 20; // 10mm margins
             let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
             
             // Constrain height to reserve 25mm for footer
-            const maxPdfHeight = A4_HEIGHT - 20;
-            // Removed shrinking logic so width is always exactly A4_WIDTH - 20
-            const xOffset = (A4_WIDTH - pdfWidth) / 2;
+            const maxPdfHeight = PAGE_HEIGHT - 20;
+            // Removed shrinking logic so width is always exactly PAGE_WIDTH - 20
+            const xOffset = (PAGE_WIDTH - pdfWidth) / 2;
             
             if (idx > 0) doc.addPage();
             
@@ -598,7 +610,7 @@ async function generateGlobalPdfReport(mode = 'download') {
             doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(150);
-            doc.text(`${idx + 1}`, A4_WIDTH / 2, 7, { align: 'center' });
+            doc.text(`${idx + 1}`, PAGE_WIDTH / 2, 7, { align: 'center' });
         }
         
         if (mode === 'download') {
@@ -1868,6 +1880,7 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
 
