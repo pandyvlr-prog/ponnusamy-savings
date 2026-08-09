@@ -3631,8 +3631,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             </div>
             <div style="text-align: right;">
                 <h2 id="pdf-month-name" style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">--</h2>
-                <p id="pdf-group-name" style="font-size: 16px; color: #6b7280; margin: 6px 0; font-weight: 600;">--</p>
-                <p id="pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+                <p id="pdf-group-name" style="display: none;"></p>
+                <p id="pdf-gen-date" style="display: none;"></p>
             </div>
         </div>
         
@@ -3644,8 +3644,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <thead>
                     <tr style="background-color: #111827;">
                         <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
-                        <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
-                        <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
                         <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
                         <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Month</th>
                         <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
@@ -3660,7 +3660,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </tbody>
             </table>
 
-            <div style="display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px;">
+            <div style="display: none; justify-content: space-between; margin-top: 60px; padding-top: 20px;">
                 <div style="text-align: center;">
                     <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
                     <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Prepared By</div>
@@ -3689,8 +3689,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             </div>
             <div style="text-align: right;">
                 <h2 id="global-pdf-month-name" style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">--</h2>
-                <p style="font-size: 16px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
-                <p id="global-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
+                <p id="global-pdf-gen-date" style="display: none;"></p>
             </div>
         </div>
 
@@ -3702,7 +3701,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <!-- Single table populated dynamically -->
             </div>
 
-            <div style="display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px;">
+            <div style="display: none; justify-content: space-between; margin-top: 60px; padding-top: 20px;">
                 <div style="text-align: center;">
                     <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
                     <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Prepared By</div>

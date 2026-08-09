@@ -98,35 +98,35 @@ async function generatePdfReport() {
 
         const schemeName = `${(group.chitAmount >= 100000 ? group.chitAmount/100000 + ' Lakh' : group.chitAmount/1000 + 'K')} / ${group.duration}M`;
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
-        let rowDueColor = !isPaid ? '#ef4444' : '#94a3b8';
-        let rowPaidColor = isPaid ? '#10b981' : '#94a3b8';
-        let rowDueText = isPaid ? '--' : `₹${formatNumberIndian(installmentVal)}`;
-        let rowPaidText = !isPaid ? '--' : `₹${formatNumberIndian(installmentVal)}`;
+        let rowDueColor = !isPaid ? '#dc2626' : 'transparent';
+        let rowPaidColor = isPaid ? '#15803d' : 'transparent';
+        let rowDueText = isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
+        let rowPaidText = !isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
         
         const dateBox = datePaidText !== '--' 
             ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${datePaidText}</div>`
-            : `--`;
+            : ``;
             
         const chitPill = hasTakenChit
             ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;">${chitAmountStr} / ${chitModeStr}</span>`
-            : `<span style="color: #94a3b8; font-weight: 600;">--</span>`;
+            : ``;
 
         const tr = document.createElement('tr');
         tr.style.backgroundColor = rowBg;
         tr.innerHTML = `
             <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-            <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
-            <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; border: 1px solid #475569;">${group.name}</td>
+            <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: center; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
+            <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: center; border: 1px solid #475569;">${group.name}</td>
             <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
                 <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
             </td>
             <td style="padding: 16px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
-            <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
-            <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowPaidText}</td>
+            <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
+            <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
             <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
             <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
             <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
-                <div style="width: 16px; height: 16px; border: 2px solid #64748b; border-radius: 4px; margin: 0 auto;"></div>
+                <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
             </td>
         `;
         tbody.appendChild(tr);
@@ -167,7 +167,7 @@ async function generatePdfReport() {
                     pdf.setTextColor(100);
                     const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
                     const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
-                    pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
+                    pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 12, { align: 'center' });
                 }
             }).save().then(() => resolve()).catch(reject);
         });
@@ -307,34 +307,34 @@ async function generateGlobalPdfReport(mode = 'download') {
     let tableRowsHtml = '';
     allMembersFlattened.forEach((row, index) => {
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
-        let rowDueColor = row.dueAmount > 0 ? '#ef4444' : '#94a3b8';
-        let rowPaidColor = row.paidAmount > 0 ? '#10b981' : '#94a3b8';
-        let rowDueText = row.dueAmount === 0 ? '--' : `₹${formatNumberIndian(row.dueAmount)}`;
-        let rowPaidText = row.paidAmount === 0 ? '--' : `₹${formatNumberIndian(row.paidAmount)}`;
+        let rowDueColor = row.dueAmount > 0 ? '#dc2626' : 'transparent';
+        let rowPaidColor = row.paidAmount > 0 ? '#15803d' : 'transparent';
+        let rowDueText = row.dueAmount === 0 ? '' : `₹${formatNumberIndian(row.dueAmount)}`;
+        let rowPaidText = row.paidAmount === 0 ? '' : `₹${formatNumberIndian(row.paidAmount)}`;
         
         const dateBox = row.paidDate !== '--' 
             ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${row.paidDate}</div>`
-            : `--`;
+            : ``;
             
         const chitPill = row.hasTakenChit
             ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;">${row.chitTakenDisplay}</span>`
-            : `<span style="color: #94a3b8; font-weight: 600;">--</span>`;
+            : ``;
 
         tableRowsHtml += `
             <tr style="background-color: ${rowBg};">
                 <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
-                <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; border: 1px solid #475569;">${row.groupName}</td>
+                <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: center; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
+                <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.groupName}</td>
                 <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
                     <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                 </td>
                 <td style="padding: 16px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
-                <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
-                <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowPaidText}</td>
+                <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
+                <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
                 <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                 <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
                 <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
-                    <div style="width: 16px; height: 16px; border: 2px solid #64748b; border-radius: 4px; margin: 0 auto;"></div>
+                    <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                 </td>
             </tr>
         `;
@@ -345,8 +345,8 @@ async function generateGlobalPdfReport(mode = 'download') {
             <thead>
                 <tr style="background-color: #111827;">
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">
                         <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -403,7 +403,7 @@ async function generateGlobalPdfReport(mode = 'download') {
                         pdf.setTextColor(100);
                         const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
                         const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
-                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
+                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 12, { align: 'center' });
                     }
                 }).save().then(() => resolve()).catch(reject);
             } else if (mode === 'share') {
@@ -415,7 +415,7 @@ async function generateGlobalPdfReport(mode = 'download') {
                         pdf.setTextColor(100);
                         const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
                         const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
-                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
+                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 12, { align: 'center' });
                     }
                 }).outputPdf('blob').then(async (blob) => {
                     const file = new File([blob], opt.filename, { type: 'application/pdf' });
