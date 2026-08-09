@@ -2,16 +2,22 @@
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
-    if (isHtml2PdfLoaded || typeof html2pdf !== 'undefined') return true;
+    if (isHtml2PdfLoaded || (window.jspdf && window.html2canvas)) return true;
     return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-        script.integrity = 'sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==';
-        script.crossOrigin = 'anonymous';
-        script.referrerPolicy = 'no-referrer';
-        script.onload = () => { isHtml2PdfLoaded = true; resolve(true); };
-        script.onerror = () => reject(new Error('Failed to load html2pdf.js'));
-        document.body.appendChild(script);
+        const script1 = document.createElement('script');
+        script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script1.onload = () => {
+            const script2 = document.createElement('script');
+            script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script2.onload = () => {
+                isHtml2PdfLoaded = true;
+                resolve(true);
+            };
+            script2.onerror = () => reject(new Error('Failed to load jsPDF'));
+            document.body.appendChild(script2);
+        };
+        script1.onerror = () => reject(new Error('Failed to load html2canvas'));
+        document.body.appendChild(script1);
     });
 }
 
@@ -87,7 +93,7 @@ async function generatePdfReport() {
     
     // We will chunk members to avoid page break issues
     const ROWS_PER_PAGE = 20;
-    let pagesHtml = '';
+    let chunkPagesHtml = [];
     
     for (let i = 0; i < members.length; i += ROWS_PER_PAGE) {
         const chunk = members.slice(i, i + ROWS_PER_PAGE);
@@ -163,77 +169,85 @@ async function generatePdfReport() {
             `;
         });
         
-        const pageBreak = i > 0 ? `<div class="html2pdf__page-break"></div>` : '';
-        pagesHtml += `
-            ${pageBreak}
-            <div style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
-                <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
-                        <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+        let chunkPageHtml = `
+                <div style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+                    <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
+                            <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                        </div>
+                        <div style="text-align: right;">
+                            <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
+                        </div>
                     </div>
-                    <div style="text-align: right;">
-                        <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
+                    <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
+                    <div style="padding: 0 30px 30px 30px; background: white;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
+                            <thead>
+                                <tr style="background-color: #111827;">
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Month</th>
+                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
+                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${chunkRowsHtml}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
-                <div style="padding: 0 30px 30px 30px; background: white;">
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
-                        <thead>
-                            <tr style="background-color: #111827;">
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Month</th>
-                                <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
-                                <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${chunkRowsHtml}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
+            `;
+            
+            chunkPagesHtml.push(chunkPageHtml);
+        }
 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
     
-    const wrapper = document.createElement('div');
-    wrapper.style.width = '1900px';
-    wrapper.innerHTML = pagesHtml;
-    const htmlContent = wrapper.outerHTML;
-
-    const opt = {
-        margin:       [10, 5, 15, 5],
-        filename:     `${group.name.replace(/\s+/g, '_')}_Month_${monthNum}_Report.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowWidth: 1900 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak:    { mode: ['css', 'legacy'] }
-    };
-
     try {
         await loadHtml2Pdf();
-        await new Promise((resolve, reject) => {
-            html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
-                const totalPages = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(100);
-                    const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
-                    const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
-                    pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 12, { align: 'center' });
-                }
-            }).save().then(() => resolve()).catch(reject);
-        });
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+        const A4_WIDTH = 297;
+        const A4_HEIGHT = 210;
+        const totalPagesExpected = chunkPagesHtml.length || 1;
+
+        for (let idx = 0; idx < chunkPagesHtml.length; idx++) {
+            const wrapper = document.createElement('div');
+            wrapper.style.width = '1400px';
+            wrapper.style.position = 'absolute';
+            wrapper.style.left = '-9999px';
+            wrapper.style.top = '0';
+            wrapper.innerHTML = chunkPagesHtml[idx];
+            document.body.appendChild(wrapper);
+            
+            const canvas = await html2canvas(wrapper, { scale: 2, useCORS: true, logging: false });
+            document.body.removeChild(wrapper);
+            
+            const imgData = canvas.toDataURL('image/jpeg', 0.98);
+            const imgProps = doc.getImageProperties(imgData);
+            
+            const pdfWidth = A4_WIDTH - 20; // 10mm margins
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            if (idx > 0) doc.addPage();
+            
+            doc.addImage(imgData, 'JPEG', 10, 5, pdfWidth, pdfHeight);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Page ${idx + 1} of ${totalPagesExpected}`, A4_WIDTH / 2, A4_HEIGHT - 10, { align: 'center' });
+        }
+        
+        doc.save(`${group.name.replace(/\s+/g, '_')}_Month_${monthNum}_Report.pdf`);
+        
         if (overlay) overlay.style.display = 'none';
         if (typeof showNotification === 'function') showNotification('PDF Report Generated Successfully!', 'success');
     } catch (error) {
@@ -372,7 +386,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     const monthTitle = `${monthName} ${selYear}`;
 
     const ROWS_PER_PAGE = 20;
-    let pagesHtml = '';
+    let chunkPagesHtml = [];
     
     for (let i = 0; i < allMembersFlattened.length; i += ROWS_PER_PAGE) {
         const chunk = allMembersFlattened.slice(i, i + ROWS_PER_PAGE);
@@ -414,113 +428,109 @@ async function generateGlobalPdfReport(mode = 'download') {
             `;
         });
         
-        const pageBreak = i > 0 ? `<div class="html2pdf__page-break"></div>` : '';
-        pagesHtml += `
-            ${pageBreak}
-            <div style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
-                <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
-                        <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+        let chunkPageHtml = `
+                <div style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+                    <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
+                            <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
+                        </div>
+                        <div style="text-align: right;">
+                            <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
+                        </div>
                     </div>
-                    <div style="text-align: right;">
-                        <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
+                    <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
+                    <div style="padding: 0 30px 30px 30px; background: white;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
+                            <thead>
+                                <tr style="background-color: #111827;">
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                            Month
+                                        </div>
+                                    </th>
+                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
+                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
+                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${chunkRowsHtml}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
-                <div style="padding: 0 30px 30px 30px; background: white;">
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
-                        <thead>
-                            <tr style="background-color: #111827;">
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                        Month
-                                    </div>
-                                </th>
-                                <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
-                                <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
-                                <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${chunkRowsHtml}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
+            `;
+            chunkPagesHtml.push(chunkPageHtml);
+        }
 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
     
-    const wrapper = document.createElement('div');
-    wrapper.style.width = '1900px';
-    wrapper.innerHTML = pagesHtml;
-    const htmlContent = wrapper.outerHTML;
-
-    const opt = {
-        margin:       [10, 5, 15, 5],
-        filename:     `Global_Report_${monthName}_${selYear}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowWidth: 1900 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak:    { mode: ['css', 'legacy'] }
-    };
-
     try {
         await loadHtml2Pdf();
-        await new Promise((resolve, reject) => {
-            if (mode === 'download') {
-                html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        pdf.setFontSize(10);
-                        pdf.setTextColor(100);
-                        const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
-                        const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
-                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 12, { align: 'center' });
-                    }
-                }).save().then(() => resolve()).catch(reject);
-            } else if (mode === 'share') {
-                html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        pdf.setFontSize(10);
-                        pdf.setTextColor(100);
-                        const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
-                        const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
-                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 12, { align: 'center' });
-                    }
-                }).outputPdf('blob').then(async (blob) => {
-                    const file = new File([blob], opt.filename, { type: 'application/pdf' });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                title: opt.filename,
-                                text: 'Here is the Global Dashboard Report',
-                                files: [file]
-                            });
-                        } catch (error) {
-                            if (error.name !== 'AbortError') throw error;
-                        }
-                    } else {
-                        if (typeof showNotification === 'function') showNotification('Web Share not supported on this device/browser', 'error');
-                        html2pdf().set(opt).from(htmlContent).save();
-                    }
-                    resolve();
-                }).catch(reject);
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+        const A4_WIDTH = 297;
+        const A4_HEIGHT = 210;
+        const totalPagesExpected = chunkPagesHtml.length || 1;
+        const filename = `Global_Report_${monthName}_${selYear}.pdf`;
+
+        for (let idx = 0; idx < chunkPagesHtml.length; idx++) {
+            const wrapper = document.createElement('div');
+            wrapper.style.width = '1400px';
+            wrapper.style.position = 'absolute';
+            wrapper.style.left = '-9999px';
+            wrapper.style.top = '0';
+            wrapper.innerHTML = chunkPagesHtml[idx];
+            document.body.appendChild(wrapper);
+            
+            const canvas = await html2canvas(wrapper, { scale: 2, useCORS: true, logging: false });
+            document.body.removeChild(wrapper);
+            
+            const imgData = canvas.toDataURL('image/jpeg', 0.98);
+            const imgProps = doc.getImageProperties(imgData);
+            
+            const pdfWidth = A4_WIDTH - 20; // 10mm margins
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            if (idx > 0) doc.addPage();
+            
+            doc.addImage(imgData, 'JPEG', 10, 5, pdfWidth, pdfHeight);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Page ${idx + 1} of ${totalPagesExpected}`, A4_WIDTH / 2, A4_HEIGHT - 10, { align: 'center' });
+        }
+        
+        if (mode === 'download') {
+            doc.save(filename);
+        } else if (mode === 'share') {
+            const blob = doc.output('blob');
+            const file = new File([blob], filename, { type: 'application/pdf' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: filename,
+                        text: 'Here is the Global Dashboard Report',
+                        files: [file]
+                    });
+                } catch (error) {
+                    if (error.name !== 'AbortError') throw error;
+                }
+            } else {
+                if (typeof showNotification === 'function') showNotification('Web Share not supported on this device/browser', 'error');
+                doc.save(filename);
             }
-        });
+        }
+        
         if (overlay) overlay.style.display = 'none';
         if (typeof showNotification === 'function') showNotification('PDF Report Processed Successfully!', 'success');
     } catch (error) {
