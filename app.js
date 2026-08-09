@@ -1228,12 +1228,34 @@ function setupEventListeners() {
             }
         });
         
-        function handleQuickReport(mode) {
-            quickReportMenu.style.display = 'none';
+        async function handleQuickReport(mode, btnElement) {
+            if (btnElement && btnElement.isGenerating) return;
+            
+            let originalHtml, originalOpacity, originalPointerEvents;
+            if (btnElement) {
+                btnElement.isGenerating = true;
+                originalHtml = btnElement.innerHTML;
+                originalOpacity = btnElement.style.opacity;
+                originalPointerEvents = btnElement.style.pointerEvents;
+                
+                btnElement.innerHTML = `<i data-lucide="loader-2" class="spin-anim" style="width: 16px; height: 16px; color: var(--primary);"></i> Preparing...`;
+                btnElement.style.opacity = '0.5';
+                btnElement.style.pointerEvents = 'none';
+                if (window.lucide) window.lucide.createIcons();
+            }
+            
             let monthKey = State.dashboardSelectedMonth || 'current';
             
             if (monthKey === 'accumulated') {
                 showNotification("Cannot generate a date-wise report for 'All Dues'. Please select a specific month.", "warning");
+                if (btnElement) {
+                    btnElement.isGenerating = false;
+                    btnElement.innerHTML = originalHtml;
+                    btnElement.style.opacity = originalOpacity;
+                    btnElement.style.pointerEvents = originalPointerEvents;
+                    if (window.lucide) window.lucide.createIcons();
+                }
+                quickReportMenu.style.display = 'none';
                 return;
             }
             
@@ -1284,20 +1306,38 @@ function setupEventListeners() {
             if (overlay) overlay.style.display = 'flex';
             
             // Yield main thread to allow browser to paint UI (fixes INP issue)
-            setTimeout(() => {
+            try {
                 if (activeFilter === 'chit_taken') {
-                    generateChitTakenPdfReport(monthKey, mode);
+                    await generateChitTakenPdfReport(monthKey, mode);
                 } else {
-                    generateGlobalPdfReport(mode);
+                    await generateGlobalPdfReport(mode);
                 }
-            }, 50);
+                
+                if (btnElement) {
+                    btnElement.innerHTML = `<i data-lucide="check" style="width: 16px; height: 16px; color: #10b981;"></i> Done`;
+                    if (window.lucide) window.lucide.createIcons();
+                    await new Promise(r => setTimeout(r, 800)); // Flash success
+                }
+            } catch (err) {
+                console.error(err);
+                if (typeof showNotification === 'function') showNotification('Failed to generate PDF, try again', 'error');
+            } finally {
+                if (btnElement) {
+                    btnElement.isGenerating = false;
+                    btnElement.innerHTML = originalHtml;
+                    btnElement.style.opacity = originalOpacity;
+                    btnElement.style.pointerEvents = originalPointerEvents;
+                    if (window.lucide) window.lucide.createIcons();
+                }
+                quickReportMenu.style.display = 'none';
+            }
         }
         
         if (btnQuickReportDownload) {
-            btnQuickReportDownload.addEventListener('click', () => handleQuickReport('download'));
+            btnQuickReportDownload.addEventListener('click', function() { handleQuickReport('download', this); });
         }
         if (btnQuickReportShare) {
-            btnQuickReportShare.addEventListener('click', () => handleQuickReport('share'));
+            btnQuickReportShare.addEventListener('click', function() { handleQuickReport('share', this); });
         }
     }
 
@@ -1331,8 +1371,34 @@ function setupEventListeners() {
 
     const btnGeneratePdf = document.getElementById('btn-generate-pdf');
     if (btnGeneratePdf) {
-        btnGeneratePdf.addEventListener('click', () => {
-            generatePdfReport();
+        btnGeneratePdf.addEventListener('click', async function() {
+            if (this.isGenerating) return;
+            this.isGenerating = true;
+            
+            const originalHtml = this.innerHTML;
+            const originalOpacity = this.style.opacity;
+            const originalPointerEvents = this.style.pointerEvents;
+            
+            this.innerHTML = `<i data-lucide="loader-2" class="spin-anim" style="width: 18px; height: 18px;"></i> Preparing...`;
+            this.style.opacity = '0.5';
+            this.style.pointerEvents = 'none';
+            if (window.lucide) window.lucide.createIcons();
+            
+            try {
+                await generatePdfReport();
+                this.innerHTML = `<i data-lucide="check" style="width: 18px; height: 18px; color: #10b981;"></i> Done`;
+                if (window.lucide) window.lucide.createIcons();
+                await new Promise(r => setTimeout(r, 800)); // Flash success
+            } catch (err) {
+                console.error(err);
+                if (typeof showNotification === 'function') showNotification('Failed to generate PDF, try again', 'error');
+            } finally {
+                this.isGenerating = false;
+                this.innerHTML = originalHtml;
+                this.style.opacity = originalOpacity;
+                this.style.pointerEvents = originalPointerEvents;
+                if (window.lucide) window.lucide.createIcons();
+            }
         });
     }
 

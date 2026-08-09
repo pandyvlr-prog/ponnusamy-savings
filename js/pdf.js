@@ -56,9 +56,14 @@ async function generatePdfReport() {
         const isPaid = payment && payment.paid;
         
         let hasTakenChit = false;
+        let chitAmountStr = '';
+        let chitModeStr = '';
         for (let m = 1; m <= group.duration; m++) {
             if (member.payments[m] && member.payments[m].payoutClaimed) {
                 hasTakenChit = true;
+                const pVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : 0;
+                chitAmountStr = `₹${formatNumberIndian(pVal)}`;
+                chitModeStr = member.payments[m].paymentMode ? member.payments[m].paymentMode.substring(0,1).toUpperCase() : 'C';
                 break;
             }
         }
@@ -74,73 +79,67 @@ async function generatePdfReport() {
             pendingMembers.push(member);
         }
         
-        const tr = document.createElement('tr');
-        const rowBg = index % 2 === 0 ? '#ffffff' : '#f9fafb';
-        tr.style.backgroundColor = rowBg;
-        
-        const statusColor = isPaid ? '#065f46' : '#991b1b';
-        const statusBg = isPaid ? '#d1fae5' : '#fee2e2';
-        const statusText = isPaid ? 'PAID' : 'PENDING';
-        
-        const chitStatusText = hasTakenChit ? '<span style="color: #4338ca; font-weight: 700;">Taken</span>' : '<span style="color: #64748b;">Not Taken</span>';
-        
         let datePaidText = '--';
         if (isPaid) {
             if (payment.customDate) {
-                datePaidText = new Date(payment.customDate).toLocaleDateString();
+                const parts = payment.customDate.split('-');
+                if(parts.length === 3) {
+                    datePaidText = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                } else {
+                    const dayNumber = parseInt(payment.customDate, 10);
+                    const dDate = new Date();
+                    datePaidText = `${String(dayNumber).padStart(2, '0')}/${String(dDate.getMonth()+1).padStart(2, '0')}/${dDate.getFullYear()}`;
+                }
             } else if (payment.paidAt) {
-                datePaidText = new Date(payment.paidAt).toLocaleDateString();
-            } else {
-                datePaidText = 'Paid';
+                const d = new Date(payment.paidAt);
+                datePaidText = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
             }
         }
 
+        const schemeName = `${(group.chitAmount >= 100000 ? group.chitAmount/100000 + ' Lakh' : group.chitAmount/1000 + 'K')} / ${group.duration}M`;
+        const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+        let rowDueColor = !isPaid ? '#ef4444' : '#94a3b8';
+        let rowPaidColor = isPaid ? '#10b981' : '#94a3b8';
+        let rowDueText = isPaid ? '--' : `₹${formatNumberIndian(installmentVal)}`;
+        let rowPaidText = !isPaid ? '--' : `₹${formatNumberIndian(installmentVal)}`;
+        
+        const dateBox = datePaidText !== '--' 
+            ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${datePaidText}</div>`
+            : `--`;
+            
+        const chitPill = hasTakenChit
+            ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;">${chitAmountStr} / ${chitModeStr}</span>`
+            : `<span style="color: #94a3b8; font-weight: 600;">--</span>`;
+
+        const tr = document.createElement('tr');
+        tr.style.backgroundColor = rowBg;
         tr.innerHTML = `
-            <td style="padding: 12px; color: #334155; border: 1px solid #d1d5db; text-align: center;">${index + 1}</td>
-            <td style="padding: 12px; color: #0f172a; font-weight: 700; border: 1px solid #d1d5db;">${member.name}</td>
-            <td style="padding: 12px; text-align: center; border: 1px solid #d1d5db;">${chitStatusText}</td>
-            <td style="padding: 12px; color: #475569; font-size: 11px; border: 1px solid #d1d5db;">${datePaidText}</td>
-            <td style="padding: 12px; text-align: right; color: #0f172a; font-weight: 600; border: 1px solid #d1d5db;">₹${formatNumberIndian(installmentVal)}</td>
-            <td style="padding: 12px; text-align: center; border: 1px solid #d1d5db;">
-                <span style="background-color: ${statusBg}; color: ${statusColor}; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800;">${statusText}</span>
+            <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
+            <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
+            <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; border: 1px solid #475569;">${group.name}</td>
+            <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
+            </td>
+            <td style="padding: 16px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
+            <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
+            <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowPaidText}</td>
+            <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
+            <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
+            <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                <div style="width: 16px; height: 16px; border: 2px solid #64748b; border-radius: 4px; margin: 0 auto;"></div>
             </td>
         `;
         tbody.appendChild(tr);
     });
 
-    pendingMembers.forEach((member) => {
-        const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid #fecaca';
-        tr.innerHTML = `
-            <td style="padding: 8px; color: #991b1b; font-weight: 700;">${member.name}</td>
-            <td style="padding: 8px; color: #991b1b;">${member.mobileNo || '--'}</td>
-            <td style="padding: 8px; text-align: right; color: #991b1b; font-weight: 800;">₹${formatNumberIndian(installmentVal)}</td>
-        `;
-        defaultersBody.appendChild(tr);
-    });
-    
-    if (pendingMembers.length === 0) {
-        defaultersBody.innerHTML = `<tr><td colspan="3" style="padding: 8px; text-align: center; color: #059669; font-weight: 700;">No pending dues this month! All collected.</td></tr>`;
-    }
-
-    // Populate Headers and Summary
+    // Populate Headers
     document.getElementById('pdf-group-name').textContent = group.name;
-    document.getElementById('pdf-month-name').textContent = `Month ${monthNum} / ${group.duration}`;
+    const dateObj = new Date();
+    const monthNameDisplay = dateObj.toLocaleString('default', { month: 'long' });
+    document.getElementById('pdf-month-name').textContent = `${monthNameDisplay} ${dateObj.getFullYear()}`;
     
     const now = new Date();
     document.getElementById('pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-    
-    document.getElementById('pdf-target-collection').textContent = `₹${formatNumberIndian(targetCollection)}`;
-    document.getElementById('pdf-total-collected').textContent = `₹${formatNumberIndian(collected)}`;
-    document.getElementById('pdf-total-pending').textContent = `₹${formatNumberIndian(pending)}`;
-
-    const percentage = targetCollection > 0 ? ((collected / targetCollection) * 100).toFixed(1) : 0;
-    document.getElementById('pdf-collection-percentage').textContent = `${percentage}%`;
-
-    document.getElementById('pdf-total-members').textContent = members.length;
-    document.getElementById('pdf-members-paid').textContent = paidCount;
-    document.getElementById('pdf-members-pending').textContent = pendingCount;
-    document.getElementById('pdf-members-taken').textContent = takenChitCount;
 
     // Show temporary container, generate, hide
     const overlay = document.getElementById('pdf-loading-overlay');
@@ -150,27 +149,32 @@ async function generatePdfReport() {
     const htmlContent = container.outerHTML.replace('display: none;', 'display: block;');
 
     const opt = {
-        margin:       [10, 5],
+        margin:       [10, 5, 15, 5],
         filename:     `${group.name.replace(/\s+/g, '_')}_Month_${monthNum}_Report.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
     try {
         await loadHtml2Pdf();
-        html2pdf().set(opt).from(htmlContent).save().then(() => {
-            if (overlay) overlay.style.display = 'none';
-            showNotification('PDF Report Generated Successfully!', 'success');
-        }).catch(err => {
-            console.error(err);
-            if (overlay) overlay.style.display = 'none';
-            showNotification('Error generating PDF', 'error');
+        await new Promise((resolve, reject) => {
+            html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100);
+                    pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 8, { align: 'center' });
+                }
+            }).save().then(() => resolve()).catch(reject);
         });
+        if (overlay) overlay.style.display = 'none';
+        if (typeof showNotification === 'function') showNotification('PDF Report Generated Successfully!', 'success');
     } catch (error) {
         console.error(error);
         if (overlay) overlay.style.display = 'none';
-        showNotification('Failed to load PDF library', 'error');
+        throw error;
     }
 }
 
@@ -299,57 +303,59 @@ async function generateGlobalPdfReport(mode = 'download') {
 
     let tableRowsHtml = '';
     allMembersFlattened.forEach((row, index) => {
-        
-        const markPill = row.isPaid 
-            ? `<span style="background-color: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 99px; font-size: 10px; font-weight: 800; border: 1px solid #bbf7d0;"><i class="fa-solid fa-check" style="margin-right: 4px;"></i> PAID</span>`
-            : `<span style="background-color: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 99px; font-size: 10px; font-weight: 800; border: 1px solid #fecaca;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> DUE</span>`;
-            
-        const chitPill = row.hasTakenChit
-            ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 10px; font-weight: 800; border: 1px solid #e9d5ff;"><i class="fa-solid fa-circle-check" style="margin-right: 4px;"></i> ${row.chitTakenDisplay}</span>`
-            : `<span style="color: #94a3b8; font-weight: 600;">--</span>`;
-
-        const rowBg = index % 2 === 0 ? '#ffffff' : '#f9fafb';
+        const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
         let rowDueColor = row.dueAmount > 0 ? '#ef4444' : '#94a3b8';
         let rowPaidColor = row.paidAmount > 0 ? '#10b981' : '#94a3b8';
-        let rowDateColor = row.paidDate !== '--' ? '#0ea5e9' : '#94a3b8';
-        if (row.paidAmount > 0 && row.dueAmount > 0 && row.paidDate !== '--') {
-            rowDateColor = '#d97706';
-        }
         let rowDueText = row.dueAmount === 0 ? '--' : `₹${formatNumberIndian(row.dueAmount)}`;
         let rowPaidText = row.paidAmount === 0 ? '--' : `₹${formatNumberIndian(row.paidAmount)}`;
+        
+        const dateBox = row.paidDate !== '--' 
+            ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${row.paidDate}</div>`
+            : `--`;
+            
+        const chitPill = row.hasTakenChit
+            ? `<span style="background-color: #f3e8ff; color: #6b21a8; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800;">${row.chitTakenDisplay}</span>`
+            : `<span style="color: #94a3b8; font-weight: 600;">--</span>`;
 
         tableRowsHtml += `
             <tr style="background-color: ${rowBg};">
-                <td style="padding: 12px 10px; color: #334155; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${index + 1}</td>
-                <td style="padding: 12px 10px; color: #0f172a; font-weight: 800; font-size: 12px; text-transform: uppercase; border: 1px solid #d1d5db;">${row.name}</td>
-                <td style="padding: 12px 10px; color: #64748b; font-size: 12px; font-weight: 600; border: 1px solid #d1d5db;">${row.groupName}</td>
-                <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">
-                    <span style="border: 1px solid #e2e8f0; background: #ffffff; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; color: #1e293b;">${row.scheme}</span>
+                <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
+                <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
+                <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; border: 1px solid #475569;">${row.groupName}</td>
+                <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                    <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                 </td>
-                <td style="padding: 12px 10px; color: #d97706; font-size: 12px; font-weight: 800; text-align: center; border: 1px solid #d1d5db;">${row.monthNo}</td>
-                <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowDueText}</td>
-                <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">${rowPaidText}</td>
-                <td style="padding: 12px 10px; color: ${rowDateColor}; font-size: 12px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${row.paidDate}</td>
-                <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${markPill}</td>
-                <td style="padding: 12px 10px; text-align: center; border: 1px solid #d1d5db;">${chitPill}</td>
+                <td style="padding: 16px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
+                <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
+                <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 800; font-size: 14px; border: 1px solid #475569;">${rowPaidText}</td>
+                <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
+                <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
+                <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                    <div style="width: 16px; height: 16px; border: 2px solid #64748b; border-radius: 4px; margin: 0 auto;"></div>
+                </td>
             </tr>
         `;
     });
 
     groupsContainer.innerHTML = `
-        <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; background: white;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
             <thead>
                 <tr style="background-color: #111827;">
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">S.No</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Name</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Chit Group</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Scheme</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Month No.</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Due Amount</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Amount</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Paid Date</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Mark</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Chit Taken</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
+                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
+                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Month
+                        </div>
+                    </th>
+                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
+                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
+                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -380,7 +386,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     const htmlContent = container.outerHTML.replace('display: none;', 'display: block;');
 
     const opt = {
-        margin:       [10, 5],
+        margin:       [10, 5, 15, 5],
         filename:     `Global_Report_${monthName}_${selYear}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
@@ -389,49 +395,46 @@ async function generateGlobalPdfReport(mode = 'download') {
 
     try {
         await loadHtml2Pdf();
-        if (mode === 'download') {
-            html2pdf().set(opt).from(htmlContent).save().then(() => {
-                if (overlay) overlay.style.display = 'none';
-                showNotification('Global PDF Report Downloaded!', 'success');
-            }).catch(err => {
-                console.error(err);
-                if (overlay) overlay.style.display = 'none';
-                showNotification('Error generating PDF', 'error');
-            });
-        } else if (mode === 'share') {
-            html2pdf().set(opt).from(htmlContent).outputPdf('blob').then(async (blob) => {
-                if (overlay) overlay.style.display = 'none';
-                
-                const file = new File([blob], opt.filename, { type: 'application/pdf' });
-                
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            title: opt.filename,
-                            text: 'Here is the Global Dashboard Report',
-                            files: [file]
-                        });
-                        showNotification('Report shared successfully!', 'success');
-                    } catch (error) {
-                        console.error('Error sharing', error);
-                        if (error.name !== 'AbortError') {
-                            showNotification('Error sharing report.', 'error');
-                        }
-                    }
-                } else {
-                    showNotification('Web Share not supported on this device/browser', 'error');
-                    html2pdf().set(opt).from(htmlContent).save();
+        await new Promise((resolve, reject) => {
+            let instance = html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100);
+                    pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 8, { align: 'center' });
                 }
-            }).catch(err => {
-                console.error(err);
-                if (overlay) overlay.style.display = 'none';
-                showNotification('Error generating PDF', 'error');
             });
-        }
+            
+            if (mode === 'download') {
+                instance.save().then(() => resolve()).catch(reject);
+            } else if (mode === 'share') {
+                instance.outputPdf('blob').then(async (blob) => {
+                    const file = new File([blob], opt.filename, { type: 'application/pdf' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                title: opt.filename,
+                                text: 'Here is the Global Dashboard Report',
+                                files: [file]
+                            });
+                        } catch (error) {
+                            if (error.name !== 'AbortError') throw error;
+                        }
+                    } else {
+                        showNotification('Web Share not supported on this device/browser', 'error');
+                        await instance.save();
+                    }
+                    resolve();
+                }).catch(reject);
+            }
+        });
+        if (overlay) overlay.style.display = 'none';
+        if (typeof showNotification === 'function') showNotification('PDF Report Processed Successfully!', 'success');
     } catch (error) {
         console.error(error);
         if (overlay) overlay.style.display = 'none';
-        showNotification('Failed to load PDF library', 'error');
+        throw error;
     }
 }
 

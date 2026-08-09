@@ -3622,72 +3622,37 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     <script src="app.js?v=210" defer></script>
 
     <!-- HIDDEN PDF TEMPLATE (GROUP) -->
-    <div id="pdf-template-container" style="display: none; width: 750px; background: #fafafa; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; color: black; padding: 0; font-family: 'Inter', sans-serif;">
-        <!-- Colored Header -->
-        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
+    <div id="pdf-template-container" style="display: none; width: 1100px; background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Header -->
+        <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
             <div style="display: flex; align-items: center; gap: 20px;">
-                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
-                <div>
-                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
-                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Monthly Chit Fund Report</p>
-                </div>
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
+                <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
             </div>
             <div style="text-align: right;">
-                <h2 id="pdf-group-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
-                <p id="pdf-month-name" style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">--</p>
+                <h2 id="pdf-month-name" style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">--</h2>
+                <p id="pdf-group-name" style="font-size: 16px; color: #6b7280; margin: 6px 0; font-weight: 600;">--</p>
                 <p id="pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
             </div>
         </div>
+        
+        <!-- Orange Divider -->
+        <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
 
-        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Target Collection</div>
-                    <div id="pdf-target-collection" style="font-size: 20px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
-                </div>
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collected Amount</div>
-                    <div id="pdf-total-collected" style="font-size: 20px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
-                </div>
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Pending Amount</div>
-                    <div id="pdf-total-pending" style="font-size: 20px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
-                </div>
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
-                    <div id="pdf-collection-percentage" style="font-size: 20px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
-                <div style="background: #f8fafc; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #e2e8f0;">
-                    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700;">Total Members</div>
-                    <div id="pdf-total-members" style="font-size: 16px; font-weight: 800; color: #0f172a; margin-top: 4px;">0</div>
-                </div>
-                <div style="background: #ecfdf5; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #a7f3d0;">
-                    <div style="font-size: 10px; color: #047857; text-transform: uppercase; font-weight: 700;">Members Paid</div>
-                    <div id="pdf-members-paid" style="font-size: 16px; font-weight: 800; color: #065f46; margin-top: 4px;">0</div>
-                </div>
-                <div style="background: #fef2f2; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #fecaca;">
-                    <div style="font-size: 10px; color: #b91c1c; text-transform: uppercase; font-weight: 700;">Members Pending</div>
-                    <div id="pdf-members-pending" style="font-size: 16px; font-weight: 800; color: #991b1b; margin-top: 4px;">0</div>
-                </div>
-                <div style="background: #eef2ff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #c7d2fe;">
-                    <div style="font-size: 10px; color: #4338ca; text-transform: uppercase; font-weight: 700;">Taken Chit</div>
-                    <div id="pdf-members-taken" style="font-size: 16px; font-weight: 800; color: #3730a3; margin-top: 4px;">0</div>
-                </div>
-            </div>
-
-            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Member Payment Details</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 12px; border: 1px solid #d1d5db;">
+        <div style="padding: 0 30px 30px 30px; background: white; position: relative; z-index: 10;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
                 <thead>
                     <tr style="background-color: #111827;">
-                        <th style="padding: 12px; text-align: center; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">S.No</th>
-                        <th style="padding: 12px; text-align: left; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Member Name</th>
-                        <th style="padding: 12px; text-align: center; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Chit Status</th>
-                        <th style="padding: 12px; text-align: left; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Date Paid</th>
-                        <th style="padding: 12px; text-align: right; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Amount (₹)</th>
-                        <th style="padding: 12px; text-align: center; color: #ffffff; font-weight: 700; border: 1px solid #d1d5db;">Status</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
+                        <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
+                        <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Month</th>
+                        <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
+                        <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
+                        <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
                     </tr>
                 </thead>
                 <tbody id="pdf-table-body">
@@ -3695,30 +3660,14 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </tbody>
             </table>
 
-            <h3 style="font-size: 16px; font-weight: 800; color: #b91c1c; margin: 0 0 10px 0; border-bottom: 2px solid #fecaca; padding-bottom: 8px;">Defaulters Summary (Pending This Month)</h3>
-            <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                    <thead>
-                        <tr>
-                            <th style="padding: 0 8px 8px 8px; text-align: left; color: #991b1b; font-weight: 700; border-bottom: 1px solid #fca5a5;">Member Name</th>
-                            <th style="padding: 0 8px 8px 8px; text-align: left; color: #991b1b; font-weight: 700; border-bottom: 1px solid #fca5a5;">Mobile</th>
-                            <th style="padding: 0 8px 8px 8px; text-align: right; color: #991b1b; font-weight: 700; border-bottom: 1px solid #fca5a5;">Pending Due (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pdf-defaulters-body">
-                        <!-- Rows populated dynamically -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                <div style="text-align: center; width: 200px;">
-                    <div style="border-bottom: 1px solid #94a3b8; height: 30px; margin-bottom: 8px;"></div>
-                    <div style="font-size: 12px; color: #475569; font-weight: 700;">Organizer Signature</div>
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Prepared By</div>
                 </div>
-                <div style="text-align: right; align-self: flex-end;">
-                    <div style="font-size: 11px; color: #94a3b8;">Generated securely by</div>
-                    <div style="font-size: 13px; color: #475569; font-weight: 800;">PMS App</div>
+                <div style="text-align: center;">
+                    <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Authorized Signature</div>
                 </div>
             </div>
         </div>
@@ -3731,57 +3680,36 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     </div>
 
     <!-- HIDDEN PDF TEMPLATE (GLOBAL DASHBOARD - RESTORED FOR QUICK REPORT) -->
-    <div id="global-pdf-template-container" style="display: none; width: 1100px; background: #fafafa; color: black; padding: 0; font-family: 'Inter', sans-serif;">
-        <!-- Colored Header -->
-        <div style="background: #ffffff; color: #111827; padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d97706;">
+    <div id="global-pdf-template-container" style="display: none; width: 1100px; background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
+        <!-- Header -->
+        <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
             <div style="display: flex; align-items: center; gap: 20px;">
-                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #d97706;">
-                <div>
-                    <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
-                    <p style="font-size: 15px; color: #d97706; margin: 6px 0 0 0; font-weight: 700;">Global Dashboard Report</p>
-                </div>
+                <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
+                <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
             </div>
             <div style="text-align: right;">
-                <h2 id="global-pdf-month-name" style="font-size: 22px; font-weight: 800; margin: 0; color: #111827;">--</h2>
-                <p style="font-size: 15px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
+                <h2 id="global-pdf-month-name" style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">--</h2>
+                <p style="font-size: 16px; color: #6b7280; margin: 6px 0; font-weight: 600;">All Active Groups</p>
                 <p id="global-pdf-gen-date" style="font-size: 12px; color: #9ca3af; margin: 6px 0 0 0;">--</p>
             </div>
         </div>
 
-        <div style="padding: 25px 30px 30px 30px; background: white; margin: -15px 30px 30px 30px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); position: relative; z-index: 10;">
-            
-            <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0 0 15px 0;">Global Summary</h3>
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Target</div>
-                    <div id="global-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
-                </div>
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Collected</div>
-                    <div id="global-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
-                </div>
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global Pending</div>
-                    <div id="global-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
-                </div>
-                <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
-                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
-                    <div id="global-pdf-percentage" style="font-size: 24px; font-weight: 800; color: #d97706; margin-top: 6px;">0%</div>
-                </div>
-            </div>
+        <!-- Orange Divider -->
+        <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
 
+        <div style="padding: 0 30px 30px 30px; background: white; position: relative; z-index: 10;">
             <div id="global-pdf-unified-table-container">
                 <!-- Single table populated dynamically -->
             </div>
 
-            <div style="display: flex; justify-content: space-between; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px;">
                 <div style="text-align: center;">
                     <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
                     <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Prepared By</div>
                 </div>
                 <div style="text-align: center;">
                     <div style="width: 150px; border-bottom: 1px solid #111827; margin-bottom: 8px;"></div>
-                    <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Authorized Signatory</div>
+                    <div style="font-size: 12px; font-weight: 800; color: #111827; text-transform: uppercase;">Authorized Signature</div>
                 </div>
             </div>
         </div>
