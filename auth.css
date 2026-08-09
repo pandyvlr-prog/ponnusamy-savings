@@ -101,7 +101,15 @@
 }
 /* Login and landing have their own full-page layouts — no extra padding-bottom */
 #screen-login.app-screen,
-#screen-landing.app-screen {
+#screen-landing.app-screen,
+#screen-dashboard.app-screen,
+#screen-pnl.app-screen,
+#screen-notes.app-screen,
+#screen-cards.app-screen,
+#screen-settings.app-screen,
+#screen-create-group.app-screen,
+#screen-add-members.app-screen,
+#screen-group-details.app-screen {
     padding-bottom: 0;
 }
 .app-screen.active {
