@@ -5702,6 +5702,7 @@ body:not([data-theme="light"]) .icon-blend-img {
         align-items: center;
         width: 100%;
         flex-shrink: 0;
+        order: 99; /* Force to bottom of flex column despite DOM order */
         height: calc(64px + var(--safe-bottom));
         padding-bottom: var(--safe-bottom);
         background: var(--bg-surface-elevated);
