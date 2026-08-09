@@ -151,18 +151,18 @@ async function generatePdfReport() {
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
-                    <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
-                    <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
+                    <td style="padding: 12px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
+                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
                     </td>
-                    <td style="padding: 16px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
-                    <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
-                    <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 12px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
+                    <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
                         <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                     </td>
                 </tr>
@@ -171,7 +171,7 @@ async function generatePdfReport() {
         
         let chunkPageHtml = `
                 <div style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
-                    <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="padding: 20px 30px 10px 30px; display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="display: flex; align-items: center; gap: 20px;">
                             <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
                             <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
@@ -180,9 +180,9 @@ async function generatePdfReport() {
                             <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
                         </div>
                     </div>
-                    <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
-                    <div style="padding: 0 30px 30px 30px; background: white;">
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
+                    <div style="height: 2px; background-color: #d97706; margin: 0 30px 10px 30px;"></div>
+                    <div style="padding: 0 30px 20px 30px; background: white;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; border: 1px solid #111827;">
                             <thead>
                                 <tr style="background-color: #111827;">
                                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
@@ -234,12 +234,20 @@ async function generatePdfReport() {
             const imgData = canvas.toDataURL('image/jpeg', 0.98);
             const imgProps = doc.getImageProperties(imgData);
             
-            const pdfWidth = A4_WIDTH - 20; // 10mm margins
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            let pdfWidth = A4_WIDTH - 20; // 10mm margins
+            let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            // Constrain height to reserve 25mm for footer
+            const maxPdfHeight = A4_HEIGHT - 25;
+            if (pdfHeight > maxPdfHeight) {
+                pdfWidth = (maxPdfHeight * pdfWidth) / pdfHeight;
+                pdfHeight = maxPdfHeight;
+            }
+            const xOffset = (A4_WIDTH - pdfWidth) / 2;
             
             if (idx > 0) doc.addPage();
             
-            doc.addImage(imgData, 'JPEG', 10, 5, pdfWidth, pdfHeight);
+            doc.addImage(imgData, 'JPEG', xOffset, 5, pdfWidth, pdfHeight);
             
             doc.setFontSize(10);
             doc.setTextColor(100);
@@ -410,18 +418,18 @@ async function generateGlobalPdfReport(mode = 'download') {
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
-                    <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
-                    <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
+                    <td style="padding: 12px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
+                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                     </td>
-                    <td style="padding: 16px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
-                    <td style="padding: 16px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
-                    <td style="padding: 16px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
-                    <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 12px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
+                    <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
+                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
                         <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                     </td>
                 </tr>
@@ -430,7 +438,7 @@ async function generateGlobalPdfReport(mode = 'download') {
         
         let chunkPageHtml = `
                 <div style="background: #ffffff; color: black; padding: 0; font-family: 'Inter', sans-serif;">
-                    <div style="padding: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="padding: 20px 30px 10px 30px; display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="display: flex; align-items: center; gap: 20px;">
                             <img src="logo-light.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 12px; object-fit: cover;">
                             <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #111827; letter-spacing: -0.5px;">PMS</h1>
@@ -439,9 +447,9 @@ async function generateGlobalPdfReport(mode = 'download') {
                             <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: #d97706;">${monthTitle}</h2>
                         </div>
                     </div>
-                    <div style="height: 2px; background-color: #d97706; margin: 0 30px 20px 30px;"></div>
-                    <div style="padding: 0 30px 30px 30px; background: white;">
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px; font-size: 13px; border: 1px solid #111827;">
+                    <div style="height: 2px; background-color: #d97706; margin: 0 30px 10px 30px;"></div>
+                    <div style="padding: 0 30px 20px 30px; background: white;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; border: 1px solid #111827;">
                             <thead>
                                 <tr style="background-color: #111827;">
                                     <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
@@ -498,12 +506,20 @@ async function generateGlobalPdfReport(mode = 'download') {
             const imgData = canvas.toDataURL('image/jpeg', 0.98);
             const imgProps = doc.getImageProperties(imgData);
             
-            const pdfWidth = A4_WIDTH - 20; // 10mm margins
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            let pdfWidth = A4_WIDTH - 20; // 10mm margins
+            let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            // Constrain height to reserve 25mm for footer
+            const maxPdfHeight = A4_HEIGHT - 25;
+            if (pdfHeight > maxPdfHeight) {
+                pdfWidth = (maxPdfHeight * pdfWidth) / pdfHeight;
+                pdfHeight = maxPdfHeight;
+            }
+            const xOffset = (A4_WIDTH - pdfWidth) / 2;
             
             if (idx > 0) doc.addPage();
             
-            doc.addImage(imgData, 'JPEG', 10, 5, pdfWidth, pdfHeight);
+            doc.addImage(imgData, 'JPEG', xOffset, 5, pdfWidth, pdfHeight);
             
             doc.setFontSize(10);
             doc.setTextColor(100);
