@@ -165,7 +165,9 @@ async function generatePdfReport() {
                     pdf.setPage(i);
                     pdf.setFontSize(10);
                     pdf.setTextColor(100);
-                    pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 8, { align: 'center' });
+                    const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
+                    const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
+                    pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
                 }
             }).save().then(() => resolve()).catch(reject);
         });
@@ -174,6 +176,7 @@ async function generatePdfReport() {
     } catch (error) {
         console.error(error);
         if (overlay) overlay.style.display = 'none';
+        if (typeof showNotification === 'function') showNotification('Error: ' + (error.message || error), 'error');
         throw error;
     }
 }
@@ -396,20 +399,30 @@ async function generateGlobalPdfReport(mode = 'download') {
     try {
         await loadHtml2Pdf();
         await new Promise((resolve, reject) => {
-            let instance = html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
-                const totalPages = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(100);
-                    pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 8, { align: 'center' });
-                }
-            });
-            
             if (mode === 'download') {
-                instance.save().then(() => resolve()).catch(reject);
+                html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100);
+                        const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
+                        const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
+                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
+                    }
+                }).save().then(() => resolve()).catch(reject);
             } else if (mode === 'share') {
-                instance.outputPdf('blob').then(async (blob) => {
+                html2pdf().set(opt).from(htmlContent).toPdf().get('pdf').then((pdf) => {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100);
+                        const pageWidth = typeof pdf.internal.pageSize.getWidth === 'function' ? pdf.internal.pageSize.getWidth() : pdf.internal.pageSize.width;
+                        const pageHeight = typeof pdf.internal.pageSize.getHeight === 'function' ? pdf.internal.pageSize.getHeight() : pdf.internal.pageSize.height;
+                        pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
+                    }
+                }).outputPdf('blob').then(async (blob) => {
                     const file = new File([blob], opt.filename, { type: 'application/pdf' });
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         try {
@@ -422,8 +435,8 @@ async function generateGlobalPdfReport(mode = 'download') {
                             if (error.name !== 'AbortError') throw error;
                         }
                     } else {
-                        showNotification('Web Share not supported on this device/browser', 'error');
-                        await instance.save();
+                        if (typeof showNotification === 'function') showNotification('Web Share not supported on this device/browser', 'error');
+                        html2pdf().set(opt).from(htmlContent).save();
                     }
                     resolve();
                 }).catch(reject);
@@ -434,6 +447,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     } catch (error) {
         console.error(error);
         if (overlay) overlay.style.display = 'none';
+        if (typeof showNotification === 'function') showNotification('Error: ' + (error.message || error), 'error');
         throw error;
     }
 }
