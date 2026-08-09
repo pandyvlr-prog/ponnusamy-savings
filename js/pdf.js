@@ -367,7 +367,8 @@ async function generateGlobalPdfReport(mode = 'download') {
     });
 
     const dateObj = new Date(selYear, selMonth - 1, 1);
-    const monthTitle = `${dateObj.toLocaleString('default', { month: 'long' })} ${selYear}`;
+    const monthName = dateObj.toLocaleString('default', { month: 'long' });
+    const monthTitle = `${monthName} ${selYear}`;
 
     const ROWS_PER_PAGE = 12;
     let pagesHtml = '';
