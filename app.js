@@ -4119,7 +4119,7 @@ function filterAndRenderMembers() {
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="color:#d97706;font-size:1.1rem;font-weight:900;">${index + 1}</span>
-                        <h3 style="font-size:1.1rem;font-weight:900;color:#111827;margin:0;text-transform:uppercase;">${member.name}</h3>
+                        <h3 style="font-size:1.1rem;font-weight:900;background:linear-gradient(135deg, #b8860b, #ffd700, #b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;text-transform:uppercase;text-shadow: 0px 2px 4px rgba(212,175,55,0.2);">${member.name}</h3>
                         ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
                     </div>
                     <div style="background:#ecfdf5;color:#059669;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">

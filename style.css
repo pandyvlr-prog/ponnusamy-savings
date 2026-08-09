@@ -672,11 +672,11 @@ body {
 
 .premium-member-card {
     background: var(--bg-surface);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 2px solid #d4af37;
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 0;
-    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 10px rgba(212, 175, 55, 0.05);
     position: relative;
     color: var(--text-main);
     cursor: pointer;
@@ -684,24 +684,11 @@ body {
     z-index: 1;
 }
 
-.premium-member-card::before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    border-radius: 19px;
-    background: linear-gradient(135deg, #d4af37, #fff7b0, #d4af37, #996515);
-    background-size: 200% 200%;
-    z-index: -1;
-    opacity: 0.6;
-    animation: premiumCardGlow 4s ease infinite;
-    pointer-events: none;
+.premium-member-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.6), inset 0 0 15px rgba(212, 175, 55, 0.1);
 }
 
-@keyframes premiumCardGlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 .premium-member-card:last-child {
     margin-bottom: 24px; /* Just enough space for the floating button */
 }
