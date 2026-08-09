@@ -112,6 +112,10 @@ async function initAuth() {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         // If they just returned from OAuth, Supabase might fire INITIAL_SESSION instead of SIGNED_IN
         if ((event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && wasOAuthRedirect)) && session) {
+            // Detect if user was ALREADY authenticated (e.g. app resumed from background/minimize).
+            // In that case, this is just a silent session refresh — skip animation and navigation.
+            const wasAlreadyAuthenticated = AuthState.isAuthenticated;
+
             // Force network fetch to get the absolute latest user_metadata across devices
             const { data: { user }, error } = await supabaseClient.auth.getUser();
             const activeUser = user || session.user;
@@ -127,6 +131,13 @@ async function initAuth() {
             
             // [PHASE 1] Save session to cache
             localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
+
+            // If the user was already logged in (app resumed from background), silently update
+            // profile UI and return — no animation, no navigation needed.
+            if (wasAlreadyAuthenticated && !wasOAuthRedirect) {
+                updateProfileUI();
+                return;
+            }
 
             // [NEW] SUCCESS ANIMATION
             const isLoginScreen = document.getElementById('screen-login') && document.getElementById('screen-login').classList.contains('active');
