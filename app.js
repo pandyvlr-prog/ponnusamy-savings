@@ -1320,7 +1320,7 @@ function setupEventListeners() {
                 }
             } catch (err) {
                 console.error(err);
-                if (typeof showNotification === 'function') showNotification('Failed to generate PDF, try again', 'error');
+                if (typeof showNotification === 'function') showNotification('PDF Error: ' + (err.message || err), 'error');
             } finally {
                 if (btnElement) {
                     btnElement.isGenerating = false;
@@ -1391,7 +1391,7 @@ function setupEventListeners() {
                 await new Promise(r => setTimeout(r, 800)); // Flash success
             } catch (err) {
                 console.error(err);
-                if (typeof showNotification === 'function') showNotification('Failed to generate PDF, try again', 'error');
+                if (typeof showNotification === 'function') showNotification('PDF Error: ' + (err.message || err), 'error');
             } finally {
                 this.isGenerating = false;
                 this.innerHTML = originalHtml;
