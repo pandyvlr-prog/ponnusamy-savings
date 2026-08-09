@@ -214,8 +214,8 @@ async function generatePdfReport() {
 
             const schemeName = `${(group.chitAmount >= 100000 ? group.chitAmount/100000 + ' Lakh' : group.chitAmount/1000 + 'K')} / ${group.duration}M`;
             const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
-            let rowDueColor = !isPaid ? '#dc2626' : 'transparent';
-            let rowPaidColor = isPaid ? '#15803d' : 'transparent';
+            let rowDueColor = !isPaid ? '#b91c1c' : 'transparent';
+            let rowPaidColor = isPaid ? '#14532d' : 'transparent';
             let rowDueText = isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
             let rowPaidText = !isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
             
@@ -230,14 +230,14 @@ async function generatePdfReport() {
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 10px 4px; color: #111827; font-weight: 800; font-size: 11.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${member.name}</td>
+                    <td style="padding: 10px 4px; color: #000000; font-weight: 900; font-size: 12px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${member.name}</td>
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
                     </td>
                     <td style="padding: 10px 4px; color: #d97706; font-size: 11px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
-                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569;">${rowDueText}</td>
-                    <td style="padding: 10px 4px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
@@ -315,7 +315,7 @@ async function generatePdfReport() {
             let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
             
             // Constrain height to reserve 25mm for footer
-            const maxPdfHeight = A4_HEIGHT - 25;
+            const maxPdfHeight = A4_HEIGHT - 20;
             if (pdfHeight > maxPdfHeight) {
                 pdfWidth = (maxPdfHeight * pdfWidth) / pdfHeight;
                 pdfHeight = maxPdfHeight;
@@ -324,11 +324,12 @@ async function generatePdfReport() {
             
             if (idx > 0) doc.addPage();
             
-            doc.addImage(imgData, 'JPEG', xOffset, 5, pdfWidth, pdfHeight);
+            doc.addImage(imgData, 'JPEG', xOffset, 12, pdfWidth, pdfHeight);
             
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text(`Page ${idx + 1} of ${totalPagesExpected}`, A4_WIDTH / 2, A4_HEIGHT - 10, { align: 'center' });
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(150);
+            doc.text(`${idx + 1}`, A4_WIDTH / 2, 7, { align: 'center' });
         }
         
         doc.save(`${group.name.replace(/\s+/g, '_')}_Month_${monthNum}_Report.pdf`);
@@ -483,8 +484,8 @@ async function generateGlobalPdfReport(mode = 'download') {
         chunk.forEach((row, idx) => {
             const index = i + idx;
             const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
-            let rowDueColor = row.dueAmount > 0 ? '#dc2626' : 'transparent';
-            let rowPaidColor = row.paidAmount > 0 ? '#15803d' : 'transparent';
+            let rowDueColor = row.dueAmount > 0 ? '#b91c1c' : 'transparent';
+            let rowPaidColor = row.paidAmount > 0 ? '#14532d' : 'transparent';
             let rowDueText = row.dueAmount === 0 ? '' : `₹${formatNumberIndian(row.dueAmount)}`;
             let rowPaidText = row.paidAmount === 0 ? '' : `₹${formatNumberIndian(row.paidAmount)}`;
             
@@ -499,14 +500,14 @@ async function generateGlobalPdfReport(mode = 'download') {
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 10px 4px; color: #111827; font-weight: 800; font-size: 11.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${row.name}</td>
+                    <td style="padding: 10px 4px; color: #000000; font-weight: 900; font-size: 12px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${row.name}</td>
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                     </td>
                     <td style="padding: 10px 4px; color: #d97706; font-size: 11px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
-                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569;">${rowDueText}</td>
-                    <td style="padding: 10px 4px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
@@ -589,7 +590,7 @@ async function generateGlobalPdfReport(mode = 'download') {
             let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
             
             // Constrain height to reserve 25mm for footer
-            const maxPdfHeight = A4_HEIGHT - 25;
+            const maxPdfHeight = A4_HEIGHT - 20;
             if (pdfHeight > maxPdfHeight) {
                 pdfWidth = (maxPdfHeight * pdfWidth) / pdfHeight;
                 pdfHeight = maxPdfHeight;
@@ -598,11 +599,11 @@ async function generateGlobalPdfReport(mode = 'download') {
             
             if (idx > 0) doc.addPage();
             
-            doc.addImage(imgData, 'JPEG', xOffset, 5, pdfWidth, pdfHeight);
-            
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text(`Page ${idx + 1} of ${totalPagesExpected}`, A4_WIDTH / 2, A4_HEIGHT - 10, { align: 'center' });
+            doc.addImage(imgData, 'JPEG', xOffset, 12, pdfWidth, pdfHeight);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(150);
+            doc.text(`${idx + 1}`, A4_WIDTH / 2, 7, { align: 'center' });
         }
         
         if (mode === 'download') {
@@ -1872,5 +1873,6 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
