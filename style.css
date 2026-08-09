@@ -9889,3 +9889,47 @@ html, body, .app-device-shell {
         bottom: calc(72px + var(--safe-bottom, 0px)) !important;
     }
 }
+
+/* ═══════════════════════════════════════════════════
+   LANDING PAGE — MOBILE SCROLL FIX
+   .app-screen has overflow:hidden by default.
+   Override for #screen-landing so all sections
+   (features, steps, CTA) are reachable on mobile.
+   ═══════════════════════════════════════════════════ */
+
+/* Make the landing screen itself scrollable */
+#screen-landing {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+/* The scroller div fills the screen and scrolls */
+.landing-scroller {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;           /* At least full screen height */
+    padding-top: 0;
+    padding-bottom: 40px;       /* Breathing room at bottom */
+    box-sizing: border-box;
+}
+
+/* On mobile, relax the hero section so it doesn't lock to viewport */
+@media (max-width: 768px) {
+    .landing-hero-section {
+        min-height: unset !important;
+        height: auto !important;
+    }
+
+    /* Prevent hero from ever being clamped to viewport height */
+    .hero-split {
+        min-height: unset !important;
+        height: auto !important;
+    }
+
+    /* Ensure the scroller fills the container so overflow-y kicks in */
+    .landing-scroller {
+        flex: 1 0 auto;
+    }
+}
