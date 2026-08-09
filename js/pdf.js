@@ -170,7 +170,7 @@ async function generatePdfReport(paperSize = 'a4') {
     if (overlay) overlay.style.display = 'flex';
     
     // Dynamically calculate optimal rows per page based on current CSS/DOM
-    const ROWS_PER_PAGE = paperSize === 'custom' ? 12 : 25;
+    const ROWS_PER_PAGE = paperSize === 'custom' ? 20 : 25;
     let chunkPagesHtml = [];
     
     for (let i = 0; i < members.length; i += ROWS_PER_PAGE) {
@@ -223,19 +223,31 @@ async function generatePdfReport(paperSize = 'a4') {
                 ? `<span style="color: #2563eb; font-size: 13px; font-weight: 900;">${datePaidText}</span>`
                 : ``;
                 
+            let nameStyle = `padding: 10px 4px; color: #000000; font-weight: 900; font-size: 14.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;`;
+            let groupStyle = `padding: 10px 4px; color: #334155; font-size: 10.5px; font-weight: 700; text-align: center; border: 1px solid #475569;`;
+            let monthStyle = `padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;`;
+            let chitPillText = `${chitAmountStr} / ${chitModeStr}`;
+            
+            if (paperSize === 'custom') {
+                nameStyle = `padding: 10px 4px; color: #000000; font-weight: 900; font-size: 17px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;`;
+                groupStyle = `padding: 10px 4px; color: #000000; font-size: 11.5px; font-weight: 900; text-align: center; border: 1px solid #475569;`;
+                monthStyle = `padding: 10px 4px; color: #000000; font-size: 15px; font-weight: 900; text-align: center; border: 1px solid #475569;`;
+                chitPillText = `${chitAmountStr} / ${monthNum} m`;
+            }
+
             const chitPill = memberHasTakenChit
-                ? `<span style="background-color: #f3e8ff; color: #4c1d95; padding: 4px 10px; border-radius: 99px; font-size: 14.5px; font-weight: 900;">${chitAmountStr} / ${chitModeStr}</span>`
+                ? `<span style="background-color: #f3e8ff; color: #4c1d95; padding: 4px 10px; border-radius: 99px; font-size: 14.5px; font-weight: 900;">${chitPillText}</span>`
                 : ``;
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 10px 4px; color: #000000; font-weight: 900; font-size: 14.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${member.name}</td>
-                    <td style="padding: 10px 4px; color: #334155; font-size: 10.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${group.name}</td>
+                    <td style="${nameStyle}">${member.name}</td>
+                    <td style="${groupStyle}">${group.name}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
                     </td>
-                    <td style="padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;">${monthNum}</td>
+                    <td style="${monthStyle}">${monthNum}</td>
                     <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 16.5px; border: 1px solid #475569;">${rowDueText}</td>
                     
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
@@ -477,7 +489,7 @@ async function generateGlobalPdfReport(mode = 'download', paperSize = 'a4') {
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
     
-    const ROWS_PER_PAGE = paperSize === 'custom' ? 12 : 25;
+    const ROWS_PER_PAGE = paperSize === 'custom' ? 20 : 25;
     let chunkPagesHtml = [];
     
     allMembersFlattened.sort((a, b) => a.name.localeCompare(b.name));
@@ -498,19 +510,34 @@ async function generateGlobalPdfReport(mode = 'download', paperSize = 'a4') {
                 ? `<span style="color: #2563eb; font-size: 13px; font-weight: 900;">${row.paidDate}</span>`
                 : ``;
                 
+            let nameStyle = `padding: 10px 4px; color: #000000; font-weight: 900; font-size: 14.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;`;
+            let groupStyle = `padding: 10px 4px; color: #334155; font-size: 10.5px; font-weight: 700; text-align: center; border: 1px solid #475569;`;
+            let monthStyle = `padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;`;
+            let chitPillText = row.chitTakenDisplay;
+            
+            if (paperSize === 'custom') {
+                nameStyle = `padding: 10px 4px; color: #000000; font-weight: 900; font-size: 17px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;`;
+                groupStyle = `padding: 10px 4px; color: #000000; font-size: 11.5px; font-weight: 900; text-align: center; border: 1px solid #475569;`;
+                monthStyle = `padding: 10px 4px; color: #000000; font-size: 15px; font-weight: 900; text-align: center; border: 1px solid #475569;`;
+                if (row.hasTakenChit) {
+                    let chitAmtStr = row.chitTakenDisplay.split(' / ')[0];
+                    chitPillText = `${chitAmtStr} / ${row.monthNo} m`;
+                }
+            }
+
             const chitPill = row.hasTakenChit
-                ? `<span style="background-color: #f3e8ff; color: #4c1d95; padding: 4px 10px; border-radius: 99px; font-size: 14.5px; font-weight: 900;">${row.chitTakenDisplay}</span>`
+                ? `<span style="background-color: #f3e8ff; color: #4c1d95; padding: 4px 10px; border-radius: 99px; font-size: 14.5px; font-weight: 900;">${chitPillText}</span>`
                 : ``;
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
                     <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 10px 4px; color: #000000; font-weight: 900; font-size: 14.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${row.name}</td>
-                    <td style="padding: 10px 4px; color: #334155; font-size: 10.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${row.groupName}</td>
+                    <td style="${nameStyle}">${row.name}</td>
+                    <td style="${groupStyle}">${row.groupName}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                     </td>
-                    <td style="padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
+                    <td style="${monthStyle}">${row.monthNo}</td>
                     <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 16.5px; border: 1px solid #475569;">${rowDueText}</td>
                     
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
@@ -1880,6 +1907,7 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
 
