@@ -1,4 +1,4 @@
-// --- PDF Generation Logic ---
+﻿// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -436,7 +436,7 @@ async function generateGlobalPdfReport(mode = 'download') {
                 if (member.payments[i] && member.payments[i].payoutClaimed) {
                     hasTakenChit = true;
                     const payoutVal = group.payouts && group.payouts[i] !== undefined ? group.payouts[i] : 0;
-                    chitAmountStr = `â‚¹${formatNumberIndian(payoutVal)}`;
+                    chitAmountStr = `₹${formatNumberIndian(payoutVal)}`;
                     chitModeStr = member.payments[i].paymentMode ? member.payments[i].paymentMode.substring(0,1).toUpperCase() : 'C'; // e.g., 'G' for Gpay
                     break;
                 }
@@ -505,7 +505,7 @@ async function generateGlobalPdfReport(mode = 'download') {
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                     </td>
-                    <td style="padding: 10px 4px; color: #d97706; font-size: 11px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
+                    <td style="padding: 10px 4px; color: #9a3412; font-size: 13px; font-weight: 900; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
                     <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 13px; border: 1px solid #475569;">${rowDueText}</td>
                     
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
@@ -861,9 +861,9 @@ function generateYearlyPdfReport() {
             <tr style="background-color: ${rowBg};">
                 <td style="padding: 10px 4px; color: #334155; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${i}</td>
                 <td style="padding: 10px 4px; color: #0f172a; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">${monthNames[i-1]}</td>
-                <td style="padding: 10px 4px; text-align: right; color: #334155; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.target)}</td>
-                <td style="padding: 10px 4px; text-align: right; color: #16a34a; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.collected)}</td>
-                <td style="padding: 10px 4px; text-align: right; color: #dc2626; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.pending)}</td>
+                <td style="padding: 10px 4px; text-align: right; color: #334155; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.target)}</td>
+                <td style="padding: 10px 4px; text-align: right; color: #16a34a; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.collected)}</td>
+                <td style="padding: 10px 4px; text-align: right; color: #dc2626; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.pending)}</td>
                 <td style="padding: 10px 4px; text-align: center; color: #d97706; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">${colRate}%</td>
             </tr>
         `;
@@ -895,9 +895,9 @@ function generateYearlyPdfReport() {
     const now = new Date();
     document.getElementById('yearly-pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     
-    document.getElementById('yearly-pdf-target').textContent = `â‚¹${formatNumberIndian(totalTarget)}`;
-    document.getElementById('yearly-pdf-collected').textContent = `â‚¹${formatNumberIndian(totalCollected)}`;
-    document.getElementById('yearly-pdf-pending').textContent = `â‚¹${formatNumberIndian(totalPending)}`;
+    document.getElementById('yearly-pdf-target').textContent = `₹${formatNumberIndian(totalTarget)}`;
+    document.getElementById('yearly-pdf-collected').textContent = `₹${formatNumberIndian(totalCollected)}`;
+    document.getElementById('yearly-pdf-pending').textContent = `₹${formatNumberIndian(totalPending)}`;
 
     const percentage = totalTarget > 0 ? ((totalCollected / totalTarget) * 100).toFixed(1) : 0;
     document.getElementById('yearly-pdf-percentage').textContent = `${percentage}%`;
@@ -1074,8 +1074,8 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     takenMembers.forEach((item, index) => {
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
         
-        let dueAmountText = item.dueAmount > 0 ? `â‚¹${item.dueAmount.toLocaleString('en-IN')}` : '--';
-        let paidAmountText = item.paidAmount > 0 ? `â‚¹${item.paidAmount.toLocaleString('en-IN')}` : '--';
+        let dueAmountText = item.dueAmount > 0 ? `₹${item.dueAmount.toLocaleString('en-IN')}` : '--';
+        let paidAmountText = item.paidAmount > 0 ? `₹${item.paidAmount.toLocaleString('en-IN')}` : '--';
         let dueColor = item.dueAmount > 0 ? '#ef4444' : '#1e293b';
         let paidColor = item.paidAmount > 0 ? '#10b981' : '#1e293b';
         
@@ -1105,7 +1105,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         } else if (item.payoutMethod === 'gpay') {
             methodLetterHtml = ` <span style="color: #93c5fd; font-weight: 800;">/ G</span>`;
         }
-        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">â‚¹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
+        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
         
         let schemeAmountStr = '';
         if (item.chitAmount >= 100000) {
@@ -1188,7 +1188,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     document.getElementById('chit-pdf-gen-date').textContent = `Generated: ${dd}/${mmGen}/${yyyyGen} ${now.toLocaleTimeString()}`;
     
     document.getElementById('chit-pdf-total-members').textContent = takenMembers.length;
-    document.getElementById('chit-pdf-total-amount').textContent = `â‚¹${formatNumberIndian(totalPayoutAmount)}`;
+    document.getElementById('chit-pdf-total-amount').textContent = `₹${formatNumberIndian(totalPayoutAmount)}`;
 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
