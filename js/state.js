@@ -24,6 +24,7 @@ const State = {
 };
 
 let originalStateSnapshot = null;
+window.isCloudSyncComplete = false;
 
 // --- State Management & Storage ---
 function getStorageKey(key) {
@@ -636,6 +637,10 @@ async function loadState() {
             } else if (error) {
                 console.error("Supabase load error:", error);
             }
+            window.isCloudSyncComplete = true;
+        } else {
+            // Offline or no auth, consider local sync complete
+            window.isCloudSyncComplete = true;
         }
         
         if (ensureDefaultTemplates()) {
@@ -787,6 +792,10 @@ function setupRealtimeSync() {
 }
 
 async function commitState(skipBanner = false) {
+    if (window.supabaseClient && window.AuthState?.isAuthenticated && !window.isCloudSyncComplete) {
+        console.warn("Skipping commitState: Cloud sync incomplete, preventing accidental overwrite of cloud data.");
+        return;
+    }
     try {
         // Always save locally first for speed and offline fallback
         localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
