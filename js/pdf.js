@@ -375,12 +375,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     const now = new Date();
     document.getElementById('global-pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     
-    document.getElementById('global-pdf-target').textContent = `₹${formatNumberIndian(globalTarget)}`;
-    document.getElementById('global-pdf-collected').textContent = `₹${formatNumberIndian(globalCollected)}`;
-    document.getElementById('global-pdf-pending').textContent = `₹${formatNumberIndian(globalPending)}`;
 
-    const globalPercentage = globalTarget > 0 ? ((globalCollected / globalTarget) * 100).toFixed(1) : 0;
-    document.getElementById('global-pdf-percentage').textContent = `${globalPercentage}%`;
 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
