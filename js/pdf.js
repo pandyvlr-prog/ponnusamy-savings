@@ -115,8 +115,8 @@ async function generatePdfReport() {
         tr.style.backgroundColor = rowBg;
         tr.innerHTML = `
             <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-            <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: center; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
-            <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: center; border: 1px solid #475569;">${group.name}</td>
+            <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
+            <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
             <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
                 <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
             </td>
@@ -323,8 +323,8 @@ async function generateGlobalPdfReport(mode = 'download') {
         tableRowsHtml += `
             <tr style="background-color: ${rowBg};">
                 <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: center; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
-                <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.groupName}</td>
+                <td style="padding: 16px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
+                <td style="padding: 16px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
                 <td style="padding: 16px 10px; text-align: center; border: 1px solid #475569;">
                     <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                 </td>
