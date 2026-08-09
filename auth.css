@@ -121,7 +121,8 @@
 }
 @media (max-width: 768px) {
     #screen-landing {
-        overflow: hidden !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 }
 
