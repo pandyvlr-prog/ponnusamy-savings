@@ -76,15 +76,23 @@ async function calculateDynamicRowsPerPage(monthTitle) {
     const staticHeightPx = totalHeight - rowHeight;
     document.body.removeChild(wrapper);
 
-    // Scaling ratio used in rendering
-    const mmPerPx = 277 / 1400; 
+    // html2canvas uses scale: 2 for high-res output
+    const scaleFactor = 2;
+    
+    // Convert A4 height to pixels matching the scaled canvas output
+    // Assuming 96 DPI: 1 mm = 3.779527559px
+    const pxPerMm = 3.779527559 * scaleFactor;
     
     // Available height in mm (A4 height 210mm - 25mm footer reserved)
     const availableHeightMm = 210 - 25; 
-    const availableHeightPx = availableHeightMm / mmPerPx;
+    const availableHeightPx = availableHeightMm * pxPerMm;
     
-    const maxContentPx = availableHeightPx - staticHeightPx;
-    const maxRows = Math.floor(maxContentPx / rowHeight);
+    // Measure DOM elements and scale up to match canvas output
+    const scaledStaticHeightPx = staticHeightPx * scaleFactor;
+    const scaledRowHeightPx = rowHeight * scaleFactor;
+    
+    const maxContentPx = availableHeightPx - scaledStaticHeightPx;
+    const maxRows = Math.floor(maxContentPx / scaledRowHeightPx);
     
     return maxRows > 0 ? maxRows : 1;
 }
