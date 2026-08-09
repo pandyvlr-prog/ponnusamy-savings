@@ -1,4 +1,4 @@
-// --- PDF Generation Logic ---
+﻿// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -295,9 +295,9 @@ async function generatePdfReport(paperSize = 'a4') {
         let PAGE_WIDTH = 210;
         let PAGE_HEIGHT = 297;
         if (paperSize === 'custom') {
-            pdfFormat = [190, 155];
-            PAGE_WIDTH = 190;
-            PAGE_HEIGHT = 155;
+            pdfFormat = [155, 190];
+            PAGE_WIDTH = 155;
+            PAGE_HEIGHT = 190;
         }
         const doc = new jsPDF({ unit: 'mm', format: pdfFormat, orientation: 'portrait' });
         const totalPagesExpected = chunkPagesHtml.length || 1;
@@ -573,9 +573,9 @@ async function generateGlobalPdfReport(mode = 'download', paperSize = 'a4') {
         let PAGE_WIDTH = 210;
         let PAGE_HEIGHT = 297;
         if (paperSize === 'custom') {
-            pdfFormat = [190, 155];
-            PAGE_WIDTH = 190;
-            PAGE_HEIGHT = 155;
+            pdfFormat = [155, 190];
+            PAGE_WIDTH = 155;
+            PAGE_HEIGHT = 190;
         }
         const doc = new jsPDF({ unit: 'mm', format: pdfFormat, orientation: 'portrait' });
         const totalPagesExpected = chunkPagesHtml.length || 1;
@@ -1880,6 +1880,7 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
 
