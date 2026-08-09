@@ -1,5 +1,5 @@
 // Capture OAuth redirect state before Supabase consumes the URL
-const wasOAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+let wasOAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
 
 // Supabase Configuration
 const supabaseUrl = 'https://ypkmtmmmsjcdmnarkmhf.supabase.co';
@@ -177,6 +177,9 @@ async function initAuth() {
                     }, 500);
                 }
             }
+            
+            // Clear the flag so subsequent background session refreshes don't trigger the animation again
+            wasOAuthRedirect = false;
 
             navigateToLastScreen();
             updateProfileUI();
