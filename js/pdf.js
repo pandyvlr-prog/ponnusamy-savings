@@ -206,7 +206,7 @@ async function generatePdfReport() {
     if (overlay) overlay.style.display = 'flex';
     
     const wrapper = document.createElement('div');
-    wrapper.style.width = '1600px';
+    wrapper.style.width = '1900px';
     wrapper.innerHTML = pagesHtml;
     const htmlContent = wrapper.outerHTML;
 
@@ -214,8 +214,9 @@ async function generatePdfReport() {
         margin:       [10, 5, 15, 5],
         filename:     `${group.name.replace(/\s+/g, '_')}_Month_${monthNum}_Report.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 1900 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak:    { mode: ['css', 'legacy'] }
     };
 
     try {
@@ -461,7 +462,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     if (overlay) overlay.style.display = 'flex';
     
     const wrapper = document.createElement('div');
-    wrapper.style.width = '1600px';
+    wrapper.style.width = '1900px';
     wrapper.innerHTML = pagesHtml;
     const htmlContent = wrapper.outerHTML;
 
@@ -469,8 +470,9 @@ async function generateGlobalPdfReport(mode = 'download') {
         margin:       [10, 5, 15, 5],
         filename:     `Global_Report_${monthName}_${selYear}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 1900 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak:    { mode: ['css', 'legacy'] }
     };
 
     try {
