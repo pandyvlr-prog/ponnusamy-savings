@@ -1211,7 +1211,9 @@ function setupEventListeners() {
     const btnQuickDashboardReport = document.getElementById('btn-quick-dashboard-report');
     const quickReportMenu = document.getElementById('quick-report-dropdown-menu');
     const btnQuickReportDownload = document.getElementById('btn-quick-report-download');
+    const btnQuickReportDownloadCustom = document.getElementById('btn-quick-report-download-custom');
     const btnQuickReportShare = document.getElementById('btn-quick-report-share');
+    const btnQuickReportShareCustom = document.getElementById('btn-quick-report-share-custom');
     
     if (btnQuickDashboardReport && quickReportMenu) {
         btnQuickDashboardReport.addEventListener('click', (e) => {
@@ -1310,7 +1312,7 @@ function setupEventListeners() {
                 if (activeFilter === 'chit_taken') {
                     await generateChitTakenPdfReport(monthKey, mode);
                 } else {
-                    await generateGlobalPdfReport(mode);
+                    await generateGlobalPdfReport(mode, paperSize);
                 }
                 
                 if (btnElement) {
@@ -1334,10 +1336,16 @@ function setupEventListeners() {
         }
         
         if (btnQuickReportDownload) {
-            btnQuickReportDownload.addEventListener('click', function() { handleQuickReport('download', this); });
+            btnQuickReportDownload.addEventListener('click', function() { handleQuickReport('download', this, 'a4'); });
+        }
+        if (btnQuickReportDownloadCustom) {
+            btnQuickReportDownloadCustom.addEventListener('click', function() { handleQuickReport('download', this, 'custom'); });
         }
         if (btnQuickReportShare) {
-            btnQuickReportShare.addEventListener('click', function() { handleQuickReport('share', this); });
+            btnQuickReportShare.addEventListener('click', function() { handleQuickReport('share', this, 'a4'); });
+        }
+        if (btnQuickReportShareCustom) {
+            btnQuickReportShareCustom.addEventListener('click', function() { handleQuickReport('share', this, 'custom'); });
         }
     }
 
@@ -7148,4 +7156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 300);
 });
+
+
 
