@@ -1,4 +1,4 @@
-﻿// --- PDF Generation Logic ---
+// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -94,7 +94,7 @@ async function calculateDynamicRowsPerPage(monthTitle) {
     const maxContentPx = availableHeightPx - scaledStaticHeightPx;
     const maxRows = Math.floor(maxContentPx / scaledRowHeightPx);
     
-    return maxRows > 0 ? maxRows : 1;
+    return maxRows > 2 ? maxRows - 2 : 1;
 }
 async function generatePdfReport() {
     const group = State.groups.find(g => g.id === State.selectedGroupId);
@@ -316,10 +316,7 @@ async function generatePdfReport() {
             
             // Constrain height to reserve 25mm for footer
             const maxPdfHeight = A4_HEIGHT - 20;
-            if (pdfHeight > maxPdfHeight) {
-                pdfWidth = (maxPdfHeight * pdfWidth) / pdfHeight;
-                pdfHeight = maxPdfHeight;
-            }
+            // Removed shrinking logic so width is always exactly A4_WIDTH - 20
             const xOffset = (A4_WIDTH - pdfWidth) / 2;
             
             if (idx > 0) doc.addPage();
@@ -592,10 +589,7 @@ async function generateGlobalPdfReport(mode = 'download') {
             
             // Constrain height to reserve 25mm for footer
             const maxPdfHeight = A4_HEIGHT - 20;
-            if (pdfHeight > maxPdfHeight) {
-                pdfWidth = (maxPdfHeight * pdfWidth) / pdfHeight;
-                pdfHeight = maxPdfHeight;
-            }
+            // Removed shrinking logic so width is always exactly A4_WIDTH - 20
             const xOffset = (A4_WIDTH - pdfWidth) / 2;
             
             if (idx > 0) doc.addPage();
@@ -1874,6 +1868,7 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
 
