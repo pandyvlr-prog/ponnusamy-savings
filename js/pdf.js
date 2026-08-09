@@ -1,4 +1,4 @@
-﻿// --- PDF Generation Logic ---
+// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -143,7 +143,7 @@ async function generatePdfReport() {
             if (member.payments[m] && member.payments[m].payoutClaimed) {
                 hasTakenChit = true;
                 const pVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : 0;
-                chitAmountStr = `â‚¹${formatNumberIndian(pVal)}`;
+                chitAmountStr = `₹${formatNumberIndian(pVal)}`;
                 chitModeStr = member.payments[m].paymentMode ? member.payments[m].paymentMode.substring(0,1).toUpperCase() : 'C';
                 break;
             }
