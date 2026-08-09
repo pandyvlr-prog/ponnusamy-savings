@@ -671,14 +671,14 @@ body {
 }
 
 .premium-member-card {
-    background: #ffffff;
+    background: var(--bg-surface);
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 0;
     box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
     position: relative;
-    color: #111827;
+    color: var(--text-main);
     cursor: pointer;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     z-index: 1;

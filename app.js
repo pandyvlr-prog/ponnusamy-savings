@@ -4128,7 +4128,7 @@ function filterAndRenderMembers() {
                 </div>
 
                 <div style="display:flex;gap:6px;margin-bottom:14px;">
-                    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:#f9fafb;">
+                    <div style="flex:1;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--bg-surface-elevated);">
                         <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i>
                         </div>
@@ -4146,14 +4146,14 @@ function filterAndRenderMembers() {
                             <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${group.currentMonth}</div>
                         </div>
                     </div>
-                    <div style="flex:0 0 auto;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;background:#f0fdf4;display:flex;flex-direction:column;justify-content:center;">
+                    <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;background:var(--bg-surface-elevated);display:flex;flex-direction:column;justify-content:center;">
                         <div style="font-size:0.5rem;color:#6b7280;font-weight:700;white-space:nowrap;">SCHEME</div>
                         <div style="font-size:0.7rem;font-weight:900;color:#059669;white-space:nowrap;">${schemeLabelStr}</div>
                     </div>
                 </div>
 
-                <div style="border:1px solid #f0f0f0;border-radius:12px;overflow:hidden;background:#fff;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-surface-elevated);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
                             <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
@@ -4162,7 +4162,7 @@ function filterAndRenderMembers() {
                         </div>
                         <span style="font-size:0.85rem;font-weight:800;color:#dc2626;">&#8377;${formatNumberIndian(dueAmountDisplay)}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
                             <div style="width:24px;height:24px;border-radius:50%;background:${paidAmountColor === '#059669' ? '#ecfdf5' : (paidAmountColor === '#d97706' ? '#fffbeb' : '#f3f4f6')};color:${paidAmountColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i data-lucide="wallet" style="width:11px;height:11px;"></i>
@@ -4171,7 +4171,7 @@ function filterAndRenderMembers() {
                         </div>
                         <span style="font-size:0.85rem;font-weight:800;color:${paidAmountColor};">&#8377;${formatNumberIndian(paidAmountDisplay)}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
                             <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
@@ -4180,7 +4180,7 @@ function filterAndRenderMembers() {
                         </div>
                         <span style="font-size:0.85rem;font-weight:800;color:#2563eb;">${paidDateStr}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
                             <div style="width:24px;height:24px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
@@ -4189,7 +4189,7 @@ function filterAndRenderMembers() {
                         </div>
                         <span>${statusBadgeHTML}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0f0f0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
                         <div style="display:flex;align-items:center;gap:8px;">
                             <div style="width:24px;height:24px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i data-lucide="coins" style="width:11px;height:11px;"></i>
