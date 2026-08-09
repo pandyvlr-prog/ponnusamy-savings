@@ -107,7 +107,7 @@ async function generatePdfReport() {
     document.getElementById('pdf-export-modal-backdrop').classList.remove('active');
     
     // Prepare Data
-    const members = State.members.filter(m => m.groupId === group.id);
+    const members = State.members.filter(m => m.groupId === group.id).sort((a, b) => a.name.localeCompare(b.name));
     let collected = 0;
     let pending = 0;
     let paidCount = 0;
@@ -391,7 +391,7 @@ async function generateGlobalPdfReport(mode = 'download') {
 
     activeGroupsForMonth.forEach(item => {
         const { group, relMonthNum } = item;
-        const members = State.members.filter(m => m.groupId === group.id);
+        const members = State.members.filter(m => m.groupId === group.id).sort((a, b) => a.name.localeCompare(b.name));
         
         const installmentVal = group.installments && group.installments[relMonthNum] !== undefined 
             ? group.installments[relMonthNum] 
