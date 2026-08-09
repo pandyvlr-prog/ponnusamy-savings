@@ -1,4 +1,4 @@
-// --- PDF Generation Logic ---
+﻿// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -170,7 +170,7 @@ async function generatePdfReport() {
     if (overlay) overlay.style.display = 'flex';
     
     // Dynamically calculate optimal rows per page based on current CSS/DOM
-    const ROWS_PER_PAGE = await calculateDynamicRowsPerPage(monthTitle);
+    const ROWS_PER_PAGE = 25;
     let chunkPagesHtml = [];
     
     for (let i = 0; i < members.length; i += ROWS_PER_PAGE) {
@@ -220,7 +220,7 @@ async function generatePdfReport() {
             let rowPaidText = !isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
             
             const dateBox = datePaidText !== '--' 
-                ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${datePaidText}</div>`
+                ? `<span style="color: #2563eb; font-size: 13px; font-weight: 900;">${datePaidText}</span>`
                 : ``;
                 
             const chitPill = memberHasTakenChit
@@ -241,7 +241,7 @@ async function generatePdfReport() {
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
-                        <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
+                        <div style="width: 28px; height: 28px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                     </td>
                 </tr>
             `;
@@ -471,7 +471,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
     
-    const ROWS_PER_PAGE = await calculateDynamicRowsPerPage(monthTitle);
+    const ROWS_PER_PAGE = 25;
     let chunkPagesHtml = [];
     
     allMembersFlattened.sort((a, b) => a.name.localeCompare(b.name));
@@ -489,7 +489,7 @@ async function generateGlobalPdfReport(mode = 'download') {
             let rowPaidText = row.paidAmount === 0 ? '' : `₹${formatNumberIndian(row.paidAmount)}`;
             
             const dateBox = row.paidDate !== '--' 
-                ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${row.paidDate}</div>`
+                ? `<span style="color: #2563eb; font-size: 13px; font-weight: 900;">${row.paidDate}</span>`
                 : ``;
                 
             const chitPill = row.hasTakenChit
@@ -510,7 +510,7 @@ async function generateGlobalPdfReport(mode = 'download') {
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
                     <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
-                        <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
+                        <div style="width: 28px; height: 28px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                     </td>
                 </tr>
             `;
@@ -1868,6 +1868,7 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
 
 
