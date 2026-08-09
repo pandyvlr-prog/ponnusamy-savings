@@ -92,7 +92,7 @@ async function generatePdfReport() {
     const monthTitle = `${monthNameDisplay} ${dateObj.getFullYear()}`;
     
     // We will chunk members to avoid page break issues
-    const ROWS_PER_PAGE = 20;
+    const ROWS_PER_PAGE = 15;
     let chunkPagesHtml = [];
     
     for (let i = 0; i < members.length; i += ROWS_PER_PAGE) {
@@ -385,7 +385,7 @@ async function generateGlobalPdfReport(mode = 'download') {
     const monthName = dateObj.toLocaleString('default', { month: 'long' });
     const monthTitle = `${monthName} ${selYear}`;
 
-    const ROWS_PER_PAGE = 20;
+    const ROWS_PER_PAGE = 15;
     let chunkPagesHtml = [];
     
     for (let i = 0; i < allMembersFlattened.length; i += ROWS_PER_PAGE) {
