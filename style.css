@@ -9926,3 +9926,11 @@ html, body, .app-device-shell {
         flex: 1 0 auto;
     }
 }
+
+@media (max-width: 767px) {
+    /* Match content background to surface to hide app-container's grey empty space */
+    #screen-dashboard .screen-content,
+    #screen-pnl .pnl-screen-content {
+        background-color: var(--bg-surface);
+    }
+}
