@@ -35,15 +35,15 @@ async function calculateDynamicRowsPerPage(monthTitle) {
             </div>
             <div style="height: 2px; background-color: #d97706; margin: 0 30px 10px 30px;"></div>
             <div style="padding: 0 30px 20px 30px; background: white;">
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; border: 1px solid #111827;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11.5px; border: 1px solid #111827;">
                     <thead>
                         <tr style="background-color: #111827;">
-                            <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Test</th>
+                            <th style="padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Test</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr id="pdf-dynamic-row" style="background-color: #ffffff;">
-                            <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">Test Row Data</td>
+                            <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">Test Row Data</td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,7 +52,7 @@ async function calculateDynamicRowsPerPage(monthTitle) {
     `;
 
     const wrapper = document.createElement('div');
-    wrapper.style.width = '1400px';
+    wrapper.style.width = '1000px';
     wrapper.style.position = 'absolute';
     wrapper.style.left = '-9999px';
     wrapper.style.top = '0';
@@ -81,10 +81,10 @@ async function calculateDynamicRowsPerPage(monthTitle) {
     
     // Convert A4 height to pixels matching the scaled canvas output
     // Assuming 96 DPI: 1 mm = 3.779527559px
-    const pxPerMm = 3.779527559 * scaleFactor;
+    const pxPerMm = (1000 / 190) * scaleFactor; // Using 1000px mapped to 190mm
     
     // Available height in mm (A4 height 210mm - 25mm footer reserved)
-    const availableHeightMm = 210 - 25; 
+    const availableHeightMm = 297 - 25; 
     const availableHeightPx = availableHeightMm * pxPerMm;
     
     // Measure DOM elements and scale up to match canvas output
@@ -143,7 +143,7 @@ async function generatePdfReport() {
             if (member.payments[m] && member.payments[m].payoutClaimed) {
                 hasTakenChit = true;
                 const pVal = group.payouts && group.payouts[m] !== undefined ? group.payouts[m] : 0;
-                chitAmountStr = `₹${formatNumberIndian(pVal)}`;
+                chitAmountStr = `â‚¹${formatNumberIndian(pVal)}`;
                 chitModeStr = member.payments[m].paymentMode ? member.payments[m].paymentMode.substring(0,1).toUpperCase() : 'C';
                 break;
             }
@@ -206,7 +206,7 @@ async function generatePdfReport() {
                 if (member.payments[j] && member.payments[j].payoutClaimed) {
                     memberHasTakenChit = true;
                     const payoutVal = group.payouts && group.payouts[j] !== undefined ? group.payouts[j] : 0;
-                    chitAmountStr = `₹${formatNumberIndian(payoutVal)}`;
+                    chitAmountStr = `â‚¹${formatNumberIndian(payoutVal)}`;
                     chitModeStr = member.payments[j].paymentMode ? member.payments[j].paymentMode.substring(0,1).toUpperCase() : 'C';
                     break;
                 }
@@ -216,8 +216,8 @@ async function generatePdfReport() {
             const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
             let rowDueColor = !isPaid ? '#dc2626' : 'transparent';
             let rowPaidColor = isPaid ? '#15803d' : 'transparent';
-            let rowDueText = isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
-            let rowPaidText = !isPaid ? '' : `₹${formatNumberIndian(installmentVal)}`;
+            let rowDueText = isPaid ? '' : `â‚¹${formatNumberIndian(installmentVal)}`;
+            let rowPaidText = !isPaid ? '' : `â‚¹${formatNumberIndian(installmentVal)}`;
             
             const dateBox = datePaidText !== '--' 
                 ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${datePaidText}</div>`
@@ -229,18 +229,18 @@ async function generatePdfReport() {
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
-                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 12px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${member.name}</td>
-                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
+                    <td style="padding: 10px 4px; color: #111827; font-weight: 800; font-size: 11.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${member.name}</td>
+                    <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 800; text-align: left; border: 1px solid #475569;">${group.name}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${schemeName}</span>
                     </td>
-                    <td style="padding: 12px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
-                    <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
-                    <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 10px 4px; color: #d97706; font-size: 11px; font-weight: 800; text-align: center; border: 1px solid #475569;">${monthNum}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                     </td>
                 </tr>
@@ -260,19 +260,19 @@ async function generatePdfReport() {
                     </div>
                     <div style="height: 2px; background-color: #d97706; margin: 0 30px 10px 30px;"></div>
                     <div style="padding: 0 30px 20px 30px; background: white;">
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; border: 1px solid #111827;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11.5px; border: 1px solid #111827;">
                             <thead>
                                 <tr style="background-color: #111827;">
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Month</th>
-                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
-                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
+                                    <th style="width: 4%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">S.No</th>
+                                    <th style="width: 17%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Name</th>
+                                    <th style="width: 17%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Chit Group</th>
+                                    <th style="width: 13%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Scheme</th>
+                                    <th style="width: 6%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Month</th>
+                                    <th style="width: 11%; padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Due Amount</th>
+                                    <th style="width: 11%; padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Paid Amount</th>
+                                    <th style="width: 10%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Paid Date</th>
+                                    <th style="width: 8%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Chit Taken</th>
+                                    <th style="width: 3%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -291,14 +291,14 @@ async function generatePdfReport() {
     try {
         await loadHtml2Pdf();
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
-        const A4_WIDTH = 297;
-        const A4_HEIGHT = 210;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        const A4_WIDTH = 210;
+        const A4_HEIGHT = 297;
         const totalPagesExpected = chunkPagesHtml.length || 1;
 
         for (let idx = 0; idx < chunkPagesHtml.length; idx++) {
             const wrapper = document.createElement('div');
-            wrapper.style.width = '1400px';
+            wrapper.style.width = '1000px';
             wrapper.style.position = 'absolute';
             wrapper.style.left = '-9999px';
             wrapper.style.top = '0';
@@ -435,7 +435,7 @@ async function generateGlobalPdfReport(mode = 'download') {
                 if (member.payments[i] && member.payments[i].payoutClaimed) {
                     hasTakenChit = true;
                     const payoutVal = group.payouts && group.payouts[i] !== undefined ? group.payouts[i] : 0;
-                    chitAmountStr = `₹${formatNumberIndian(payoutVal)}`;
+                    chitAmountStr = `â‚¹${formatNumberIndian(payoutVal)}`;
                     chitModeStr = member.payments[i].paymentMode ? member.payments[i].paymentMode.substring(0,1).toUpperCase() : 'C'; // e.g., 'G' for Gpay
                     break;
                 }
@@ -485,8 +485,8 @@ async function generateGlobalPdfReport(mode = 'download') {
             const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
             let rowDueColor = row.dueAmount > 0 ? '#dc2626' : 'transparent';
             let rowPaidColor = row.paidAmount > 0 ? '#15803d' : 'transparent';
-            let rowDueText = row.dueAmount === 0 ? '' : `₹${formatNumberIndian(row.dueAmount)}`;
-            let rowPaidText = row.paidAmount === 0 ? '' : `₹${formatNumberIndian(row.paidAmount)}`;
+            let rowDueText = row.dueAmount === 0 ? '' : `â‚¹${formatNumberIndian(row.dueAmount)}`;
+            let rowPaidText = row.paidAmount === 0 ? '' : `â‚¹${formatNumberIndian(row.paidAmount)}`;
             
             const dateBox = row.paidDate !== '--' 
                 ? `<div style="border: 1px solid #3b82f6; color: #2563eb; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; font-weight: 700;">${row.paidDate}</div>`
@@ -498,18 +498,18 @@ async function generateGlobalPdfReport(mode = 'download') {
 
             chunkRowsHtml += `
                 <tr style="background-color: ${rowBg};">
-                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
-                    <td style="padding: 12px 10px; color: #111827; font-weight: 800; font-size: 13px; text-align: left; text-transform: uppercase; border: 1px solid #475569;">${row.name}</td>
-                    <td style="padding: 12px 10px; color: #111827; font-size: 13px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #475569;">${index + 1}</td>
+                    <td style="padding: 10px 4px; color: #111827; font-weight: 800; font-size: 11.5px; text-align: left; text-transform: uppercase; word-break: break-word; white-space: normal; border: 1px solid #475569;">${row.name}</td>
+                    <td style="padding: 10px 4px; color: #111827; font-size: 11.5px; font-weight: 800; text-align: left; border: 1px solid #475569;">${row.groupName}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <span style="border: 1px solid #94a3b8; background: #ffffff; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #111827;">${row.scheme}</span>
                     </td>
-                    <td style="padding: 12px 10px; color: #d97706; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
-                    <td style="padding: 12px 10px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569;">${rowDueText}</td>
-                    <td style="padding: 12px 10px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 14px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
-                    <td style="padding: 12px 10px; text-align: center; border: 1px solid #475569;">
+                    <td style="padding: 10px 4px; color: #d97706; font-size: 11px; font-weight: 800; text-align: center; border: 1px solid #475569;">${row.monthNo}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowDueColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569;">${rowDueText}</td>
+                    <td style="padding: 10px 4px; text-align: right; color: ${rowPaidColor}; font-weight: 900; font-size: 11px; border: 1px solid #475569; width: 65px;">${rowPaidText}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${dateBox}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">${chitPill}</td>
+                    <td style="padding: 10px 4px; text-align: center; border: 1px solid #475569;">
                         <div style="width: 24px; height: 24px; border: 2.5px solid #64748b; border-radius: 6px; margin: 0 auto;"></div>
                     </td>
                 </tr>
@@ -529,24 +529,24 @@ async function generateGlobalPdfReport(mode = 'download') {
                     </div>
                     <div style="height: 2px; background-color: #d97706; margin: 0 30px 10px 30px;"></div>
                     <div style="padding: 0 30px 20px 30px; background: white;">
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; border: 1px solid #111827;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11.5px; border: 1px solid #111827;">
                             <thead>
                                 <tr style="background-color: #111827;">
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">S.No</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Name</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Group</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Scheme</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">
+                                    <th style="width: 4%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">S.No</th>
+                                    <th style="width: 17%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Name</th>
+                                    <th style="width: 17%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Chit Group</th>
+                                    <th style="width: 13%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Scheme</th>
+                                    <th style="width: 6%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">
                                         <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                             Month
                                         </div>
                                     </th>
-                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Due Amount</th>
-                                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Amount</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Paid Date</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;">Chit Taken</th>
-                                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #334155;"></th>
+                                    <th style="width: 11%; padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Due Amount</th>
+                                    <th style="width: 11%; padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Paid Amount</th>
+                                    <th style="width: 10%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Paid Date</th>
+                                    <th style="width: 8%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;">Chit Taken</th>
+                                    <th style="width: 3%; padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #334155;"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -564,15 +564,15 @@ async function generateGlobalPdfReport(mode = 'download') {
     try {
         await loadHtml2Pdf();
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
-        const A4_WIDTH = 297;
-        const A4_HEIGHT = 210;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        const A4_WIDTH = 210;
+        const A4_HEIGHT = 297;
         const totalPagesExpected = chunkPagesHtml.length || 1;
         const filename = `Global_Report_${monthName}_${selYear}.pdf`;
 
         for (let idx = 0; idx < chunkPagesHtml.length; idx++) {
             const wrapper = document.createElement('div');
-            wrapper.style.width = '1400px';
+            wrapper.style.width = '1000px';
             wrapper.style.position = 'absolute';
             wrapper.style.left = '-9999px';
             wrapper.style.top = '0';
@@ -859,12 +859,12 @@ function generateYearlyPdfReport() {
         
         tableRowsHtml += `
             <tr style="background-color: ${rowBg};">
-                <td style="padding: 12px 10px; color: #334155; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${i}</td>
-                <td style="padding: 12px 10px; color: #0f172a; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">${monthNames[i-1]}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #334155; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.target)}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #16a34a; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.collected)}</td>
-                <td style="padding: 12px 10px; text-align: right; color: #dc2626; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">₹${formatNumberIndian(d.pending)}</td>
-                <td style="padding: 12px 10px; text-align: center; color: #d97706; font-weight: 800; font-size: 13px; border: 1px solid #d1d5db;">${colRate}%</td>
+                <td style="padding: 10px 4px; color: #334155; font-size: 11.5px; font-weight: 700; text-align: center; border: 1px solid #d1d5db;">${i}</td>
+                <td style="padding: 10px 4px; color: #0f172a; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">${monthNames[i-1]}</td>
+                <td style="padding: 10px 4px; text-align: right; color: #334155; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.target)}</td>
+                <td style="padding: 10px 4px; text-align: right; color: #16a34a; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.collected)}</td>
+                <td style="padding: 10px 4px; text-align: right; color: #dc2626; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">â‚¹${formatNumberIndian(d.pending)}</td>
+                <td style="padding: 10px 4px; text-align: center; color: #d97706; font-weight: 800; font-size: 11.5px; border: 1px solid #d1d5db;">${colRate}%</td>
             </tr>
         `;
     }
@@ -877,12 +877,12 @@ function generateYearlyPdfReport() {
         <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; background: white;">
             <thead>
                 <tr style="background-color: #111827;">
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Month No.</th>
-                    <th style="padding: 15px 10px; text-align: left; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Month Name</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Target Amount</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Collected Amount</th>
-                    <th style="padding: 15px 10px; text-align: right; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Pending Amount</th>
-                    <th style="padding: 15px 10px; text-align: center; color: #ffffff; font-weight: 800; font-size: 12px; border: 1px solid #d1d5db;">Collection %</th>
+                    <th style="padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Month No.</th>
+                    <th style="padding: 12px 4px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Month Name</th>
+                    <th style="padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Target Amount</th>
+                    <th style="padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Collected Amount</th>
+                    <th style="padding: 12px 4px; text-align: right; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Pending Amount</th>
+                    <th style="padding: 12px 4px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border: 1px solid #d1d5db;">Collection %</th>
                 </tr>
             </thead>
             <tbody>
@@ -895,9 +895,9 @@ function generateYearlyPdfReport() {
     const now = new Date();
     document.getElementById('yearly-pdf-gen-date').textContent = `Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     
-    document.getElementById('yearly-pdf-target').textContent = `₹${formatNumberIndian(totalTarget)}`;
-    document.getElementById('yearly-pdf-collected').textContent = `₹${formatNumberIndian(totalCollected)}`;
-    document.getElementById('yearly-pdf-pending').textContent = `₹${formatNumberIndian(totalPending)}`;
+    document.getElementById('yearly-pdf-target').textContent = `â‚¹${formatNumberIndian(totalTarget)}`;
+    document.getElementById('yearly-pdf-collected').textContent = `â‚¹${formatNumberIndian(totalCollected)}`;
+    document.getElementById('yearly-pdf-pending').textContent = `â‚¹${formatNumberIndian(totalPending)}`;
 
     const percentage = totalTarget > 0 ? ((totalCollected / totalTarget) * 100).toFixed(1) : 0;
     document.getElementById('yearly-pdf-percentage').textContent = `${percentage}%`;
@@ -913,7 +913,7 @@ function generateYearlyPdfReport() {
         filename:     `Yearly_Report_${selYear}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     html2pdf().set(opt).from(htmlContent).save().then(() => {
@@ -1074,8 +1074,8 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     takenMembers.forEach((item, index) => {
         const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
         
-        let dueAmountText = item.dueAmount > 0 ? `₹${item.dueAmount.toLocaleString('en-IN')}` : '--';
-        let paidAmountText = item.paidAmount > 0 ? `₹${item.paidAmount.toLocaleString('en-IN')}` : '--';
+        let dueAmountText = item.dueAmount > 0 ? `â‚¹${item.dueAmount.toLocaleString('en-IN')}` : '--';
+        let paidAmountText = item.paidAmount > 0 ? `â‚¹${item.paidAmount.toLocaleString('en-IN')}` : '--';
         let dueColor = item.dueAmount > 0 ? '#ef4444' : '#1e293b';
         let paidColor = item.paidAmount > 0 ? '#10b981' : '#1e293b';
         
@@ -1092,7 +1092,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
             } else if (item.paymentMethodThisMonth === 'cash') {
                 methodSuffix = ` <span style="color: #fca5a5; font-weight: 800; font-size: 10px;">/ C</span>`;
             }
-            markHtml = `<span style="background: #ecfdf5; color: #10b981; border: 1px solid #10b981; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">✓ PAID${methodSuffix}</span>`;
+            markHtml = `<span style="background: #ecfdf5; color: #10b981; border: 1px solid #10b981; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">âœ“ PAID${methodSuffix}</span>`;
         } else if (item.paidAmount > 0) {
             markHtml = `<span style="background: #fffbeb; color: #d97706; border: 1px solid #d97706; padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block;">PARTIAL</span>`;
         } else {
@@ -1105,7 +1105,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         } else if (item.payoutMethod === 'gpay') {
             methodLetterHtml = ` <span style="color: #93c5fd; font-weight: 800;">/ G</span>`;
         }
-        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">₹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
+        let chitTakenHtml = `<span style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 99px; display: inline-block;">â‚¹${item.payoutVal.toLocaleString('en-IN')}${methodLetterHtml}</span>`;
         
         let schemeAmountStr = '';
         if (item.chitAmount >= 100000) {
@@ -1134,15 +1134,15 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         
         tableRowsHtml += `
             <tr style="background-color: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 12px 6px; color: #334155; font-size: 12px; font-weight: 700; text-align: center; border-right: 1px solid #e2e8f0;">${index + 1}</td>
-                <td style="padding: 12px 6px; color: #0f172a; font-weight: 800; font-size: 12px; text-transform: uppercase; border-right: 1px solid #e2e8f0;">${item.name}${newCustomerBadgeHtml}</td>
+                <td style="padding: 12px 6px; color: #334155; font-size: 11px; font-weight: 700; text-align: center; border-right: 1px solid #e2e8f0;">${index + 1}</td>
+                <td style="padding: 12px 6px; color: #0f172a; font-weight: 800; font-size: 11px; text-transform: uppercase; word-break: break-word; white-space: normal; border-right: 1px solid #e2e8f0;">${item.name}${newCustomerBadgeHtml}</td>
                 <td style="padding: 12px 6px; color: #64748b; font-size: 11px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">${groupNameHtml}</td>
                 <td style="padding: 12px 6px; text-align: center; border-right: 1px solid #e2e8f0;">
                     <span style="border: 1px solid #e2e8f0; background: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #1e293b;">${schemeText}</span>
                 </td>
-                <td style="padding: 12px 6px; text-align: center; font-weight: 800; font-size: 14px; color: #d9b327; border-right: 1px solid #e2e8f0;">${item.relativeMonthNum}</td>
-                <td style="padding: 12px 6px; text-align: left; color: ${dueColor}; font-weight: 800; font-size: 13px; border-right: 1px solid #e2e8f0;">${dueAmountText}</td>
-                <td style="padding: 12px 6px; text-align: left; color: ${paidColor}; font-weight: 800; font-size: 13px; border-right: 1px solid #e2e8f0;">${paidAmountText}</td>
+                <td style="padding: 12px 6px; text-align: center; font-weight: 800; font-size: 11px; color: #d9b327; border-right: 1px solid #e2e8f0;">${item.relativeMonthNum}</td>
+                <td style="padding: 12px 6px; text-align: left; color: ${dueColor}; font-weight: 800; font-size: 11.5px; border-right: 1px solid #e2e8f0;">${dueAmountText}</td>
+                <td style="padding: 12px 6px; text-align: left; color: ${paidColor}; font-weight: 800; font-size: 11.5px; border-right: 1px solid #e2e8f0;">${paidAmountText}</td>
                 <td style="padding: 12px 6px; text-align: center; border-right: 1px solid #e2e8f0;">${paidDateHtml}</td>
                 <td style="padding: 12px 6px; text-align: center; border-right: 1px solid #e2e8f0;">${markHtml}</td>
                 <td style="padding: 12px 6px; text-align: center;">${chitTakenHtml}</td>
@@ -1158,16 +1158,16 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         <table style="width: 100%; border-collapse: collapse; border: 2px solid #111827; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <thead>
                 <tr style="background-color: #d9b327;">
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">S.No</th>
-                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Name</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Chit Group</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Scheme</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">📅</th>
-                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Due Amount</th>
-                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Paid Amount</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Paid Date</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase;">Mark</th>
-                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; text-transform: uppercase;">Chit Taken</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">S.No</th>
+                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Name</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Chit Group</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Scheme</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">ðŸ“…</th>
+                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Due Amount</th>
+                    <th style="padding: 12px 6px; text-align: left; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Paid Amount</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Paid Date</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; border-right: 1px solid #b7951d; text-transform: uppercase; word-break: break-word; white-space: normal;">Mark</th>
+                    <th style="padding: 12px 6px; text-align: center; color: #ffffff; font-weight: 800; font-size: 11px; text-transform: uppercase; word-break: break-word; white-space: normal;">Chit Taken</th>
                 </tr>
             </thead>
             <tbody>
@@ -1188,7 +1188,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
     document.getElementById('chit-pdf-gen-date').textContent = `Generated: ${dd}/${mmGen}/${yyyyGen} ${now.toLocaleTimeString()}`;
     
     document.getElementById('chit-pdf-total-members').textContent = takenMembers.length;
-    document.getElementById('chit-pdf-total-amount').textContent = `₹${formatNumberIndian(totalPayoutAmount)}`;
+    document.getElementById('chit-pdf-total-amount').textContent = `â‚¹${formatNumberIndian(totalPayoutAmount)}`;
 
     const overlay = document.getElementById('pdf-loading-overlay');
     if (overlay) overlay.style.display = 'flex';
@@ -1198,7 +1198,7 @@ function generateChitTakenPdfReport(monthKeyOverride = null, mode = 'download') 
         filename:     `Chit_Taken_Report_${monthName}_${selYear}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     const container = document.getElementById('chit-taken-pdf-template-container');
@@ -1324,7 +1324,7 @@ function initSidebar() {
             if (labelEl) {
                 if (State.dashboardDateRangeFrom && State.dashboardDateRangeTo) {
                     const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
-                    labelEl.textContent = `${fmtDate(State.dashboardDateRangeFrom)} – ${fmtDate(State.dashboardDateRangeTo)}`;
+                    labelEl.textContent = `${fmtDate(State.dashboardDateRangeFrom)} â€“ ${fmtDate(State.dashboardDateRangeTo)}`;
                     btnOpenDateRange.style.backgroundColor = 'var(--primary-glow)';
                     btnOpenDateRange.style.color = 'var(--primary)';
                     btnOpenDateRange.style.borderColor = 'var(--primary)';
@@ -1543,8 +1543,8 @@ function initSidebar() {
                         let opSymbol = '';
                         if(action === 'add') opSymbol = '+';
                         if(action === 'subtract') opSymbol = '-';
-                        if(action === 'multiply') opSymbol = '×';
-                        if(action === 'divide') opSymbol = '÷';
+                        if(action === 'multiply') opSymbol = 'Ã—';
+                        if(action === 'divide') opSymbol = 'Ã·';
                         
                         calcHistory.textContent = `${previousInput} ${opSymbol}`;
                         break;
@@ -1570,7 +1570,7 @@ function initSidebar() {
     let activeNoteId = null;
     let saveTimeout = null;
 
-    // Load initial notes — localStorage is PRIMARY source of truth.
+    // Load initial notes â€” localStorage is PRIMARY source of truth.
     // Cloud data is only used as a one-time seed when localStorage has nothing.
     function loadNotes() {
         // Always try localStorage first
@@ -1582,14 +1582,14 @@ function initSidebar() {
                 if (Array.isArray(parsed)) {
                     currentNotes = parsed;
                     renderNotesList();
-                    return; // done — localStorage wins
+                    return; // done â€” localStorage wins
                 }
             } catch (e) {
                 console.warn('notepad localStorage parse error, falling back to cloud', e);
             }
         }
 
-        // Only reach here if localStorage is empty/corrupt — try cloud as one-time seed
+        // Only reach here if localStorage is empty/corrupt â€” try cloud as one-time seed
         const cloudRaw = window.AuthState?.currentUser?.user_metadata?.notepad_content;
         if (cloudRaw) {
             try {
@@ -1719,15 +1719,15 @@ function initSidebar() {
     function saveNotesState() {
         const payload = JSON.stringify(currentNotes);
 
-        // IMMEDIATELY persist to localStorage — this is the source of truth
+        // IMMEDIATELY persist to localStorage â€” this is the source of truth
         localStorage.setItem('pms_workspace_notepad', payload);
 
-        // Show saving indicator (debounced — purely cosmetic)
+        // Show saving indicator (debounced â€” purely cosmetic)
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
             notepadStatus.textContent = 'Saving...';
             setTimeout(() => {
-                notepadStatus.textContent = '✓ Saved';
+                notepadStatus.textContent = 'âœ“ Saved';
                 setTimeout(() => {
                     if (notepadStatus.textContent.includes('Saved')) {
                         notepadStatus.textContent = '';
@@ -1814,7 +1814,7 @@ function initSidebar() {
         });
     });
 
-    // Rich Text / Format Toolbar — supports both old .rt-btn and new .fmt-btn
+    // Rich Text / Format Toolbar â€” supports both old .rt-btn and new .fmt-btn
     document.querySelectorAll('.rt-btn, .fmt-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1852,7 +1852,7 @@ function initSidebar() {
 
             if (!title && !body.trim()) {
                 if (typeof showNotification === 'function') {
-                    showNotification('Note is empty — nothing to share!', 'error');
+                    showNotification('Note is empty â€” nothing to share!', 'error');
                 }
                 return;
             }
@@ -1872,4 +1872,5 @@ function initSidebar() {
 
 // Initialize on script load (delay to ensure DOM and auth are ready)
 setTimeout(initSidebar, 1000);
+
 
