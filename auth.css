@@ -1,4 +1,4 @@
-/* AUTHENTICATION & SETTINGS CSS */
+﻿/* AUTHENTICATION & SETTINGS CSS */
 
 /* --- Avatar & Dropdown --- */
 .avatar-btn {
@@ -99,7 +99,7 @@
     position: relative;
     padding-bottom: 20px;
 }
-/* Login and landing have their own full-page layouts — no extra padding-bottom */
+/* Login and landing have their own full-page layouts â€” no extra padding-bottom */
 #screen-login.app-screen,
 #screen-landing.app-screen,
 #screen-dashboard.app-screen,
@@ -127,7 +127,7 @@
     overflow-y: auto;
     background: #050505;
 }
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
     #screen-landing {
         overflow: hidden !important;
     }
@@ -207,7 +207,7 @@
     align-items: center;
     width: 100%;
 }
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
     .landing-scroller {
         flex: 1 0 auto;
         height: auto;
@@ -358,7 +358,7 @@
     .hero-3d-illustration { max-width: 80%; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
     .landing-hero-section {
         min-height: 0;
         flex: 1;
@@ -1363,4 +1363,5 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
     opacity: 0 !important;
     transition: opacity 0.6s ease-in-out !important;
 }
+
 

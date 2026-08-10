@@ -154,7 +154,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     max-width: 1000px !important;
     width: 100%;
 }
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
     /* ========== MOBILE COMPLETE REDESIGN ========== */
     #ic-tenure-selector {
         justify-content: flex-start !important;
@@ -1204,7 +1204,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 
 /* SIDEBAR TABLET FIT & SETTINGS ICON VISIBILITY FIX */
-@media (min-width: 769px) {
+@media (min-width: 769px) and (orientation: landscape), (min-width: 1025px) {
     .desktop-sidebar {
         height: 100% !important;
         display: flex !important;
@@ -1275,7 +1275,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 </style>
     <style>
         .toolbar-toggle-btn { display: none; }
-        @media (max-width: 767px) {
+        @media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
             .toolbar-toggle-btn { display: flex !important; }
         }
     </style>
@@ -4104,6 +4104,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
+
 
 
 

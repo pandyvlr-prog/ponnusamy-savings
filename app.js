@@ -1,4 +1,4 @@
-﻿// --- Initializing App ---
+// --- Initializing App ---
 document.addEventListener('DOMContentLoaded', () => {
     // [PHASE 4] Debounce lucide.createIcons to prevent main thread freezing
     if (typeof lucide !== 'undefined' && typeof window.lucideOriginalCreateIcons === 'undefined') {
@@ -220,7 +220,8 @@ function setupEventListeners() {
         const card = dashboardHeader.closest('.dashboard-card');
         const savedState = localStorage.getItem('pms_dashboard_collapsed');
         if (card) {
-            if (savedState === 'true' || (savedState === null && window.innerWidth <= 768)) {
+            const _isMobLayout = window.innerWidth <= 768 || (window.innerWidth <= 1024 && window.matchMedia("(orientation: portrait)").matches);
+            if (savedState === 'true' || (savedState === null && _isMobLayout)) {
                 card.classList.add('collapsed');
             } else if (savedState === 'false') {
                 card.classList.remove('collapsed');
@@ -2311,7 +2312,7 @@ function _renderDashboard() {
         });
         
         mNames.forEach((monthName, idx) => {
-            const isMobile = window.innerWidth < 768;
+            const isMobile = window.innerWidth < 768 || (window.innerWidth <= 1024 && window.matchMedia("(orientation: portrait)").matches);
             const card = document.createElement('div');
             card.className = 'wizard-month-card';
             card.style.cssText = 'background:#ffffff;border:1px solid #f0f0f0;border-radius:16px;padding:16px;margin-bottom:0;box-shadow:0 4px 20px rgba(0,0,0,0.04);position:relative;color:#111827;cursor:pointer;';
@@ -4162,7 +4163,7 @@ function filterAndRenderMembers() {
             : `<span style="font-weight:700;color:var(--text-main);">---</span>`;
 
         // Detect mobile once
-        const isMobile = window.innerWidth < 768;
+        const isMobile = window.innerWidth < 768 || (window.innerWidth <= 1024 && window.matchMedia("(orientation: portrait)").matches);
 
         // Desktop layout (simple row layout)
         const desktopHTML = `
@@ -7156,6 +7157,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 300);
 });
+
+// P&L Drawer Functions
+window.closePnLMonthDrawer = function() {
+    const backdrop = document.getElementById('pnl-drawer-backdrop');
+    const drawer = document.getElementById('pnl-month-drawer');
+    if (drawer) {
+        drawer.style.transform = 'translateY(100%)';
+    }
+    setTimeout(() => {
+        if (backdrop) backdrop.style.display = 'none';
+    }, 300);
+};
+
+window.openPnLMonthDrawer = function() {
+    const backdrop = document.getElementById('pnl-drawer-backdrop');
+    const drawer = document.getElementById('pnl-month-drawer');
+    if (backdrop) backdrop.style.display = 'flex';
+    if (drawer) {
+        requestAnimationFrame(() => {
+            drawer.style.transform = 'translateY(0)';
+        });
+    }
+};
 
 
 
