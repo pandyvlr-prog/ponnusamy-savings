@@ -397,6 +397,19 @@ function setupAuthListeners() {
     // Mock Google Login
     document.getElementById('google-login-btn').addEventListener('click', async (e) => {
         e.preventDefault();
+        
+        // Immediate green effect
+        const btn = document.getElementById('google-login-btn');
+        const originalHTML = btn.innerHTML;
+        if (btn) {
+            btn.innerHTML = '<svg class="success-tick" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            btn.classList.add('btn-success-anim');
+            btn.style.border = 'none';
+        }
+
+        // Wait a short time for the animation
+        await new Promise(r => setTimeout(r, 600));
+
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -406,6 +419,11 @@ function setupAuthListeners() {
         if (error) {
             console.error("Google Login Error:", error.message);
             if (typeof showNotification === 'function') showNotification('Google login failed', 'error');
+            if (btn) {
+                btn.classList.remove('btn-success-anim');
+                btn.innerHTML = originalHTML;
+                btn.style.border = '';
+            }
         }
     });
 
