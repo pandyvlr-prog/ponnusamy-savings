@@ -4091,7 +4091,42 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <div class="pdf-progress-bar-fill"></div>
             </div>
         </div>
-    </div>
+    <script>
+        (function() {
+            var lastScreen = localStorage.getItem('pms_last_active_screen');
+            var targetScreenId = lastScreen || 'screen-dashboard';
+            var target = document.getElementById(targetScreenId);
+            
+            if (!target) {
+                targetScreenId = 'screen-dashboard';
+                target = document.getElementById(targetScreenId);
+            }
+            
+            if (targetScreenId === 'screen-landing') {
+                document.body.setAttribute('data-app-state', 'landing');
+            } else if (targetScreenId === 'screen-login' || targetScreenId === 'screen-register') {
+                document.body.setAttribute('data-app-state', 'login');
+            } else {
+                document.body.setAttribute('data-app-state', 'dashboard');
+            }
+            
+            if (target) {
+                target.classList.add('active');
+            }
+            
+            var NO_HEADER_SCREENS = ['screen-landing', 'screen-login', 'screen-register'];
+            var appContainer = document.querySelector('.app-container');
+            if (appContainer) {
+                if (NO_HEADER_SCREENS.indexOf(targetScreenId) !== -1) {
+                    appContainer.classList.add('hide-global-header');
+                    document.body.classList.add('hide-navigation');
+                } else {
+                    appContainer.classList.remove('hide-global-header');
+                    document.body.classList.remove('hide-navigation');
+                }
+            }
+        })();
+    </script>
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
