@@ -7158,5 +7158,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
 });
 
+// P&L Drawer Functions
+window.closePnLMonthDrawer = function() {
+    const backdrop = document.getElementById('pnl-drawer-backdrop');
+    const drawer = document.getElementById('pnl-month-drawer');
+    if (drawer) {
+        drawer.style.transform = 'translateY(100%)';
+    }
+    setTimeout(() => {
+        if (backdrop) backdrop.style.display = 'none';
+    }, 300);
+};
+
+window.openPnLMonthDrawer = function() {
+    const backdrop = document.getElementById('pnl-drawer-backdrop');
+    const drawer = document.getElementById('pnl-month-drawer');
+    if (backdrop) backdrop.style.display = 'flex';
+    if (drawer) {
+        requestAnimationFrame(() => {
+            drawer.style.transform = 'translateY(0)';
+        });
+    }
+};
+
 
 
