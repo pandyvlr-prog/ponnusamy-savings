@@ -3592,7 +3592,7 @@ function renderDashboardMembersList(searchQuery = '') {
                             <i data-lucide="phone" style="width: 16px; height: 16px;"></i>
                         </button>
                         <button class="contact-wa-btn" data-member-id="${item.member.id}" title="WhatsApp" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #dcfce7; border: 1px solid #bbf7d0; color: #22c55e; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.884 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -3655,14 +3655,6 @@ function renderDashboardMembersList(searchQuery = '') {
             mobileGroupNameHtml = `<div style="color: var(--green-dark); font-weight: 900; font-size: 0.85rem; line-height: 1.2;">${start}</div><div style="color: var(--red-dark); font-weight: 900; font-size: 0.85rem; line-height: 1.2;">- ${end}</div>`;
         }
 
-        let mobilePayoutBadgeHTML = '';
-        if (item.hasTakenPayout) {
-            let payoutMethodText = item.payoutMethod ? item.payoutMethod.substring(0,1).toUpperCase() : 'C';
-            mobilePayoutBadgeHTML = `<span style="background: var(--bg-surface-elevated, #faf5ff); color: #9333ea; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">₹${item.payoutVal.toLocaleString('en-IN')} / ${payoutMethodText}</span>`;
-        } else {
-            mobilePayoutBadgeHTML = `<span style="font-weight:700;color:var(--text-main);">---</span>`;
-        }
-
         row.innerHTML = `
             <span class="desktop-only-col" style="font-weight: 700; color: var(--text-secondary); font-size: 0.8rem; text-align: center;">${index + 1}</span>
             <span class="desktop-only-col member-name" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); text-align: left; text-transform: uppercase; padding-left: 8px;">${item.member.name}${newCustomerBadgeHtml}</span>
@@ -3685,88 +3677,116 @@ function renderDashboardMembersList(searchQuery = '') {
             <div class="mobile-card-view dashboard-mobile-card" style="background:#f8f9fa;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.07);padding:0;">
 
                 <!-- Name header -->
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #f0f0f0;">
+                <div class="mobile-card-header" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="color:#d97706;font-size:0.85rem;font-weight:900;">${index + 1}</span>
                         <h3 class="member-name" style="font-size:1rem;font-weight:900;color:#111827;margin:0;text-transform:uppercase;">${item.member.name}</h3>
                         ${item.member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.55rem;font-weight:800;padding:1px 5px;border-radius:3px;margin-left:4px;">NEW</span>' : ''}
                     </div>
-                    <div style="display:flex;align-items:center;">
+                    <div style="display:flex;align-items:center;gap:8px;">
                         ${contactMenuHtml ? contactMenuHtml : `<div style="background:#ecfdf5;color:#059669;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="user" style="width:13px;height:13px;"></i></div>`}
+                        <button class="mobile-expand-btn" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#f3f4f6;border:none;color:#4b5563;cursor:pointer;transition:background 0.2s;"><i data-lucide="chevron-down" style="width:18px;height:18px;transition:transform 0.3s ease;pointer-events:none;"></i></button>
                     </div>
                 </div>
 
-                <!-- Info boxes: Group | Month | Scheme -->
-                <div style="display:grid;grid-template-columns:1.1fr 0.9fr 1fr;gap:6px;padding:8px;border-bottom:1px solid #f0f0f0;">
-                    <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
-                        <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
-                        <div>${mobileGroupNameHtml}</div>
+                <div class="mobile-card-details" style="display:none;">
+                    <!-- Info boxes: Group | Month | Scheme -->
+                    <div style="display:grid;grid-template-columns:1.1fr 0.9fr 1fr;gap:6px;padding:8px;border-bottom:1px solid #f0f0f0;">
+                        <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
+                            <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">GROUP</div>
+                            <div>${mobileGroupNameHtml}</div>
+                        </div>
+                        <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffbeb;text-align:center;">
+                            <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">MONTH</div>
+                            <div style="font-size:1.4rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
+                        </div>
+                        <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
+                            <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME</div>
+                            <div style="font-size:0.82rem;font-weight:900;color:#b45309;line-height:1.2;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
+                        </div>
                     </div>
-                    <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffbeb;text-align:center;">
-                        <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">MONTH</div>
-                        <div style="font-size:1.4rem;font-weight:900;color:#d97706;line-height:1;">${item.relativeMonthNum}</div>
-                    </div>
-                    <div style="border:1px solid #000000;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;">
-                        <div style="font-size:0.45rem;color:#111827;font-weight:700;text-transform:uppercase;margin-bottom:2px;">SCHEME</div>
-                        <div style="font-size:0.82rem;font-weight:900;color:#b45309;line-height:1.2;">${schemeAmountStr}<br>/ ${item.group.duration}M</div>
-                    </div>
-                </div>
 
-                <!-- Vertical metric rows -->
-                <div>
-                    <!-- Due Amount -->
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
+                    <!-- Vertical metric rows -->
+                    <div>
+                        <!-- Due Amount -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:26px;height:26px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.72rem;color:#dc2626;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Due Amount</span>
                             </div>
-                            <span style="font-size:0.72rem;color:#dc2626;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Due Amount</span>
+                            <span style="font-size:0.95rem;font-weight:900;color:#dc2626;">&#8377;${item.dueAmount.toLocaleString('en-IN')}</span>
                         </div>
-                        <span style="font-size:0.95rem;font-weight:900;color:#dc2626;">&#8377;${formatNumberIndian(item.dueAmount)}</span>
-                    </div>
-                    <!-- Paid Amount -->
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:${item.paidAmount > 0 ? '#ecfdf5' : '#f9fafb'};color:${item.paidAmount > 0 ? '#059669' : '#9ca3af'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="wallet" style="width:11px;height:11px;"></i>
+                        <!-- Paid Amount -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:26px;height:26px;border-radius:50%;background:${item.paidAmount > 0 ? '#ecfdf5' : '#f9fafb'};color:${item.paidAmount > 0 ? '#059669' : '#9ca3af'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="wallet" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.72rem;color:${item.paidAmount > 0 ? '#059669' : '#9ca3af'};font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Paid Amount</span>
                             </div>
-                            <span style="font-size:0.72rem;color:${item.paidAmount > 0 ? '#059669' : '#9ca3af'};font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Paid Amount</span>
+                            <span style="font-size:0.95rem;font-weight:900;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};">&#8377;${item.paidAmount.toLocaleString('en-IN')}</span>
                         </div>
-                        <span style="font-size:0.95rem;font-weight:900;color:${item.paidAmount > 0 ? (item.currentMonthPaid ? '#059669' : '#d97706') : '#9ca3af'};">&#8377;${formatNumberIndian(item.paidAmount)}</span>
-                    </div>
-                    <!-- Paid Date -->
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
+                        <!-- Paid Date -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:26px;height:26px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Paid Date</span>
                             </div>
-                            <span style="font-size:0.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Paid Date</span>
+                            <span style="font-size:0.88rem;font-weight:900;color:#2563eb;">${paidDateText || '--'}</span>
                         </div>
-                        <span style="font-size:0.88rem;font-weight:900;color:#2563eb;">${paidDateText || '--'}</span>
-                    </div>
-                    <!-- Status -->
-                    <div class="mobile-status-row" style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;cursor:${item.isApplicable ? 'pointer' : 'default'};">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#f0fdf4;color:#16a34a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+                        <!-- Status -->
+                        <div class="mobile-status-row" style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid #f5f5f5;cursor:${item.isApplicable ? 'pointer' : 'default'};">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:26px;height:26px;border-radius:50%;background:#f0fdf4;color:#16a34a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Status</span>
                             </div>
-                            <span style="font-size:0.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Status</span>
+                            <span>${statusBadgePill}</span>
                         </div>
-                        <span>${statusBadgePill}</span>
-                    </div>
-                    <!-- Payout -->
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:26px;height:26px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="coins" style="width:11px;height:11px;"></i>
+                        <!-- Payout -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:26px;height:26px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="coins" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Payout</span>
                             </div>
-                            <span style="font-size:0.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;">Payout</span>
+                            <span style="font-size:0.88rem;font-weight:900;color:#9333ea;">${item.hasTakenPayout ? `&#8377;${item.payoutVal.toLocaleString('en-IN')} / ${item.payoutMethod ? item.payoutMethod.substring(0,1).toUpperCase() : 'C'}` : '--'}</span>
                         </div>
-                        <span style="font-size:0.88rem;font-weight:900;color:#9333ea;">${item.hasTakenPayout ? `&#8377;${item.payoutVal.toLocaleString('en-IN')} / ${item.payoutMethod ? item.payoutMethod.substring(0,1).toUpperCase() : 'C'}` : '--'}</span>
                     </div>
-                </div>
+                </div> <!-- /mobile-card-details -->
             </div>
         `;
+
+        // Mobile expand listener
+        const expandHeader = row.querySelector('.mobile-card-header');
+        const detailsContainer = row.querySelector('.mobile-card-details');
+        if (expandHeader && detailsContainer) {
+            expandHeader.addEventListener('click', (e) => {
+                // Prevent toggle if clicked on contact buttons
+                if (e.target.closest('.contact-action-wrapper')) {
+                    return;
+                }
+                
+                const isExpanded = detailsContainer.style.display === 'block';
+                const btnIcon = row.querySelector('.mobile-expand-btn svg') || row.querySelector('.mobile-expand-btn i');
+                
+                if (isExpanded) {
+                    detailsContainer.style.display = 'none';
+                    expandHeader.style.borderBottom = '1px solid #f0f0f0';
+                    if (btnIcon) btnIcon.style.transform = 'rotate(0deg)';
+                } else {
+                    detailsContainer.style.display = 'block';
+                    expandHeader.style.borderBottom = 'none';
+                    if (btnIcon) btnIcon.style.transform = 'rotate(180deg)';
+                }
+            });
+        }
 
         if (item.isApplicable) {
             // Mobile listener
