@@ -4891,6 +4891,11 @@ body:not([data-theme="light"]) .icon-blend-img {
     border: 1px solid rgba(220, 38, 38, 0.4);
     box-shadow: 0 8px 28px rgba(220, 38, 38, 0.22);
 }
+.pnl-card-orange {
+    background: linear-gradient(145deg, #9c4200, #c45200, #e66000);
+    border: 1px solid rgba(230, 96, 0, 0.4);
+    box-shadow: 0 8px 28px rgba(230, 96, 0, 0.22);
+}
 
 .pnl-card-label {
     font-size: 0.72rem;
@@ -5009,6 +5014,7 @@ body:not([data-theme="light"]) .icon-blend-img {
 .pnl-val-green { color: var(--green-dark) !important; }
 .pnl-val-purple { color: #7c3aed !important; }
 .pnl-val-red { color: var(--red-dark) !important; }
+.pnl-val-orange { color: #ea580c !important; }
 .pnl-val-muted { color: var(--text-secondary) !important; }
 .pnl-empty-row td {
     text-align: center;

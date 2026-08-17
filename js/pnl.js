@@ -1,8 +1,26 @@
 // --- Profit and Loss (P&L) Implementation ---
 
+function getActualCurrentMonthNum(group) {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0-11
+    
+    const startYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
+    const startMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
+    
+    const diffMonths = (currentYear - startYear) * 12 + (currentMonth - startMonth);
+    let actualMonthNum = diffMonths + 1;
+    
+    if (actualMonthNum < 1) actualMonthNum = 1;
+    if (actualMonthNum > group.duration) actualMonthNum = group.duration;
+    
+    return actualMonthNum;
+}
+
 function calculateGroupPnL(group) {
     const activeMembers = State.members.filter(m => m.groupId === group.id && m.status === 'Active');
     const memberCount = activeMembers.length;
+    const actualMonthNum = getActualCurrentMonthNum(group);
     let expectedCollection = 0;
     let expectedPayout = 0;
     
@@ -28,11 +46,11 @@ function calculateGroupPnL(group) {
                 } else {
                     const partial = payment.partialPaid || 0;
                     realizedCollection += partial;
-                    if (m <= group.currentMonth) {
+                    if (m <= actualMonthNum) {
                         arrears += (instAmount - partial);
                     }
                 }
-            } else if (m <= group.currentMonth) {
+            } else if (m <= actualMonthNum) {
                 // Not paid, and month is past or current -> Arrears!
                 arrears += instAmount;
             }
@@ -85,7 +103,7 @@ function renderPnLDashboard() {
             }
             
             const netClass = pnl.netProfit >= 0 ? 'pnl-val-green' : 'pnl-val-red';
-            const arrearsClass = pnl.arrears > 0 ? 'pnl-val-red' : 'pnl-val-muted';
+            const arrearsClass = pnl.arrears > 0 ? 'pnl-val-orange' : 'pnl-val-muted';
             
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -173,11 +191,12 @@ function openPnLMonthDrawer(groupId) {
 
     let totalCollected = 0, totalPayout = 0, totalArrears = 0;
     let rowsHtml = '';
+    const actualMonthNum = getActualCurrentMonthNum(group);
 
     for (let m = 1; m <= group.duration; m++) {
         let monthCollected = 0, monthPayout = 0, paidCount = 0;
         let monthArrears = 0;
-        const isCurrentOrPast = m <= group.currentMonth;
+        const isCurrentOrPast = m <= actualMonthNum;
         
         const instAmountVal = (group.installments && group.installments[m] !== undefined) ? group.installments[m] : (group.monthlyInstallment || baseInstAmount);
         const payoutVal = (group.payouts && group.payouts[m] !== undefined) ? group.payouts[m] : group.chitAmount;
@@ -217,7 +236,7 @@ function openPnLMonthDrawer(groupId) {
             '<td style="padding:12px 16px;text-align:right;white-space:nowrap;">' + paidCount + '/' + memberCount + '</td>' +
             '<td style="padding:12px 16px;text-align:right;color:#10b981;white-space:nowrap;">&#8377;' + formatNumberIndian(monthCollected) + '</td>' +
             '<td style="padding:12px 16px;text-align:right;color:#9333ea;white-space:nowrap;">' + (monthPayout > 0 ? '&#8377;' + formatNumberIndian(monthPayout) : '&mdash;') + '</td>' +
-            '<td style="padding:12px 16px;text-align:right;color:#ef4444;white-space:nowrap;">' + (monthArrears > 0 ? '&#8377;' + formatNumberIndian(monthArrears) : '&mdash;') + '</td>' +
+            '<td style="padding:12px 16px;text-align:right;color:#ea580c;white-space:nowrap;">' + (monthArrears > 0 ? '&#8377;' + formatNumberIndian(monthArrears) : '&mdash;') + '</td>' +
             '</tr>';
     }
 
@@ -226,7 +245,7 @@ function openPnLMonthDrawer(groupId) {
         '<td colspan="3" style="padding:14px 16px;font-weight:900;text-align:left;font-size:0.9rem;letter-spacing:0.05em;border-top:2px solid #a07a00;border-bottom-left-radius:18px;">TOTAL</td>' +
         '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#064e3b;border-top:2px solid #a07a00;">&#8377;' + formatNumberIndian(totalCollected) + '</td>' +
         '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#4c1d95;border-top:2px solid #a07a00;">&#8377;' + formatNumberIndian(totalPayout) + '</td>' +
-        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#7f1d1d;border-top:2px solid #a07a00;border-bottom-right-radius:18px;">' + (totalArrears > 0 ? '&#8377;' + formatNumberIndian(totalArrears) : '&mdash;') + '</td>' +
+        '<td style="padding:14px 16px;text-align:right;font-weight:900;color:#9a3412;border-top:2px solid #a07a00;border-bottom-right-radius:18px;">' + (totalArrears > 0 ? '&#8377;' + formatNumberIndian(totalArrears) : '&mdash;') + '</td>' +
         '</tr>';
 
     const isDark = document.body.getAttribute('data-theme') !== 'light';
