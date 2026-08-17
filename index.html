@@ -1303,7 +1303,37 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     <!-- Static Theme Background -->
     <div id="app-bg"></div>
 
-    <!-- Loading Screen Removed -->
+    <!-- Premium Splash Screen -->
+    <div id="pms-splash-screen" style="position: fixed; inset: 0; background: var(--bg-primary, #0f0f14); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;">
+        <!-- Animated Logo -->
+        <div class="splash-logo-container" style="position: relative; width: 100px; height: 100px; margin-bottom: 24px;">
+            <div style="position: absolute; inset: 0; border-radius: 24px; background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); opacity: 0.2; filter: blur(20px); animation: splashPulse 2s infinite;"></div>
+            <img src="logo-light.jpg" alt="PMS" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px; position: relative; z-index: 2; border: 1px solid rgba(212,175,55,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+        </div>
+        
+        <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; margin: 0 0 8px 0; background: linear-gradient(135deg, #ffffff 10%, #D4AF37 50%, #ffffff 90%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: icShine 4s linear infinite;">Ponnusamy Savings</h1>
+        
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.95rem; font-weight: 500; margin: 0 0 32px 0;">Premium Chit Management</p>
+        
+        <!-- Premium Loader -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #D4AF37; animation: splashBounce 1.4s infinite ease-in-out both; animation-delay: -0.32s;"></div>
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #D4AF37; animation: splashBounce 1.4s infinite ease-in-out both; animation-delay: -0.16s;"></div>
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #D4AF37; animation: splashBounce 1.4s infinite ease-in-out both;"></div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes splashPulse {
+            0% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 0.2; }
+        }
+        @keyframes splashBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
 
     <!-- App Shell Wrapper (Centered Mockup Frame on Desktop, Full Screen on Mobile) -->
     <div class="app-device-shell">
@@ -1637,7 +1667,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             </div>
                             <span id="dashboard-target-collection-badge" style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #ffffff; padding: 8px 20px; border-radius: 10px; font-size: 1.05rem; font-weight: 900; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #4338ca; box-shadow: 0 6px 16px rgba(30, 58, 138, 0.6), inset 0 1px 1px rgba(255,255,255,0.2); letter-spacing: 0.5px; text-transform: uppercase; flex-shrink: 0;">
                                 <i data-lucide="trophy" style="width: 22px; height: 22px; color: #ffd700; flex-shrink: 0; vertical-align: middle; filter: drop-shadow(0 0 4px rgba(255,215,0,0.4));"></i>
-                                <span id="dashboard-target-collection-text">Target: â‚¹0</span>
+                                <span id="dashboard-target-collection-text">Target: ₹0</span>
                             </span>
                         </div>
                         <div class="metrics-grid dashboard-metrics-content" id="dashboard-metrics-grid" style="margin-top: 16px;">
@@ -1646,7 +1676,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--green-dark);"><path d="M15 15.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/><path d="M12 14v3"/><path d="M5.6 10A11.1 11.1 0 0 1 12 7c3.3 0 6.4 1.3 8.4 3.6A7.8 7.8 0 0 1 22 16c0 3.3-2.7 6-6 6H8c-3.3 0-6-2.7-6-6 0-2.3 1-4.4 2.6-5.8Z"/><path d="M10 7V4c0-1.1.9-2 2-2h0c1.1 0 2 .9 2 2v3"/></svg>
                                     Collected
                                 </span>
-                                <span class="metric-value text-green" id="stat-total-collected">â‚¹0</span>
+                                <span class="metric-value text-green" id="stat-total-collected">₹0</span>
                                 <span id="stat-summary-collected-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--green-dark);">(0)</span>
                                 <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(48,209,88,0.2); padding-top: 8px;">
                                     <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%) !important; border: 1px solid #7c2d12; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
@@ -1658,11 +1688,11 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                                 <circle cx="5" cy="8" r="1.5" fill="#15803d"/>
                                                 <circle cx="19" cy="8" r="1.5" fill="#15803d"/>
                                                 <circle cx="12" cy="8" r="3.5" fill="#15803d"/>
-                                                <text x="12" y="10.8" font-family="sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">â‚¹</text>
+                                                <text x="12" y="10.8" font-family="sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">₹</text>
                                             </svg>
                                             CASH
                                         </div>
-                                        <span id="stat-summary-collected-cash" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">â‚¹0</span>
+                                        <span id="stat-summary-collected-cash" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
                                     </div>
                                     <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important; border: 1px solid #1e3a8a; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
                                         <div style="display: flex; align-items: center; gap: 6px; color: #bfdbfe !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
@@ -1675,7 +1705,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                             </svg>
                                             GPAY
                                         </div>
-                                        <span id="stat-summary-collected-gpay" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">â‚¹0</span>
+                                        <span id="stat-summary-collected-gpay" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
                                     </div>
                                 </div>
                             </div>
@@ -1684,7 +1714,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--red-dark);"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
                                     Pending
                                 </span>
-                                <span class="metric-value text-red" id="stat-total-pending">â‚¹0</span>
+                                <span class="metric-value text-red" id="stat-total-pending">₹0</span>
                                 <span id="stat-summary-pending-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--red-dark);">(0)</span>
                             </div>
                             <div class="metric-item" style="border-left: 3px solid #9333ea; background-color: rgba(147, 51, 234, 0.08); position: relative;">
@@ -1692,7 +1722,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #9333ea;"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
                                     Chit Taken
                                 </span>
-                                <span class="metric-value" style="color: #9333ea;" id="stat-summary-chit-taken-amount">â‚¹0</span>
+                                <span class="metric-value" style="color: #9333ea;" id="stat-summary-chit-taken-amount">₹0</span>
                                 <span id="stat-summary-chit-taken-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: #9333ea;">(0)</span>
                                 <div id="stat-surplus-deficit-container" style="margin-top: auto; margin: auto -10px -10px -10px; padding: 12px 10px; font-size: 0.95rem; font-weight: 800; display: flex; justify-content: center; align-items: center; border-radius: 0 0 var(--radius-md) var(--radius-md); border-top: 1px solid rgba(147, 51, 234, 0.2);">
                                     <!-- Computed in JS -->
@@ -2066,10 +2096,10 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <label for="group-amount">Total Scheme Amount</label>
                             <div id="group-amount-quick-select" class="quick-select-amounts-row"></div>
                             <div class="currency-input-wrapper">
-                                <span class="currency-symbol">â‚¹</span>
+                                <span class="currency-symbol">₹</span>
                                 <input type="text" inputmode="numeric" id="group-amount" class="amount-input" placeholder="e.g., 50,000" required>
                             </div>
-                            <span class="field-help">The total value of the chit scheme (e.g., â‚¹50,000). Each member's monthly contribution will be calculated automatically.</span>
+                            <span class="field-help">The total value of the chit scheme (e.g., ₹50,000). Each member's monthly contribution will be calculated automatically.</span>
                         </div>
 
                         <div class="form-group" id="create-schedule-group" style="margin-top: 10px; display: none;">
@@ -2077,8 +2107,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div class="schedule-table-container">
                                 <div class="schedule-header-row">
                                     <span>Month</span>
-                                    <span>Installment (â‚¹)</span>
-                                    <span>Payout (â‚¹)</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
                                 </div>
                                 <div id="create-schedule-rows-container" class="schedule-rows-grid">
                                     <!-- Dynamic rows generated by JS -->
@@ -2116,9 +2146,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <div class="group-preview-card">
                             <h3 id="preview-group-name">Group Name</h3>
                             <div class="preview-stats">
-                                <span><i data-lucide="trending-up"></i> Monthly: <strong id="preview-group-installment">â‚¹0</strong></span>
+                                <span><i data-lucide="trending-up"></i> Monthly: <strong id="preview-group-installment">₹0</strong></span>
                                 <span><i data-lucide="calendar"></i> Duration: <strong id="preview-group-months">12m</strong></span>
-                                <span><i data-lucide="layers"></i> Total Pool: <strong id="preview-group-pool">â‚¹0</strong></span>
+                                <span><i data-lucide="layers"></i> Total Pool: <strong id="preview-group-pool">₹0</strong></span>
                             </div>
                         </div>
                         
@@ -2248,7 +2278,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     <div style="display: flex; gap: 12px; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
                                         <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> <span id="details-duration" style="font-weight: 700; color: var(--primary);">0 Months</span></span>
                                         <span style="color: var(--border-active);">|</span>
-                                        <span style="display: flex; align-items: center; gap: 4px; font-weight: 700;">Scheme: <span id="details-installment-value" style="color: var(--text-main);">â‚¹0</span></span>
+                                        <span style="display: flex; align-items: center; gap: 4px; font-weight: 700;">Scheme: <span id="details-installment-value" style="color: var(--text-main);">₹0</span></span>
                                     </div>
                                 </div>
                             </div>
@@ -2257,7 +2287,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div class="month-selector-widget" style="background: var(--bg-body); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
                                 <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; font-size: 0.75rem;">
                                     <span class="widget-label" style="margin: 0;">Current Billing Month</span>
-                                    <span class="widget-label" style="margin: 0;">Payout: <strong id="details-month-payout" style="color: var(--primary);">â‚¹0</strong></span>
+                                    <span class="widget-label" style="margin: 0;">Payout: <strong id="details-month-payout" style="color: var(--primary);">₹0</strong></span>
                                 </div>
                                 <div class="adjuster-controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 4px; box-shadow: var(--shadow-sm);">
                                     <button class="adjuster-btn" id="btn-month-decrement" aria-label="Previous Month" style="width: 32px; height: 32px; padding: 0;">
@@ -2275,11 +2305,11 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <div class="financials-dashboard">
                             <div class="fin-card highlight-green">
                                 <span class="fin-label"><i data-lucide="check-circle" class="icon-inline text-green"></i> Total Collected</span>
-                                <span class="fin-val" id="details-total-collected">â‚¹0</span>
+                                <span class="fin-val" id="details-total-collected">₹0</span>
                             </div>
                             <div class="fin-card highlight-red">
                                 <span class="fin-label"><i data-lucide="alert-circle" class="icon-inline text-red"></i> Pending Payments</span>
-                                <span class="fin-val" id="details-total-pending">â‚¹0</span>
+                                <span class="fin-val" id="details-total-pending">₹0</span>
                             </div>
                             
                             <!-- Collection Progress Bar -->
@@ -2291,7 +2321,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <div class="progress-track">
                                     <div class="progress-bar" id="details-progress-bar" style="width: 0%"></div>
                                 </div>
-                                <span class="progress-desc" id="progress-amount-desc">â‚¹0 of â‚¹0 collected for active cycle</span>
+                                <span class="progress-desc" id="progress-amount-desc">₹0 of ₹0 collected for active cycle</span>
                             </div>
                         </div>
                     </div>
@@ -2508,7 +2538,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <div class="pnl-card-shine"></div>
                                 <div class="pnl-card-icon"><i data-lucide="trending-up"></i></div>
                                 <span class="pnl-card-label">Total Collected</span>
-                                <span class="pnl-card-value" id="pnl-global-expected">â‚¹0</span>
+                                <span class="pnl-card-value" id="pnl-global-expected">₹0</span>
                                 <span class="pnl-card-foot">Cash received from members</span>
                             </div>
 
@@ -2516,7 +2546,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <div class="pnl-card-shine"></div>
                                 <div class="pnl-card-icon"><i data-lucide="wallet"></i></div>
                                 <span class="pnl-card-label">Total Payout</span>
-                                <span class="pnl-card-value" id="pnl-global-payout">â‚¹0</span>
+                                <span class="pnl-card-value" id="pnl-global-payout">₹0</span>
                                 <span class="pnl-card-foot">Chit amounts disbursed</span>
                             </div>
 
@@ -2524,7 +2554,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <div class="pnl-card-shine"></div>
                                 <div class="pnl-card-icon"><i data-lucide="piggy-bank"></i></div>
                                 <span class="pnl-card-label"><span id="pnl-global-title">Net Profit</span></span>
-                                <span class="pnl-card-value" id="pnl-global-realized">â‚¹0</span>
+                                <span class="pnl-card-value" id="pnl-global-realized">₹0</span>
                                 <span class="pnl-card-foot">Actual cash in hand</span>
                             </div>
 
@@ -2532,7 +2562,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <div class="pnl-card-shine"></div>
                                 <div class="pnl-card-icon"><i data-lucide="alert-circle"></i></div>
                                 <span class="pnl-card-label">Pending Arrears</span>
-                                <span class="pnl-card-value" id="pnl-global-pending">â‚¹0</span>
+                                <span class="pnl-card-value" id="pnl-global-pending">₹0</span>
                                 <span class="pnl-card-foot">Outstanding member dues</span>
                             </div>
                         </div>
@@ -2670,7 +2700,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 </div>
                                 <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Total Value</span>
-                                    <span class="ic-scheme-stat-val" id="stats-12M-value">â‚¹0</span>
+                                    <span class="ic-scheme-stat-val" id="stats-12M-value">₹0</span>
                                 </div>
                                 <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Last Updated</span>
@@ -2697,7 +2727,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 </div>
                                 <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Total Value</span>
-                                    <span class="ic-scheme-stat-val" id="stats-20M-value">â‚¹0</span>
+                                    <span class="ic-scheme-stat-val" id="stats-20M-value">₹0</span>
                                 </div>
                                 <div class="ic-scheme-stat-box">
                                     <span class="ic-scheme-stat-label">Last Updated</span>
@@ -2752,10 +2782,10 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 
                     <!-- Hidden old stats for JS compatibility -->
                     <div style="display: none;">
-                        <span id="gallery-stat-total-value">â‚¹0</span>
-                        <span id="gallery-stat-highest-value">â‚¹0</span>
-                        <span id="gallery-stat-lowest-value">â‚¹0</span>
-                        <span id="gallery-stat-avg-value">â‚¹0</span>
+                        <span id="gallery-stat-total-value">₹0</span>
+                        <span id="gallery-stat-highest-value">₹0</span>
+                        <span id="gallery-stat-lowest-value">₹0</span>
+                        <span id="gallery-stat-avg-value">₹0</span>
                         <span id="gallery-stat-storage-used">0 KB</span>
                     </div>
 
@@ -2768,8 +2798,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <div class="ic-filter-dropdowns">
                             <select id="ic-filter-select" class="ic-select-premium">
                                 <option value="all">All Values</option>
-                                <option value="low">Low Value (â‰¤ â‚¹1L)</option>
-                                <option value="high">High Value (&gt; â‚¹1L)</option>
+                                <option value="low">Low Value (â‰¤ ₹1L)</option>
+                                <option value="high">High Value (&gt; ₹1L)</option>
                             </select>
                             <select id="ic-sort-select" class="ic-select-premium">
                                 <option value="auto">Sort: Automatic</option>
@@ -2976,7 +3006,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <div class="ic-lightbox-header">
                     <div class="ic-lightbox-info">
                         <span class="ic-lightbox-position" id="ic-lightbox-position">Image 1 of 1</span>
-                        <h4 class="ic-lightbox-title" id="ic-lightbox-title">â‚¹25,000</h4>
+                        <h4 class="ic-lightbox-title" id="ic-lightbox-title">₹25,000</h4>
                         <span class="ic-lightbox-date" id="ic-lightbox-date">Uploaded Aug 5, 2026</span>
                     </div>
                     <div class="ic-lightbox-actions">
@@ -3169,7 +3199,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <div class="hero-left">
                             <span class="outstanding-label" id="modal-payment-due-label">Current Outstanding</span>
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="outstanding-value text-red" id="modal-payment-due-val">â‚¹0</span>
+                                <span class="outstanding-value text-red" id="modal-payment-due-val">₹0</span>
                                 <button id="btn-modal-whatsapp-reminder" class="whatsapp-reminder-btn hidden" title="Send WhatsApp Reminder" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background-color: rgba(37, 211, 102, 0.12); border: 1px solid rgba(37, 211, 102, 0.25); color: #25d366; cursor: pointer; transition: all 0.2s ease; outline: none;">
                                     <i data-lucide="send" style="width: 12px; height: 12px;"></i>
                                 </button>
@@ -3337,9 +3367,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div class="scheme-card-table-header" style="display: grid; grid-template-columns: 0.6fr 1.1fr 0.9fr 0.9fr 0.9fr 0.6fr; gap: 8px; padding: 10px; font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); background-color: rgba(255,255,255,0.02); text-align: center; align-items: center;">
                                 <span style="display: inline-flex; align-items: center; justify-content: center;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i></span>
                                 <span>Date</span>
-                                <span>Installment (â‚¹)</span>
-                                <span>Partial Paid (â‚¹)</span>
-                                <span>Payout (â‚¹)</span>
+                                <span>Installment (₹)</span>
+                                <span>Partial Paid (₹)</span>
+                                <span>Payout (₹)</span>
                                 <span>Mark</span>
                             </div>
                             <div id="modal-checklist-container" style="display: flex; flex-direction: column;">
@@ -3447,7 +3477,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <div class="form-group">
                             <label for="edit-group-amount">Total Scheme Amount</label>
                             <div class="currency-input-wrapper">
-                                <span class="currency-symbol">â‚¹</span>
+                                <span class="currency-symbol">₹</span>
                                 <input type="text" inputmode="numeric" id="edit-group-amount" class="amount-input" placeholder="e.g., 50,000" required>
                             </div>
                         </div>
@@ -3486,8 +3516,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div class="schedule-table-container">
                                 <div class="schedule-header-row">
                                     <span>Month</span>
-                                    <span>Installment (â‚¹)</span>
-                                    <span>Payout (â‚¹)</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
                                 </div>
                                 <div id="edit-schedule-rows-container" class="schedule-rows-grid">
                                     <!-- Dynamic rows generated by JS -->
@@ -3584,7 +3614,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div class="form-group">
                                 <label for="template-amount">Scheme Amount</label>
                                 <div class="currency-input-wrapper">
-                                    <span class="currency-symbol">â‚¹</span>
+                                    <span class="currency-symbol">₹</span>
                                     <input type="text" inputmode="numeric" id="template-amount" class="amount-input" placeholder="e.g., 25,000" required>
                                 </div>
                             </div>
@@ -3618,8 +3648,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <div class="schedule-table-container">
                                 <div class="schedule-header-row">
                                     <span>Month</span>
-                                    <span>Installment (â‚¹)</span>
-                                    <span>Payout (â‚¹)</span>
+                                    <span>Installment (₹)</span>
+                                    <span>Payout (₹)</span>
                                 </div>
                                 <div id="template-schedule-rows-container" class="schedule-rows-grid">
                                     <!-- Dynamic rows generated by JS -->
@@ -3763,15 +3793,15 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
                     <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Target</div>
-                    <div id="yearly-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">â‚¹0</div>
+                    <div id="yearly-pdf-target" style="font-size: 24px; font-weight: 800; color: #111827; margin-top: 6px;">₹0</div>
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
                     <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Collected</div>
-                    <div id="yearly-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">â‚¹0</div>
+                    <div id="yearly-pdf-collected" style="font-size: 24px; font-weight: 800; color: #16a34a; margin-top: 6px;">₹0</div>
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
                     <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Pending</div>
-                    <div id="yearly-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">â‚¹0</div>
+                    <div id="yearly-pdf-pending" style="font-size: 24px; font-weight: 800; color: #dc2626; margin-top: 6px;">₹0</div>
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
                     <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Collection Rate</div>
@@ -3823,7 +3853,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </div>
                 <div style="background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
                     <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Total Payout Amount</div>
-                    <div id="chit-pdf-total-amount" style="font-size: 24px; font-weight: 800; color: #6366f1; margin-top: 6px;">â‚¹0</div>
+                    <div id="chit-pdf-total-amount" style="font-size: 24px; font-weight: 800; color: #6366f1; margin-top: 6px;">₹0</div>
                 </div>
             </div>
 
@@ -4093,6 +4123,19 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         </div>
     <script>
         (function() {
+            window.hideSplashScreen = function() {
+                var splash = document.getElementById('pms-splash-screen');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    splash.style.visibility = 'hidden';
+                    setTimeout(function() {
+                        if (splash.parentNode) splash.parentNode.removeChild(splash);
+                    }, 500);
+                }
+            };
+            // Fallback to hide splash screen after 6 seconds in case of network issues
+            setTimeout(window.hideSplashScreen, 6000);
+
             var lastScreen = localStorage.getItem('pms_last_active_screen');
             var targetScreenId = lastScreen || 'screen-dashboard';
             var target = document.getElementById(targetScreenId);
@@ -4130,6 +4173,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
+
 
 
 

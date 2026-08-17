@@ -100,8 +100,11 @@ async function initAuth() {
         navigateTo('screen-landing');
     }
     
-    // Hide initial loading overlay for a corporate feel
+    // Hide splash screen after initialization
     setTimeout(() => {
+        if (typeof window.hideSplashScreen === 'function') {
+            window.hideSplashScreen();
+        }
         const overlay = document.getElementById('transition-overlay');
         if (overlay && overlay.classList.contains('active')) {
             overlay.classList.remove('active');
