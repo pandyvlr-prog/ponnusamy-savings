@@ -3685,7 +3685,7 @@ function renderDashboardMembersList(searchQuery = '') {
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;">
                         ${contactMenuHtml ? contactMenuHtml : `<div style="background:#ecfdf5;color:#059669;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="user" style="width:13px;height:13px;"></i></div>`}
-                        <button class="mobile-expand-btn" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#f3f4f6;border:none;color:#4b5563;cursor:pointer;transition:background 0.2s;"><i data-lucide="chevron-down" style="width:18px;height:18px;transition:transform 0.3s ease;pointer-events:none;"></i></button>
+                        <div class="mobile-expand-btn" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;min-height:28px;border-radius:8px;background:#f3f4f6;color:#4b5563;cursor:pointer;transition:background 0.2s;flex-shrink:0;"><i data-lucide="chevron-down" style="width:18px;height:18px;transition:transform 0.3s ease;pointer-events:none;"></i></div>
                     </div>
                 </div>
 
