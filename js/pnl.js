@@ -86,7 +86,16 @@ function renderPnLDashboard() {
     if (State.groups.length === 0) {
         tbody.innerHTML = '<tr class="pnl-empty-row"><td colspan="7">No groups available yet. Create a chit group to see P&amp;L data.</td></tr>';
     } else {
-        State.groups.forEach((group, index) => {
+        const sortedGroups = [...State.groups].sort((a, b) => {
+            const yearA = a.startYear !== undefined ? parseInt(a.startYear) : new Date(a.createdAt).getFullYear();
+            const yearB = b.startYear !== undefined ? parseInt(b.startYear) : new Date(b.createdAt).getFullYear();
+            if (yearA !== yearB) return yearA - yearB;
+            const monthA = a.startMonth !== undefined ? parseInt(a.startMonth) : new Date(a.createdAt).getMonth();
+            const monthB = b.startMonth !== undefined ? parseInt(b.startMonth) : new Date(b.createdAt).getMonth();
+            return monthA - monthB;
+        });
+
+        sortedGroups.forEach((group, index) => {
             const pnl = calculateGroupPnL(group);
             
             globalCollected += pnl.realizedCollection;

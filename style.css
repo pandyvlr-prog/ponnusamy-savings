@@ -5009,7 +5009,9 @@ body:not([data-theme="light"]) .icon-blend-img {
 .pnl-table .pnl-td-right {
     text-align: right;
     font-family: var(--font-number);
-    font-weight: 800;
+    font-weight: 900 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 0.5px;
 }
 .pnl-val-green { color: var(--green-dark) !important; }
 .pnl-val-purple { color: #7c3aed !important; }
