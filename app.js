@@ -3685,19 +3685,36 @@ function renderDashboardMembersList(searchQuery = '') {
             <div class="mobile-card-view dashboard-mobile-card" style="background:#f8f9fa;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.07);padding:0;">
 
                 <!-- Name header -->
-                <div class="mobile-card-header" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;">
-                    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
-                        <span style="color:#2563eb;font-size:1.1rem;font-weight:900;text-shadow:0 1px 2px rgba(37,99,235,0.2);">${index + 1}</span>
-                        <h3 class="member-name" style="font-size:1rem;font-weight:900;color:#111827;margin:0;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.member.name}</h3>
-                        ${item.member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.55rem;font-weight:800;padding:1px 5px;border-radius:3px;margin-left:4px;flex-shrink:0;">NEW</span>' : ''}
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                        <div style="text-align:right;">
-                            <div style="font-size:0.5rem; color:#6b7280; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">${item.dueAmount === 0 ? 'PAID' : 'DUE'}</div>
-                            <div style="font-size:0.95rem; font-weight:900; color:${item.dueAmount === 0 ? '#059669' : '#dc2626'};">&#8377;${(item.dueAmount + item.paidAmount).toLocaleString('en-IN')}</div>
+                <div class="mobile-card-header" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;background:linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 100%);">
+                    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+                        <!-- Premium SNo Badge -->
+                        <div style="background:linear-gradient(135deg, #eff6ff, #dbeafe);color:#1d4ed8;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.95rem;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 4px rgba(37,99,235,0.1);">
+                            ${index + 1}
                         </div>
-                        ${contactMenuHtml ? contactMenuHtml : `<div style="background:${item.dueAmount === 0 ? '#ecfdf5' : '#fef2f2'};color:${item.dueAmount === 0 ? '#059669' : '#dc2626'};width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="user" style="width:13px;height:13px;"></i></div>`}
-                        <i data-lucide="chevron-right" style="width:18px;height:18px;color:#9ca3af;"></i>
+                        
+                        <!-- Name and Amount Stack -->
+                        <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;">
+                            <div style="display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;">
+                                <h3 class="member-name" style="font-size:0.95rem;font-weight:900;color:#111827;margin:0;text-transform:uppercase;line-height:1.2;white-space:normal;word-break:break-word;">${item.member.name}</h3>
+                                ${item.member.customerType === 'New' ? '<span style="background:linear-gradient(135deg, #f59e0b, #d97706);color:white;font-size:0.55rem;font-weight:800;padding:2px 6px;border-radius:4px;box-shadow:0 2px 4px rgba(217,119,6,0.2);margin-top:1px;">NEW</span>' : ''}
+                            </div>
+                            
+                            <!-- Amount Row -->
+                            <div style="display:flex;align-items:center;gap:4px;">
+                                <span style="font-size:0.6rem; color:#6b7280; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">${item.dueAmount === 0 ? 'PAID' : 'DUE'}</span>
+                                <span style="font-size:0.95rem; font-weight:900; color:${item.dueAmount === 0 ? '#059669' : '#dc2626'}; display:flex; align-items:center; gap:2px;">
+                                    &#8377;${(item.dueAmount + item.paidAmount).toLocaleString('en-IN')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Actions -->
+                    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:8px;">
+                        ${contactMenuHtml ? contactMenuHtml : `<div style="background:${item.dueAmount === 0 ? '#ecfdf5' : '#fef2f2'};color:${item.dueAmount === 0 ? '#059669' : '#dc2626'};width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);border:1px solid ${item.dueAmount === 0 ? 'rgba(5,150,105,0.15)' : 'rgba(220,38,38,0.15)'};"><i data-lucide="user" style="width:14px;height:14px;"></i></div>`}
+                        <div style="width:24px;height:24px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#64748b;border:1px solid rgba(0,0,0,0.03);">
+                            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                        </div>
                         <div class="mobile-expand-btn" style="display:none;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;min-height:28px;border-radius:8px;background:#f3f4f6;color:#4b5563;cursor:pointer;transition:background 0.2s;flex-shrink:0;"><i data-lucide="chevron-down" style="width:18px;height:18px;transition:transform 0.3s ease;pointer-events:none;"></i></div>
                     </div>
                 </div>
