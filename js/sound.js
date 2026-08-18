@@ -15,9 +15,6 @@ const SoundSystem = {
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        if (this.audioCtx.state === 'suspended') {
-            this.audioCtx.resume();
-        }
         return this.audioCtx;
     },
 
@@ -26,21 +23,24 @@ const SoundSystem = {
 
         try {
             const ctx = this.getAudioContext();
+            if (ctx.state === 'suspended') ctx.resume();
+
+            const t = ctx.currentTime + 0.01; // slight offset to prevent glitches
             const osc = ctx.createOscillator();
             const gainNode = ctx.createGain();
 
             osc.type = type;
-            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            osc.frequency.setValueAtTime(freq, t);
 
             // Envelope
-            gainNode.gain.setValueAtTime(vol, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+            gainNode.gain.setValueAtTime(vol, t);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, t + duration);
 
             osc.connect(gainNode);
             gainNode.connect(ctx.destination);
 
-            osc.start();
-            osc.stop(ctx.currentTime + duration);
+            osc.start(t);
+            osc.stop(t + duration);
         } catch (e) {
             console.warn("Audio play failed:", e);
         }
@@ -50,6 +50,9 @@ const SoundSystem = {
         if (!this.isSoundEnabled) return;
         try {
             const ctx = this.getAudioContext();
+            if (ctx.state === 'suspended') ctx.resume();
+
+            const t = ctx.currentTime + 0.01;
             const bufferSize = ctx.sampleRate * 0.25; // 250ms of noise
             const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
             const data = buffer.getChannelData(0);
@@ -62,34 +65,34 @@ const SoundSystem = {
             // Lowpass filter for the "crumple/trash" feel
             const filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1000, ctx.currentTime);
-            filter.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.25);
+            filter.frequency.setValueAtTime(1000, t);
+            filter.frequency.exponentialRampToValueAtTime(100, t + 0.25);
 
             const gain = ctx.createGain();
-            gain.gain.setValueAtTime(1.0, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+            gain.gain.setValueAtTime(1.5, t); // Boost volume
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
 
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
 
-            noise.start();
+            noise.start(t);
         } catch (e) {
             console.warn("Trash audio failed:", e);
         }
     },
 
     playClick() {
-        this.playTone(400, 'sine', 0.1, 0.1);
+        this.playTone(400, 'sine', 0.1, 0.5); // increased volume
     },
 
     playSuccess() {
-        this.playTone(600, 'sine', 0.1, 0.1);
-        setTimeout(() => this.playTone(800, 'sine', 0.15, 0.1), 100);
+        this.playTone(600, 'sine', 0.1, 0.5); // increased volume
+        setTimeout(() => this.playTone(800, 'sine', 0.15, 0.5), 100);
     },
 
     playError() {
-        this.playTone(200, 'sawtooth', 0.3, 0.2);
+        this.playTone(200, 'sawtooth', 0.3, 0.6); // increased volume
     },
 
     vibrate(pattern) {
