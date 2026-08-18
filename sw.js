@@ -3,7 +3,7 @@
  * JS and CSS are NEVER cached — always fetched fresh from Vercel.
  */
 
-const CACHE_VERSION = 'pms-v200-nocache';
+const CACHE_VERSION = 'pms-v201-nocache';
 
 self.addEventListener('install', () => self.skipWaiting());
 
