@@ -121,7 +121,8 @@ SoundSystem.init();
 
 // Global Event Delegation for Sounds & Haptics
 document.addEventListener('DOMContentLoaded', () => {
-    document.body.addEventListener('click', (e) => {
+    // Use capture phase to ensure we catch the click before any e.stopPropagation() calls
+    document.addEventListener('click', (e) => {
         // Initialize AudioContext on first user interaction
         if (SoundSystem.isSoundEnabled && SoundSystem.audioCtx && SoundSystem.audioCtx.state === 'suspended') {
             SoundSystem.audioCtx.resume();
@@ -144,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 SoundSystem.vibrate(10);
             }
         }
-    });
+    }, { capture: true });
 
     // Hook up Settings UI Toggles if they exist
     const soundToggle = document.getElementById('settings-sound-toggle');
