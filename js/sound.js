@@ -1,12 +1,21 @@
-// sound.js - Professional Sound System & Haptic Feedback
+// sound.js - Premium Sample-Based Audio Engine
 
 const SoundSystem = {
     audioCtx: null,
     isSoundEnabled: true,
     isHapticEnabled: true,
+    buffers: {},
+    
+    // Premium UI Sounds from CDNJS (ion-sound library)
+    soundUrls: {
+        nav: 'https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/tap.mp3',
+        tick: 'https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/button_tiny.mp3',
+        untick: 'https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/button_click.mp3',
+        detail: 'https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/glass.mp3',
+        payout: 'https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/bell_ring.mp3'
+    },
 
     init() {
-        // Load preferences
         this.isSoundEnabled = localStorage.getItem('pms_sound_enabled') !== 'false';
         this.isHapticEnabled = localStorage.getItem('pms_haptic_enabled') !== 'false';
     },
@@ -14,102 +23,83 @@ const SoundSystem = {
     getAudioContext() {
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.preloadSounds();
+        }
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
         }
         return this.audioCtx;
     },
 
-    playTone(freq, type, duration, vol) {
-        if (!this.isSoundEnabled) return;
+    async preloadSounds() {
+        for (const [key, url] of Object.entries(this.soundUrls)) {
+            try {
+                const response = await fetch(url);
+                const arrayBuffer = await response.arrayBuffer();
+                this.audioCtx.decodeAudioData(arrayBuffer, (decodedData) => {
+                    this.buffers[key] = decodedData;
+                });
+            } catch (e) {
+                console.warn(`Failed to load sound: ${key}`, e);
+            }
+        }
+    },
 
+    playSound(key, volume = 1.0) {
+        if (!this.isSoundEnabled) return;
         try {
             const ctx = this.getAudioContext();
             if (ctx.state === 'suspended') ctx.resume();
+            
+            const buffer = this.buffers[key];
+            if (!buffer) return; // Sound not loaded yet
 
-            const t = ctx.currentTime + 0.01; // slight offset to prevent glitches
-            const osc = ctx.createOscillator();
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+
             const gainNode = ctx.createGain();
+            gainNode.gain.value = volume;
 
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, t);
-
-            // Envelope
-            gainNode.gain.setValueAtTime(vol, t);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, t + duration);
-
-            osc.connect(gainNode);
+            source.connect(gainNode);
             gainNode.connect(ctx.destination);
-
-            osc.start(t);
-            osc.stop(t + duration);
+            
+            source.start(0);
         } catch (e) {
             console.warn("Audio play failed:", e);
         }
     },
 
-    playTrash() {
-        if (!this.isSoundEnabled) return;
-        try {
-            const ctx = this.getAudioContext();
-            if (ctx.state === 'suspended') ctx.resume();
-
-            const t = ctx.currentTime + 0.01;
-            const bufferSize = ctx.sampleRate * 0.25; // 250ms of noise
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-            const noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-
-            // Lowpass filter for the "crumple/trash" feel
-            const filter = ctx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1000, t);
-            filter.frequency.exponentialRampToValueAtTime(100, t + 0.25);
-
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(1.5, t); // Boost volume
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(ctx.destination);
-
-            noise.start(t);
-        } catch (e) {
-            console.warn("Trash audio failed:", e);
-        }
+    // Specific Action Methods
+    playNav() {
+        this.playSound('nav', 0.5);
     },
-
-    playClick() {
-        this.playTone(400, 'sine', 0.1, 0.5); // increased volume
+    playMarkPaid() {
+        this.playSound('tick', 0.8);
     },
-
-    playSuccess() {
-        this.playTone(600, 'sine', 0.1, 0.5); // increased volume
-        setTimeout(() => this.playTone(800, 'sine', 0.15, 0.5), 100);
+    playUntick() {
+        this.playSound('untick', 0.8);
     },
-
-    playError() {
-        this.playTone(200, 'sawtooth', 0.3, 0.6); // increased volume
+    playOpenDetail() {
+        this.playSound('detail', 0.6);
+    },
+    playPayout() {
+        this.playSound('payout', 0.7);
     },
 
     vibrate(pattern) {
         if (!this.isHapticEnabled) return;
         if (navigator.vibrate) {
-            try {
-                navigator.vibrate(pattern);
-            } catch (e) {
-                // Ignore if not supported
-            }
+            try { navigator.vibrate(pattern); } catch (e) {}
         }
     },
 
     toggleSound(enabled) {
         this.isSoundEnabled = enabled;
         localStorage.setItem('pms_sound_enabled', enabled);
-        if (enabled) this.playSuccess();
+        if (enabled) {
+            this.getAudioContext();
+            setTimeout(() => this.playMarkPaid(), 100);
+        }
     },
 
     toggleHaptic(enabled) {
@@ -119,52 +109,62 @@ const SoundSystem = {
     }
 };
 
-// Initialize on load
 SoundSystem.init();
 
-// Global Event Delegation for Sounds & Haptics
+// Global listeners for generic buttons and specific classes
 document.addEventListener('DOMContentLoaded', () => {
-    // Use capture phase to ensure we catch the click before any e.stopPropagation() calls
     document.addEventListener('click', (e) => {
-        // Initialize AudioContext on first user interaction
         if (SoundSystem.isSoundEnabled && SoundSystem.audioCtx && SoundSystem.audioCtx.state === 'suspended') {
             SoundSystem.audioCtx.resume();
+        } else if (SoundSystem.isSoundEnabled && !SoundSystem.audioCtx) {
+            SoundSystem.getAudioContext();
         }
 
-        const target = e.target.closest('button, .btn, .clickable, .sidebar-nav-item, .card, a');
-        if (target) {
-            // Check if it's a danger/delete action
-            if (target.classList.contains('btn-danger') || 
-                target.querySelector('[data-lucide="trash-2"]') || 
-                target.getAttribute('id') === 'btn-reset-app' || 
-                (target.textContent && target.textContent.toLowerCase().includes('delete'))) {
-                SoundSystem.playTrash();
-                SoundSystem.vibrate([30, 50, 30]);
-            } else if (target.classList.contains('btn-primary') || target.getAttribute('type') === 'submit') {
-                SoundSystem.playSuccess();
-                SoundSystem.vibrate([10, 30, 10]);
-            } else {
-                SoundSystem.playClick();
-                SoundSystem.vibrate(10);
-            }
+        const target = e.target.closest('button, .btn, .clickable, .sidebar-nav-item, .card, a, .member-card, .row-checkbox-wrapper');
+        if (!target) return;
+
+        const id = target.id;
+
+        // Route sounds based on exact element classes/IDs
+        if (id === 'btn-select-cash' || id === 'btn-select-gpay' || id === 'btn-modal-mark-all') {
+            SoundSystem.playMarkPaid();
+            SoundSystem.vibrate([10, 30, 10]);
+        } else if (id === 'btn-action-unmark-payment' || id === 'btn-modal-unmark-all') {
+            SoundSystem.playUntick();
+            SoundSystem.vibrate([30, 50, 30]);
+        } else if (target.classList.contains('sidebar-nav-item')) {
+            SoundSystem.playNav();
+            SoundSystem.vibrate(10);
+        } else if (target.classList.contains('member-card')) {
+            SoundSystem.playOpenDetail();
+            SoundSystem.vibrate(10);
+        } else if (target.classList.contains('payout-claim-btn') || id === 'btn-save-payout') {
+            // Usually form submit handles save, but we can catch the button too
+        } else if (target.classList.contains('btn-danger') || target.querySelector('[data-lucide="trash-2"]')) {
+            SoundSystem.playUntick();
+            SoundSystem.vibrate([30, 50, 30]);
+        } else if (target.getAttribute('type') === 'submit' && target.closest('#payout-claim-form')) {
+            SoundSystem.playPayout();
+            SoundSystem.vibrate([20, 30, 20]);
+        } else if (target.getAttribute('type') === 'submit' || target.classList.contains('btn-primary')) {
+            SoundSystem.playMarkPaid();
+            SoundSystem.vibrate(10);
+        } else {
+            // Fallback for normal buttons and opening modals
+            SoundSystem.playNav();
+            SoundSystem.vibrate(5);
         }
     }, { capture: true });
 
-    // Hook up Settings UI Toggles if they exist
+    // Settings
     const soundToggle = document.getElementById('settings-sound-toggle');
-    const hapticToggle = document.getElementById('settings-haptic-toggle');
-
     if (soundToggle) {
         soundToggle.checked = SoundSystem.isSoundEnabled;
-        soundToggle.addEventListener('change', (e) => {
-            SoundSystem.toggleSound(e.target.checked);
-        });
+        soundToggle.addEventListener('change', (e) => SoundSystem.toggleSound(e.target.checked));
     }
-
+    const hapticToggle = document.getElementById('settings-haptic-toggle');
     if (hapticToggle) {
         hapticToggle.checked = SoundSystem.isHapticEnabled;
-        hapticToggle.addEventListener('change', (e) => {
-            SoundSystem.toggleHaptic(e.target.checked);
-        });
+        hapticToggle.addEventListener('change', (e) => SoundSystem.toggleHaptic(e.target.checked));
     }
 });
