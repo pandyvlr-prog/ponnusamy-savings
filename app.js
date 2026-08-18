@@ -4220,13 +4220,20 @@ function filterAndRenderMembers() {
         const mobileHTML = `
             <div style="display:block;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span style="color:#d97706;font-size:1.1rem;font-weight:900;">${index + 1}</span>
-                        <h3 style="font-size:1.1rem;font-weight:900;background:linear-gradient(135deg, #b8860b, #ffd700, #b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;text-transform:uppercase;text-shadow: 0px 2px 4px rgba(212,175,55,0.2);">${member.name}</h3>
-                        ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
+                    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+                        <span style="color:#2563eb;font-size:1.2rem;font-weight:900;text-shadow: 0px 1px 2px rgba(37,99,235,0.2);">${index + 1}</span>
+                        <h3 style="font-size:1.1rem;font-weight:900;background:linear-gradient(135deg, #b8860b, #ffd700, #b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;text-transform:uppercase;text-shadow: 0px 2px 4px rgba(212,175,55,0.2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${member.name}</h3>
+                        ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;flex-shrink:0;">NEW</span>' : ''}
                     </div>
-                    <div style="background:#ecfdf5;color:#059669;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i data-lucide="user" style="width:16px;height:16px;"></i>
+                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                        <div style="text-align:right;">
+                            <div style="font-size:0.55rem; color:#6b7280; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">${isPaid ? 'PAID' : 'DUE'}</div>
+                            <div style="font-size:0.95rem; font-weight:900; color:${isPaid ? '#059669' : '#dc2626'};">&#8377;${formatNumberIndian(totalDue)}</div>
+                        </div>
+                        <div style="background:${isPaid ? '#ecfdf5' : '#fef2f2'};color:${isPaid ? '#059669' : '#dc2626'};width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                            <i data-lucide="user" style="width:16px;height:16px;"></i>
+                        </div>
+                        <i data-lucide="chevron-right" style="width:18px;height:18px;color:#9ca3af;"></i>
                     </div>
                 </div>
 
