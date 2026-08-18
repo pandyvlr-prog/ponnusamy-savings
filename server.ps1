@@ -21,9 +21,9 @@ try {
                 $extension = [System.IO.Path]::GetExtension($fullPath)
                 $contentType = "text/plain"
                 switch ($extension) {
-                    ".html" { $contentType = "text/html" }
-                    ".css"  { $contentType = "text/css" }
-                    ".js"   { $contentType = "application/javascript" }
+                    ".html" { $contentType = "text/html; charset=utf-8" }
+                    ".css"  { $contentType = "text/css; charset=utf-8" }
+                    ".js"   { $contentType = "application/javascript; charset=utf-8" }
                     ".png"  { $contentType = "image/png" }
                     ".jpg"  { $contentType = "image/jpeg" }
                 }
