@@ -114,11 +114,15 @@ function renderPnLDashboard() {
             const netClass = pnl.netProfit >= 0 ? 'pnl-val-green' : 'pnl-val-red';
             const arrearsClass = pnl.arrears > 0 ? 'pnl-val-orange' : 'pnl-val-muted';
             
+            let schemeString = '₹' + formatNumberIndian(group.chitAmount || group.amount);
+            if ((group.chitAmount || group.amount) === 100000) schemeString = '1 LAKH';
+            else if ((group.chitAmount || group.amount) === 50000) schemeString = '50K';
+            
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td class="pnl-td-num" data-label="#">${index + 1}</td>
                 <td class="pnl-td-name" data-label="Group Name">${groupNameHtml}</td>
-                <td class="pnl-td-center" data-label="Duration">${group.duration}M</td>
+                <td class="pnl-td-center" data-label="Duration">${group.duration}M / ${schemeString}</td>
                 <td class="pnl-td-right pnl-val-green" data-label="Collected">₹${formatNumberIndian(pnl.realizedCollection)}</td>
                 <td class="pnl-td-right pnl-val-purple" data-label="Payout">₹${formatNumberIndian(pnl.realizedPayout)}</td>
                 <td class="pnl-td-right ${netClass}" data-label="Net">₹${formatNumberIndian(pnl.netProfit)}</td>
@@ -294,9 +298,13 @@ function openPnLMonthDrawer(groupId) {
         'overflow:hidden;');
     drawerEl.addEventListener('click', function(e) { e.stopPropagation(); });
 
+    let schemeString = '₹' + formatNumberIndian(group.chitAmount || group.amount);
+    if ((group.chitAmount || group.amount) === 100000) schemeString = '1 LAKH';
+    else if ((group.chitAmount || group.amount) === 50000) schemeString = '50K';
+
     drawerEl.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid ' + borderColor + ';flex-shrink:0;">' +
-            '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:' + textMain + ';font-family:inherit;">' + group.name + ' <span style="font-size:0.75rem;font-weight:800;color:#b45309;background-color:#fef3c7;border:1px solid #fcd34d;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;letter-spacing:0.05em;">' + group.duration + ' M</span></h3>' +
+            '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:' + textMain + ';font-family:inherit;">' + group.name + ' <span style="font-size:0.75rem;font-weight:800;color:#b45309;background-color:#fef3c7;border:1px solid #fcd34d;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;letter-spacing:0.05em;">' + group.duration + 'M / ' + schemeString + '</span></h3>' +
             '<button id="pnl-drawer-close-x" style="width:34px;height:34px;border-radius:50%;background:rgba(128,128,128,0.15);border:1px solid ' + borderColor + ';cursor:pointer;color:' + textMain + ';display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1;font-family:sans-serif;" title="Close">&#215;</button>' +
         '</div>' +
         '<div style="overflow-y:auto;overflow-x:auto;flex:1;">' +

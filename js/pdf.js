@@ -1,4 +1,4 @@
-﻿// --- PDF Generation Logic ---
+// --- PDF Generation Logic ---
 let isHtml2PdfLoaded = false;
 
 async function loadHtml2Pdf() {
@@ -1578,8 +1578,8 @@ function initSidebar() {
                         let opSymbol = '';
                         if(action === 'add') opSymbol = '+';
                         if(action === 'subtract') opSymbol = '-';
-                        if(action === 'multiply') opSymbol = 'Ã—';
-                        if(action === 'divide') opSymbol = 'Ã·';
+                        if(action === 'multiply') opSymbol = '×';
+                        if(action === 'divide') opSymbol = '÷';
                         
                         calcHistory.textContent = `${previousInput} ${opSymbol}`;
                         break;
