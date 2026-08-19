@@ -7229,3 +7229,12 @@ document.addEventListener('focusin', (e) => {
         }, 300); // slight delay to let the keyboard open first
     }
 });
+
+document.addEventListener('focusout', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+        }, 100);
+    }
+});

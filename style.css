@@ -164,8 +164,11 @@ body {
     color: var(--text-main);
     overflow-x: hidden;
     overflow-y: hidden;
-    min-height: 100dvh;
-    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     padding-top: var(--safe-top);
     padding-bottom: var(--safe-bottom);
     padding-left: var(--safe-left);
