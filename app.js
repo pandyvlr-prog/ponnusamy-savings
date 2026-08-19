@@ -7220,21 +7220,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-// Ensure inputs are visible when keyboard opens on mobile
-document.addEventListener('focusin', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        setTimeout(() => {
-            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300); // slight delay to let the keyboard open first
-    }
-});
-
-document.addEventListener('focusout', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-            document.body.scrollTop = 0;
-        }, 100);
-    }
-});
