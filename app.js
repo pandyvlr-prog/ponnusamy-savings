@@ -3620,7 +3620,7 @@ function renderDashboardMembersList(searchQuery = '') {
         let amount = item.group.chitAmount;
         if (amount >= 100000) {
             let lakhs = amount / 100000;
-            schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + ' Lakh';
+            schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + 'L';
         } else if (amount >= 1000) {
             let k = amount / 1000;
             schemeAmountStr = (k % 1 === 0 ? k : k.toFixed(1)) + 'K';
@@ -4195,7 +4195,7 @@ function filterAndRenderMembers() {
         let amount = group.chitAmount;
         if (amount >= 100000) {
             let lakhs = amount / 100000;
-            schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + ' Lakh';
+            schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + 'L';
         } else if (amount >= 1000) {
             let k = amount / 1000;
             schemeAmountStr = (k % 1 === 0 ? k : k.toFixed(1)) + 'K';
@@ -4383,7 +4383,7 @@ function openPaymentModal(memberId, filterMode = 'all', targetMonthNum = null) {
     let amount = group.chitAmount;
     if (amount >= 100000) {
         let lakhs = amount / 100000;
-        schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + ' Lakh';
+        schemeAmountStr = (lakhs % 1 === 0 ? lakhs : lakhs.toFixed(1)) + 'L';
     } else if (amount >= 1000) {
         let k = amount / 1000;
         schemeAmountStr = (k % 1 === 0 ? k : k.toFixed(1)) + 'K';

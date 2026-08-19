@@ -114,9 +114,11 @@ function renderPnLDashboard() {
             const netClass = pnl.netProfit >= 0 ? 'pnl-val-green' : 'pnl-val-red';
             const arrearsClass = pnl.arrears > 0 ? 'pnl-val-orange' : 'pnl-val-muted';
             
-            let schemeString = '₹' + formatNumberIndian(group.chitAmount || group.amount);
-            if ((group.chitAmount || group.amount) === 100000) schemeString = '1 LAKH';
-            else if ((group.chitAmount || group.amount) === 50000) schemeString = '50K';
+            let amt = group.chitAmount || group.amount;
+            let schemeString = '';
+            if (amt >= 100000 && amt % 100000 === 0) schemeString = (amt / 100000) + 'L';
+            else if (amt >= 1000 && amt % 1000 === 0) schemeString = (amt / 1000) + 'K';
+            else schemeString = '₹' + formatNumberIndian(amt);
             
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -298,9 +300,11 @@ function openPnLMonthDrawer(groupId) {
         'overflow:hidden;');
     drawerEl.addEventListener('click', function(e) { e.stopPropagation(); });
 
-    let schemeString = '₹' + formatNumberIndian(group.chitAmount || group.amount);
-    if ((group.chitAmount || group.amount) === 100000) schemeString = '1 LAKH';
-    else if ((group.chitAmount || group.amount) === 50000) schemeString = '50K';
+    let amt = group.chitAmount || group.amount;
+    let schemeString = '';
+    if (amt >= 100000 && amt % 100000 === 0) schemeString = (amt / 100000) + 'L';
+    else if (amt >= 1000 && amt % 1000 === 0) schemeString = (amt / 1000) + 'K';
+    else schemeString = '₹' + formatNumberIndian(amt);
 
     drawerEl.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid ' + borderColor + ';flex-shrink:0;">' +
