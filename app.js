@@ -2740,6 +2740,8 @@ function renderDashboardGroupsList(filterConfig = null) {
                        amt === filterConfig.amount && 
                        dur === filterConfig.duration;
             });
+            console.log("Matched groups for Step 4:", groupsToRender.length, "groups");
+            console.log("Filter Config:", filterConfig);
         }
 
         const countBadge = document.getElementById('modal-total-groups-count');
