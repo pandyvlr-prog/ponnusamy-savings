@@ -2422,7 +2422,7 @@ function _renderDashboard() {
             
             const metaText = document.createElement('span');
             if (chipGroups.length > 1) {
-                metaText.textContent = `${chipGroups.length} Groups â€¢ ${totalMembers} Mbrs`;
+                metaText.textContent = `${chipGroups.length} Groups • ${totalMembers} Mbrs`;
             } else {
                 metaText.textContent = `${totalMembers} Members`;
             }
@@ -2821,7 +2821,7 @@ function renderDashboardGroupsList(filterConfig = null) {
             </div>
             <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.74rem; font-weight: 700;">
                 <span style="color: #15803d; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${startLabel}</span>
-                <span style="color: var(--text-muted); font-weight: 800; font-size: 0.85rem; line-height: 1;">â€”</span>
+                <span style="color: var(--text-muted); font-weight: 800; font-size: 0.85rem; line-height: 1;">—</span>
                 <span style="color: #b91c1c; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${endLabel}</span>
             </div>
         `;
