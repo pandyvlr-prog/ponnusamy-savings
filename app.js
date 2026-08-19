@@ -2730,15 +2730,16 @@ function renderDashboardGroupsList(filterConfig = null) {
         // If filterConfig is provided, apply the wizard filters
         if (filterConfig) {
             groupsToRender = groupsToRender.filter(g => {
-                const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
-                const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+                const y = g.startYear !== undefined ? parseInt(g.startYear, 10) : new Date(g.createdAt).getFullYear();
+                const m = g.startMonth !== undefined ? parseInt(g.startMonth, 10) : new Date(g.createdAt).getMonth();
                 const amt = extractNumericAmount(g);
                 const dur = extractNumericDuration(g);
                 
-                return y === filterConfig.year && 
-                       m === filterConfig.month && 
-                       amt === filterConfig.amount && 
-                       dur === filterConfig.duration;
+                // Use loose equality (==) for amount and duration in case of string/number mismatch, but strict for year/month
+                return y == filterConfig.year && 
+                       m == filterConfig.month && 
+                       amt == filterConfig.amount && 
+                       dur == filterConfig.duration;
             });
             console.log("Matched groups for Step 4:", groupsToRender.length, "groups");
             console.log("Filter Config:", filterConfig);
@@ -2753,9 +2754,9 @@ function renderDashboardGroupsList(filterConfig = null) {
         
         if (groupsToRender.length === 0) {
             container.innerHTML = `
-                <div class="empty-state" style="padding: 20px;">
-                    <h3>No Chit Groups Found</h3>
-                    <p>No groups match your selection.</p>
+                <div class="empty-state" style="padding: 20px; color: var(--text-main); display: block !important; visibility: visible !important;">
+                    <h3 style="color: var(--text-main); margin-bottom: 8px;">No Chit Groups Found</h3>
+                    <p style="color: var(--text-secondary); margin: 0;">No groups match your selection.</p>
                 </div>
             `;
             return;
