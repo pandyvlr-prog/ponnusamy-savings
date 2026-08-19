@@ -649,6 +649,13 @@ async function loadState() {
         
         renderSavedNotesList();
         
+        // Ensure every member has a payments object initialized
+        if (Array.isArray(State.members)) {
+            State.members.forEach(m => {
+                if (!m.payments) m.payments = {};
+            });
+        }
+        
         originalStateSnapshot = JSON.stringify(State);
     } catch (e) {
         console.error('Error loading state:', e);
