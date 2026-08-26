@@ -88,28 +88,22 @@ async function initAuth() {
             updateProfileUI();
             
             if (typeof loadState === 'function') await loadState();
+            // Wait for 2 paint frames so real data is visible BEFORE splash hides
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+            if (typeof window.hideSplashScreen === 'function') window.hideSplashScreen();
             // [PHASE 1] Removed duplicate renderDashboard() call. navigateTo already triggers it via switchView.
         } else {
             AuthState.isAuthenticated = false;
             localStorage.removeItem('pms_cached_session');
             navigateTo('screen-landing');
+            if (typeof window.hideSplashScreen === 'function') window.hideSplashScreen();
         }
     } catch(err) {
         console.error(err);
         localStorage.removeItem('pms_cached_session');
         navigateTo('screen-landing');
+        if (typeof window.hideSplashScreen === 'function') window.hideSplashScreen();
     }
-    
-    // Hide splash screen after initialization
-    setTimeout(() => {
-        if (typeof window.hideSplashScreen === 'function') {
-            window.hideSplashScreen();
-        }
-        const overlay = document.getElementById('transition-overlay');
-        if (overlay && overlay.classList.contains('active')) {
-            overlay.classList.remove('active');
-        }
-    }, 200);
 
     // Listen for auth changes (like returning from Google login redirect)
     supabaseClient.auth.onAuthStateChange(async (event, session) => {

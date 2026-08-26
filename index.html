@@ -1404,16 +1404,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             }, 420);
         };
 
-        // HARD FALLBACK: If JS takes too long (slow network / hard refresh),
-        // force-dismiss the splash after 7 seconds so the app is never stuck.
-        window.addEventListener('load', function() {
-            setTimeout(window.hideSplashScreen, 5000);
-        });
-
-        // Extra safety: DOMContentLoaded fallback at 8s
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(window.hideSplashScreen, 8000);
-        });
+        // Absolute last resort — only fires if auth.js crashes completely (15 seconds)
+        setTimeout(window.hideSplashScreen, 15000);
     })();
     </script>
 

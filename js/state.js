@@ -607,6 +607,10 @@ async function loadState() {
                 // Force a UI refresh of the currently active view
                 if (typeof switchView === 'function' && State.currentView) {
                     switchView(State.currentView);
+                    // Re-render Lucide icons after cloud data paints
+                    requestAnimationFrame(() => {
+                        if (window.lucide) window.lucide.createIcons();
+                    });
                 }
                 
                 // Save to local storage for offline use
