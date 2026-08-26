@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- FORCE CACHE CLEAR: visit /?clear to bust old service worker -->
@@ -2583,52 +2583,142 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     <section id="screen-pnl" class="app-screen">
                 <div class="screen-content pnl-screen-content">
                     <div class="pnl-hero">
-                        <div class="pnl-hero-glow pnl-hero-glow-1"></div>
-                        <div class="pnl-hero-glow pnl-hero-glow-2"></div>
-                        <div class="pnl-hero-glow pnl-hero-glow-3"></div>
 
                         <div class="pnl-hero-topbar">
-                            <div>
-                                <p class="pnl-hero-eyebrow">Business Analytics</p>
-                                <h1 class="pnl-hero-title">Profit &amp; Loss</h1>
+                            <div class="pnl-hero-title-block">
+                                <div class="pnl-hero-eyebrow-row">
+                                    <i data-lucide="trending-up" class="pnl-hero-eyebrow-icon"></i>
+                                    <p class="pnl-hero-eyebrow">Business Analytics</p>
+                                </div>
+                                <h1 class="pnl-hero-title">Profit &amp; Loss Overview</h1>
+                                <p class="pnl-hero-subtitle">Complete financial summary and group performance</p>
                             </div>
-                            <span class="pnl-live-badge">
+                            <button class="pnl-live-badge">
+                                <span class="pnl-live-dot"></span>
                                 <i data-lucide="activity" style="width:14px;height:14px;"></i>
                                 Live Summary
-                            </span>
+                            </button>
                         </div>
 
                         <div class="pnl-metric-grid">
-                            <div class="pnl-metric-card pnl-card-green">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="trending-up"></i></div>
-                                <span class="pnl-card-label">Total Collected</span>
-                                <span class="pnl-card-value" id="pnl-global-expected">₹0</span>
-                                <span class="pnl-card-foot">Cash received from members</span>
+                            <!-- Card 1: Total Collected -->
+                            <div class="pnl-metric-card pnl-card-v2">
+                                <div class="pnl-card-v2-top">
+                                    <div class="pnl-card-v2-icon pnl-icon-green">
+                                        <i data-lucide="wallet" style="width:18px;height:18px;"></i>
+                                    </div>
+                                    <span class="pnl-card-v2-label">Total Collected</span>
+                                </div>
+                                <span class="pnl-card-v2-value" id="pnl-global-expected">₹0</span>
+                                <span class="pnl-card-v2-desc">Cash received from members</span>
+                                <div class="pnl-card-v2-bottom">
+                                    <div class="pnl-card-v2-chart pnl-chart-green">
+                                        <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                            <defs>
+                                                <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+                                                    <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M0,35 C20,30 30,20 45,22 S70,10 90,8 S110,12 120,5" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M0,35 C20,30 30,20 45,22 S70,10 90,8 S110,12 120,5 L120,40 L0,40 Z" fill="url(#grad-green)"/>
+                                        </svg>
+                                    </div>
+                                    <span class="pnl-card-v2-trend pnl-trend-up">
+                                        <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+                                        12.5% vs last period
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="pnl-metric-card pnl-card-purple">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="wallet"></i></div>
-                                <span class="pnl-card-label">Total Payout</span>
-                                <span class="pnl-card-value" id="pnl-global-payout">₹0</span>
-                                <span class="pnl-card-foot">Chit amounts disbursed</span>
+                            <!-- Card 2: Total Payout -->
+                            <div class="pnl-metric-card pnl-card-v2">
+                                <div class="pnl-card-v2-top">
+                                    <div class="pnl-card-v2-icon pnl-icon-purple">
+                                        <i data-lucide="credit-card" style="width:18px;height:18px;"></i>
+                                    </div>
+                                    <span class="pnl-card-v2-label">Total Payout</span>
+                                </div>
+                                <span class="pnl-card-v2-value" id="pnl-global-payout">₹0</span>
+                                <span class="pnl-card-v2-desc">Total amounts disbursed</span>
+                                <div class="pnl-card-v2-bottom">
+                                    <div class="pnl-card-v2-chart pnl-chart-purple">
+                                        <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                            <defs>
+                                                <linearGradient id="grad-purple" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.3"/>
+                                                    <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M0,30 C15,28 25,18 40,20 S60,28 80,18 S105,8 120,12" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M0,30 C15,28 25,18 40,20 S60,28 80,18 S105,8 120,12 L120,40 L0,40 Z" fill="url(#grad-purple)"/>
+                                        </svg>
+                                    </div>
+                                    <span class="pnl-card-v2-trend pnl-trend-up">
+                                        <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+                                        8.4% vs last period
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="pnl-metric-card pnl-card-green" id="pnl-global-realized-card">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="piggy-bank"></i></div>
-                                <span class="pnl-card-label"><span id="pnl-global-title">Net Profit</span></span>
-                                <span class="pnl-card-value" id="pnl-global-realized">₹0</span>
-                                <span class="pnl-card-foot">Actual cash in hand</span>
+                            <!-- Card 3: Net Loss/Profit -->
+                            <div class="pnl-metric-card pnl-card-v2" id="pnl-global-realized-card">
+                                <div class="pnl-card-v2-top">
+                                    <div class="pnl-card-v2-icon pnl-icon-red">
+                                        <i data-lucide="alert-triangle" style="width:18px;height:18px;"></i>
+                                    </div>
+                                    <span class="pnl-card-v2-label"><span id="pnl-global-title">Net Loss</span></span>
+                                </div>
+                                <span class="pnl-card-v2-value pnl-val-net" id="pnl-global-realized">₹0</span>
+                                <span class="pnl-card-v2-desc">Actual cash in hand</span>
+                                <div class="pnl-card-v2-bottom">
+                                    <div class="pnl-card-v2-chart pnl-chart-red">
+                                        <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                            <defs>
+                                                <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+                                                    <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M0,8 C20,10 35,25 55,28 S80,22 100,30 S115,35 120,34" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M0,8 C20,10 35,25 55,28 S80,22 100,30 S115,35 120,34 L120,40 L0,40 Z" fill="url(#grad-red)"/>
+                                        </svg>
+                                    </div>
+                                    <span class="pnl-card-v2-trend pnl-trend-down" id="pnl-net-trend">
+                                        <i data-lucide="trending-down" style="width:12px;height:12px;"></i>
+                                        15.3% vs last period
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="pnl-metric-card pnl-card-orange">
-                                <div class="pnl-card-shine"></div>
-                                <div class="pnl-card-icon"><i data-lucide="alert-circle"></i></div>
-                                <span class="pnl-card-label">Pending Arrears</span>
-                                <span class="pnl-card-value" id="pnl-global-pending">₹0</span>
-                                <span class="pnl-card-foot">Outstanding member dues</span>
+                            <!-- Card 4: Pending Arrears -->
+                            <div class="pnl-metric-card pnl-card-v2">
+                                <div class="pnl-card-v2-top">
+                                    <div class="pnl-card-v2-icon pnl-icon-orange">
+                                        <i data-lucide="clock" style="width:18px;height:18px;"></i>
+                                    </div>
+                                    <span class="pnl-card-v2-label">Pending Arrears</span>
+                                </div>
+                                <span class="pnl-card-v2-value pnl-val-arrears" id="pnl-global-pending">₹0</span>
+                                <span class="pnl-card-v2-desc">Outstanding member dues</span>
+                                <div class="pnl-card-v2-bottom">
+                                    <div class="pnl-card-v2-chart pnl-chart-orange">
+                                        <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                            <defs>
+                                                <linearGradient id="grad-orange" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="#f97316" stop-opacity="0.3"/>
+                                                    <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M0,32 C15,30 25,22 40,18 S65,14 85,10 S108,8 120,6" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M0,32 C15,30 25,22 40,18 S65,14 85,10 S108,8 120,6 L120,40 L0,40 Z" fill="url(#grad-orange)"/>
+                                        </svg>
+                                    </div>
+                                    <span class="pnl-card-v2-trend pnl-trend-up">
+                                        <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+                                        10.7% vs last period
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2636,10 +2726,19 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                     <div class="pnl-table-zone">
                         <div class="pnl-toolbar">
                             <div class="pnl-toolbar-left">
-                                <i data-lucide="layers" style="width:18px;height:18px;color:var(--primary);"></i>
+                                <i data-lucide="users" style="width:18px;height:18px;color:var(--primary);"></i>
                                 <span class="pnl-toolbar-title">Group Breakdown</span>
                             </div>
-                            <span class="pnl-toolbar-hint">Per-group margins &amp; arrears</span>
+                            <div class="pnl-toolbar-actions">
+                                <button class="pnl-toolbar-btn">
+                                    <i data-lucide="filter" style="width:14px;height:14px;"></i>
+                                    Filter
+                                </button>
+                                <button class="pnl-toolbar-btn">
+                                    <i data-lucide="download" style="width:14px;height:14px;"></i>
+                                    Export
+                                </button>
+                            </div>
                         </div>
 
                         <div class="pnl-table-scroll">

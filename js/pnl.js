@@ -146,20 +146,21 @@ function renderPnLDashboard() {
     const elRealized = document.getElementById('pnl-global-realized');
     const elRealizedCard = document.getElementById('pnl-global-realized-card');
     const elTitle = document.getElementById('pnl-global-title');
+    const elNetTrend = document.getElementById('pnl-net-trend');
+    // Update icon inside Net card
+    const elRealizedIcon = elRealizedCard ? elRealizedCard.querySelector('.pnl-card-v2-icon') : null;
     if (elRealized) {
-        elRealized.textContent = '₹' + formatNumberIndian(globalNetProfit);
+        elRealized.textContent = '\u20b9' + formatNumberIndian(globalNetProfit);
         if (globalNetProfit < 0) {
             if (elTitle) elTitle.textContent = 'Net Loss';
-            if (elRealizedCard) {
-                elRealizedCard.classList.remove('pnl-card-green');
-                elRealizedCard.classList.add('pnl-card-red');
-            }
+            elRealized.style.color = '#dc2626';
+            if (elRealizedIcon) { elRealizedIcon.className = 'pnl-card-v2-icon pnl-icon-red'; }
+            if (elNetTrend) { elNetTrend.className = 'pnl-card-v2-trend pnl-trend-down'; }
         } else {
             if (elTitle) elTitle.textContent = 'Net Profit';
-            if (elRealizedCard) {
-                elRealizedCard.classList.remove('pnl-card-red');
-                elRealizedCard.classList.add('pnl-card-green');
-            }
+            elRealized.style.color = '#059669';
+            if (elRealizedIcon) { elRealizedIcon.className = 'pnl-card-v2-icon pnl-icon-green'; }
+            if (elNetTrend) { elNetTrend.className = 'pnl-card-v2-trend pnl-trend-up'; }
         }
     }
     
