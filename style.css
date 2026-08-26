@@ -4870,36 +4870,62 @@ body:not([data-theme="light"]) .icon-blend-img {
     .pnl-metric-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ── New v2 Card ── */
+/* ── New v2 Card (Premium Colored) ── */
 .pnl-card-v2 {
-    background: #fff;
-    border: 1px solid #e8eaf0;
-    border-radius: 14px;
-    padding: 16px 16px 0;
+    border-radius: 18px;
+    padding: 20px 20px 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    gap: 3px;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
     cursor: default;
-}
-[data-theme='dark'] .pnl-card-v2 {
-    background: #1a1d27;
-    border-color: rgba(255,255,255,0.08);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    position: relative;
 }
 .pnl-card-v2:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    transform: translateY(-5px) scale(1.01);
 }
-[data-theme='dark'] .pnl-card-v2:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+
+/* ── Per-card colours: border + background ── */
+.pnl-card-v2:nth-child(1) {
+    background: linear-gradient(145deg, #064e3b 0%, #065f46 50%, #047857 100%);
+    border: 2px solid rgba(16,185,129,0.55);
+    box-shadow: 0 8px 32px rgba(5,150,105,0.35), 0 0 0 1px rgba(16,185,129,0.12) inset;
+}
+.pnl-card-v2:nth-child(2) {
+    background: linear-gradient(145deg, #3b0764 0%, #4c1d95 50%, #6d28d9 100%);
+    border: 2px solid rgba(139,92,246,0.55);
+    box-shadow: 0 8px 32px rgba(109,40,217,0.35), 0 0 0 1px rgba(139,92,246,0.12) inset;
+}
+.pnl-card-v2:nth-child(3) {
+    background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%);
+    border: 2px solid rgba(239,68,68,0.55);
+    box-shadow: 0 8px 32px rgba(185,28,28,0.35), 0 0 0 1px rgba(239,68,68,0.12) inset;
+}
+.pnl-card-v2:nth-child(4) {
+    background: linear-gradient(145deg, #7c2d12 0%, #9a3412 50%, #c2410c 100%);
+    border: 2px solid rgba(249,115,22,0.55);
+    box-shadow: 0 8px 32px rgba(194,65,12,0.35), 0 0 0 1px rgba(249,115,22,0.12) inset;
+}
+
+/* Shine overlay */
+.pnl-card-v2::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 55%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+}
 
 .pnl-card-v2-top {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 .pnl-card-v2-icon {
     width: 36px;
@@ -4909,53 +4935,62 @@ body:not([data-theme="light"]) .icon-blend-img {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    backdrop-filter: blur(4px);
 }
-.pnl-icon-green { background: rgba(16,185,129,0.12); color: #059669; }
-.pnl-icon-purple { background: rgba(124,58,237,0.12); color: #7c3aed; }
-.pnl-icon-red { background: rgba(239,68,68,0.12); color: #dc2626; }
-.pnl-icon-orange { background: rgba(249,115,22,0.12); color: #ea580c; }
+/* Legacy icon colour classes — now all white on colour bg */
+.pnl-icon-green, .pnl-icon-purple, .pnl-icon-red, .pnl-icon-orange {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+}
 
 .pnl-card-v2-label {
-    font-size: 0.7rem;
-    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    font-size: 0.68rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #6b7280;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.75);
 }
-[data-theme='dark'] .pnl-card-v2-label { color: rgba(255,255,255,0.5); }
 
 .pnl-card-v2-value {
+    position: relative;
+    z-index: 1;
     font-family: var(--font-number);
-    font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+    font-size: clamp(1.25rem, 3.5vw, 1.6rem);
     font-weight: 900;
-    color: #111827;
+    color: #fff !important;
     line-height: 1.1;
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
-[data-theme='dark'] .pnl-card-v2-value { color: #f3f4f6; }
-.pnl-val-net { color: #dc2626 !important; }
-.pnl-val-arrears { color: #ea580c !important; }
-/* Override for profit state */
-.pnl-net-profit-val .pnl-val-net { color: #059669 !important; }
+/* Override coloured values — all white on coloured cards */
+.pnl-val-net, .pnl-val-arrears { color: #fff !important; }
 
 .pnl-card-v2-desc {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    font-weight: 500;
-    margin-bottom: 6px;
-}
-[data-theme='dark'] .pnl-card-v2-desc { color: rgba(255,255,255,0.35); }
-
-/* ── Card bottom: sparkline + trend ── */
-.pnl-card-v2-bottom {
-    margin-top: auto;
     position: relative;
-    margin-left: -16px;
-    margin-right: -16px;
+    z-index: 1;
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* ── Card bottom: sparkline only (no trend text) ── */
+.pnl-card-v2-bottom {
+    position: relative;
+    z-index: 1;
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: auto;
+    height: 54px;
+    overflow: hidden;
 }
 .pnl-card-v2-chart {
     width: 100%;
-    height: 44px;
+    height: 100%;
     display: block;
 }
 .pnl-card-v2-chart svg {
@@ -4963,30 +4998,12 @@ body:not([data-theme="light"]) .icon-blend-img {
     height: 100%;
     display: block;
 }
-.pnl-card-v2-trend {
-    position: absolute;
-    bottom: 8px;
-    left: 16px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    border-radius: 99px;
-    padding: 2px 7px;
-}
-.pnl-trend-up {
-    color: #059669;
-    background: rgba(16,185,129,0.12);
-}
-.pnl-trend-down {
-    color: #dc2626;
-    background: rgba(239,68,68,0.1);
-}
+/* Hide trend text completely */
+.pnl-card-v2-trend { display: none !important; }
 
-/* ── Backwards-compat old card classes (kept but hidden) ── */
+/* ── Backwards-compat old card classes ── */
 .pnl-card-shine, .pnl-card-icon { display: none; }
-.pnl-card-green, .pnl-card-purple, .pnl-card-red, .pnl-card-orange { /* legacy overrides gone */ }
+.pnl-card-green, .pnl-card-purple, .pnl-card-red, .pnl-card-orange { }
 .pnl-card-label { display: none; }
 .pnl-card-value { display: none; }
 .pnl-card-foot { display: none; }
@@ -5022,38 +5039,13 @@ body:not([data-theme="light"]) .icon-blend-img {
     color: var(--text-muted);
     font-weight: 500;
 }
-.pnl-toolbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.pnl-toolbar-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 7px 12px;
-    border-radius: 8px;
-    border: 1px solid #e0e2e8;
-    background: #fff;
-    color: #374151;
-    font-size: 0.76rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, transform 0.15s;
-}
-[data-theme='dark'] .pnl-toolbar-btn {
-    background: #1a1d27;
-    border-color: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.7);
-}
-.pnl-toolbar-btn:hover {
-    background: #f3f4f6;
-    border-color: #c7cad2;
-    transform: translateY(-1px);
-}
-[data-theme='dark'] .pnl-toolbar-btn:hover {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.18);
+/* ── Table toolbar (Filter/Export hidden) ── */
+.pnl-toolbar-actions { display: none; }
+.pnl-toolbar-btn { display: none; }
+.pnl-toolbar-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
 .pnl-table-scroll {
