@@ -109,7 +109,7 @@ async function initAuth() {
         if (overlay && overlay.classList.contains('active')) {
             overlay.classList.remove('active');
         }
-    }, 1500);
+    }, 200);
 
     // Listen for auth changes (like returning from Google login redirect)
     supabaseClient.auth.onAuthStateChange(async (event, session) => {

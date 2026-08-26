@@ -1373,7 +1373,49 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         @media (prefers-reduced-motion: reduce) {
             /* We leave this empty or removed, but to be safe we will just let the global CSS handle reduce motion EXCEPT for the splash dots */
         }
+
+        /* Smooth fade-out class */
+        #pms-splash-screen {
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #pms-splash-screen.splash-hiding {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        #pms-splash-screen.splash-gone {
+            display: none !important;
+        }
     </style>
+
+    <!-- CRITICAL: Define hideSplashScreen immediately so auth.js can call it -->
+    <script>
+    (function() {
+        var _splashDismissed = false;
+
+        window.hideSplashScreen = function() {
+            if (_splashDismissed) return;
+            _splashDismissed = true;
+            var splash = document.getElementById('pms-splash-screen');
+            if (!splash) return;
+            splash.classList.add('splash-hiding');
+            setTimeout(function() {
+                splash.classList.add('splash-gone');
+                splash.remove();
+            }, 420);
+        };
+
+        // HARD FALLBACK: If JS takes too long (slow network / hard refresh),
+        // force-dismiss the splash after 7 seconds so the app is never stuck.
+        window.addEventListener('load', function() {
+            setTimeout(window.hideSplashScreen, 5000);
+        });
+
+        // Extra safety: DOMContentLoaded fallback at 8s
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(window.hideSplashScreen, 8000);
+        });
+    })();
+    </script>
 
     <!-- App Shell Wrapper (Centered Mockup Frame on Desktop, Full Screen on Mobile) -->
     <div class="app-device-shell">
