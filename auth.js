@@ -54,6 +54,15 @@ async function initAuth() {
             try {
                 AuthState.isAuthenticated = true;
                 AuthState.currentUser = JSON.parse(cachedSession);
+                
+                // Pre-load local state synchronously so switchView renders real data instantly
+                if (typeof State !== 'undefined' && typeof getStorageKey === 'function') {
+                    const storedGroups = localStorage.getItem(getStorageKey('groups'));
+                    const storedMembers = localStorage.getItem(getStorageKey('members'));
+                    State.groups = storedGroups ? JSON.parse(storedGroups) : [];
+                    State.members = storedMembers ? JSON.parse(storedMembers) : [];
+                }
+
                 // navigateTo('screen-dashboard') triggers switchView which triggers renderDashboard
                 navigateToLastScreen();
                 updateProfileUI();
