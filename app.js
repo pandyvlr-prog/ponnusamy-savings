@@ -3550,6 +3550,8 @@ function renderDashboardMembersList(searchQuery = '') {
     let syncCollectedCash = 0;
     let syncCollectedGpay = 0;
     let syncPending = 0;
+    let syncPendingUnpaid = 0;
+    let syncPendingPartial = 0;
     let syncChitTaken = 0;
     
     let syncCountPaid = 0;
@@ -3562,6 +3564,13 @@ function renderDashboardMembersList(searchQuery = '') {
         if (item.paymentMethodThisMonth === 'cash') syncCollectedCash += item.paidAmount;
         if (item.paymentMethodThisMonth === 'gpay') syncCollectedGpay += item.paidAmount;
         syncPending += item.dueAmount;
+        if (item.dueAmount > 0) {
+            if (item.paidAmount === 0) {
+                syncPendingUnpaid += item.dueAmount;
+            } else {
+                syncPendingPartial += item.dueAmount;
+            }
+        }
         
         if (item.currentMonthPaid || item.paidAmount > 0) {
             syncCountPaid++;
@@ -3591,6 +3600,12 @@ function renderDashboardMembersList(searchQuery = '') {
     
     const statTotalPending = document.getElementById('stat-total-pending');
     if (statTotalPending) statTotalPending.textContent = '₹' + syncPending.toLocaleString('en-IN');
+    
+    const mPendingUnpaidEl = document.getElementById('stat-summary-pending-unpaid');
+    if (mPendingUnpaidEl) mPendingUnpaidEl.textContent = '₹' + syncPendingUnpaid.toLocaleString('en-IN');
+    
+    const mPendingPartialEl = document.getElementById('stat-summary-pending-partial');
+    if (mPendingPartialEl) mPendingPartialEl.textContent = '₹' + syncPendingPartial.toLocaleString('en-IN');
     
     const mChitTakenEl = document.getElementById('stat-summary-chit-taken-amount');
     if (mChitTakenEl) mChitTakenEl.textContent = '₹' + syncChitTaken.toLocaleString('en-IN');

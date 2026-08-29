@@ -1789,6 +1789,22 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 </span>
                                 <span class="metric-value text-red" id="stat-total-pending">₹0</span>
                                 <span id="stat-summary-pending-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--red-dark);">(0)</span>
+                                <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(220,38,38,0.3); padding-top: 8px;">
+                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%) !important; border: 1px solid #450a0a; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
+                                        <div style="display: flex; align-items: center; gap: 6px; color: #fca5a5 !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+                                            <i data-lucide="alert-circle" style="width: 14px; height: 14px; stroke-width: 3px;"></i>
+                                            UNPAID
+                                        </div>
+                                        <span id="stat-summary-pending-unpaid" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important; border: 1px solid #9a3412; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
+                                        <div style="display: flex; align-items: center; gap: 6px; color: #fdba74 !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+                                            <i data-lucide="pie-chart" style="width: 14px; height: 14px; stroke-width: 3px;"></i>
+                                            PARTIAL
+                                        </div>
+                                        <span id="stat-summary-pending-partial" style="font-size: clamp(0.9rem, 4vw, 1.15rem); font-weight: 900; color: #ffffff !important; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4);">₹0</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="metric-item highlight-purple" style="position: relative;">
                                 <span class="metric-label" style="display: inline-flex; align-items: center; gap: 4px;">
