@@ -5,7 +5,7 @@
  * then fetches fresh copy in background — eliminates blank screen.
  */
 
-const CACHE_NAME = 'pms-shell-v304';
+const CACHE_NAME = 'pms-shell-v309';
 
 // App shell files to cache immediately on install
 const SHELL_FILES = [
