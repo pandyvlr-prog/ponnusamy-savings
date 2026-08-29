@@ -1,5 +1,63 @@
+// --- Offline Indicator (injected via JS for backward-compatibility with cached index.html) ---
+(function () {
+    function ensureOfflineIndicator() {
+        if (document.getElementById('offline-indicator')) return; // Already in HTML
+        var el = document.createElement('div');
+        el.id = 'offline-indicator';
+        el.setAttribute('role', 'status');
+        el.setAttribute('aria-live', 'assertive');
+        el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>No Internet Connection</span>';
+        // Inject styles if not already in stylesheet
+        if (!document.getElementById('offline-indicator-style')) {
+            var style = document.createElement('style');
+            style.id = 'offline-indicator-style';
+            style.textContent = [
+                '#offline-indicator{position:fixed;bottom:calc(64px + env(safe-area-inset-bottom,0px));left:50%;',
+                'transform:translateX(-50%) translateY(120%);z-index:9999;display:flex;align-items:center;gap:8px;',
+                'padding:10px 20px;background:#ef4444;color:#fff;font-family:"Inter",sans-serif;font-size:13px;',
+                'font-weight:600;border-radius:999px;box-shadow:0 4px 24px rgba(0,0,0,.35);pointer-events:none;',
+                'transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s ease;opacity:0;white-space:nowrap;}',
+                '#offline-indicator.visible{transform:translateX(-50%) translateY(0%);opacity:1;}',
+                '@media(min-width:768px){#offline-indicator{bottom:auto;top:80px;}}'
+            ].join('');
+            document.head.appendChild(style);
+        }
+        document.body.appendChild(el);
+        return el;
+    }
+
+    function updateOfflineUI() {
+        var el = document.getElementById('offline-indicator') || ensureOfflineIndicator();
+        if (!el) return;
+        if (!navigator.onLine) {
+            el.classList.add('visible');
+        } else {
+            el.classList.remove('visible');
+            // When we come back online, re-sync data
+            if (window.loadState && typeof window.loadState === 'function') {
+                setTimeout(function () { window.loadState(); }, 500);
+            }
+        }
+    }
+
+    // Run immediately if body is ready, else wait for DOM
+    if (document.body) {
+        ensureOfflineIndicator();
+        updateOfflineUI();
+    } else {
+        document.addEventListener('DOMContentLoaded', function () {
+            ensureOfflineIndicator();
+            updateOfflineUI();
+        });
+    }
+
+    window.addEventListener('offline', updateOfflineUI);
+    window.addEventListener('online',  updateOfflineUI);
+})();
+
 // --- Initializing App ---
 document.addEventListener('DOMContentLoaded', () => {
+
     // [PHASE 4] Debounce lucide.createIcons to prevent main thread freezing
     if (typeof lucide !== 'undefined' && typeof window.lucideOriginalCreateIcons === 'undefined') {
         window.lucideOriginalCreateIcons = lucide.createIcons;

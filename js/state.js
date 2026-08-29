@@ -593,6 +593,21 @@ async function loadState() {
 
         // If authenticated with Supabase, pull cloud data
         if (window.supabaseClient && window.AuthState?.isAuthenticated && window.AuthState.currentUser?.id) {
+
+            // ── OFFLINE GUARD ──────────────────────────────────────────────
+            // If the device has no internet, skip the Supabase fetch entirely.
+            // Mark sync complete immediately so the UI renders local cached data
+            // instead of getting stuck on "Syncing..." forever.
+            if (!navigator.onLine) {
+                console.log('[State] Device is offline — using local cached data.');
+                window.isCloudSyncComplete = true;
+                if (typeof switchView === 'function' && State.currentView) {
+                    switchView(State.currentView);
+                }
+                return;
+            }
+            // ───────────────────────────────────────────────────────────────
+
             // Force network fetch of user_metadata silently in the background
             try {
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
@@ -600,11 +615,27 @@ async function loadState() {
                     window.AuthState.currentUser.user_metadata = user.user_metadata || {};
                 }
             } catch (e) {}
-            const { data, error } = await window.supabaseClient
+
+            // Race: 10-second timeout so a sluggish connection never hangs the UI
+            const fetchPromise = window.supabaseClient
                 .from('user_data')
                 .select('*')
                 .eq('user_id', window.AuthState.currentUser.id)
                 .single();
+            const timeoutPromise = new Promise(resolve =>
+                setTimeout(() => resolve({ data: null, error: { message: 'timeout', code: 'TIMEOUT' } }), 10000)
+            );
+            const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+
+            // If timed-out or network error, fall back to local data gracefully
+            if (error && (error.code === 'TIMEOUT' || error.message === 'Failed to fetch')) {
+                console.warn('[State] Cloud sync timed out — using local cached data.');
+                window.isCloudSyncComplete = true;
+                if (typeof switchView === 'function' && State.currentView) {
+                    switchView(State.currentView);
+                }
+                return;
+            }
                 
             if (data) {
                 // We have cloud data! Override local state
@@ -716,6 +747,7 @@ async function loadState() {
         console.error('Error loading state:', e);
     }
 }
+window.loadState = loadState; // Expose globally for online-event re-sync
 
 // --- DEEP EQUAL HELPER ---
 function deepEqual(obj1, obj2) {

@@ -1,12 +1,13 @@
 /**
- * Ponnusamy Savings — Service Worker v310
+ * Ponnusamy Savings — Service Worker v311
  * Strategy: Stale-While-Revalidate for app shell files.
  * → Serves from cache INSTANTLY on hard refresh (no blank screen).
  * → Fetches fresh copy in background silently.
  * → Falls back to premium offline.html for any failed navigation.
+ * v311: Fixes offline "Syncing..." hang + offline indicator on all cached devices.
  */
 
-const CACHE_NAME = 'pms-shell-v310';
+const CACHE_NAME = 'pms-shell-v311';
 
 // App shell files to pre-cache on install
 const SHELL_FILES = [
