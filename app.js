@@ -2731,16 +2731,15 @@ function renderDashboardGroupsList(filterConfig = null) {
         // If filterConfig is provided, apply the wizard filters
         if (filterConfig) {
             groupsToRender = groupsToRender.filter(g => {
-                const y = g.startYear !== undefined ? parseInt(g.startYear, 10) : new Date(g.createdAt).getFullYear();
-                const m = g.startMonth !== undefined ? parseInt(g.startMonth, 10) : new Date(g.createdAt).getMonth();
+                const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+                const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
                 const amt = extractNumericAmount(g);
                 const dur = extractNumericDuration(g);
                 
-                // Use loose equality (==) for amount and duration in case of string/number mismatch, but strict for year/month
-                return y == filterConfig.year && 
-                       m == filterConfig.month && 
-                       amt == filterConfig.amount && 
-                       dur == filterConfig.duration;
+                return y === filterConfig.year && 
+                       m === filterConfig.month && 
+                       amt === filterConfig.amount && 
+                       dur === filterConfig.duration;
             });
             console.log("Matched groups for Step 4:", groupsToRender.length, "groups");
             console.log("Filter Config:", filterConfig);
