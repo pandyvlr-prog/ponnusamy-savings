@@ -5,26 +5,26 @@
  * then fetches fresh copy in background — eliminates blank screen.
  */
 
-const CACHE_NAME = 'pms-shell-v303';
+const CACHE_NAME = 'pms-shell-v304';
 
 // App shell files to cache immediately on install
 const SHELL_FILES = [
-    './',
-    './index.html',
-    './offline.html',
-    './style.css',
-    './auth.js',
-    './app.js',
-    './js/state.js',
-    './js/ui.js',
-    './js/utils.js',
-    './js/settings.js',
-    './js/pdf.js',
-    './js/pnl.js',
-    './js/sound.js',
-    './logo-light.jpg',
-    './logo-light.png',
-    './manifest.json'
+    '/',
+    '/index.html',
+    '/offline.html',
+    '/style.css',
+    '/auth.js',
+    '/app.js',
+    '/js/state.js',
+    '/js/ui.js',
+    '/js/utils.js',
+    '/js/settings.js',
+    '/js/pdf.js',
+    '/js/pnl.js',
+    '/js/sound.js',
+    '/logo-light.jpg',
+    '/logo-light.png',
+    '/manifest.json'
 ];
 
 // Install: pre-cache the app shell
@@ -93,7 +93,10 @@ self.addEventListener('fetch', event => {
                     // If network fails and it's a navigation request, serve offline page
                     const acceptHeader = request.headers.get('accept');
                     if (request.mode === 'navigate' || (request.method === 'GET' && acceptHeader && acceptHeader.includes('text/html'))) {
-                        return caches.match('./offline.html');
+                        return caches.match('/offline.html').then(offlineRes => {
+                            // If offline page is found, return it. Otherwise, return null (triggers default dinosaur)
+                            return offlineRes || null;
+                        });
                     }
                     return null;
                 });
