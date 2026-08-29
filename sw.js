@@ -5,12 +5,13 @@
  * then fetches fresh copy in background — eliminates blank screen.
  */
 
-const CACHE_NAME = 'pms-shell-v301';
+const CACHE_NAME = 'pms-shell-v302';
 
 // App shell files to cache immediately on install
 const SHELL_FILES = [
     '/',
     '/index.html',
+    '/offline.html',
     '/style.css',
     '/auth.js',
     '/app.js',
@@ -87,7 +88,14 @@ self.addEventListener('fetch', event => {
                 }).catch(() => null);
 
                 // Return cached immediately if available, else wait for network
-                return cached || networkFetch;
+                return cached || networkFetch.then(res => {
+                    if (res) return res;
+                    // If network fails and it's a navigation request, serve offline page
+                    if (request.mode === 'navigate' || (request.method === 'GET' && request.headers.get('accept').includes('text/html'))) {
+                        return caches.match('/offline.html');
+                    }
+                    return null;
+                });
             });
         })
     );

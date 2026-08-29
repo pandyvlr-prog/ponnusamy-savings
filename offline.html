@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ponnusamy Savings - Offline</title>
+    <!-- Use Google Fonts cached by SW or standard fallbacks -->
+    <style>
+        :root {
+            --bg-body: #0f1115;
+            --bg-surface: #1e222a;
+            --primary: #3b82f6;
+            --accent: #fbbf24;
+            --text-main: #f3f4f6;
+            --text-secondary: #9ca3af;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Gradients */
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: pulseGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+            100% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        }
+
+        .glass-card {
+            background: rgba(30, 34, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        /* Piggy Bank Game Styles */
+        .game-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .game-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .piggy-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .piggy-wrapper:active {
+            transform: scale(0.9);
+        }
+
+        .piggy-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 10px 15px rgba(251, 191, 36, 0.2));
+        }
+
+        .score-display {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .floating-coin {
+            position: absolute;
+            font-size: 1.5rem;
+            color: var(--accent);
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            font-weight: bold;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+        }
+
+        .reconnect-status {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: var(--text-secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="glass-card">
+        <div class="icon-container">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.61 4.39A2.25 2.25 0 0 1 12 4c.6 0 1.17.23 1.6.64l.8.8"></path>
+                <path d="M16 8.5c0-.82-.3-1.58-.8-2.14"></path>
+                <path d="M20.25 12.2a4 4 0 0 0-4.14-4"></path>
+                <path d="M22 17.5a4 4 0 0 0-3.66-3.9"></path>
+                <path d="M2 17.5a4 4 0 0 1 3.5-3.9"></path>
+                <path d="M6 10a4 4 0 0 1 4-4"></path>
+                <path d="M1 1l22 22"></path>
+            </svg>
+        </div>
+        
+        <h1>You're Offline</h1>
+        <p>Your connection was lost. We'll automatically reconnect you when the internet comes back.</p>
+
+        <div class="game-container">
+            <div class="game-title">Tap to Save</div>
+            <div class="piggy-wrapper" id="piggy-btn">
+                <!-- Piggy Bank SVG -->
+                <svg class="piggy-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.5-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V6c0-.5-.5-1-1-1Z"></path>
+                    <path d="M2 9v1c0 1.1.9 2 2 2h1"></path>
+                    <path d="M16 11h.01"></path>
+                </svg>
+            </div>
+            <div class="score-display" id="score-display">0</div>
+        </div>
+
+        <div class="reconnect-status">
+            <div class="spinner"></div>
+            <span>Waiting for connection...</span>
+        </div>
+    </div>
+
+    <script>
+        // Game Logic
+        let score = 0;
+        const piggyBtn = document.getElementById('piggy-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const gameContainer = document.querySelector('.game-container');
+
+        piggyBtn.addEventListener('click', (e) => {
+            score += 10;
+            scoreDisplay.textContent = score;
+
+            // Haptic Feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+
+            // Create floating +10 animation
+            const rect = piggyBtn.getBoundingClientRect();
+            const floatEl = document.createElement('div');
+            floatEl.textContent = '+10';
+            floatEl.className = 'floating-coin';
+            
+            // Calculate random position around the piggy bank
+            const randomX = Math.random() * 40 - 20;
+            floatEl.style.left = `calc(50% + ${randomX}px)`;
+            floatEl.style.top = '10px';
+            
+            piggyBtn.appendChild(floatEl);
+
+            // Remove element after animation
+            setTimeout(() => {
+                floatEl.remove();
+            }, 1000);
+        });
+
+        // Auto-Reconnect Logic
+        function checkNetwork() {
+            // Using a simple fetch with no-cache to test actual connection
+            fetch('/?ping=' + Date.now(), { method: 'HEAD', cache: 'no-store' })
+                .then(response => {
+                    if (response.ok) {
+                        // Connection restored! Reload the page
+                        window.location.reload();
+                    }
+                })
+                .catch(() => {
+                    // Still offline, check again in 3 seconds
+                    setTimeout(checkNetwork, 3000);
+                });
+        }
+
+        // Listen for browser online event as a fast-path
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+
+        // Start polling check
+        setTimeout(checkNetwork, 3000);
+    </script>
+</body>
+</html>
