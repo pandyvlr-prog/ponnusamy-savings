@@ -2305,6 +2305,9 @@ function _renderDashboard() {
         // Find which months have groups for the selected year
         const activeMonths = new Set();
         State.groups.forEach(g => {
+            const hasMembers = State.members.some(m => m.groupId === g.id);
+            if (!hasMembers) return;
+            
             const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
             const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
             if (y === wizardState.year) {
@@ -2346,6 +2349,9 @@ function _renderDashboard() {
         
         // Filter groups for chosen year and month
         const matchedGroups = State.groups.filter(g => {
+            const hasMembers = State.members.some(m => m.groupId === g.id);
+            if (!hasMembers) return false;
+            
             const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
             const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
             return y === wizardState.year && m === wizardState.month;
@@ -2386,6 +2392,9 @@ function _renderDashboard() {
         
         // Filter groups for chosen year, month, and duration
         const matchedGroups = State.groups.filter(g => {
+            const hasMembers = State.members.some(m => m.groupId === g.id);
+            if (!hasMembers) return false;
+            
             const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
             const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
             const dur = extractNumericDuration(g);
@@ -2728,7 +2737,8 @@ function renderDashboardGroupsList(filterConfig = null) {
         try {
             const fragment = document.createDocumentFragment();
             
-            let groupsToRender = [...State.groups];
+            // Only render groups that have at least one member
+            let groupsToRender = State.groups.filter(g => State.members.some(m => m.groupId === g.id));
 
             // If filterConfig is provided, apply the wizard filters
             if (filterConfig) {
