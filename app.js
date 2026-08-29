@@ -2155,6 +2155,20 @@ function renderDashboard() {
     renderDashboardRAF = requestAnimationFrame(_renderDashboard);
 }
 
+function extractNumericAmount(g) {
+    let raw = g.chitAmount || g.amount || (g.monthlyInstallment ? parseFloat(g.monthlyInstallment) * parseInt(g.duration) : 0);
+    if (typeof raw === 'string') {
+        raw = parseFloat(raw.replace(/,/g, '').replace(/[^0-9.]/g, ''));
+    }
+    return isNaN(raw) ? 0 : raw;
+}
+
+function extractNumericDuration(g) {
+    let raw = g.duration;
+    if (typeof raw === 'string') raw = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+    return isNaN(raw) ? 12 : raw;
+}
+
 function _renderDashboard() {
     const isSyncing = State.groups.length === 0 && !window.isCloudSyncComplete;
     
@@ -2275,20 +2289,6 @@ function _renderDashboard() {
         if (num >= 100000) return (num / 100000) + 'L';
         if (num >= 1000) return (num / 1000) + 'K';
         return num.toString();
-    }
-
-    function extractNumericAmount(g) {
-        let raw = g.chitAmount || g.amount || (g.monthlyInstallment ? parseFloat(g.monthlyInstallment) * parseInt(g.duration) : 0);
-        if (typeof raw === 'string') {
-            raw = parseFloat(raw.replace(/,/g, '').replace(/[^0-9.]/g, ''));
-        }
-        return isNaN(raw) ? 0 : raw;
-    }
-
-    function extractNumericDuration(g) {
-        let raw = g.duration;
-        if (typeof raw === 'string') raw = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-        return isNaN(raw) ? 12 : raw;
     }
 
     function renderWizardStep1() {
