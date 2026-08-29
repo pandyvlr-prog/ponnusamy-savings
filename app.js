@@ -2724,121 +2724,146 @@ function _renderDashboard() {
 function renderDashboardGroupsList(filterConfig = null) {
         const container = document.getElementById('group-list-container');
         if (!container) return;
-        const fragment = document.createDocumentFragment();
         
-        let groupsToRender = [...State.groups];
+        try {
+            const fragment = document.createDocumentFragment();
+            
+            let groupsToRender = [...State.groups];
 
-        // If filterConfig is provided, apply the wizard filters
-        if (filterConfig) {
-            groupsToRender = groupsToRender.filter(g => {
-                const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
-                const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
-                const amt = extractNumericAmount(g);
-                const dur = extractNumericDuration(g);
+            // If filterConfig is provided, apply the wizard filters
+            if (filterConfig) {
+                groupsToRender = groupsToRender.filter(g => {
+                    const y = g.startYear !== undefined ? parseInt(g.startYear) : new Date(g.createdAt).getFullYear();
+                    const m = g.startMonth !== undefined ? parseInt(g.startMonth) : new Date(g.createdAt).getMonth();
+                    const amt = extractNumericAmount(g);
+                    const dur = extractNumericDuration(g);
+                    
+                    return y === filterConfig.year && 
+                           m === filterConfig.month && 
+                           amt === filterConfig.amount && 
+                           dur === filterConfig.duration;
+                });
+                console.log("Matched groups for Step 4:", groupsToRender.length, "groups");
+                console.log("Filter Config:", filterConfig);
+            }
+
+            const countBadge = document.getElementById('modal-total-groups-count');
+            if (countBadge) {
+                countBadge.textContent = groupsToRender.length;
+                // Update title based on whether it's all groups or filtered
+                document.getElementById('wizard-title').innerHTML = filterConfig ? `Groups (${groupsToRender.length})` : `Chit Groups`;
+            }
+            
+            if (groupsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 20px; background: #fff1f2; border: 2px solid #ef4444; border-radius: 8px; color: #991b1b; display: block !important; visibility: visible !important; font-weight: bold; text-align: center;">
+                        <h3 style="color: #991b1b; margin-bottom: 8px;">DEBUG: ZERO GROUPS FOUND</h3>
+                        <p style="color: #991b1b; margin: 0;">If you see this, groupsToRender.length is exactly 0.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort groups chronologically
+            const sortedGroups = groupsToRender.sort((a, b) => {
+                const aYear = a.startYear !== undefined ? parseInt(a.startYear) : new Date(a.createdAt).getFullYear();
+                const bYear = b.startYear !== undefined ? parseInt(b.startYear) : new Date(b.createdAt).getFullYear();
+                if (aYear !== bYear) return aYear - bYear;
                 
-                return y === filterConfig.year && 
-                       m === filterConfig.month && 
-                       amt === filterConfig.amount && 
-                       dur === filterConfig.duration;
+                const aMonth = a.startMonth !== undefined ? parseInt(a.startMonth) : new Date(a.createdAt).getMonth();
+                const bMonth = b.startMonth !== undefined ? parseInt(b.startMonth) : new Date(b.createdAt).getMonth();
+                return aMonth - bMonth;
             });
-            console.log("Matched groups for Step 4:", groupsToRender.length, "groups");
-            console.log("Filter Config:", filterConfig);
-        }
 
-        const countBadge = document.getElementById('modal-total-groups-count');
-        if (countBadge) {
-            countBadge.textContent = groupsToRender.length;
-            // Update title based on whether it's all groups or filtered
-            document.getElementById('wizard-title').innerHTML = filterConfig ? `Groups (${groupsToRender.length})` : `Chit Groups`;
-        }
-        
-        if (groupsToRender.length === 0) {
+            const boxColors = [
+                { border: '#3b82f6', bg: 'rgba(59,130,246,0.07)' },
+                { border: '#10b981', bg: 'rgba(16,185,129,0.07)' },
+                { border: '#f59e0b', bg: 'rgba(245,158,11,0.07)' },
+                { border: '#ef4444', bg: 'rgba(239,68,68,0.07)' },
+                { border: '#8b5cf6', bg: 'rgba(139,92,246,0.07)' },
+                { border: '#ec4899', bg: 'rgba(236,72,153,0.07)' },
+                { border: '#06b6d4', bg: 'rgba(6,182,212,0.07)' },
+                { border: '#14b8a6', bg: 'rgba(20,184,166,0.07)' }
+            ];
+            
+            const mNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+            sortedGroups.forEach((group, index) => {
+                const metrics = getGroupMetrics(group.id);
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.setAttribute('data-id', group.id);
+                
+                const colorPair = boxColors[index % boxColors.length];
+                card.style.border = `2px solid ${colorPair.border}`;
+                // Adaptive background that works in both Light and Dark themes
+                card.style.backgroundColor = `var(--bg-surface-elevated)`;
+                card.style.backgroundImage = `linear-gradient(${colorPair.bg}, ${colorPair.bg})`;
+                card.style.boxShadow = `0 4px 16px ${colorPair.border}30, inset 0 1px 0 rgba(255,255,255,0.05)`;
+                    
+                const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? parseFloat(group.monthlyInstallment) * parseInt(group.duration) : 0);
+                
+                // Calculate date range labels using month names
+                const sMonthIdx = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
+                const sYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
+                const durNumeric = extractNumericDuration(group);
+                
+                const sDateObj = new Date(sYear, sMonthIdx, 1);
+                const eDateObj = new Date(sYear, sMonthIdx + durNumeric - 1, 1);
+                
+                const startLabel = isNaN(sDateObj.getTime()) ? "Unknown" : `${mNames[sDateObj.getMonth()]} ${sDateObj.getFullYear()}`;
+                const endLabel = isNaN(eDateObj.getTime()) ? "Unknown" : `${mNames[eDateObj.getMonth()]} ${eDateObj.getFullYear()}`;
+
+                card.innerHTML = `
+                    <div class="group-card-header">
+                        <div class="group-card-title" style="display: flex; align-items: center; color: var(--text-main);">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.78rem; font-weight: 900; margin-right: 10px; flex-shrink: 0; box-shadow: 0 2px 6px ${colorPair.border}80;">${index + 1}</span>
+                            <span style="font-weight: 700; letter-spacing: 0.3px;">${group.name || 'Unnamed Group'}</span>
+                        </div>
+                        <div class="group-card-amount" style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #ffffff; padding: 4px 10px; border-radius: 8px; border: none; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(147,51,234,0.3);">₹${Number(schemeAmount).toLocaleString('en-IN')}</div>
+                    </div>
+                    <div class="group-card-info" style="color: var(--text-muted);">
+                        <div class="info-item">
+                            <i data-lucide="users"></i>
+                            <span>${metrics.totalMembers || 0} Members</span>
+                        </div>
+                        <div class="info-item">
+                            <i data-lucide="calendar"></i>
+                            <span>${durNumeric} Months</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.74rem; font-weight: 700;">
+                        <span style="color: #15803d; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${startLabel}</span>
+                        <span style="color: var(--text-muted); font-weight: 800; font-size: 0.85rem; line-height: 1;">—</span>
+                        <span style="color: #b91c1c; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${endLabel}</span>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    State.selectedGroupId = group.id;
+                    const modal = document.getElementById('groups-list-modal-backdrop');
+                    if (modal) modal.classList.remove('active');
+                    switchView('screen-group-details');
+                });
+                
+                fragment.appendChild(card);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(fragment);
+            
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        } catch (error) {
+            console.error("CRITICAL ERROR IN renderDashboardGroupsList:", error);
             container.innerHTML = `
-                <div class="empty-state" style="padding: 20px; color: var(--text-main); display: block !important; visibility: visible !important;">
-                    <h3 style="color: var(--text-main); margin-bottom: 8px;">No Chit Groups Found</h3>
-                    <p style="color: var(--text-secondary); margin: 0;">No groups match your selection.</p>
+                <div style="padding: 20px; background: #fff1f2; border: 2px solid #ef4444; border-radius: 8px; color: #991b1b; text-align: left; display: block !important;">
+                    <h3 style="margin-top: 0;">Application Error</h3>
+                    <p>Failed to render groups. Error: ${error.message}</p>
+                    <pre style="font-size: 10px; overflow-x: auto; margin-top: 10px;">${error.stack}</pre>
                 </div>
             `;
-            return;
-        }
-        
-        // Sort groups chronologically
-        const sortedGroups = groupsToRender.sort((a, b) => {
-            if (a.startYear !== b.startYear) return a.startYear - b.startYear;
-            return a.startMonth - b.startMonth;
-        });
-
-    const boxColors = [
-        { border: '#3b82f6', bg: 'rgba(59,130,246,0.07)' },
-        { border: '#10b981', bg: 'rgba(16,185,129,0.07)' },
-        { border: '#f59e0b', bg: 'rgba(245,158,11,0.07)' },
-        { border: '#ef4444', bg: 'rgba(239,68,68,0.07)' },
-        { border: '#8b5cf6', bg: 'rgba(139,92,246,0.07)' },
-        { border: '#ec4899', bg: 'rgba(236,72,153,0.07)' },
-        { border: '#06b6d4', bg: 'rgba(6,182,212,0.07)' },
-        { border: '#14b8a6', bg: 'rgba(20,184,166,0.07)' }
-    ];
-    
-    const mNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-    sortedGroups.forEach((group, index) => {
-        const metrics = getGroupMetrics(group.id);
-        const card = document.createElement('div');
-        card.className = 'group-card';
-        card.setAttribute('data-id', group.id);
-        
-        const colorPair = boxColors[index % boxColors.length];
-        card.style.border = `2px solid ${colorPair.border}`;
-        // Adaptive background that works in both Light and Dark themes
-        card.style.backgroundColor = `var(--bg-surface-elevated)`;
-        card.style.backgroundImage = `linear-gradient(${colorPair.bg}, ${colorPair.bg})`;
-        card.style.boxShadow = `0 4px 16px ${colorPair.border}30, inset 0 1px 0 rgba(255,255,255,0.05)`;
-            
-        const schemeAmount = group.chitAmount || group.amount || (group.monthlyInstallment ? group.monthlyInstallment * group.duration : 0);
-        
-        // Calculate date range labels using month names
-        const sMonthIdx = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
-        const sYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
-        const sDateObj = new Date(sYear, sMonthIdx, 1);
-        const eDateObj = new Date(sYear, sMonthIdx + group.duration - 1, 1);
-        const startLabel = `${mNames[sDateObj.getMonth()]} ${sDateObj.getFullYear()}`;
-        const endLabel = `${mNames[eDateObj.getMonth()]} ${eDateObj.getFullYear()}`;
-
-        card.innerHTML = `
-            <div class="group-card-header">
-                <div class="group-card-title" style="display: flex; align-items: center; color: var(--text-main);">
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: ${colorPair.border}; color: #fff; font-size: 0.78rem; font-weight: 900; margin-right: 10px; flex-shrink: 0; box-shadow: 0 2px 6px ${colorPair.border}80;">${index + 1}</span>
-                    <span style="font-weight: 700; letter-spacing: 0.3px;">${group.name}</span>
-                </div>
-                <div class="group-card-amount" style="background: linear-gradient(135deg, #9333ea, #7e22ce); color: #ffffff; padding: 4px 10px; border-radius: 8px; border: none; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(147,51,234,0.3);">₹${schemeAmount.toLocaleString('en-IN')}</div>
-            </div>
-            <div class="group-card-info" style="color: var(--text-muted);">
-                <div class="info-item">
-                    <i data-lucide="users"></i>
-                    <span>${metrics.totalMembers} Members</span>
-                </div>
-                <div class="info-item">
-                    <i data-lucide="calendar"></i>
-                    <span>${group.duration} Months</span>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.74rem; font-weight: 700;">
-                <span style="color: #15803d; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${startLabel}</span>
-                <span style="color: var(--text-muted); font-weight: 800; font-size: 0.85rem; line-height: 1;">—</span>
-                <span style="color: #b91c1c; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px;">${endLabel}</span>
-            </div>
-        `;
-        
-        card.addEventListener('click', () => {
-            State.selectedGroupId = group.id;
-            document.getElementById('groups-list-modal-backdrop').classList.remove('active');
-            switchView('screen-group-details');
-        });
-        
-        fragment.appendChild(card);
-    });
-    
-    container.innerHTML = '';
     container.appendChild(fragment);
     lucide.createIcons();
 }
