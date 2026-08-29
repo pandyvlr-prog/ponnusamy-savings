@@ -5,26 +5,26 @@
  * then fetches fresh copy in background — eliminates blank screen.
  */
 
-const CACHE_NAME = 'pms-shell-v302';
+const CACHE_NAME = 'pms-shell-v303';
 
 // App shell files to cache immediately on install
 const SHELL_FILES = [
-    '/',
-    '/index.html',
-    '/offline.html',
-    '/style.css',
-    '/auth.js',
-    '/app.js',
-    '/js/state.js',
-    '/js/ui.js',
-    '/js/utils.js',
-    '/js/settings.js',
-    '/js/pdf.js',
-    '/js/pnl.js',
-    '/js/sound.js',
-    '/logo-light.jpg',
-    '/logo-light.png',
-    '/manifest.json'
+    './',
+    './index.html',
+    './offline.html',
+    './style.css',
+    './auth.js',
+    './app.js',
+    './js/state.js',
+    './js/ui.js',
+    './js/utils.js',
+    './js/settings.js',
+    './js/pdf.js',
+    './js/pnl.js',
+    './js/sound.js',
+    './logo-light.jpg',
+    './logo-light.png',
+    './manifest.json'
 ];
 
 // Install: pre-cache the app shell
@@ -91,8 +91,9 @@ self.addEventListener('fetch', event => {
                 return cached || networkFetch.then(res => {
                     if (res) return res;
                     // If network fails and it's a navigation request, serve offline page
-                    if (request.mode === 'navigate' || (request.method === 'GET' && request.headers.get('accept').includes('text/html'))) {
-                        return caches.match('/offline.html');
+                    const acceptHeader = request.headers.get('accept');
+                    if (request.mode === 'navigate' || (request.method === 'GET' && acceptHeader && acceptHeader.includes('text/html'))) {
+                        return caches.match('./offline.html');
                     }
                     return null;
                 });
