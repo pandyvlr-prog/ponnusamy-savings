@@ -3611,13 +3611,13 @@ function renderDashboardMembersList(searchQuery = '') {
     if (mChitTakenEl) mChitTakenEl.textContent = '₹' + syncChitTaken.toLocaleString('en-IN');
     
     const statSummaryCollectedCount = document.getElementById('stat-summary-collected-count');
-    if (statSummaryCollectedCount) statSummaryCollectedCount.textContent = `(${syncCountPaid})`;
+    if (statSummaryCollectedCount) statSummaryCollectedCount.textContent = syncCountPaid;
     
     const statSummaryPendingCount = document.getElementById('stat-summary-pending-count');
-    if (statSummaryPendingCount) statSummaryPendingCount.textContent = `(${syncCountPending})`;
+    if (statSummaryPendingCount) statSummaryPendingCount.textContent = syncCountPending;
     
     const statSummaryChitTakenCount = document.getElementById('stat-summary-chit-taken-count');
-    if (statSummaryChitTakenCount) statSummaryChitTakenCount.textContent = `(${syncCountChitTaken})`;
+    if (statSummaryChitTakenCount) statSummaryChitTakenCount.textContent = syncCountChitTaken;
 
     // Update Surplus/Deficit calculation
     const containerSD = document.getElementById('stat-surplus-deficit-container');

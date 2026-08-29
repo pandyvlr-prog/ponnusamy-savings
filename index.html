@@ -1750,7 +1750,10 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     Collected
                                 </span>
                                 <span class="metric-value text-green" id="stat-total-collected">₹0</span>
-                                <span id="stat-summary-collected-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--green-dark);">(0)</span>
+                                <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 800; color: var(--green-dark); background: rgba(255,255,255,0.4); padding: 2px 8px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <i data-lucide="users" style="width: 12px; height: 12px; stroke-width: 3px;"></i>
+                                    <span id="stat-summary-collected-count">0</span>
+                                </div>
                                 <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(48,209,88,0.2); padding-top: 8px;">
                                     <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important; border: 1px solid #1e293b; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
                                         <div style="display: flex; align-items: center; gap: 6px; color: #fcd34d !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
@@ -1788,7 +1791,10 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     Pending
                                 </span>
                                 <span class="metric-value text-red" id="stat-total-pending">₹0</span>
-                                <span id="stat-summary-pending-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700; color: var(--red-dark);">(0)</span>
+                                <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 800; color: var(--red-dark); background: rgba(255,255,255,0.4); padding: 2px 8px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <i data-lucide="users" style="width: 12px; height: 12px; stroke-width: 3px;"></i>
+                                    <span id="stat-summary-pending-count">0</span>
+                                </div>
                                 <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(220,38,38,0.3); padding-top: 8px;">
                                     <div style="flex: 1; text-align: center; background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%) !important; border: 1px solid #450a0a; border-radius: 8px; font-size: 0.85rem; font-weight: 800; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
                                         <div style="display: flex; align-items: center; gap: 6px; color: #fca5a5 !important; text-shadow: 0 1px 4px rgba(0,0,0,0.3);">
@@ -1812,7 +1818,10 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                     Chit Taken
                                 </span>
                                 <span class="metric-value text-purple" id="stat-summary-chit-taken-amount">₹0</span>
-                                <span id="stat-summary-chit-taken-count" style="position: absolute; top: 12px; right: 12px; font-size: 0.8rem; font-weight: 700;">(0)</span>
+                                <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 800; color: #ffffff; background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <i data-lucide="users" style="width: 12px; height: 12px; stroke-width: 3px;"></i>
+                                    <span id="stat-summary-chit-taken-count">0</span>
+                                </div>
                                 <div id="stat-surplus-deficit-container" style="margin-top: auto; margin: auto -10px -10px -10px; padding: 12px 10px; font-size: 0.95rem; font-weight: 800; display: flex; justify-content: center; align-items: center; border-radius: 0 0 var(--radius-md) var(--radius-md); border-top: 1px solid rgba(255, 255, 255, 0.2);">
                                     <!-- Computed in JS -->
                                 </div>
