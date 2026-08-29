@@ -2,284 +2,495 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ponnusamy Savings - Offline</title>
-    <!-- Use Google Fonts cached by SW or standard fallbacks -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ponnusamy Savings — You're Offline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #0f1115;
-            --bg-surface: #1e222a;
-            --primary: #3b82f6;
-            --accent: #fbbf24;
-            --text-main: #f3f4f6;
-            --text-secondary: #9ca3af;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pink:    #f472b6;
+            --amber:   #fbbf24;
+            --blue:    #60a5fa;
+            --purple:  #a78bfa;
+            --green:   #34d399;
+            --bg:      #080b14;
+            --surface: rgba(255,255,255,0.04);
+            --border:  rgba(255,255,255,0.08);
+            --text:    #f1f5f9;
+            --muted:   #64748b;
         }
 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
             overflow: hidden;
             position: relative;
+            padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px);
         }
 
-        /* Animated Background Gradients */
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
+        /* ── Background Orbs ── */
+        .orb {
+            position: fixed;
             border-radius: 50%;
-            z-index: 0;
-            animation: pulseGlow 4s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: translateX(-50%) scale(1); opacity: 0.5; }
-            100% { transform: translateX(-50%) scale(1.2); opacity: 1; }
-        }
-
-        .glass-card {
-            background: rgba(30, 34, 42, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 40px 30px;
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            z-index: 10;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes slideUp {
-            0% { transform: translateY(30px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        .icon-container {
-            width: 80px;
-            height: 80px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: var(--primary);
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
-        }
-
-        p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
-
-        /* Piggy Bank Game Styles */
-        .game-container {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-        }
-
-        .game-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .piggy-wrapper {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .piggy-wrapper:active {
-            transform: scale(0.9);
-        }
-
-        .piggy-svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 10px 15px rgba(251, 191, 36, 0.2));
-        }
-
-        .score-display {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--accent);
-            margin-top: 10px;
-            font-family: monospace;
-        }
-
-        .floating-coin {
-            position: absolute;
-            font-size: 1.5rem;
-            color: var(--accent);
+            filter: blur(80px);
             pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
-            font-weight: bold;
+            animation: orbDrift 12s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 420px; height: 420px; background: rgba(167,139,250,0.18); top: -120px; left: -100px; animation-duration: 14s; }
+        .orb-2 { width: 320px; height: 320px; background: rgba(251,191,36,0.12);  bottom: -80px; right: -60px;  animation-duration: 11s; animation-delay: -4s; }
+        .orb-3 { width: 240px; height: 240px; background: rgba(96,165,250,0.12);  top: 40%; left: 60%;          animation-duration: 9s;  animation-delay: -7s; }
+
+        @keyframes orbDrift {
+            0%   { transform: translate(0,0) scale(1);      }
+            50%  { transform: translate(30px,-20px) scale(1.08); }
+            100% { transform: translate(-20px,30px) scale(0.95); }
         }
 
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+        /* ── Card ── */
+        .card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 380px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 32px 28px 28px;
+            text-align: center;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.1);
+            animation: cardIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
         }
 
-        .reconnect-status {
-            margin-top: 25px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0)    scale(1);    }
         }
 
-        .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-top-color: var(--text-secondary);
+        /* ── Wifi icon badge ── */
+        .wifi-badge {
+            width: 68px; height: 68px;
+            margin: 0 auto 16px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.08));
+            border: 1px solid rgba(239,68,68,0.3);
+            display: flex; align-items: center; justify-content: center;
+            color: #ef4444;
+            animation: badgePulse 2.5s ease-in-out infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.3); }
+            50%       { box-shadow: 0 0 0 12px rgba(239,68,68,0); }
         }
 
+        .card h1 {
+            font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .card p {
+            color: var(--muted); font-size: 0.88rem; line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 20px;
+            color: var(--muted); font-size: 0.72rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1.2px;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+
+        /* ── Game Zone ── */
+        .game-zone {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Streak bar */
+        .streak-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .streak-badge {
+            font-size: 0.72rem; font-weight: 700; color: var(--amber);
+            background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.25);
+            border-radius: 999px; padding: 3px 10px;
+            transition: transform 0.15s;
+        }
+        .score-pill {
+            font-size: 1.4rem; font-weight: 900; color: var(--amber);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+        }
+
+        /* Multiplier ring */
+        .multiplier-ring {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(251,191,36,0.15);
+            border: 2px solid var(--amber);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; font-weight: 800; color: var(--amber);
+            transition: all 0.2s;
+        }
+
+        /* Piggy button */
+        .piggy-btn {
+            width: 110px; height: 110px;
+            margin: 8px auto 12px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            transition: transform 0.08s ease;
+            display: flex; align-items: center; justify-content: center;
+            filter: drop-shadow(0 8px 24px rgba(251,191,36,0.25));
+        }
+        .piggy-btn:active { transform: scale(0.87) rotate(-3deg); }
+        .piggy-btn svg { width: 100%; height: 100%; }
+
+        /* Floating +N labels */
+        .float-coin {
+            position: absolute;
+            pointer-events: none;
+            font-weight: 900;
+            font-size: 1rem;
+            color: var(--amber);
+            text-shadow: 0 0 8px rgba(251,191,36,0.6);
+            animation: coinFloat 0.9s ease-out forwards;
+            z-index: 20;
+        }
+        @keyframes coinFloat {
+            0%   { opacity: 1; transform: translateY(0)    scale(1);   }
+            60%  { opacity: 1; transform: translateY(-38px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
+        }
+
+        /* Particle */
+        .particle {
+            position: absolute;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleBurst 0.7s ease-out forwards;
+        }
+        @keyframes particleBurst {
+            0%   { opacity: 1; transform: translate(0,0) scale(1);     }
+            100% { opacity: 0; transform: var(--tx, translate(40px,-40px)) scale(0); }
+        }
+
+        /* Hint text */
+        .tap-hint {
+            font-size: 0.75rem; color: var(--muted); letter-spacing: 0.5px;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0.5; } 50% { opacity: 1; }
+        }
+
+        /* ── Reconnect status ── */
+        .reconnect {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 22px; font-size: 0.78rem; color: var(--muted);
+        }
+
+        /* SVG countdown ring */
+        .ring-wrap { position: relative; width: 22px; height: 22px; flex-shrink: 0; }
+        .ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+        .ring-track { stroke: rgba(255,255,255,0.1); fill: none; stroke-width: 3; }
+        .ring-fill  { stroke: var(--blue); fill: none; stroke-width: 3; stroke-linecap: round;
+                      stroke-dasharray: 56.5; stroke-dashoffset: 0;
+                      transition: stroke-dashoffset 1s linear; }
+
+        /* ── Back-online flash ── */
+        .online-flash {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(52,211,153,0.15);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .online-flash.show { opacity: 1; }
+        .online-flash-text {
+            font-size: 1.3rem; font-weight: 800; color: var(--green);
+            background: rgba(0,0,0,0.6); border-radius: 16px;
+            padding: 16px 32px;
+            animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.6); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
     </style>
 </head>
 <body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
-    <div class="bg-glow"></div>
+    <div class="online-flash" id="onlineFlash">
+        <div class="online-flash-text">✅ Back Online! Reloading…</div>
+    </div>
 
-    <div class="glass-card">
-        <div class="icon-container">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10.61 4.39A2.25 2.25 0 0 1 12 4c.6 0 1.17.23 1.6.64l.8.8"></path>
-                <path d="M16 8.5c0-.82-.3-1.58-.8-2.14"></path>
-                <path d="M20.25 12.2a4 4 0 0 0-4.14-4"></path>
-                <path d="M22 17.5a4 4 0 0 0-3.66-3.9"></path>
-                <path d="M2 17.5a4 4 0 0 1 3.5-3.9"></path>
-                <path d="M6 10a4 4 0 0 1 4-4"></path>
-                <path d="M1 1l22 22"></path>
+    <div class="card">
+        <!-- Icon -->
+        <div class="wifi-badge">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="1" x2="23" y2="23"/>
+                <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+                <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+                <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+                <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                <line x1="12" y1="20" x2="12.01" y2="20"/>
             </svg>
         </div>
-        
-        <h1>You're Offline</h1>
-        <p>Your connection was lost. We'll automatically reconnect you when the internet comes back.</p>
 
-        <div class="game-container">
-            <div class="game-title">Tap to Save</div>
-            <div class="piggy-wrapper" id="piggy-btn">
-                <!-- Piggy Bank SVG -->
-                <svg class="piggy-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.5-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V6c0-.5-.5-1-1-1Z"></path>
-                    <path d="M2 9v1c0 1.1.9 2 2 2h1"></path>
-                    <path d="M16 11h.01"></path>
+        <h1>You're Offline</h1>
+        <p>No internet connection found. We'll reconnect you automatically — play while you wait!</p>
+
+        <div class="divider">Mini Game</div>
+
+        <!-- Game -->
+        <div class="game-zone" id="gameZone">
+            <div class="streak-row">
+                <div class="streak-badge" id="streakBadge">🔥 ×1</div>
+                <div class="score-pill" id="scoreDisplay">0</div>
+                <div class="multiplier-ring" id="multRing">×1</div>
+            </div>
+
+            <div class="piggy-btn" id="piggyBtn" role="button" aria-label="Tap the piggy bank to score points">
+                <!-- Detailed Piggy Bank SVG -->
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Body -->
+                    <ellipse cx="50" cy="58" rx="28" ry="24" fill="#fbbf24"/>
+                    <!-- Head -->
+                    <ellipse cx="76" cy="50" rx="16" ry="14" fill="#fbbf24"/>
+                    <!-- Ear -->
+                    <ellipse cx="72" cy="38" rx="6" ry="5" fill="#f59e0b"/>
+                    <ellipse cx="72" cy="39" rx="3.5" ry="3" fill="#fcd34d"/>
+                    <!-- Snout -->
+                    <ellipse cx="89" cy="52" rx="7" ry="6" fill="#f59e0b"/>
+                    <circle cx="87" cy="52" r="1.5" fill="#92400e" opacity="0.6"/>
+                    <circle cx="91" cy="52" r="1.5" fill="#92400e" opacity="0.6"/>
+                    <!-- Eye -->
+                    <circle cx="79" cy="46" r="2.5" fill="#1e1b4b"/>
+                    <circle cx="80" cy="45" r="0.8" fill="white"/>
+                    <!-- Coin slot -->
+                    <rect x="44" y="34" width="12" height="3" rx="1.5" fill="#92400e" opacity="0.5"/>
+                    <!-- Legs -->
+                    <rect x="30" y="76" width="9" height="14" rx="4" fill="#f59e0b"/>
+                    <rect x="43" y="76" width="9" height="14" rx="4" fill="#f59e0b"/>
+                    <rect x="56" y="76" width="9" height="14" rx="4" fill="#f59e0b"/>
+                    <!-- Tail -->
+                    <path d="M22 55 Q14 52 16 62 Q18 70 24 66" stroke="#f59e0b" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <!-- Shine -->
+                    <ellipse cx="62" cy="46" rx="5" ry="3" fill="white" opacity="0.18" transform="rotate(-20 62 46)"/>
                 </svg>
             </div>
-            <div class="score-display" id="score-display">0</div>
+
+            <div class="tap-hint" id="tapHint">Tap the piggy to save coins! 🪙</div>
         </div>
 
-        <div class="reconnect-status">
-            <div class="spinner"></div>
-            <span>Waiting for connection...</span>
+        <!-- Reconnect row -->
+        <div class="reconnect">
+            <div class="ring-wrap">
+                <svg viewBox="0 0 22 22" width="22" height="22">
+                    <circle class="ring-track" cx="11" cy="11" r="9"/>
+                    <circle class="ring-fill"  cx="11" cy="11" r="9" id="ringFill"/>
+                </svg>
+            </div>
+            <span id="reconnectText">Checking connection in <b id="countdown">3</b>s…</span>
         </div>
     </div>
 
     <script>
-        // Game Logic
-        let score = 0;
-        const piggyBtn = document.getElementById('piggy-btn');
-        const scoreDisplay = document.getElementById('score-display');
-        const gameContainer = document.querySelector('.game-container');
+    (function () {
+        'use strict';
 
-        piggyBtn.addEventListener('click', (e) => {
-            score += 10;
-            scoreDisplay.textContent = score;
+        /* ── Score & Streak ── */
+        let score = 0, streak = 0, multiplier = 1, streakTimer = null;
+        const STREAK_TIMEOUT = 1200; // ms between taps to maintain streak
+        const MULTIPLIER_THRESHOLDS = [1,5,15,30]; // streak → multiplier ×1/×2/×3/×5
+        const MULTIPLIER_VALUES     = [1,2, 3, 5];
+        const COLORS = ['#fbbf24','#f472b6','#60a5fa','#a78bfa','#34d399'];
 
-            // Haptic Feedback
-            if (navigator.vibrate) {
-                navigator.vibrate(10);
+        const piggyBtn    = document.getElementById('piggyBtn');
+        const scoreEl     = document.getElementById('scoreDisplay');
+        const streakEl    = document.getElementById('streakBadge');
+        const multRingEl  = document.getElementById('multRing');
+        const gameZone    = document.getElementById('gameZone');
+        const tapHint     = document.getElementById('tapHint');
+
+        function getMultiplier(s) {
+            let m = 1;
+            for (let i = 0; i < MULTIPLIER_THRESHOLDS.length; i++) {
+                if (s >= MULTIPLIER_THRESHOLDS[i]) m = MULTIPLIER_VALUES[i];
             }
-
-            // Create floating +10 animation
-            const rect = piggyBtn.getBoundingClientRect();
-            const floatEl = document.createElement('div');
-            floatEl.textContent = '+10';
-            floatEl.className = 'floating-coin';
-            
-            // Calculate random position around the piggy bank
-            const randomX = Math.random() * 40 - 20;
-            floatEl.style.left = `calc(50% + ${randomX}px)`;
-            floatEl.style.top = '10px';
-            
-            piggyBtn.appendChild(floatEl);
-
-            // Remove element after animation
-            setTimeout(() => {
-                floatEl.remove();
-            }, 1000);
-        });
-
-        // Auto-Reconnect Logic
-        function checkNetwork() {
-            // Using a simple fetch with no-cache to test actual connection
-            fetch('/?ping=' + Date.now(), { method: 'HEAD', cache: 'no-store' })
-                .then(response => {
-                    if (response.ok) {
-                        // Connection restored! Reload the page
-                        window.location.reload();
-                    }
-                })
-                .catch(() => {
-                    // Still offline, check again in 3 seconds
-                    setTimeout(checkNetwork, 3000);
-                });
+            return m;
         }
 
-        // Listen for browser online event as a fast-path
-        window.addEventListener('online', () => {
-            window.location.reload();
-        });
+        function updateStreakUI() {
+            const labels = ['×1','×2','×3','×5'];
+            const icons  = ['🐷','🔥','💥','⚡'];
+            const idx = MULTIPLIER_THRESHOLDS.findLastIndex
+                ? MULTIPLIER_THRESHOLDS.findLastIndex(t => streak >= t)
+                : (() => { let r=-1; MULTIPLIER_THRESHOLDS.forEach((t,i)=>{ if(streak>=t) r=i; }); return r; })();
+            const safeIdx = Math.max(0, idx);
+            multiplier = MULTIPLIER_VALUES[safeIdx] || 1;
+            streakEl.textContent = icons[safeIdx] + ' ×' + streak;
+            multRingEl.textContent = '×' + multiplier;
+            multRingEl.style.background   = multiplier > 1 ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.1)';
+            multRingEl.style.borderColor  = multiplier > 1 ? '#f59e0b' : 'rgba(251,191,36,0.4)';
+            multRingEl.style.color        = multiplier > 1 ? '#fbbf24' : 'rgba(251,191,36,0.6)';
+            multRingEl.style.transform    = multiplier > 1 ? 'scale(1.15)' : 'scale(1)';
+        }
 
-        // Start polling check
-        setTimeout(checkNetwork, 3000);
+        function spawnFloat(x, y, points) {
+            const el = document.createElement('div');
+            el.className = 'float-coin';
+            el.textContent = '+' + points;
+            el.style.left = x + 'px';
+            el.style.top  = y + 'px';
+            gameZone.appendChild(el);
+            setTimeout(() => el.remove(), 900);
+        }
+
+        function spawnParticles(cx, cy) {
+            const count = 8;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'particle';
+                const angle = (i / count) * 360;
+                const dist  = 35 + Math.random() * 25;
+                const tx = Math.cos(angle * Math.PI / 180) * dist;
+                const ty = Math.sin(angle * Math.PI / 180) * dist;
+                el.style.setProperty('--tx', `translate(${tx}px,${ty}px)`);
+                el.style.background = COLORS[i % COLORS.length];
+                el.style.left = cx + 'px';
+                el.style.top  = cy + 'px';
+                gameZone.appendChild(el);
+                setTimeout(() => el.remove(), 700);
+            }
+        }
+
+        function onTap(e) {
+            e.preventDefault();
+
+            // Haptic
+            if (navigator.vibrate) navigator.vibrate(12);
+
+            // Streak logic
+            clearTimeout(streakTimer);
+            streak++;
+            updateStreakUI();
+            streakTimer = setTimeout(() => {
+                streak = 0;
+                updateStreakUI();
+            }, STREAK_TIMEOUT);
+
+            const pts = 10 * multiplier;
+            score += pts;
+            scoreEl.textContent = score.toLocaleString();
+
+            // Position relative to gameZone
+            const zRect = gameZone.getBoundingClientRect();
+            const bRect = piggyBtn.getBoundingClientRect();
+            const cx = bRect.left - zRect.left + bRect.width  / 2;
+            const cy = bRect.top  - zRect.top  + bRect.height / 2;
+
+            // Float +N
+            const rx = cx + (Math.random() * 40 - 20);
+            const ry = cy - 30;
+            spawnFloat(rx, ry, pts);
+
+            // Particles on big streak milestones
+            if (streak % 5 === 0 || multiplier > 1) {
+                spawnParticles(cx, cy);
+            }
+
+            // Update hint
+            if (streak === 5)  tapHint.textContent = '🔥 On fire! Keep going!';
+            else if (streak === 15) tapHint.textContent = '💥 Unstoppable!';
+            else if (streak === 30) tapHint.textContent = '⚡ LEGENDARY savings!';
+            else if (score >= 1000 && streak < 5) tapHint.textContent = '🪙 ' + score.toLocaleString() + ' saved!';
+        }
+
+        piggyBtn.addEventListener('click',      onTap, { passive: false });
+        piggyBtn.addEventListener('touchstart', onTap, { passive: false });
+
+        /* ── Auto-Reconnect with countdown ring ── */
+        const ringFill       = document.getElementById('ringFill');
+        const countdownEl    = document.getElementById('countdown');
+        const reconnectText  = document.getElementById('reconnectText');
+        const onlineFlash    = document.getElementById('onlineFlash');
+        const CIRCUMFERENCE  = 56.5;
+        const POLL_INTERVAL  = 3; // seconds
+
+        let remaining = POLL_INTERVAL;
+        let tickTimer = null;
+
+        function setRing(fraction) {
+            ringFill.style.strokeDashoffset = CIRCUMFERENCE * (1 - fraction);
+        }
+
+        function tick() {
+            remaining--;
+            countdownEl.textContent = remaining;
+            setRing(remaining / POLL_INTERVAL);
+            if (remaining <= 0) {
+                checkConnection();
+            } else {
+                tickTimer = setTimeout(tick, 1000);
+            }
+        }
+
+        function startCountdown() {
+            clearTimeout(tickTimer);
+            remaining = POLL_INTERVAL;
+            countdownEl.textContent = remaining;
+            setRing(1);
+            reconnectText.innerHTML = 'Checking connection in <b id="countdown">' + remaining + '</b>s…';
+            tickTimer = setTimeout(tick, 1000);
+        }
+
+        function goOnline() {
+            clearTimeout(tickTimer);
+            onlineFlash.classList.add('show');
+            setTimeout(() => window.location.href = '/', 1200);
+        }
+
+        function checkConnection() {
+            reconnectText.innerHTML = '<span style="color:var(--blue)">Checking…</span>';
+            fetch('/manifest.json?ping=' + Date.now(), { method: 'HEAD', cache: 'no-store' })
+                .then(r => { if (r.ok) goOnline(); else startCountdown(); })
+                .catch(() => startCountdown());
+        }
+
+        // Fast-path: browser fires 'online'
+        window.addEventListener('online', goOnline);
+
+        // Start the countdown
+        startCountdown();
+    })();
     </script>
 </body>
 </html>

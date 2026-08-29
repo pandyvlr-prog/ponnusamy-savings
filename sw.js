@@ -1,13 +1,14 @@
 /**
- * Ponnusamy Savings - Service Worker v301
- * Strategy: Stale-While-Revalidate for all app files.
- * App shell (HTML, JS, CSS) serves from cache INSTANTLY on hard refresh,
- * then fetches fresh copy in background — eliminates blank screen.
+ * Ponnusamy Savings — Service Worker v310
+ * Strategy: Stale-While-Revalidate for app shell files.
+ * → Serves from cache INSTANTLY on hard refresh (no blank screen).
+ * → Fetches fresh copy in background silently.
+ * → Falls back to premium offline.html for any failed navigation.
  */
 
-const CACHE_NAME = 'pms-shell-v309';
+const CACHE_NAME = 'pms-shell-v310';
 
-// App shell files to cache immediately on install
+// App shell files to pre-cache on install
 const SHELL_FILES = [
     '/',
     '/index.html',
@@ -27,40 +28,41 @@ const SHELL_FILES = [
     '/manifest.json'
 ];
 
-// Install: pre-cache the app shell
+/* ── Install: pre-cache the app shell ── */
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => cache.addAll(SHELL_FILES))
             .then(() => self.skipWaiting())
-            .catch(() => self.skipWaiting()) // Don't block on cache failure
+            .catch(() => self.skipWaiting()) // don't block on cache failure
     );
 });
 
-// Activate: clean up old caches
+/* ── Activate: clean up old caches ── */
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys()
             .then(keys => Promise.all(
-                keys
-                    .filter(k => k !== CACHE_NAME)
-                    .map(k => caches.delete(k))
+                keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
             ))
             .then(() => self.clients.claim())
     );
 });
 
+/* ── Fetch: smart routing ── */
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Skip non-GET and external APIs (Supabase)
+    // Only intercept GET requests
     if (request.method !== 'GET') return;
-    if (url.hostname.includes('supabase.co')) return;
-    if (url.hostname.includes('googleapis.com')) return;
-    if (url.hostname.includes('gstatic.com')) return;
 
-    // For CDN scripts (lucide, supabase-js) — network first, fallback cache
+    // Skip Supabase API calls — always go to network
+    if (url.hostname.includes('supabase.co'))     return;
+    if (url.hostname.includes('googleapis.com'))  return;
+    if (url.hostname.includes('gstatic.com'))     return;
+
+    // CDN scripts (lucide, supabase-js): network-first, fallback to cache
     if (url.hostname.includes('unpkg.com') || url.hostname.includes('jsdelivr.net')) {
         event.respondWith(
             fetch(request)
@@ -74,31 +76,37 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // For all app files: STALE-WHILE-REVALIDATE
-    // → Serve from cache instantly (no blank screen)
-    // → Fetch fresh copy in background silently
+    // All local app files: STALE-WHILE-REVALIDATE
     event.respondWith(
         caches.open(CACHE_NAME).then(cache => {
             return cache.match(request).then(cached => {
-                const networkFetch = fetch(request).then(response => {
-                    if (response.ok) {
-                        cache.put(request, response.clone());
-                    }
-                    return response;
-                }).catch(() => null);
 
-                // Return cached immediately if available, else wait for network
-                return cached || networkFetch.then(res => {
+                // Always kick off a background network refresh
+                const networkFetch = fetch(request)
+                    .then(response => {
+                        if (response && response.ok) {
+                            cache.put(request, response.clone());
+                        }
+                        return response;
+                    })
+                    .catch(() => null);
+
+                // If we have a cached copy, return it immediately
+                if (cached) return cached;
+
+                // No cache — wait for network
+                return networkFetch.then(res => {
                     if (res) return res;
-                    // If network fails and it's a navigation request, serve offline page
-                    const acceptHeader = request.headers.get('accept');
-                    if (request.mode === 'navigate' || (request.method === 'GET' && acceptHeader && acceptHeader.includes('text/html'))) {
-                        return caches.match('/offline.html').then(offlineRes => {
-                            // If offline page is found, return it. Otherwise, return null (triggers default dinosaur)
-                            return offlineRes || null;
-                        });
+
+                    // Network failed: serve premium offline page for navigation requests
+                    const isNavigation = request.mode === 'navigate';
+                    const acceptsHtml  = (request.headers.get('accept') || '').includes('text/html');
+
+                    if (isNavigation || (request.method === 'GET' && acceptsHtml)) {
+                        return caches.match('/offline.html');
                     }
-                    return null;
+
+                    return new Response('', { status: 503, statusText: 'Service Unavailable' });
                 });
             });
         })
