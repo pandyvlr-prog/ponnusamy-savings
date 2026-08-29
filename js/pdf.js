@@ -822,6 +822,24 @@ function initAppearanceSettings() {
             document.documentElement.style.fontSize = size + "px";
         });
     }
+
+    const darkModeToggle = document.getElementById('settings-dark-mode-toggle');
+    const isDarkMode = localStorage.getItem('pms_dark_mode') === 'true';
+    if (isDarkMode) {
+        document.body.classList.add('dark-theme');
+        if (darkModeToggle) darkModeToggle.checked = true;
+    }
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('pms_dark_mode', 'true');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('pms_dark_mode', 'false');
+            }
+        });
+    }
 }
 
 function generateYearlyPdfReport() {

@@ -174,7 +174,12 @@ function setupRouting() {
     });
 }
 
+window.isSwitchingView = false;
 function switchView(viewId) {
+    if (window.isSwitchingView) return;
+    window.isSwitchingView = true;
+    setTimeout(() => { window.isSwitchingView = false; }, 300);
+
     const activeScreen = document.querySelector('.app-screen.active');
     const targetScreen = document.getElementById(viewId);
     

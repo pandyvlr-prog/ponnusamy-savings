@@ -13,7 +13,7 @@ try {
         console.warn("Supabase library not loaded. Running in offline/mock mode.");
     }
 } catch (e) {
-    console.error("Supabase failed to initialize", e);
+    console.warn("Supabase failed to initialize. Running offline.", e);
 }
 
 // Simulated Authentication & Settings Logic
@@ -145,44 +145,6 @@ async function initAuth() {
                 return;
             }
 
-            // [NEW] SUCCESS ANIMATION
-            const isLoginScreen = document.getElementById('screen-login') && document.getElementById('screen-login').classList.contains('active');
-            
-            if (isLoginScreen || wasOAuthRedirect) {
-                // We only animate the Google button if we are returning from an OAuth redirect
-                const isGoogle = wasOAuthRedirect;
-                
-                // Force show login screen for animation if returning from OAuth
-                if (wasOAuthRedirect) navigateTo('screen-login');
-                
-                const btnClass = isGoogle ? '#google-login-btn' : '.premium-submit-btn';
-                const btn = document.querySelector(btnClass);
-                
-                if (btn) {
-                    const originalHTML = btn.innerHTML;
-                    btn.innerHTML = '<svg class="success-tick" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                    btn.classList.add('btn-success-anim');
-                    if (isGoogle) btn.style.border = 'none';
-                    
-                    await new Promise(r => setTimeout(r, 600)); // wait for button anim
-                    
-                    const card = document.querySelector('.login-glass-card');
-                    const imgSide = document.querySelector('.login-image-side');
-                    if (card) card.classList.add('card-expand-anim');
-                    if (imgSide) imgSide.classList.add('bg-fade-anim');
-                    
-                    await new Promise(r => setTimeout(r, 600)); // wait for card expand
-                    
-                    // Cleanup in background
-                    setTimeout(() => {
-                        btn.classList.remove('btn-success-anim');
-                        btn.innerHTML = originalHTML;
-                        if (isGoogle) btn.style.border = '';
-                        if (card) card.classList.remove('card-expand-anim');
-                        if (imgSide) imgSide.classList.remove('bg-fade-anim');
-                    }, 500);
-                }
-            }
             
             // Clear the flag so subsequent background session refreshes don't trigger the animation again
             wasOAuthRedirect = false;
@@ -574,25 +536,38 @@ function setupAuthListeners() {
             const file = e.target.files[0];
             if (file) {
                 if (file.size > 2 * 1024 * 1024) {
-                    if (typeof showNotification === 'function') {
-                        showNotification('Image must be less than 2MB', 'error');
-                    } else {
-                        alert('Image must be less than 2MB');
-                    }
+                    if (typeof showNotification === 'function') showNotification('Image must be less than 2MB', 'error');
+                    else alert('Image must be less than 2MB');
                     return;
                 }
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    AuthState.currentUser.avatar = event.target.result;
-                    localStorage.setItem('ps_user_' + AuthState.currentUser.email, JSON.stringify(AuthState.currentUser));
-                    localStorage.setItem('ps_auth', JSON.stringify(AuthState));
-                    updateProfileUI();
+                
+                if (typeof showNotification === 'function') showNotification('Uploading avatar...', 'info');
+
+                if (supabaseClient && AuthState.currentUser) {
+                    const fileExt = file.name.split('.').pop() || 'jpg';
+                    const filePath = `${AuthState.currentUser.id}-${Date.now()}.${fileExt}`;
                     
-                    if (typeof showNotification === 'function') {
-                        showNotification('Profile photo updated!', 'success');
-                    }
-                };
-                reader.readAsDataURL(file);
+                    supabaseClient.storage.from('avatars').upload(filePath, file)
+                        .then(({data, error}) => {
+                            if (error) throw error;
+                            const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+                            
+                            AuthState.currentUser.avatar = publicUrl;
+                            localStorage.setItem('pms_cached_session', JSON.stringify(AuthState.currentUser));
+                            
+                            // Also update user metadata
+                            supabaseClient.auth.updateUser({ data: { avatar_url: publicUrl }});
+                            
+                            updateProfileUI();
+                            if (typeof showNotification === 'function') showNotification('Profile photo updated!', 'success');
+                        })
+                        .catch(err => {
+                            console.error("Avatar upload failed:", err);
+                            if (typeof showNotification === 'function') showNotification('Failed to upload avatar to cloud.', 'error');
+                        });
+                } else {
+                    if (typeof showNotification === 'function') showNotification('Cannot upload avatar while offline.', 'error');
+                }
             }
         });
     }

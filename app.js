@@ -2148,7 +2148,6 @@ function populateDashboardMonthDropdown() {
         customMenu.appendChild(customRangeBtn);
     }
 }
-
 // 1. Dashboard Renderer
 let renderDashboardRAF = null;
 function renderDashboard() {
@@ -2157,19 +2156,21 @@ function renderDashboard() {
 }
 
 function _renderDashboard() {
+    const isSyncing = State.groups.length === 0 && !window.isCloudSyncComplete;
+    
     // Global Metrics Calculation
     const globalMetrics = getGlobalMetrics(State.dashboardSelectedMonth);
     
     // Removed stat-total-groups update
-    document.getElementById('stat-total-collected').textContent = '₹' + globalMetrics.totalCollected.toLocaleString('en-IN');
+    document.getElementById('stat-total-collected').textContent = isSyncing ? 'Syncing...' : '₹' + globalMetrics.totalCollected.toLocaleString('en-IN');
     
     const cashEl = document.getElementById('stat-summary-collected-cash');
-    if (cashEl) cashEl.textContent = '₹' + (globalMetrics.totalCollectedCash || 0).toLocaleString('en-IN');
+    if (cashEl) cashEl.textContent = isSyncing ? '...' : '₹' + (globalMetrics.totalCollectedCash || 0).toLocaleString('en-IN');
     
     const gpayEl = document.getElementById('stat-summary-collected-gpay');
-    if (gpayEl) gpayEl.textContent = '₹' + (globalMetrics.totalCollectedGpay || 0).toLocaleString('en-IN');
+    if (gpayEl) gpayEl.textContent = isSyncing ? '...' : '₹' + (globalMetrics.totalCollectedGpay || 0).toLocaleString('en-IN');
 
-    document.getElementById('stat-total-pending').textContent = '₹' + globalMetrics.totalPending.toLocaleString('en-IN');
+    document.getElementById('stat-total-pending').textContent = isSyncing ? 'Syncing...' : '₹' + globalMetrics.totalPending.toLocaleString('en-IN');
     
     // Populate month dropdown dynamic options
     populateDashboardMonthDropdown();
@@ -2846,6 +2847,18 @@ function renderDashboardGroupsList(filterConfig = null) {
 function renderDashboardMembersList(searchQuery = '') {
     const listContainer = document.getElementById('dashboard-members-container');
     if (!listContainer) return;
+    
+    if (State.groups.length === 0 && !window.isCloudSyncComplete) {
+        listContainer.innerHTML = `
+            <div style="padding: 40px; text-align: center; color: var(--text-secondary);">
+                <div style="width: 32px; height: 32px; border: 3px solid rgba(232,199,116,0.3); border-top-color: #e8c774; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                <p style="font-size: 0.95rem; font-weight: 500;">Syncing data from cloud...</p>
+            </div>
+            <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+        `;
+        return;
+    }
+    
     const fragment = document.createDocumentFragment();
 
     const selMonth = State.dashboardSelectedMonth || 'current';

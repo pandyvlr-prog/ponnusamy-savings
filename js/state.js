@@ -26,10 +26,52 @@ const State = {
 let originalStateSnapshot = null;
 window.isCloudSyncComplete = false;
 
+// --- IndexedDB Wrapper ---
+const IDB_NAME = 'PonnusamySavingsDB';
+const IDB_VERSION = 1;
+function getDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => resolve(req.result);
+        req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('store')) db.createObjectStore('store');
+        };
+    });
+}
+async function idbGet(key) {
+    try {
+        const db = await getDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('store', 'readonly');
+            const store = tx.objectStore('store');
+            const req = store.get(key);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    } catch(e) { return null; }
+}
+async function idbSet(key, value) {
+    try {
+        const db = await getDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('store', 'readwrite');
+            const store = tx.objectStore('store');
+            const req = store.put(value, key);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+        });
+    } catch(e) {}
+}
+
 // --- State Management & Storage ---
 function getStorageKey(key) {
-    if (typeof AuthState !== 'undefined' && AuthState.currentUser && AuthState.currentUser.email) {
-        return `ponnusamy_${AuthState.currentUser.email}_${key}`;
+    if (typeof AuthState !== 'undefined' && AuthState.currentUser) {
+        const identifier = AuthState.currentUser.email || AuthState.currentUser.id;
+        if (identifier) {
+            return `ponnusamy_${identifier}_${key}`;
+        }
     }
     return `ponnusamy_${key}`;
 }
@@ -529,14 +571,23 @@ function renderSavedNotesList() {
 
 async function loadState() {
     try {
-        // Fallback Local Storage load first
-        const storedGroups = localStorage.getItem(getStorageKey('groups'));
-        const storedMembers = localStorage.getItem(getStorageKey('members'));
+        // Fallback Local Storage / IndexedDB load first
+        let storedGroups = await idbGet(getStorageKey('groups'));
+        if (!storedGroups) {
+            const lsg = localStorage.getItem(getStorageKey('groups'));
+            storedGroups = lsg ? JSON.parse(lsg) : [];
+        }
+        let storedMembers = await idbGet(getStorageKey('members'));
+        if (!storedMembers) {
+            const lsm = localStorage.getItem(getStorageKey('members'));
+            storedMembers = lsm ? JSON.parse(lsm) : [];
+        }
+
         const storedTemplates = localStorage.getItem('ponnusamy_templates');
         const storedNotes = localStorage.getItem(getStorageKey('savedNotes'));
         
-        State.groups = storedGroups ? JSON.parse(storedGroups) : [];
-        State.members = storedMembers ? JSON.parse(storedMembers) : [];
+        State.groups = storedGroups || [];
+        State.members = storedMembers || [];
         State.templates = storedTemplates ? JSON.parse(storedTemplates) : [];
         State.savedNotes = storedNotes ? JSON.parse(storedNotes) : [];
 
@@ -809,8 +860,12 @@ async function commitState(skipBanner = false) {
     }
     try {
         // Always save locally first for speed and offline fallback
-        localStorage.setItem(getStorageKey('groups'), JSON.stringify(State.groups));
-        localStorage.setItem(getStorageKey('members'), JSON.stringify(State.members));
+        await idbSet(getStorageKey('groups'), State.groups);
+        await idbSet(getStorageKey('members'), State.members);
+        // Clear from localStorage to free up quota
+        localStorage.removeItem(getStorageKey('groups'));
+        localStorage.removeItem(getStorageKey('members'));
+        
         localStorage.setItem('ponnusamy_templates', JSON.stringify(State.templates || []));
         localStorage.setItem(getStorageKey('savedNotes'), JSON.stringify(State.savedNotes || []));
         

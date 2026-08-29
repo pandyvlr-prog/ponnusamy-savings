@@ -10177,4 +10177,48 @@ html, body, .app-device-shell {
     100% { transform: translateY(0); opacity: 1; }
 }
 
+/* --- Dark Theme --- */
+body.dark-theme {
+    --bg-body: #121212;
+    --bg-surface: #1e1e1e;
+    --bg-surface-elevated: #2c2c2c;
+    --text-main: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-tertiary: #6b7280;
+    --text-muted: #4b5563;
+    --border: #374151;
+    --border-active: #4b5563;
+    
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --green-dark: #34d399;
+    --green-light: rgba(52, 211, 153, 0.2);
+    --red-dark: #f87171;
+    --red-light: rgba(248, 113, 113, 0.2);
+    --accent: #fbbf24;
+}
 
+body.dark-theme .app-screen, body.dark-theme .app-container {
+    background-color: var(--bg-body);
+}
+
+body.dark-theme .card, body.dark-theme .dashboard-card, body.dark-theme .settings-card, body.dark-theme .group-card, body.dark-theme .modal-container {
+    background-color: var(--bg-surface);
+    border-color: var(--border);
+}
+
+body.dark-theme .bottom-nav {
+    background-color: var(--bg-surface-elevated);
+    border-top: 1px solid var(--border);
+}
+
+body.dark-theme input, body.dark-theme select, body.dark-theme textarea {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    border-color: var(--border);
+}
+
+body.dark-theme .app-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+}
