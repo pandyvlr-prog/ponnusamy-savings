@@ -77,7 +77,9 @@ function setupTheme() {
     setIcons(savedTheme);
     
     const toggleTheme = () => {
-        // removed theme-switching for smooth transition
+        // Add theme-switching class for smooth transition
+        document.documentElement.classList.add('theme-switching');
+        
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
@@ -87,8 +89,10 @@ function setupTheme() {
         if (metaTheme) metaTheme.setAttribute('content', newTheme === 'light' ? '#C8C4BE' : '#000000');
         setIcons(newTheme);
         
-        // Force reflow and remove class
-        // removed setTimeout for theme-switching
+        // Remove the class after transition completes (400ms matches CSS transition)
+        setTimeout(() => {
+            document.documentElement.classList.remove('theme-switching');
+        }, 400);
         
         showNotification(`Switched to ${newTheme} mode!`, 'info');
     };

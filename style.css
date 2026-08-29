@@ -141,9 +141,10 @@
     --shadow-primary: 0 8px 24px rgba(184, 134, 11, 0.35);
 }
 
-/* Disable transitions during theme switch */
-/* Disable transitions during theme switch for instant theme change */
-.theme-switching, .theme-switching * { transition: none !important; }
+/* Enable transitions during theme switch for a smooth color transition */
+.theme-switching, .theme-switching * { 
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background-image 0.4s ease !important; 
+}
 
 /* Global Reset & Base Styling */
 * {
