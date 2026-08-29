@@ -2853,7 +2853,6 @@ function renderDashboardGroupsList(filterConfig = null) {
             container.appendChild(fragment);
             
             if (window.lucide) {
-                lucide.createIcons();
             }
         } catch (error) {
             console.error("CRITICAL ERROR IN renderDashboardGroupsList:", error);
@@ -2864,9 +2863,9 @@ function renderDashboardGroupsList(filterConfig = null) {
                     <pre style="font-size: 10px; overflow-x: auto; margin-top: 10px;">${error.stack}</pre>
                 </div>
             `;
-    container.appendChild(fragment);
-    lucide.createIcons();
-}
+        }
+    }
+
 
 function renderDashboardMembersList(searchQuery = '') {
     const listContainer = document.getElementById('dashboard-members-container');
