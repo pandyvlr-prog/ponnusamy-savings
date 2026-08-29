@@ -1,11 +1,11 @@
 /**
- * Ponnusamy Savings - Service Worker v300
+ * Ponnusamy Savings - Service Worker v301
  * Strategy: Stale-While-Revalidate for all app files.
  * App shell (HTML, JS, CSS) serves from cache INSTANTLY on hard refresh,
  * then fetches fresh copy in background — eliminates blank screen.
  */
 
-const CACHE_NAME = 'pms-shell-v300';
+const CACHE_NAME = 'pms-shell-v301';
 
 // App shell files to cache immediately on install
 const SHELL_FILES = [
