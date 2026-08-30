@@ -1522,10 +1522,12 @@ function setupEventListeners() {
     }
     
     // Search member filters
-    const searchInput = document.getElementById('member-search-input');
-    searchInput.addEventListener('input', () => {
-        filterAndRenderMembers();
-    });
+    const searchInput = document.getElementById('dashboard-member-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            filterAndRenderMembers();
+        });
+    }
     
     // Filter pills
     document.querySelectorAll('.filter-pill').forEach(pill => {

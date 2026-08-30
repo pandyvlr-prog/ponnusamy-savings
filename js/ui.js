@@ -346,4 +346,5 @@ document.getElementById('btn-confirm-payout').addEventListener('click', () => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    updateStatusBarClock();
 });
