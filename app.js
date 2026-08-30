@@ -2320,11 +2320,11 @@ function _renderDashboard() {
     const btnGroupDetailsBack = document.getElementById('btn-group-details-back');
     if (btnGroupDetailsBack) {
         btnGroupDetailsBack.addEventListener('click', () => {
-            if (window.State && window.State.cameFromWizard) {
+            if (typeof State !== 'undefined' && State.cameFromWizard) {
                 const modal = document.getElementById('groups-list-modal-backdrop');
                 if (modal) modal.classList.add('active');
                 switchView('screen-dashboard');
-                window.State.cameFromWizard = false;
+                State.cameFromWizard = false;
             } else {
                 switchView('screen-dashboard');
             }
