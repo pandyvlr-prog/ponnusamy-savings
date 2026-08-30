@@ -3850,8 +3850,8 @@ function renderDashboardMembersList(searchQuery = '') {
                     <!-- Right Actions -->
                     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:8px;">
                         ${contactMenuHtml ? contactMenuHtml : `<div style="background:${item.dueAmount === 0 ? '#ecfdf5' : '#fef2f2'};color:${item.dueAmount === 0 ? '#059669' : '#dc2626'};width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);border:1px solid ${item.dueAmount === 0 ? 'rgba(5,150,105,0.15)' : 'rgba(220,38,38,0.15)'};"><i data-lucide="user" style="width:14px;height:14px;"></i></div>`}
-                        <div style="width:24px;height:24px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#64748b;border:1px solid rgba(0,0,0,0.03);">
-                            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                        <div style="width:24px;height:24px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#64748b;border:1px solid rgba(0,0,0,0.03);" class="premium-arrow-wrap">
+                            <i data-lucide="chevron-down" style="width:14px;height:14px;" class="premium-arrow premium-arrow-member"></i>
                         </div>
                         <div class="mobile-expand-btn" style="display:none;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;min-height:28px;border-radius:8px;background:#f3f4f6;color:#4b5563;cursor:pointer;transition:background 0.2s;flex-shrink:0;"><i data-lucide="chevron-down" style="width:18px;height:18px;transition:transform 0.3s ease;pointer-events:none;"></i></div>
                     </div>
@@ -3943,15 +3943,18 @@ function renderDashboardMembersList(searchQuery = '') {
                 
                 const isExpanded = detailsContainer.style.display === 'block';
                 const btnIcon = row.querySelector('.mobile-expand-btn svg') || row.querySelector('.mobile-expand-btn i');
+                const premiumArrow = row.querySelector('.premium-arrow');
                 
                 if (isExpanded) {
                     detailsContainer.style.display = 'none';
                     expandHeader.style.borderBottom = '1px solid #f0f0f0';
                     if (btnIcon) btnIcon.style.transform = 'rotate(0deg)';
+                    if (premiumArrow) premiumArrow.style.transform = 'rotate(0deg)';
                 } else {
                     detailsContainer.style.display = 'block';
                     expandHeader.style.borderBottom = 'none';
                     if (btnIcon) btnIcon.style.transform = 'rotate(180deg)';
+                    if (premiumArrow) premiumArrow.style.transform = 'rotate(180deg)';
                 }
             });
         }
@@ -4393,7 +4396,7 @@ function filterAndRenderMembers() {
                         <div style="background:${isPaid ? '#ecfdf5' : '#fef2f2'};color:${isPaid ? '#059669' : '#dc2626'};width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
                             <i data-lucide="user" style="width:16px;height:16px;"></i>
                         </div>
-                        <i data-lucide="chevron-right" style="width:18px;height:18px;color:#9ca3af;"></i>
+                        <i data-lucide="chevron-down" style="width:18px;height:18px;color:#9ca3af;" class="premium-arrow premium-arrow-member"></i>
                     </div>
                 </div>
 
