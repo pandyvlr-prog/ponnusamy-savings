@@ -2289,78 +2289,25 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </header>
                 
                 <div class="screen-content">
-                    <!-- Details Grid for Desktop (Meta details + Financials side-by-side) -->
-                    <div class="details-top-grid">
+                    <!-- Details Top (Hero Card Only) -->
+                    <div class="details-top-grid premium-hero-only">
                         <!-- Group Info Hero -->
-                        <div class="group-hero-card" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div>
-                                    <h2 id="details-group-name" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                                        Group Name
-                                        <span class="status-badge active-badge" style="font-size: 0.65rem; padding: 2px 6px;"><span class="dot"></span> Active</span>
-                                    </h2>
-                                    <div style="display: flex; gap: 12px; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
-                                        <span style="display: flex; align-items: center; gap: 4px;"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> <span id="details-duration" style="font-weight: 700; color: var(--primary);">0 Months</span></span>
-                                        <span style="color: var(--border-active);">|</span>
-                                        <span style="display: flex; align-items: center; gap: 4px; font-weight: 700;">Scheme: <span id="details-installment-value" style="color: var(--text-main);">₹0</span></span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Month Adjuster Component -->
-                            <div class="month-selector-widget" style="background: var(--bg-body); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
-                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; font-size: 0.75rem;">
-                                    <span class="widget-label" style="margin: 0;">Current Billing Month</span>
-                                    <span class="widget-label" style="margin: 0;">Payout: <strong id="details-month-payout" style="color: var(--primary);">₹0</strong></span>
-                                </div>
-                                <div class="adjuster-controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 4px; box-shadow: var(--shadow-sm);">
-                                    <button class="adjuster-btn" id="btn-month-decrement" aria-label="Previous Month" style="width: 32px; height: 32px; padding: 0;">
-                                        <i data-lucide="minus" style="width: 16px; height: 16px;"></i>
-                                    </button>
-                                    <span class="active-month-text" id="details-current-month-text" style="font-size: 0.9rem; font-weight: 800; padding: 0 10px;">Month 1</span>
-                                    <button class="adjuster-btn" id="btn-month-increment" aria-label="Next Month" style="width: 32px; height: 32px; padding: 0;">
-                                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Financial Overview Dashboard -->
-                        <div class="financials-dashboard">
-                            <div class="fin-card highlight-green">
-                                <span class="fin-label"><i data-lucide="check-circle" class="icon-inline text-green"></i> Total Collected</span>
-                                <span class="fin-val" id="details-total-collected">₹0</span>
-                            </div>
-                            <div class="fin-card highlight-red">
-                                <span class="fin-label"><i data-lucide="alert-circle" class="icon-inline text-red"></i> Pending Payments</span>
-                                <span class="fin-val" id="details-total-pending">₹0</span>
-                            </div>
-                            
-                            <!-- Collection Progress Bar -->
-                            <div class="collection-progress-container">
-                                <div class="progress-labels">
-                                    <span>Month <span id="progress-current-month">1</span> Progress</span>
-                                    <strong id="progress-percentage-text" class="text-green">0%</strong>
-                                </div>
-                                <div class="progress-track">
-                                    <div class="progress-bar" id="details-progress-bar" style="width: 0%"></div>
-                                </div>
-                                <span class="progress-desc" id="progress-amount-desc">₹0 of ₹0 collected for active cycle</span>
+                        <div class="group-hero-card premium-hero-card">
+                            <h2 id="details-group-name" class="premium-hero-title">JUN 2026 - MAY 2027</h2>
+                            <div class="premium-hero-meta">
+                                <span class="premium-hero-duration"><i data-lucide="calendar"></i> <span id="details-duration">12 MONTHS</span></span>
+                                <span class="premium-hero-divider">|</span>
+                                <span class="premium-hero-scheme">Scheme: <span id="details-installment-value">₹50,000</span></span>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Filter and Search controls -->
-                    <div class="search-filter-section">
-                        <div class="search-input-wrapper">
+                    <!-- Client List Header and Search -->
+                    <div class="client-list-section">
+                        <h3 class="client-list-title">Client List</h3>
+                        <div class="search-input-wrapper full-width-search">
                             <i data-lucide="search" class="search-icon"></i>
                             <input type="text" id="member-search-input" placeholder="Search members...">
-                        </div>
-                        
-                        <div class="filter-pills">
-                            <button class="filter-pill active" data-filter="all">All (<span id="count-filter-all">0</span>)</button>
-                            <button class="filter-pill text-green-pill" data-filter="paid">Paid (<span id="count-filter-paid">0</span>)</button>
-                            <button class="filter-pill text-red-pill" data-filter="pending">Pending (<span id="count-filter-pending">0</span>)</button>
                         </div>
                     </div>
                     

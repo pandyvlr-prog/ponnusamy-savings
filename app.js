@@ -4358,23 +4358,17 @@ function filterAndRenderMembers() {
 
         // Desktop layout (simple row layout)
         const desktopHTML = `
-            <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-                <div style="display:flex; align-items:center; gap:12px; flex:1;">
-                    <span style="font-weight:700; color:var(--text-secondary); font-size:0.9rem; min-width:24px;">${index + 1}.</span>
-                    <div style="display:flex; flex-direction:column; gap:2px;">
-                        <span style="font-weight:600; font-size:0.95rem; color:var(--text-main);">${member.name}</span>
-                        <div style="display:flex; gap:8px; font-size:0.72rem;">
-                            <span style="color:var(--primary); font-weight:600;">${paidMonthsCount} Paid</span>
-                            <span style="color:var(--text-muted);">${remainingMonths} Left</span>
-                        </div>
+            <div class="member-card">
+                <div class="card-main-info">
+                    <span class="member-number">${index + 1}.</span>
+                    <div>
+                        <div class="member-name-large">${member.name}</div>
+                        <div class="member-status-info"><strong>${paidMonthsCount} Paid</strong> &nbsp;|&nbsp; ${remainingMonths} Left</div>
                     </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    ${reminderBtnHtml}
-                    <div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:${isPaid ? 'var(--green-light)' : 'var(--red-light)'};color:${isPaid ? 'var(--green-dark)' : 'var(--red-dark)'};">
-                        <i data-lucide="${isPaid ? 'check' : 'alert-circle'}" style="width:14px;height:14px;"></i>
-                    </div>
-                    <span style="font-size:0.65rem;">Active</span>
+                <div class="status-pill-green">
+                    <i data-lucide="check"></i>
+                    Active
                 </div>
             </div>
         `;
