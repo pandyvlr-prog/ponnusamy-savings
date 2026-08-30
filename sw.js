@@ -7,7 +7,7 @@
  * v311: Fixes offline "Syncing..." hang + offline indicator on all cached devices.
  */
 
-const CACHE_NAME = 'pms-shell-v311';
+const CACHE_NAME = 'pms-shell-v312';
 
 // App shell files to pre-cache on install
 const SHELL_FILES = [
