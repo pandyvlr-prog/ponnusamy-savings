@@ -2317,6 +2317,20 @@ function _renderDashboard() {
     const groupsModal = document.getElementById('groups-list-modal-backdrop');
     const closeGroupsModalBtn = document.getElementById('btn-close-groups-modal');
 
+    const btnGroupDetailsBack = document.getElementById('btn-group-details-back');
+    if (btnGroupDetailsBack) {
+        btnGroupDetailsBack.addEventListener('click', () => {
+            if (window.State && window.State.cameFromWizard) {
+                const modal = document.getElementById('groups-list-modal-backdrop');
+                if (modal) modal.classList.add('active');
+                switchView('screen-dashboard');
+                window.State.cameFromWizard = false;
+            } else {
+                switchView('screen-dashboard');
+            }
+        });
+    }
+
     // Wizard state
     let wizardState = {
         year: new Date().getFullYear(),
@@ -2506,6 +2520,7 @@ function _renderDashboard() {
                 if (chipGroups.length === 1) {
                     // Bypass Step 4 and directly open the group details
                     State.selectedGroupId = chipGroups[0].id;
+                    State.cameFromWizard = true;
                     const modal = document.getElementById('groups-list-modal-backdrop');
                     if (modal) modal.classList.remove('active');
                     switchView('screen-group-details');
@@ -2909,6 +2924,7 @@ function renderDashboardGroupsList(filterConfig = null) {
                 
                 card.addEventListener('click', () => {
                     State.selectedGroupId = group.id;
+                    State.cameFromWizard = true;
                     const modal = document.getElementById('groups-list-modal-backdrop');
                     if (modal) modal.classList.remove('active');
                     switchView('screen-group-details');
