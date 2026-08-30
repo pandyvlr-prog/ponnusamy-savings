@@ -919,13 +919,19 @@ function setupEventListeners() {
     
     // --- Group Details Screen ---
     // Month adjusters
-    document.getElementById('btn-month-decrement').addEventListener('click', () => {
-        adjustGroupMonth(-1);
-    });
+    const btnMonthDec = document.getElementById('btn-month-decrement');
+    if (btnMonthDec) {
+        btnMonthDec.addEventListener('click', () => {
+            adjustGroupMonth(-1);
+        });
+    }
     
-    document.getElementById('btn-month-increment').addEventListener('click', () => {
-        adjustGroupMonth(1);
-    });
+    const btnMonthInc = document.getElementById('btn-month-increment');
+    if (btnMonthInc) {
+        btnMonthInc.addEventListener('click', () => {
+            adjustGroupMonth(1);
+        });
+    }
     
     // Quick Add Member button
     document.getElementById('btn-details-add-member').addEventListener('click', () => {
