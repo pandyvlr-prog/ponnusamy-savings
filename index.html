@@ -2032,84 +2032,6 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         </div>
                     </div>
 
-                    <!-- Groups Drawer Backdrop (Modal to view groups list wizard) -->
-                    <div class="modal-backdrop" id="groups-list-modal-backdrop">
-                        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 600px; margin: auto;">
-                            <div class="modal-header">
-                                <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
-                                    <button class="icon-btn" id="btn-wizard-back" type="button" style="display: none;">
-                                        <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
-                                    </button>
-                                    <span id="wizard-title">Chit Groups</span>
-                                </h3>
-                                <button class="icon-btn" id="btn-close-groups-modal" type="button">
-                                    <i data-lucide="x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body" style="max-height: 65vh; overflow-y: auto; padding-bottom: 24px;">
-                                
-                                <!-- Step 1: Calendar View -->
-                                <div id="wizard-step-1" class="wizard-step active-step">
-                                    <div class="wizard-year-header">
-                                        <button class="icon-btn" id="wizard-year-prev"><i data-lucide="chevron-left"></i></button>
-                                        <h3 id="wizard-year-display" style="color: #dc2626; font-size: 1.5rem; font-weight: 800; font-family: var(--font-heading);">2026</h3>
-                                        <button class="icon-btn" id="wizard-year-next"><i data-lucide="chevron-right"></i></button>
-                                    </div>
-                                    <div class="wizard-calendar-grid" id="wizard-calendar-grid">
-                                        <!-- Months injected via JS -->
-                                    </div>
-                                </div>
-
-                                <!-- Step 2: Duration View -->
-                                <div id="wizard-step-2" class="wizard-step">
-                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Duration</h4>
-                                    <div class="wizard-chips-container" id="wizard-duration-chips">
-                                        <!-- Durations injected via JS -->
-                                    </div>
-                                </div>
-
-                                <!-- Step 3: Amount View -->
-                                <div id="wizard-step-3" class="wizard-step">
-                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Total Scheme Amount</h4>
-                                    <div class="wizard-chips-container" id="wizard-amount-chips">
-                                        <!-- Amounts injected via JS -->
-                                    </div>
-                                </div>
-
-                                <!-- Step 4: Group List View -->
-                                <div id="wizard-step-4" class="wizard-step">
-                                    <div class="group-list" id="group-list-container">
-                                        <!-- Skeletons for initial load -->
-                                        <div class="skeleton">
-                                            <div class="skeleton-row">
-                                                <div class="skeleton-left">
-                                                    <div class="skeleton-avatar" style="border-radius: 8px;"></div>
-                                                    <div>
-                                                        <div class="skeleton-text-lg"></div>
-                                                        <div class="skeleton-text-sm"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="skeleton-text-right"></div>
-                                            </div>
-                                        </div>
-                                        <div class="skeleton">
-                                            <div class="skeleton-row">
-                                                <div class="skeleton-left">
-                                                    <div class="skeleton-avatar" style="border-radius: 8px;"></div>
-                                                    <div>
-                                                        <div class="skeleton-text-lg"></div>
-                                                        <div class="skeleton-text-sm"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="skeleton-text-right"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
                 <!-- Floating Action Button -->
@@ -3246,6 +3168,84 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
   </div>
 </main>
         
+                    <!-- Groups Drawer Backdrop (Modal to view groups list wizard) -->
+                    <div class="modal-backdrop" id="groups-list-modal-backdrop">
+                        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 600px; margin: auto;">
+                            <div class="modal-header">
+                                <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                                    <button class="icon-btn" id="btn-wizard-back" type="button" style="display: none;">
+                                        <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
+                                    </button>
+                                    <span id="wizard-title">Chit Groups</span>
+                                </h3>
+                                <button class="icon-btn" id="btn-close-groups-modal" type="button">
+                                    <i data-lucide="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="max-height: 65vh; overflow-y: auto; padding-bottom: 24px;">
+                                
+                                <!-- Step 1: Calendar View -->
+                                <div id="wizard-step-1" class="wizard-step active-step">
+                                    <div class="wizard-year-header">
+                                        <button class="icon-btn" id="wizard-year-prev"><i data-lucide="chevron-left"></i></button>
+                                        <h3 id="wizard-year-display" style="color: #dc2626; font-size: 1.5rem; font-weight: 800; font-family: var(--font-heading);">2026</h3>
+                                        <button class="icon-btn" id="wizard-year-next"><i data-lucide="chevron-right"></i></button>
+                                    </div>
+                                    <div class="wizard-calendar-grid" id="wizard-calendar-grid">
+                                        <!-- Months injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Duration View -->
+                                <div id="wizard-step-2" class="wizard-step">
+                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Duration</h4>
+                                    <div class="wizard-chips-container" id="wizard-duration-chips">
+                                        <!-- Durations injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Amount View -->
+                                <div id="wizard-step-3" class="wizard-step">
+                                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">Select Total Scheme Amount</h4>
+                                    <div class="wizard-chips-container" id="wizard-amount-chips">
+                                        <!-- Amounts injected via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Step 4: Group List View -->
+                                <div id="wizard-step-4" class="wizard-step">
+                                    <div class="group-list" id="group-list-container">
+                                        <!-- Skeletons for initial load -->
+                                        <div class="skeleton">
+                                            <div class="skeleton-row">
+                                                <div class="skeleton-left">
+                                                    <div class="skeleton-avatar" style="border-radius: 8px;"></div>
+                                                    <div>
+                                                        <div class="skeleton-text-lg"></div>
+                                                        <div class="skeleton-text-sm"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="skeleton-text-right"></div>
+                                            </div>
+                                        </div>
+                                        <div class="skeleton">
+                                            <div class="skeleton-row">
+                                                <div class="skeleton-left">
+                                                    <div class="skeleton-avatar" style="border-radius: 8px;"></div>
+                                                    <div>
+                                                        <div class="skeleton-text-lg"></div>
+                                                        <div class="skeleton-text-sm"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="skeleton-text-right"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
         <!-- DIALOG/MODAL: CHANGE PASSWORD -->
         <div class="modal-backdrop" id="change-password-modal-backdrop">
             <div class="simple-modal" style="width: calc(100% - 40px); max-width: 400px; margin: auto;">
