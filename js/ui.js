@@ -232,9 +232,6 @@ function switchView(viewId) {
             
             State.currentView = viewId;
             localStorage.setItem('pms_last_active_screen', viewId);
-            if (viewId === 'screen-group-details' && State.selectedGroupId) {
-                localStorage.setItem('pms_last_active_group', State.selectedGroupId);
-            }
             
             // Highlight active navigation links (Sidebar & Bottom Nav)
             const allNavLinks = document.querySelectorAll('.sidebar-link, .bottom-nav-item, .sidebar-nav-item');
@@ -257,6 +254,9 @@ function switchView(viewId) {
         } else if (viewId === 'screen-group-details') {
             if (State.isDirty.members || State.selectedGroupId !== localStorage.getItem('pms_last_active_group')) {
                 renderGroupDetails(State.selectedGroupId);
+                if (State.selectedGroupId) {
+                    localStorage.setItem('pms_last_active_group', State.selectedGroupId);
+                }
                 State.isDirty.members = false;
             }
         } else if (viewId === 'screen-pnl') {
