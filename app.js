@@ -2329,7 +2329,7 @@ function _renderDashboard() {
         document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active-step'));
         document.getElementById(`wizard-step-${stepNum}`).classList.add('active-step');
         
-        const backBtn = document.getElementById('btn-wizard-back');
+        const backBtn = document.getElementById('btn-groups-wizard-back');
         if (stepNum > 1) {
             backBtn.style.display = 'block';
             backBtn.onclick = () => {
