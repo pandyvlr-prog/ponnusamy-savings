@@ -4186,8 +4186,6 @@ function renderGroupDetails(groupId) {
     
 
     const activeMonthName = getMonthLabel(group, group.currentMonth);
-    document.getElementById('details-current-month-text').textContent = `Month ${group.currentMonth} (${activeMonthName})`;
-    document.getElementById('progress-current-month').textContent = `${group.currentMonth} (${activeMonthName})`;
     
     // Set current month payout
     const payoutEl = document.getElementById('details-month-payout');
@@ -4197,22 +4195,6 @@ function renderGroupDetails(groupId) {
     
     // Recalculate metrics
     const metrics = getGroupMetrics(groupId);
-    
-    document.getElementById('details-total-collected').textContent = '₹' + metrics.totalCollected.toLocaleString('en-IN');
-    document.getElementById('details-total-pending').textContent = '₹' + metrics.totalPending.toLocaleString('en-IN');
-    
-    // Current cycle progress bar
-    const progressPercentage = metrics.totalMembers > 0 
-        ? Math.round((metrics.paidMembersForCurrentMonth / metrics.totalMembers) * 100)
-        : 0;
-    
-    document.getElementById('details-progress-bar').style.width = progressPercentage + '%';
-    document.getElementById('progress-percentage-text').textContent = progressPercentage + '%';
-    
-    const collectedCycleAmount = metrics.paidMembersForCurrentMonth * activeInstallment;
-    const expectedCycleAmount = metrics.totalMembers * activeInstallment;
-    document.getElementById('progress-amount-desc').textContent = 
-        `₹${collectedCycleAmount.toLocaleString('en-IN')} of ₹${expectedCycleAmount.toLocaleString('en-IN')} collected for active cycle`;
         
     // Reset filters and search inputs
     // (We do not reset search on every active billing month update so user can keep editing)
@@ -4227,7 +4209,7 @@ function filterAndRenderMembers() {
     if (!group) return;
     
     const searchVal = document.getElementById('member-search-input').value.toLowerCase().trim();
-    const activeFilter = document.querySelector('.filter-pill.active').getAttribute('data-filter');
+    const activeFilter = 'all'; // Filter pills removed from UI, default to 'all'
     
     const container = document.getElementById('details-members-grid');
     container.innerHTML = '';
@@ -4240,29 +4222,10 @@ function filterAndRenderMembers() {
     
     let filteredMembers = groupMembers.filter(member => {
         // Search filter
-        const matchesSearch = member.name.toLowerCase().includes(searchVal);
-        
-        // Status filter (based on currentMonth payment status)
-        const isPaidThisMonth = member.payments[group.currentMonth] && member.payments[group.currentMonth].paid;
-        
-        let matchesFilter = true;
-        if (activeFilter === 'paid') {
-            matchesFilter = isPaidThisMonth;
-        } else if (activeFilter === 'pending') {
-            matchesFilter = !isPaidThisMonth;
-        }
-        
-        return matchesSearch && matchesFilter;
+        return member.name.toLowerCase().includes(searchVal);
     });
     
-    // Update badge filter counters
-    let allCount = groupMembers.length;
-    let paidCount = groupMembers.filter(m => m.payments[group.currentMonth] && m.payments[group.currentMonth].paid).length;
-    let pendingCount = allCount - paidCount;
-    
-    document.getElementById('count-filter-all').textContent = allCount;
-    document.getElementById('count-filter-paid').textContent = paidCount;
-    document.getElementById('count-filter-pending').textContent = pendingCount;
+    // Badge filter counters removed
     
     if (filteredMembers.length === 0) {
         container.innerHTML = `
