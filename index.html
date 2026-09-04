@@ -3108,7 +3108,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 
             <!-- 5. PREMIUM FULL-SCREEN IMAGE LIGHTBOX VIEWER -->
             <div class="ic-lightbox-backdrop" id="ic-lightbox-backdrop" style="display:none;">
-                <button class="ic-lightbox-btn close" id="btn-close-ic-lightbox" title="Close" style="position:absolute; top:20px; right:20px; z-index:10010; background:rgba(239,68,68,0.25); border:2px solid rgba(239,68,68,0.7); color:#ef4444;"><i data-lucide="x"></i></button>
+                <button class="ic-lightbox-btn close" id="btn-close-ic-lightbox" title="Close" style="position:fixed; top:20px; right:20px; z-index:99999; background:rgba(239,68,68,0.25); border:2px solid rgba(239,68,68,0.7); color:#ef4444; pointer-events:auto; touch-action:manipulation;"><i data-lucide="x"></i></button>
 
                 <!-- Top controls header -->
                 <div class="ic-lightbox-header">

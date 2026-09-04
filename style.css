@@ -10196,22 +10196,25 @@ html, body, .app-device-shell {
         color: #D4AF37 !important;
     }
 
-    /* Upper Right Close Button - Red Contrast */
+    /* Upper Right Close Button - Red Contrast, MUST be above header (z-index 10005) */
     #btn-close-ic-lightbox {
         position: fixed !important;
         top: 20px !important;
         right: 20px !important;
-        width: 44px !important;
-        height: 44px !important;
+        width: 48px !important;
+        height: 48px !important;
         background: rgba(239, 68, 68, 0.25) !important;
         backdrop-filter: blur(10px) !important;
-        border: 1.5px solid rgba(239, 68, 68, 0.55) !important;
+        border: 2px solid rgba(239, 68, 68, 0.7) !important;
         border-radius: 50% !important;
-        z-index: 999 !important;
+        z-index: 99999 !important;
         color: #ef4444 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        pointer-events: auto !important;
+        touch-action: manipulation !important;
+        cursor: pointer !important;
     }
 
     .ic-lightbox-main {
