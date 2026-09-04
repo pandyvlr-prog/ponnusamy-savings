@@ -18,7 +18,7 @@
     })();
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>PMS - Simple Chit Management</title>
     <!-- Meta tags for SEO & Mobile App behaviour -->
     <meta name="description" content="Simple Chit Management for Everyone. Track chit groups, members, and monthly payments effortlessly.">
@@ -60,12 +60,6 @@
         metaThemeColor.content = theme === 'light' ? '#C8C4BE' : '#000000';
         document.head.appendChild(metaThemeColor);
 
-        // Remove the no-transition class after first paint
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.documentElement.classList.remove('no-theme-transition');
-            }, 50);
-        });
     })();
     </script>
 <style id="wall-css">

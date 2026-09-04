@@ -109,6 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
+    // Remove no-theme-transition class only after full initial render to prevent FOUC
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            document.documentElement.classList.remove('no-theme-transition');
+        }, 50);
+    });
+
     // Auto-sync when app returns to foreground (wake up from sleep/background)
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {

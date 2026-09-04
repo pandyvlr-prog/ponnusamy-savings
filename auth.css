@@ -1,4 +1,4 @@
-﻿/* AUTHENTICATION & SETTINGS CSS */
+/* AUTHENTICATION & SETTINGS CSS */
 
 /* --- Avatar & Dropdown --- */
 .avatar-btn {
@@ -219,6 +219,7 @@
 /* Hero Section */
 .landing-hero-section {
     min-height: calc(100vh - 80px);
+    min-height: calc(100dvh - 80px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -321,6 +322,8 @@
 .hero-3d-illustration {
     width: 100%;
     max-width: 500px;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
     border-radius: 32px;
     box-shadow: 0 30px 60px rgba(0,0,0,0.4);
     border: 1px solid rgba(255,255,255,0.05);
@@ -636,9 +639,9 @@
     /* Use dvh (dynamic viewport height) so the layout fills the true visible
        area on mobile browsers, excluding the address bar. Fall back to svh
        then 100vh for older browsers. */
-    min-height: 100dvh;
+    min-height: 100vh; /* fallback */
     min-height: 100svh;
-    min-height: 100vh; /* final fallback */
+    min-height: 100dvh;
     height: auto;
 }
 
