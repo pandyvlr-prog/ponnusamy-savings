@@ -181,17 +181,19 @@
 .nav-logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
 .landing-header-title {
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: 1.5rem;
+    font-weight: 900;
     letter-spacing: 0.5px;
-    background: linear-gradient(135deg, #FFD700, #B8860B);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FF3D00; /* Bold contrast color */
+    background: none;
+    -webkit-text-fill-color: initial;
+    text-shadow: 0 2px 8px rgba(255, 61, 0, 0.4);
 }
 [data-theme='light'] .landing-header-title {
-    background: linear-gradient(135deg, #B8860B, #8B6508);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #D50000;
+    background: none;
+    -webkit-text-fill-color: initial;
+    text-shadow: 0 2px 4px rgba(213, 0, 0, 0.2);
 }
 
 .premium-glow {
@@ -1269,8 +1271,8 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
 }
 .landing-header-title {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
-    font-weight: 800;
+    font-size: 1.5rem;
+    font-weight: 900;
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
@@ -1280,12 +1282,33 @@ body, .app-device-shell, .app-header, .app-screen, .settings-card, .simple-modal
     gap: 16px;
 }
 .nav-login {
-    font-weight: 600;
-    font-size: 0.95rem;
-    opacity: 0.8;
+    font-weight: 900;
+    font-size: 1.05rem;
+    color: #FF3D00;
+    opacity: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 16px;
+    border: 2px solid #FF3D00;
+    border-radius: 8px;
+    background: rgba(255, 61, 0, 0.1);
+    transition: all 0.3s ease;
 }
 .nav-login:hover {
-    opacity: 1;
+    background: #FF3D00;
+    color: #FFF !important;
+    box-shadow: 0 4px 12px rgba(255, 61, 0, 0.4);
+    transform: translateY(-2px);
+}
+[data-theme='light'] .nav-login {
+    color: #D50000;
+    border-color: #D50000;
+    background: rgba(213, 0, 0, 0.05);
+}
+[data-theme='light'] .nav-login:hover {
+    background: #D50000;
+    color: #FFF !important;
+    box-shadow: 0 4px 12px rgba(213, 0, 0, 0.3);
 }
 .nav-get-started {
     font-weight: 600;
