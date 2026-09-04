@@ -4181,21 +4181,18 @@ function renderGroupDetails(groupId) {
         ? group.payouts[group.currentMonth]
         : group.chitAmount;
 
-    // Update Hero elements
-    document.getElementById('details-group-name').textContent = group.name;
-    // Show monthly installment as the primary amount
-    const chitValueEl = document.getElementById('details-chit-value');
-    if (chitValueEl) {
-        chitValueEl.textContent = '₹' + activeInstallment.toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' / mo';
-    }
-    
+    // Update Hero elements — start month green, end month red
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const startMonth = group.startMonth !== undefined ? parseInt(group.startMonth) : new Date(group.createdAt).getMonth();
     const startYear = group.startYear !== undefined ? parseInt(group.startYear) : new Date(group.createdAt).getFullYear();
     const startDate = new Date(startYear, startMonth, 1);
     const endDate = new Date(startYear, startMonth + group.duration - 1, 1);
+    const startStr = `${monthNames[startDate.getMonth()].toUpperCase()} ${startDate.getFullYear()}`;
+    const endStr = `${monthNames[endDate.getMonth()].toUpperCase()} ${endDate.getFullYear()}`;
     const dateRangeStr = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()} - ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;
-    
+    document.getElementById('details-group-name').innerHTML =
+        `<span style="color:#16a34a;">${startStr}</span><span style="color:#374151;"> - </span><span style="color:#dc2626;">${endStr}</span>`;
+
     document.getElementById('details-duration').textContent = `${group.duration} Months`;
     document.getElementById('details-installment-value').textContent = '₹' + group.chitAmount.toLocaleString('en-IN');
     

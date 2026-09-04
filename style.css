@@ -2200,13 +2200,13 @@ body.dark-theme .premium-back-btn .premium-back-icon {
 }
 
 .premium-hero-title {
-    font-size: 2.6rem;
+    font-size: 1.8rem;
     font-weight: 900;
     text-transform: uppercase;
     color: #111827;
     margin-bottom: 12px;
-    letter-spacing: -0.5px;
-    line-height: 1.1;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
 }
 [data-theme="dark"] .premium-hero-title {
     color: #f9fafb;
