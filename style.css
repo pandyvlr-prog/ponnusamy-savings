@@ -8780,11 +8780,19 @@ html, body, .app-device-shell {
     transform: scale(1.05);
 }
 
+/* Close (X) button always red for strong contrast */
+.ic-lightbox-btn.close {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #ef4444;
+}
+
 .ic-lightbox-btn.close:hover {
     background: #ef4444;
     color: #fff;
     border-color: #ef4444;
     box-shadow: 0 0 15px rgba(239, 68, 68, 0.45);
+    transform: scale(1.08);
 }
 
 .ic-lightbox-main {
@@ -10188,19 +10196,19 @@ html, body, .app-device-shell {
         color: #D4AF37 !important;
     }
 
-    /* Upper Right Close Button */
+    /* Upper Right Close Button - Red Contrast */
     #btn-close-ic-lightbox {
         position: fixed !important;
         top: 20px !important;
         right: 20px !important;
         width: 44px !important;
         height: 44px !important;
-        background: rgba(255,255,255,0.15) !important;
+        background: rgba(239, 68, 68, 0.25) !important;
         backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255,255,255,0.3) !important;
+        border: 1.5px solid rgba(239, 68, 68, 0.55) !important;
         border-radius: 50% !important;
         z-index: 999 !important;
-        color: white !important;
+        color: #ef4444 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -10304,8 +10312,10 @@ html, body, .app-device-shell {
     .ic-premium-card-details {
         display: flex !important;
     }
+    /* Keep card action buttons visible on mobile so users can tap edit/share/delete */
     .ic-premium-card-actions {
-        display: none !important;
+        display: flex !important;
+        gap: 4px !important;
     }
     
     /* Nav bar logo size */

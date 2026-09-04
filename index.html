@@ -835,9 +835,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 }
 
 .ic-modal-close-premium {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: none !important;
-    color: var(--text-main, #ffffff) !important;
+    background: rgba(239, 68, 68, 0.15) !important;
+    border: 1.5px solid rgba(239, 68, 68, 0.4) !important;
+    color: #ef4444 !important;
     width: 32px !important;
     height: 32px !important;
     border-radius: 50% !important;
@@ -845,11 +845,21 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.ic-modal-close-premium:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.45) !important;
+    transform: scale(1.08) !important;
 }
 
 [data-theme="light"] .ic-modal-close-premium {
-    background: rgba(0, 0, 0, 0.05) !important;
-    color: #333333 !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.35) !important;
+    color: #dc2626 !important;
 }
 
 .ic-modal-premium-body {
