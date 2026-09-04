@@ -4779,6 +4779,14 @@ function renderChecklist(member, group) {
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">₹${instVal.toLocaleString('en-IN')}</span>
             <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%;">
                 <input type="text" inputmode="numeric" class="custom-payment-partial-input amount-input ${partialBlinkClass}" data-month="${m}" placeholder="0" value="${isPaid ? '' : formatNumberIndian(enteredPartialVal)}" style="padding: 4px 6px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;" ${isPaid ? 'disabled' : ''}>
+                <div class="partial-actions-container" style="display: none; align-items: center; justify-content: center; gap: 6px; width: 100%;">
+                    <button class="btn-partial-submit" data-month="${m}" title="Submit" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 4px; cursor: pointer; color: #22c55e; padding: 2px 4px; flex: 1; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        <i data-lucide="check" style="width: 14px; height: 14px; stroke-width: 3px;"></i>
+                    </button>
+                    <button class="btn-partial-delete" data-month="${m}" title="Delete" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 4px; cursor: pointer; color: #ef4444; padding: 2px 4px; flex: 1; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        <i data-lucide="x" style="width: 14px; height: 14px; stroke-width: 3px;"></i>
+                    </button>
+                </div>
                 <select class="custom-payment-partial-method" data-month="${m}" style="display: ${!isPaid && payment.partialPaid > 0 ? 'block' : 'none'}; padding: 2px 4px; font-size: 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; text-align: center;">
                     <option value="" disabled ${!payment.partialMethod ? 'selected' : ''}>TYPE</option>
                     <option value="cash" ${payment.partialMethod === 'cash' ? 'selected' : ''}>CASH</option>
@@ -4804,20 +4812,11 @@ function renderChecklist(member, group) {
         // Listen to Partial amount input changes
         const partialInput = row.querySelector('.custom-payment-partial-input');
         const partialMethodSelect = row.querySelector('.custom-payment-partial-method');
-        
-        partialInput.addEventListener('input', (e) => {
-            const val = e.target.value !== '' ? parseFloat(e.target.value) : null;
-            member.payments[m].partialPaid = val;
-            
-            if (val > 0) {
-                if (partialMethodSelect) partialMethodSelect.style.display = 'block';
-            } else {
-                if (partialMethodSelect) partialMethodSelect.style.display = 'none';
-            }
-            
-            saveState();
-            
-            // Live calculate summary box numbers
+        const partialActionsContainer = row.querySelector('.partial-actions-container');
+        const btnPartialSubmit = row.querySelector('.btn-partial-submit');
+        const btnPartialDelete = row.querySelector('.btn-partial-delete');
+
+        function updateLiveCalculations() {
             let livePaidCount = 0;
             let liveDueCount = 0;
             let livePendingAmount = 0;
@@ -4857,7 +4856,46 @@ function renderChecklist(member, group) {
                     liveWaBtn.classList.add('hidden');
                 }
             }
+        }
+        
+        partialInput.addEventListener('input', (e) => {
+            const val = e.target.value !== '' ? parseFloat(e.target.value) : null;
+            if (val > 0 || e.target.value !== '') {
+                if (partialActionsContainer) partialActionsContainer.style.display = 'flex';
+            } else {
+                if (partialActionsContainer) partialActionsContainer.style.display = 'none';
+            }
         });
+
+        if (btnPartialSubmit) {
+            btnPartialSubmit.addEventListener('click', () => {
+                const val = partialInput.value !== '' ? parseFloat(partialInput.value) : null;
+                member.payments[m].partialPaid = val;
+                
+                if (val > 0) {
+                    if (partialMethodSelect) partialMethodSelect.style.display = 'block';
+                } else {
+                    if (partialMethodSelect) partialMethodSelect.style.display = 'none';
+                }
+                
+                saveState();
+                updateLiveCalculations();
+                if (partialActionsContainer) partialActionsContainer.style.display = 'none';
+                lucide.createIcons(); // re-init icons if needed
+            });
+        }
+
+        if (btnPartialDelete) {
+            btnPartialDelete.addEventListener('click', () => {
+                partialInput.value = '';
+                member.payments[m].partialPaid = null;
+                if (partialMethodSelect) partialMethodSelect.style.display = 'none';
+                saveState();
+                updateLiveCalculations();
+                if (partialActionsContainer) partialActionsContainer.style.display = 'none';
+                renderChecklist(member, group); // re-render to clear blink class if necessary
+            });
+        }
 
         if (partialMethodSelect) {
             partialMethodSelect.addEventListener('change', (e) => {
