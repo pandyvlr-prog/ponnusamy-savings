@@ -45,12 +45,29 @@
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
 
-<script>
-(function() {
-var theme = localStorage.getItem('ponnusamy_theme') || 'dark';
-document.documentElement.setAttribute('data-theme', theme);
-})();
-</script>
+    <!-- Theme Setup (Applied before paint to prevent FOUC) -->
+    <script>
+    (function() {
+        var theme = localStorage.getItem('ponnusamy_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        
+        // Prevent transitions on initial load
+        document.documentElement.classList.add('no-theme-transition');
+        
+        // Set initial theme-color for PWA/mobile status bar
+        var metaThemeColor = document.createElement('meta');
+        metaThemeColor.name = 'theme-color';
+        metaThemeColor.content = theme === 'light' ? '#C8C4BE' : '#000000';
+        document.head.appendChild(metaThemeColor);
+
+        // Remove the no-transition class after first paint
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.documentElement.classList.remove('no-theme-transition');
+            }, 50);
+        });
+    })();
+    </script>
 <style id="wall-css">
 /* Hard State Walls to prevent screen bleeding and flickering */
 body:not([data-app-state="dashboard"]) #desktop-sidebar,

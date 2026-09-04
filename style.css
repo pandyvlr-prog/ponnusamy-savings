@@ -141,9 +141,36 @@
     --shadow-primary: 0 8px 24px rgba(184, 134, 11, 0.35);
 }
 
-/* Enable transitions during theme switch for a smooth color transition */
-.theme-switching, .theme-switching * { 
-    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background-image 0.4s ease !important; 
+/* ── Smooth Theme Transition ────────────────────────────────────────────────
+   Permanent 0.25s ease on color-only properties. No layout properties
+   are transitioned, so there is zero jank/reflow during theme switch.
+   Applied once — no JS class-toggle needed.
+──────────────────────────────────────────────────────────────────────────── */
+body,
+.app-device-shell,
+.app-header,
+.app-sidebar,
+.desktop-sidebar,
+.bottom-nav,
+.dashboard-card,
+.fin-card,
+.modal-content,
+.simple-modal,
+.settings-card,
+.group-hero-card,
+.dashboard-container,
+#app-bg {
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease !important;
+}
+
+/* Suppress transition on first paint to avoid FOUC flicker */
+.no-theme-transition,
+.no-theme-transition * {
+    transition: none !important;
 }
 
 /* Global Reset & Base Styling */
@@ -177,18 +204,16 @@ body {
 }
 
 [data-theme="light"] body {
-    background-color: #D2CDC6 !important;
+    /* background-color inherits from --bg-body CSS variable — no !important needed */
     background-image:
         radial-gradient(ellipse at 50% -20%, rgba(184, 134, 11, 0.15) 0%, transparent 70%),
         radial-gradient(ellipse at -20% 50%, rgba(94, 106, 210, 0.08) 0%, transparent 60%),
-        radial-gradient(rgba(26, 23, 20, 0.05) 1px, transparent 1px) !important;
-    background-size: 100% 100%, 100% 100%, 24px 24px !important;
+        radial-gradient(rgba(26, 23, 20, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 24px 24px;
 }
 
-/* No heavy transitions on containers - theme switch is instant via CSS vars */
-.app-device-shell, .metric-item, .fin-card, .dashboard-card, .modal-content, .app-header {
-    /* intentionally no transition - prevents layout thrash */
-}
+/* metric-item intentionally left without transition (data rows, performance-sensitive) */
+.metric-item { /* no transition */ }
 
 /* STATIC PERFORMANCE BACKGROUND */
 #app-bg {
