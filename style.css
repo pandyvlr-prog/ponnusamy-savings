@@ -2216,24 +2216,44 @@ body.dark-theme .premium-back-btn .premium-back-icon {
     display: flex;
     align-items: center;
     gap: 16px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-main);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
 }
 
 .premium-hero-duration {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: #D4AF37;
+    gap: 6px;
+    color: #1e40af;
+    font-weight: 800;
 }
 .premium-hero-duration i {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+    color: #1e40af;
+}
+[data-theme="dark"] .premium-hero-duration {
+    color: #60a5fa;
+}
+[data-theme="dark"] .premium-hero-duration i {
+    color: #60a5fa;
+}
+
+.premium-hero-scheme {
+    color: #111827;
+    font-weight: 800;
+}
+[data-theme="dark"] .premium-hero-scheme {
+    color: #f3f4f6;
 }
 
 .premium-hero-divider {
-    color: var(--border-active);
+    color: #9ca3af;
+    font-weight: 400;
+}
+[data-theme="dark"] .premium-hero-meta {
+    color: #f9fafb;
 }
 
 /* Client List Header */
