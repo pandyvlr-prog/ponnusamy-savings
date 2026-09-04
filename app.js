@@ -4358,13 +4358,6 @@ function filterAndRenderMembers() {
                         ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;flex-shrink:0;">NEW</span>' : ''}
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                        <div style="text-align:right;">
-                            <div style="font-size:0.55rem; color:#6b7280; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">${isPaid ? 'PAID' : 'DUE'}</div>
-                            <div style="font-size:0.95rem; font-weight:900; color:${isPaid ? '#059669' : '#dc2626'};">&#8377;${formatNumberIndian(totalDue)}</div>
-                        </div>
-                        <div style="background:${isPaid ? '#ecfdf5' : '#fef2f2'};color:${isPaid ? '#059669' : '#dc2626'};width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                            <i data-lucide="user" style="width:16px;height:16px;"></i>
-                        </div>
                         <button class="mobile-member-toggle-btn" style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;">
                             <i data-lucide="chevron-down" style="width:20px;height:20px;color:#6b7280;transition:transform 0.2s ease;" class="premium-arrow premium-arrow-member"></i>
                         </button>
