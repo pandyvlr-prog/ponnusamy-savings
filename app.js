@@ -802,12 +802,40 @@ function setupEventListeners() {
             showNotification('Member name is required.', 'error');
             return;
         }
+
+        if (mMobile && !/^\d{10}$/.test(mMobile)) {
+            showNotification('Mobile number must be exactly 10 digits.', 'error');
+            return;
+        }
+
+        if (mDOB) {
+            const today = new Date();
+            const dobDate = new Date(mDOB);
+            if (dobDate > today) {
+                showNotification('Date of birth cannot be in the future.', 'error');
+                return;
+            }
+        }
         
         if (State.tempMemberList.some(m => m.name.toLowerCase() === mName.toLowerCase())) {
             showNotification('Member name already added to this list.', 'error');
             return;
         }
         
+        // Debounce / UI state
+        const btn = document.getElementById('btn-add-member-list');
+        const icon = document.getElementById('add-member-icon');
+        const btnText = document.getElementById('add-member-btn-text');
+        
+        if (btn && btn.classList.contains('btn-loading')) return;
+        
+        if (btn) btn.classList.add('btn-loading');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'user-check');
+            lucide.createIcons();
+            icon.classList.add('icon-success-pop');
+        }
+        if (btnText) btnText.textContent = 'Added!';
         State.tempMemberList.push({
             name: mName,
             mobileNo: mMobile,
@@ -840,7 +868,22 @@ function setupEventListeners() {
         }
 
         addMemberInput.focus();
+        addMemberInput.classList.add('input-focus-pulse');
+        setTimeout(() => addMemberInput.classList.remove('input-focus-pulse'), 1000);
+        
         renderTempMembersList();
+        showNotification('Member added successfully!', 'success');
+
+        // Reset button state
+        setTimeout(() => {
+            if (btn) btn.classList.remove('btn-loading');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'user-plus');
+                icon.classList.remove('icon-success-pop');
+                lucide.createIcons();
+            }
+            if (btnText) btnText.textContent = 'Add Member to List';
+        }, 800);
     }
     
     addMemberBtn.addEventListener('click', handleAddMember);

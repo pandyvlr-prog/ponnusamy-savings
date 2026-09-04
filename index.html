@@ -2262,8 +2262,8 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <label for="member-address-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Residential Address</label>
                                 <textarea id="member-address-input" placeholder="Full Address" maxlength="200" style="padding: 8px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-family: var(--font-body); resize: vertical; min-height: 50px; outline: none; transition: var(--transition-fast);"></textarea>
                             </div>
-                            <button class="btn btn-secondary" id="btn-add-member-list" type="button" style="padding: 8px 16px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--radius-sm);">
-                                <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i> Add Member to List
+                            <button class="btn btn-secondary" id="btn-add-member-list" type="button" aria-label="Add this member to the group list" style="padding: 8px 16px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--radius-sm); transition: all 0.3s ease;">
+                                <i data-lucide="user-plus" style="width: 14px; height: 14px; transition: transform 0.3s ease;" id="add-member-icon"></i> <span id="add-member-btn-text">Add Member to List</span>
                             </button>
                         </div>
                         
