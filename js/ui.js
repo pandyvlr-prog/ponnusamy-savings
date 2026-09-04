@@ -130,7 +130,7 @@ function showNotification(message, type = 'success') {
         fontSize: '0.8rem',
         fontWeight: '600',
         boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-        zIndex: '9999',
+        zIndex: '20000000',
         opacity: '0',
         transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
         pointerEvents: 'none',
