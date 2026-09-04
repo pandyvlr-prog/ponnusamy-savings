@@ -4351,13 +4351,13 @@ function filterAndRenderMembers() {
             </div>
         `;
 
-        // Mobile layout — fully inline styled, no CSS classes needed for layout
+        // Mobile layout — collapsed by default, expand on chevron click
         const mobileHTML = `
             <div style="display:block;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
-                        <span style="color:#2563eb;font-size:1.2rem;font-weight:900;text-shadow: 0px 1px 2px rgba(37,99,235,0.2);">${index + 1}</span>
-                        <h3 style="font-size:1.1rem;font-weight:900;background:linear-gradient(135deg, #b8860b, #ffd700, #b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;text-transform:uppercase;text-shadow: 0px 2px 4px rgba(212,175,55,0.2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${member.name}</h3>
+                        <span style="color:#2563eb;font-size:1.2rem;font-weight:900;">${index + 1}</span>
+                        <h3 style="font-size:1.1rem;font-weight:900;color:#111827;margin:0;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${member.name}</h3>
                         ${member.customerType === 'New' ? '<span style="background:#d97706;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;flex-shrink:0;">NEW</span>' : ''}
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
@@ -4368,98 +4368,119 @@ function filterAndRenderMembers() {
                         <div style="background:${isPaid ? '#ecfdf5' : '#fef2f2'};color:${isPaid ? '#059669' : '#dc2626'};width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
                             <i data-lucide="user" style="width:16px;height:16px;"></i>
                         </div>
-                        <i data-lucide="chevron-down" style="width:18px;height:18px;color:#9ca3af;" class="premium-arrow premium-arrow-member"></i>
+                        <button class="mobile-member-toggle-btn" style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                            <i data-lucide="chevron-down" style="width:20px;height:20px;color:#6b7280;transition:transform 0.2s ease;" class="premium-arrow premium-arrow-member"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div style="display:flex;gap:6px;margin-bottom:14px;">
-                    <div style="flex:1;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--bg-surface-elevated);">
-                        <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                <div class="mobile-member-details" style="display:none;margin-top:12px;">
+                    <div style="display:flex;gap:6px;margin-bottom:14px;">
+                        <div style="flex:1;border:1px solid var(--border);border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:var(--bg-surface-elevated);">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:0.5rem;color:#6b7280;font-weight:700;text-transform:uppercase;white-space:nowrap;">GROUP</div>
+                                <div style="font-size:0.6rem;font-weight:800;background:linear-gradient(90deg,#059669,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${durationStr}</div>
+                            </div>
                         </div>
-                        <div style="min-width:0;">
-                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;text-transform:uppercase;white-space:nowrap;">GROUP</div>
-                            <div style="font-size:0.6rem;font-weight:800;background:linear-gradient(90deg,#059669,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${durationStr}</div>
+                        <div style="flex:0 0 auto;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:#fffbeb;">
+                            <div style="width:26px;height:26px;border-radius:50%;background:#fffbeb;color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="calendar" style="width:12px;height:12px;"></i>
+                            </div>
+                            <div style="min-width:0;text-align:center;">
+                                <div style="font-size:0.45rem;color:#d97706;font-weight:700;text-transform:uppercase;white-space:nowrap;">Due Month</div>
+                                <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${group.currentMonth}</div>
+                            </div>
+                        </div>
+                        <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;background:var(--bg-surface-elevated);display:flex;flex-direction:column;justify-content:center;">
+                            <div style="font-size:0.5rem;color:#6b7280;font-weight:700;white-space:nowrap;">SCHEME</div>
+                            <div style="font-size:0.7rem;font-weight:900;color:#059669;white-space:nowrap;">${schemeLabelStr}</div>
                         </div>
                     </div>
-                    <div style="flex:0 0 auto;border:1px solid #e5e7eb;border-radius:8px;padding:7px 6px;display:flex;align-items:center;gap:5px;background:#fffbeb;">
-                        <div style="width:26px;height:26px;border-radius:50%;background:#fffbeb;color:#d97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i>
-                        </div>
-                        <div style="min-width:0;text-align:center;">
-                            <div style="font-size:0.45rem;color:#d97706;font-weight:700;text-transform:uppercase;white-space:nowrap;">Due Month</div>
-                            <div style="font-size:1.1rem;font-weight:900;color:#d97706;line-height:1;">${group.currentMonth}</div>
-                        </div>
-                    </div>
-                    <div style="flex:0 0 auto;border:1px solid var(--border);border-radius:8px;padding:7px 6px;background:var(--bg-surface-elevated);display:flex;flex-direction:column;justify-content:center;">
-                        <div style="font-size:0.5rem;color:#6b7280;font-weight:700;white-space:nowrap;">SCHEME</div>
-                        <div style="font-size:0.7rem;font-weight:900;color:#059669;white-space:nowrap;">${schemeLabelStr}</div>
-                    </div>
-                </div>
 
-                <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-surface-elevated);">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
+                    <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-surface-elevated);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="indian-rupee" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.7rem;color:#dc2626;font-weight:700;">DUE AMOUNT</span>
                             </div>
-                            <span style="font-size:0.7rem;color:#dc2626;font-weight:700;">DUE AMOUNT</span>
+                            <span style="font-size:0.85rem;font-weight:800;color:#dc2626;">&#8377;${formatNumberIndian(dueAmountDisplay)}</span>
                         </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:#dc2626;">&#8377;${formatNumberIndian(dueAmountDisplay)}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:${paidAmountColor === '#059669' ? '#ecfdf5' : (paidAmountColor === '#d97706' ? '#fffbeb' : '#f3f4f6')};color:${paidAmountColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="wallet" style="width:11px;height:11px;"></i>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:24px;height:24px;border-radius:50%;background:${paidAmountColor === '#059669' ? '#ecfdf5' : (paidAmountColor === '#d97706' ? '#fffbeb' : '#f3f4f6')};color:${paidAmountColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="wallet" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAID AMOUNT</span>
                             </div>
-                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAID AMOUNT</span>
+                            <span style="font-size:0.85rem;font-weight:800;color:${paidAmountColor};">&#8377;${formatNumberIndian(paidAmountDisplay)}</span>
                         </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:${paidAmountColor};">&#8377;${formatNumberIndian(paidAmountDisplay)}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="calendar-check" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAID DATE</span>
                             </div>
-                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAID DATE</span>
+                            <span style="font-size:0.85rem;font-weight:800;color:#2563eb;">${paidDateStr}</span>
                         </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:#2563eb;">${paidDateStr}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#ecfdf5;color:#059669;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">STATUS</span>
                             </div>
-                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">STATUS</span>
+                            <span>${statusBadgeHTML}</span>
                         </div>
-                        <span>${statusBadgeHTML}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="coins" style="width:11px;height:11px;"></i>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#faf5ff;color:#9333ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="coins" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAYOUT</span>
                             </div>
-                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">PAYOUT</span>
+                            <span>${payoutBadgeHTML}</span>
                         </div>
-                        <span>${payoutBadgeHTML}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="landmark" style="width:11px;height:11px;"></i>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="landmark" style="width:11px;height:11px;"></i>
+                                </div>
+                                <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">SCHEME</span>
                             </div>
-                            <span style="font-size:0.7rem;color:#6b7280;font-weight:600;">SCHEME</span>
+                            <span style="font-size:0.85rem;font-weight:800;color:#111827;">${schemeLabelStr}</span>
                         </div>
-                        <span style="font-size:0.85rem;font-weight:800;color:#111827;">${schemeLabelStr}</span>
                     </div>
+                    <button class="pmc2-fab-btn"><i data-lucide="plus"></i></button>
                 </div>
-
-                <button class="pmc2-fab-btn"><i data-lucide="plus"></i></button>
             </div>
         `;
 
+
         card.innerHTML = isMobile ? mobileHTML : desktopHTML;
         
+        // Mobile: chevron toggle to expand/collapse details
+        if (isMobile) {
+            const toggleBtn = card.querySelector('.mobile-member-toggle-btn');
+            const detailsPanel = card.querySelector('.mobile-member-details');
+            if (toggleBtn && detailsPanel) {
+                toggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = detailsPanel.style.display !== 'none';
+                    detailsPanel.style.display = isOpen ? 'none' : 'block';
+                    const icon = toggleBtn.querySelector('i');
+                    if (icon) {
+                        icon.style.transform = isOpen ? '' : 'rotate(180deg)';
+                    }
+                });
+            }
+        }
+
         // Card click opens payment modal
         card.addEventListener('click', () => {
             openPaymentModal(member.id);
