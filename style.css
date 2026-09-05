@@ -7225,7 +7225,7 @@ html, body, .app-device-shell {
 }
 
 /* ============================================
-   SCHEME CARD — DESKTOP (Vertical Grid Card)
+   SCHEME CARD — DESKTOP (Tall Portrait Card, Old Style)
    ============================================ */
 .ic-premium-card-item {
     background: var(--bg-surface-elevated, #fff);
@@ -7235,29 +7235,35 @@ html, body, .app-device-shell {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
     padding: 0;
     cursor: pointer;
-    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s, border-color 0.3s;
+    aspect-ratio: 4 / 5.2;
 }
 [data-theme="dark"] .ic-premium-card-item {
     background: rgba(255,255,255,0.05);
     border-color: rgba(255,255,255,0.08);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+}
+[data-theme="light"] .ic-premium-card-item {
+    background: #fff;
+    border-color: rgba(0,0,0,0.06);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
 }
 .ic-premium-card-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px) scale(1.01);
     border-color: var(--primary, #D4AF37);
-    box-shadow: 0 12px 32px rgba(212,175,55,0.2);
+    box-shadow: 0 16px 40px rgba(212,175,55,0.2);
 }
 
-/* Desktop: thumbnail = full-width card image */
+/* Desktop: thumbnail = fills whole card body */
 .ic-list-thumb {
     width: 100%;
-    height: 150px;
-    border-radius: 18px 18px 0 0;
+    flex: 1;
+    min-height: 0;
+    border-radius: 0;
     overflow: hidden;
-    flex-shrink: 0;
     background: #111;
     position: relative;
 }
@@ -7269,7 +7275,7 @@ html, body, .app-device-shell {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
 }
 .ic-premium-card-item:hover .ic-list-thumb-img {
     transform: scale(1.06);
@@ -7283,14 +7289,18 @@ html, body, .app-device-shell {
     color: var(--text-muted);
 }
 
-/* Desktop: info = below image */
+/* Desktop: info = compact strip below image */
 .ic-list-info {
-    flex: 1;
+    flex-shrink: 0;
     min-width: 0;
-    padding: 12px 14px 6px;
+    padding: 10px 12px 4px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+[data-theme="dark"] .ic-list-info {
+    border-top-color: rgba(255,255,255,0.05);
 }
 .ic-list-title {
     font-size: 0.88rem;
@@ -7318,13 +7328,13 @@ html, body, .app-device-shell {
     letter-spacing: 0.2px;
 }
 
-/* Desktop: actions = bottom of card */
+/* Desktop: share button = bottom right */
 .ic-list-actions {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 6px 12px 12px;
-    flex-shrink: 0;
+    padding: 4px 12px 12px;
 }
 
 /* Icon Button */
