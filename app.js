@@ -6060,11 +6060,12 @@ async function deleteGroup() {
             return;
         }
 
-        // Reset grid display when cards exist
-        list.style.display = 'grid';
-        list.style.flexDirection = '';
-        list.style.alignItems = '';
+        // Reset to flex column list when cards exist
+        list.style.display = 'flex';
+        list.style.flexDirection = 'column';
+        list.style.alignItems = 'stretch';
         list.style.justifyContent = '';
+        list.style.gap = '10px';
 
         // Show Skeleton loaders first if image is big (simulated soft skeletons)
         cards.forEach(card => {
@@ -6085,21 +6086,30 @@ async function deleteGroup() {
                 displayDate = displayDate.replace(regex, '<mark class="search-highlight">$1</mark>');
             }
 
-            const imgAreaHTML = card.imageData
-                ? `<img class="ic-premium-card-img" src="${card.imageData}" alt="${card.label}" loading="lazy">
-                   <div class="ic-premium-value-badge"><i data-lucide="tag" style="width:14px; height:14px;"></i> ${card.label || 'Unnamed'}</div>`
-                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);"><i data-lucide="image-off" style="width:36px;height:36px;"></i></div>`;
+            // Format amount label short (e.g. 25000 -> ₹25K)
+            function fmtAmt(lbl) {
+                const num = parseFloat((lbl || '').replace(/[^0-9.]/g, ''));
+                if (!isNaN(num) && num > 0) {
+                    if (num >= 100000) return '₹' + (num/100000).toFixed(num%100000===0?0:1) + 'L';
+                    if (num >= 1000)   return '₹' + (num/1000).toFixed(num%1000===0?0:1) + 'K';
+                    return '₹' + num;
+                }
+                return lbl || 'Card';
+            }
+            const amtBadgeText = fmtAmt(card.label);
+
+            const thumbHTML = card.imageData
+                ? `<img class="ic-list-thumb-img" src="${card.imageData}" alt="${card.label}" loading="lazy">`
+                : `<div class="ic-list-thumb-placeholder"><i data-lucide="image-off" style="width:24px;height:24px;"></i></div>`;
 
             item.innerHTML = `
-                <div class="ic-premium-image-wrap">${imgAreaHTML}</div>
-                <div class="ic-premium-card-footer">
-                    <div class="ic-premium-card-details">
-                        <span class="ic-premium-card-title">${displayLabel}</span>
-                        <span class="ic-premium-card-date">${displayDate}</span>
-                    </div>
-                    <div class="ic-premium-card-actions">
-                        <button class="ic-premium-icon-btn ic-share" title="Share Options"><i data-lucide="share-2"></i></button>
-                    </div>
+                <div class="ic-list-thumb" style="cursor:pointer;">${thumbHTML}</div>
+                <div class="ic-list-info">
+                    <span class="ic-list-title">${displayLabel}</span>
+                    <span class="ic-list-badge"><i data-lucide="tag" style="width:11px;height:11px;"></i> ${amtBadgeText}</span>
+                </div>
+                <div class="ic-list-actions">
+                    <button class="ic-premium-icon-btn ic-share" title="Share"><i data-lucide="share-2"></i></button>
                 </div>
             `;
 
@@ -6110,7 +6120,7 @@ async function deleteGroup() {
                 e.stopPropagation();
                 openSharePopover(e, card);
             });
-            item.querySelector('.ic-premium-image-wrap').addEventListener('click', (e) => {
+            item.querySelector('.ic-list-thumb').addEventListener('click', (e) => {
                 e.stopPropagation();
                 openLightbox(card);
             });
