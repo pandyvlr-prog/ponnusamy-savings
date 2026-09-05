@@ -6596,6 +6596,7 @@ body.hide-navigation .bottom-nav {
 .notes-editor-prm {
     flex: 1;
     display: flex;
+}
 .editor-topbar-prm {
     display: flex;
     align-items: center;
