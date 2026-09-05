@@ -5941,14 +5941,14 @@ body:not([data-theme="light"]) .icon-blend-img {
 }
 
 /* =====================================================
-   UNIFIED SIDEBAR ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â  no floating card, flush panel
+   UNIFIED SIDEBAR ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â no floating card, flush panel
    ===================================================== */
 .desktop-sidebar {
     display: flex;
     flex-direction: column;
     width: 76px;
     min-width: 76px;
-    /* Seamless with app shell ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â  no margin, no border-radius */
+    /* Seamless with app shell ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â no margin, no border-radius */
     background: var(--bg-surface);
     border-right: 1px solid var(--border);
     height: 100%;
@@ -6596,7 +6596,11 @@ body.hide-navigation .bottom-nav {
 .notes-editor-prm {
     flex: 1;
     display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
+
 .editor-topbar-prm {
     display: flex;
     align-items: center;
@@ -7222,260 +7226,6 @@ html, body, .app-device-shell {
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
     width: 90%;
     max-width: 500px;
-}
-
-/* ============================================
-   SCHEME CARD — DESKTOP (Original Style)
-   ============================================ */
-.ic-premium-card-item {
-    background: var(--bg-surface-elevated, #fff);
-    border: 1px solid rgba(0,0,0,0.07);
-    border-radius: 18px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    padding: 0;
-    cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s, border-color 0.3s;
-    /* NO aspect-ratio — card height is driven by image + footer */
-}
-[data-theme="dark"] .ic-premium-card-item {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.08);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-[data-theme="light"] .ic-premium-card-item {
-    background: #fff;
-    border-color: rgba(0,0,0,0.06);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-}
-.ic-premium-card-item:hover {
-    transform: translateY(-6px) scale(1.01);
-    border-color: var(--primary, #D4AF37);
-    box-shadow: 0 14px 36px rgba(212,175,55,0.2);
-}
-
-/* Desktop thumbnail: 16:9 image fills the card top */
-.ic-list-thumb {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    flex-shrink: 0;
-    border-radius: 0;
-    overflow: hidden;
-    background: #111;
-    position: relative;
-}
-[data-theme="light"] .ic-list-thumb {
-    background: #e8e8e8;
-}
-.ic-list-thumb-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-}
-.ic-premium-card-item:hover .ic-list-thumb-img {
-    transform: scale(1.06);
-}
-.ic-list-thumb-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-}
-
-/* Desktop info: title + badge below image */
-.ic-list-info {
-    flex-shrink: 0;
-    min-width: 0;
-    padding: 12px 14px 6px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-top: 1px solid rgba(0,0,0,0.05);
-}
-[data-theme="dark"] .ic-list-info {
-    border-top-color: rgba(255,255,255,0.05);
-}
-.ic-list-title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--text-main, #111);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
-}
-
-/* Yellow Amount Badge */
-.ic-list-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, #D4AF37, #B8860B);
-    color: #000;
-    font-size: 0.75rem;
-    font-weight: 800;
-    padding: 4px 11px;
-    border-radius: 20px;
-    width: fit-content;
-    box-shadow: 0 2px 8px rgba(212,175,55,0.4);
-    letter-spacing: 0.2px;
-}
-
-/* Desktop: share button below footer */
-.ic-list-actions {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 4px 14px 12px;
-}
-
-/* Icon Button */
-.ic-premium-icon-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--text-secondary);
-}
-[data-theme="light"] .ic-premium-icon-btn {
-    background: #f5f5f5;
-    border-color: rgba(0,0,0,0.08);
-    color: #666;
-}
-.ic-premium-icon-btn i { width: 15px; height: 15px; }
-.ic-premium-icon-btn.ic-edit:hover  { background: var(--primary); color: #000; border-color: var(--primary); }
-.ic-premium-icon-btn.ic-share:hover { background: #25d366; color: #fff; border-color: #25d366; box-shadow: 0 0 10px rgba(37,211,102,0.4); }
-.ic-premium-icon-btn.ic-delete:hover{ background: #ef4444; color: #fff; border-color: #ef4444; }
-
-/* ============================================
-   SCHEME CARD — MOBILE (Premium Horizontal Row)
-   ============================================ */
-@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
-    .ic-premium-card-item {
-        flex-direction: row !important;
-        align-items: center !important;
-        padding: 10px 12px !important;
-        border-radius: 20px !important;
-        gap: 0 !important;
-        min-height: 76px !important;
-        height: auto !important;
-        aspect-ratio: auto !important;
-        position: relative !important;
-        background: var(--bg-surface-elevated, #fff) !important;
-        border: 1.5px solid rgba(212,175,55,0.12) !important;
-        box-shadow: 0 3px 14px rgba(0,0,0,0.07), 0 1px 3px rgba(212,175,55,0.08) !important;
-        overflow: visible !important;
-    }
-    [data-theme="dark"] .ic-premium-card-item {
-        background: rgba(30,30,40,0.95) !important;
-        border-color: rgba(212,175,55,0.18) !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,175,55,0.08) !important;
-    }
-    [data-theme="light"] .ic-premium-card-item {
-        background: #ffffff !important;
-        border-color: rgba(212,175,55,0.15) !important;
-    }
-    .ic-premium-card-item:hover {
-        transform: translateY(-2px) !important;
-        border-color: rgba(212,175,55,0.4) !important;
-        box-shadow: 0 8px 24px rgba(212,175,55,0.18) !important;
-    }
-
-    /* Mobile thumbnail: small rounded square */
-    .ic-list-thumb {
-        width: 68px !important;
-        height: 58px !important;
-        min-width: 68px !important;
-        border-radius: 14px !important;
-        flex-shrink: 0 !important;
-        overflow: hidden !important;
-        border: 1.5px solid rgba(212,175,55,0.2) !important;
-        background: #111 !important;
-    }
-    [data-theme="light"] .ic-list-thumb {
-        background: #f0f0f0 !important;
-        border-color: rgba(0,0,0,0.08) !important;
-    }
-    .ic-list-thumb-img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        border-radius: 12px !important;
-    }
-
-    /* Mobile info: center section */
-    .ic-list-info {
-        flex: 1 !important;
-        min-width: 0 !important;
-        padding: 0 10px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 5px !important;
-        justify-content: center !important;
-    }
-    .ic-list-title {
-        font-size: 0.82rem !important;
-        font-weight: 700 !important;
-        color: var(--text-main) !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        line-height: 1.3 !important;
-    }
-    .ic-list-badge {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 3px !important;
-        background: linear-gradient(135deg, #D4AF37 0%, #A67C00 100%) !important;
-        color: #000 !important;
-        font-size: 0.7rem !important;
-        font-weight: 800 !important;
-        padding: 3px 9px !important;
-        border-radius: 20px !important;
-        width: fit-content !important;
-        box-shadow: 0 2px 8px rgba(212,175,55,0.45) !important;
-        letter-spacing: 0.2px !important;
-    }
-
-    /* Mobile actions: right side share button */
-    .ic-list-actions {
-        flex-shrink: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        margin-left: 6px !important;
-        padding: 0 !important;
-        justify-content: center !important;
-    }
-    .ic-premium-icon-btn.ic-share {
-        width: 36px !important;
-        height: 36px !important;
-        border-radius: 12px !important;
-        background: rgba(212,175,55,0.08) !important;
-        border: 1.5px solid rgba(212,175,55,0.25) !important;
-        color: #D4AF37 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-    .ic-premium-icon-btn.ic-share:active {
-        background: #25d366 !important;
-        border-color: #25d366 !important;
-        color: #fff !important;
-    }
 }
 
 .save-discard-banner.visible {
@@ -8229,6 +7979,180 @@ html, body, .app-device-shell {
     color: #000;
 }
 
+/* --- Gallery Grid --- */
+.ic-premium-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    min-height: 200px;
+}
+
+@media (max-width: 1024px) {
+    .ic-premium-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+    .ic-premium-grid { grid-template-columns: 1fr; }
+}
+
+/* --- Premium Card item --- */
+.ic-premium-card-item {
+    background: var(--bg-surface-glass);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-md);
+    aspect-ratio: 4 / 5.2;
+}
+[data-theme="light"] .ic-premium-card-item {
+    background: rgba(255, 255, 255, 0.5);
+    border-color: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+}
+
+.ic-premium-card-item:hover {
+    transform: translateY(-6px);
+    border-color: var(--primary);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.15), var(--shadow-lg);
+}
+
+/* Card Image Area */
+.ic-premium-image-wrap {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    background: #080808;
+}
+
+.ic-premium-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ic-premium-card-item:hover .ic-premium-card-img {
+    transform: scale(1.06);
+}
+
+/* Value Badge Overlay */
+.ic-premium-value-badge {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--primary);
+    padding: 8px 16px;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-family: var(--font-number);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    z-index: 3;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Bottom Footer details */
+.ic-premium-card-footer {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.1);
+    gap: 12px;
+}
+[data-theme="light"] .ic-premium-card-footer {
+    border-top-color: rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.ic-premium-card-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ic-premium-card-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.ic-premium-card-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Premium Card action row */
+.ic-premium-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.ic-premium-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+}
+[data-theme="light"] .ic-premium-icon-btn {
+    background: #fff;
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+.ic-premium-icon-btn i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Edit action colors */
+.ic-premium-icon-btn.ic-edit:hover {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+/* Share action colors */
+.ic-premium-icon-btn.ic-share:hover {
+    background: #25d366;
+    color: #fff;
+    border-color: #25d366;
+    box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
+}
+/* Delete action colors */
+.ic-premium-icon-btn.ic-delete:hover {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
 
 /* --- Skeleton Loading States --- */
 .ic-skeleton-card {
@@ -9348,115 +9272,6 @@ html, body, .app-device-shell {
     border: 1px solid rgba(255,255,255,0.06) !important;
     flex: 1 !important;
 }
-
-/* ==============================================================
-   MOBILE RESPONSIVE FIXES FOR UPLOADED CARDS (320px-430px)
-   ============================================================== */
-@media (max-width: 767px) {
-    /* 1. Force one column layout for the cards grid using Flexbox */
-    #ic-cards-grid-view .ic-premium-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 20px !important;
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-        box-sizing: border-box !important;
-        margin-top: 10px !important;
-        height: auto !important;
-    }
-
-    /* 2. Full width cards, reset positioning to prevent deck-stacking */
-    #ic-cards-grid-view .ic-premium-card-item {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important; /* Prevent JS transforms from moving them */
-        max-width: 100% !important;
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        box-sizing: border-box !important;
-        margin-bottom: 0 !important;
-        aspect-ratio: auto !important; /* Prevent card from being forced to 416px tall */
-        height: auto !important;
-    }
-
-    /* 3. Make table/image preview scrollable horizontally */
-    #ic-cards-grid-view .ic-premium-image-wrap {
-        width: 100% !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        aspect-ratio: auto !important; /* Let image define height */
-        height: auto !important;
-    }
-
-    /* 4. Let image expand past container to enable scrolling without vertical stretching */
-    #ic-cards-grid-view .ic-premium-card-img,
-    #ic-cards-grid-view .ic-premium-image-wrap table {
-        width: 100% !important;
-        min-width: 480px !important; /* Force width larger than mobile screen */
-        max-width: none !important;
-        height: auto !important; /* Respect natural height */
-        object-fit: contain !important; /* Do not crop the image */
-        object-position: left top !important; 
-        display: block !important;
-        position: relative !important;
-    }
-
-    /* 5. Keep badge fixed in top left while scrolling */
-    #ic-cards-grid-view .ic-premium-value-badge {
-        position: sticky !important;
-        left: 10px !important;
-        top: 10px !important;
-        z-index: 10 !important;
-        width: max-content !important;
-        flex-shrink: 0 !important;
-    }
-
-    /* 6. Footer Layout - Prevent overlapping */
-    #ic-cards-grid-view .ic-premium-card-footer {
-        flex-wrap: nowrap !important;
-        padding: 12px 14px !important;
-    }
-    #ic-cards-grid-view .ic-premium-card-details {
-        min-width: 0 !important;
-        flex: 1 !important;
-    }
-    #ic-cards-grid-view .ic-premium-card-actions {
-        flex-shrink: 0 !important;
-        gap: 6px !important;
-    }
-    #ic-cards-grid-view .ic-premium-icon-btn {
-        width: 36px !important;
-        height: 36px !important;
-    }
-
-    /* 7. Toolbar Responsive (Search and Filters) */
-    #ic-cards-grid-view .ic-toolbar {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 12px !important;
-        padding: 0 12px !important;
-    }
-    #ic-cards-grid-view .ic-search-input {
-        width: 100% !important;
-        margin-bottom: 0 !important; /* Remove original huge bottom margin */
-    }
-    #ic-cards-grid-view .ic-filter-dropdowns {
-        display: flex !important;
-        gap: 10px !important;
-        width: 100% !important;
-    }
-    #ic-cards-grid-view select,
-    #ic-cards-grid-view .ic-select-premium {
-        flex: 1 !important;
-        min-width: 0 !important; /* Allows flex items to shrink evenly */
-        padding: 10px 8px !important;
-        font-size: 0.8rem !important;
-    }
-}
-
 #ic-tenure-selector .ic-scheme-stat-row {
     display: flex !important;
     justify-content: space-between !important;
@@ -10574,32 +10389,60 @@ html, body, .app-device-shell {
 
     /* Additional Tweaks */
     
-    /* Horizontal list card — keep row layout on mobile */
+    /* Standard Card style for mobile list */
     .ic-premium-card-item {
-        flex-direction: row !important;
+        flex-direction: column !important;
         height: auto !important;
-        padding: 10px 12px !important;
-        border-radius: 16px !important;
+        padding: 0 !important;
+        background: var(--bg-surface) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+        border: 1px solid var(--border-subtle) !important;
+        border-radius: 12px !important;
         aspect-ratio: auto !important;
-        align-items: center !important;
+        align-items: stretch !important;
     }
     [data-theme="light"] .ic-premium-card-item {
         background: #ffffff !important;
-        border-color: rgba(0,0,0,0.07) !important;
+        border-color: rgba(0,0,0,0.05) !important;
     }
-    /* Thumbnail stays square */
-    .ic-list-thumb {
-        width: 80px !important;
-        height: 64px !important;
+    .ic-premium-image-wrap {
+        width: 100% !important;
+        aspect-ratio: 16/9 !important;
+        height: auto !important;
+        border-radius: 12px 12px 0 0 !important;
+        position: relative !important;
+        display: block !important;
+        background: transparent !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        box-shadow: none !important;
     }
-    /* Badge stays yellow */
-    .ic-list-badge {
-        font-size: 0.75rem !important;
-        padding: 3px 9px !important;
+    .ic-premium-card-img {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        object-fit: cover !important;
+        box-shadow: none !important;
     }
-    /* Share button stays visible */
-    .ic-list-actions {
+    
+    /* Hide the overlay price tag entirely, let it show in footer */
+    .ic-premium-value-badge {
+        display: none !important;
+    }
+    
+    /* Show footer but hide actions */
+    .ic-premium-card-footer {
         display: flex !important;
+        padding: 16px !important;
+    }
+    .ic-premium-card-details {
+        display: flex !important;
+    }
+    /* Keep card action buttons visible on mobile so users can tap edit/share/delete */
+    .ic-premium-card-actions {
+        display: flex !important;
+        gap: 4px !important;
     }
     
     /* Nav bar logo size */
