@@ -1,13 +1,13 @@
-/**
- * Ponnusamy Savings — Service Worker v311
+﻿/**
+ * Ponnusamy Savings â€” Service Worker v315
  * Strategy: Stale-While-Revalidate for app shell files.
- * → Serves from cache INSTANTLY on hard refresh (no blank screen).
- * → Fetches fresh copy in background silently.
- * → Falls back to premium offline.html for any failed navigation.
+ * â†’ Serves from cache INSTANTLY on hard refresh (no blank screen).
+ * â†’ Fetches fresh copy in background silently.
+ * â†’ Falls back to premium offline.html for any failed navigation.
  * v311: Fixes offline "Syncing..." hang + offline indicator on all cached devices.
  */
 
-const CACHE_NAME = 'pms-shell-v312';
+const CACHE_NAME = 'pms-shell-v315';
 
 // App shell files to pre-cache on install
 const SHELL_FILES = [
@@ -29,7 +29,7 @@ const SHELL_FILES = [
     '/manifest.json'
 ];
 
-/* ── Install: pre-cache the app shell ── */
+/* â”€â”€ Install: pre-cache the app shell â”€â”€ */
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -39,7 +39,7 @@ self.addEventListener('install', event => {
     );
 });
 
-/* ── Activate: clean up old caches ── */
+/* â”€â”€ Activate: clean up old caches â”€â”€ */
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys()
@@ -50,7 +50,7 @@ self.addEventListener('activate', event => {
     );
 });
 
-/* ── Fetch: smart routing ── */
+/* â”€â”€ Fetch: smart routing â”€â”€ */
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
@@ -58,7 +58,7 @@ self.addEventListener('fetch', event => {
     // Only intercept GET requests
     if (request.method !== 'GET') return;
 
-    // Skip Supabase API calls — always go to network
+    // Skip Supabase API calls â€” always go to network
     if (url.hostname.includes('supabase.co'))     return;
     if (url.hostname.includes('googleapis.com'))  return;
     if (url.hostname.includes('gstatic.com'))     return;
@@ -95,7 +95,7 @@ self.addEventListener('fetch', event => {
                 // If we have a cached copy, return it immediately
                 if (cached) return cached;
 
-                // No cache — wait for network
+                // No cache â€” wait for network
                 return networkFetch.then(res => {
                     if (res) return res;
 
@@ -113,3 +113,4 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
