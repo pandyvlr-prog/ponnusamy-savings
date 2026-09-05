@@ -6085,22 +6085,35 @@ async function deleteGroup() {
                 displayDate = displayDate.replace(regex, '<mark class="search-highlight">$1</mark>');
             }
 
+            const badgeHTML = `<div class="ic-premium-value-badge"><i data-lucide="tag" style="width:14px; height:14px;"></i> ${card.label || 'Unnamed'}</div>`;
+
             const imgAreaHTML = card.imageData
-                ? `<img class="ic-premium-card-img" src="${card.imageData}" alt="${card.label}" loading="lazy">
-                   <div class="ic-premium-value-badge"><i data-lucide="tag" style="width:14px; height:14px;"></i> ${card.label || 'Unnamed'}</div>`
+                ? `<img class="ic-premium-card-img" src="${card.imageData}" alt="${card.label}" loading="lazy">`
                 : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);"><i data-lucide="image-off" style="width:36px;height:36px;"></i></div>`;
 
             item.innerHTML = `
-                <div class="ic-premium-image-wrap">${imgAreaHTML}</div>
+                <div class="ic-premium-image-wrap">
+                    ${imgAreaHTML}
+                    <div class="desktop-badge-wrapper">${badgeHTML}</div>
+                </div>
+                
+                <div class="mobile-only-title" style="display:none; text-align:center; font-size:1.5rem; font-weight:800; margin-bottom:8px; width:100%;">${displayLabel}</div>
+                
+                <div class="mobile-only-badge" style="display:none; text-align:center; margin-bottom:20px; width:100%;">
+                    <div class="ic-premium-value-badge" style="position:static; display:inline-flex;">
+                        <i data-lucide="tag" style="width:14px; height:14px;"></i> ${card.label || 'Unnamed'}
+                    </div>
+                </div>
+
                 <div class="ic-premium-card-footer">
-                    <div class="ic-premium-card-details">
+                    <div class="ic-premium-card-details desktop-only-details">
                         <span class="ic-premium-card-title">${displayLabel}</span>
                         <span class="ic-premium-card-date">${displayDate}</span>
                     </div>
                     <div class="ic-premium-card-actions">
-                        <button class="ic-premium-icon-btn ic-edit" title="Edit Card"><i data-lucide="edit-3"></i></button>
+                        <button class="ic-premium-icon-btn ic-edit desktop-only-action" title="Edit Card"><i data-lucide="edit-3"></i></button>
                         <button class="ic-premium-icon-btn ic-share" title="Share Options"><i data-lucide="share-2"></i></button>
-                        <button class="ic-premium-icon-btn ic-delete" title="Delete Card"><i data-lucide="trash-2"></i></button>
+                        <button class="ic-premium-icon-btn ic-delete desktop-only-action" title="Delete Card"><i data-lucide="trash-2"></i></button>
                     </div>
                 </div>
             `;
