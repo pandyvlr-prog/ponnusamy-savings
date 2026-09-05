@@ -6098,9 +6098,7 @@ async function deleteGroup() {
                         <span class="ic-premium-card-date">${displayDate}</span>
                     </div>
                     <div class="ic-premium-card-actions">
-                        <button class="ic-premium-icon-btn ic-edit" title="Edit Card"><i data-lucide="edit-3"></i></button>
                         <button class="ic-premium-icon-btn ic-share" title="Share Options"><i data-lucide="share-2"></i></button>
-                        <button class="ic-premium-icon-btn ic-delete" title="Delete Card"><i data-lucide="trash-2"></i></button>
                     </div>
                 </div>
             `;
@@ -6108,17 +6106,9 @@ async function deleteGroup() {
             list.appendChild(item);
 
             // Bind Actions
-            item.querySelector('.ic-edit').addEventListener('click', (e) => {
-                e.stopPropagation();
-                openEditModal(card);
-            });
             item.querySelector('.ic-share').addEventListener('click', (e) => {
                 e.stopPropagation();
                 openSharePopover(e, card);
-            });
-            item.querySelector('.ic-delete').addEventListener('click', (e) => {
-                e.stopPropagation();
-                openDeleteConfirmation(card);
             });
             item.querySelector('.ic-premium-image-wrap').addEventListener('click', (e) => {
                 e.stopPropagation();
