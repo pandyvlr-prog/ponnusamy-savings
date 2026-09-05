@@ -6607,157 +6607,6 @@ body.hide-navigation .bottom-nav {
     flex-shrink: 0;
 }
 
-/* --- Horizontal List Card Row --- */
-.ic-premium-card-item {
-    background: var(--bg-surface-elevated, #fff);
-    border: 1px solid rgba(0,0,0,0.07);
-    border-radius: 18px;
-    overflow: hidden;
-    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    padding: 10px 12px;
-    cursor: pointer;
-    gap: 0;
-}
-[data-theme="dark"] .ic-premium-card-item {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.08);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-}
-.ic-premium-card-item:hover {
-    transform: translateY(-2px);
-    border-color: var(--primary, #D4AF37);
-    box-shadow: 0 6px 20px rgba(212,175,55,0.2);
-}
-
-/* Square Thumbnail on Left */
-.ic-list-thumb {
-    width: 90px;
-    height: 70px;
-    border-radius: 12px;
-    overflow: hidden;
-    flex-shrink: 0;
-    background: #111;
-    position: relative;
-    cursor: pointer;
-}
-[data-theme="light"] .ic-list-thumb {
-    background: #e5e5e5;
-}
-.ic-list-thumb-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s;
-}
-.ic-premium-card-item:hover .ic-list-thumb-img {
-    transform: scale(1.05);
-}
-.ic-list-thumb-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-}
-
-/* Info Section: title + amount badge */
-.ic-list-info {
-    flex: 1;
-    min-width: 0;
-    padding: 0 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    justify-content: center;
-}
-.ic-list-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-main, #111);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
-}
-
-/* Yellow Amount Badge */
-.ic-list-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, #D4AF37, #B8860B);
-    color: #000;
-    font-size: 0.78rem;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 20px;
-    width: fit-content;
-    box-shadow: 0 2px 6px rgba(212,175,55,0.35);
-    letter-spacing: 0.2px;
-    font-family: var(--font-number, monospace);
-}
-
-/* Actions on Far Right */
-.ic-list-actions {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: 8px;
-}
-
-.ic-premium-icon-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: var(--text-secondary);
-}
-[data-theme="light"] .ic-premium-icon-btn {
-    background: #f5f5f5;
-    border-color: rgba(0, 0, 0, 0.08);
-    color: #555;
-}
-
-.ic-premium-icon-btn i {
-    width: 16px;
-    height: 16px;
-}
-
-/* Edit action colors */
-.ic-premium-icon-btn.ic-edit:hover {
-    background: var(--primary);
-    color: #000;
-    border-color: var(--primary);
-    box-shadow: 0 0 12px var(--primary-glow);
-}
-/* Share action colors */
-.ic-premium-icon-btn.ic-share:hover {
-    background: #25d366;
-    color: #fff;
-    border-color: #25d366;
-    box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
-}
-/* Delete action colors */
-.ic-premium-icon-btn.ic-delete:hover {
-    background: #ef4444;
-    color: #fff;
-    border-color: #ef4444;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
-}
-
 .editor-btn-icon {
     background: var(--bg-surface-elevated);
     border: 1px solid var(--border);
@@ -7375,54 +7224,55 @@ html, body, .app-device-shell {
     max-width: 500px;
 }
 
-/* --- Horizontal List Card Row --- */
+/* ============================================
+   SCHEME CARD — DESKTOP (Vertical Grid Card)
+   ============================================ */
 .ic-premium-card-item {
     background: var(--bg-surface-elevated, #fff);
     border: 1px solid rgba(0,0,0,0.07);
     border-radius: 18px;
     overflow: hidden;
-    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    padding: 0;
     cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
 }
 [data-theme="dark"] .ic-premium-card-item {
     background: rgba(255,255,255,0.05);
     border-color: rgba(255,255,255,0.08);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 .ic-premium-card-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-5px);
     border-color: var(--primary, #D4AF37);
-    box-shadow: 0 6px 20px rgba(212,175,55,0.18);
+    box-shadow: 0 12px 32px rgba(212,175,55,0.2);
 }
 
-/* Square Thumbnail on Left */
+/* Desktop: thumbnail = full-width card image */
 .ic-list-thumb {
-    width: 90px;
-    height: 70px;
-    border-radius: 12px;
+    width: 100%;
+    height: 150px;
+    border-radius: 18px 18px 0 0;
     overflow: hidden;
     flex-shrink: 0;
     background: #111;
     position: relative;
 }
 [data-theme="light"] .ic-list-thumb {
-    background: #e5e5e5;
+    background: #e8e8e8;
 }
 .ic-list-thumb-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.3s;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
 .ic-premium-card-item:hover .ic-list-thumb-img {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 .ic-list-thumb-placeholder {
     width: 100%;
@@ -7433,24 +7283,23 @@ html, body, .app-device-shell {
     color: var(--text-muted);
 }
 
-/* Info Section (title + amount badge) */
+/* Desktop: info = below image */
 .ic-list-info {
     flex: 1;
     min-width: 0;
-    padding: 0 10px;
+    padding: 12px 14px 6px;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    justify-content: center;
 }
 .ic-list-title {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--text-main, #111);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 
 /* Yellow Amount Badge */
@@ -7460,67 +7309,163 @@ html, body, .app-device-shell {
     gap: 4px;
     background: linear-gradient(135deg, #D4AF37, #B8860B);
     color: #000;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 800;
     padding: 4px 10px;
     border-radius: 20px;
     width: fit-content;
-    box-shadow: 0 2px 6px rgba(212,175,55,0.35);
+    box-shadow: 0 2px 6px rgba(212,175,55,0.4);
     letter-spacing: 0.2px;
 }
 
-/* Actions on Far Right */
+/* Desktop: actions = bottom of card */
 .ic-list-actions {
-    flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: flex-end;
+    padding: 6px 12px 12px;
+    flex-shrink: 0;
 }
 
+/* Icon Button */
 .ic-premium-icon-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
     color: var(--text-secondary);
 }
 [data-theme="light"] .ic-premium-icon-btn {
-    background: #fff;
-    border-color: rgba(0, 0, 0, 0.06);
-    color: #555;
+    background: #f5f5f5;
+    border-color: rgba(0,0,0,0.08);
+    color: #666;
 }
+.ic-premium-icon-btn i { width: 15px; height: 15px; }
+.ic-premium-icon-btn.ic-edit:hover  { background: var(--primary); color: #000; border-color: var(--primary); }
+.ic-premium-icon-btn.ic-share:hover { background: #25d366; color: #fff; border-color: #25d366; box-shadow: 0 0 10px rgba(37,211,102,0.4); }
+.ic-premium-icon-btn.ic-delete:hover{ background: #ef4444; color: #fff; border-color: #ef4444; }
 
-.ic-premium-icon-btn i {
-    width: 16px;
-    height: 16px;
-}
+/* ============================================
+   SCHEME CARD — MOBILE (Premium Horizontal Row)
+   ============================================ */
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
+    .ic-premium-card-item {
+        flex-direction: row !important;
+        align-items: center !important;
+        padding: 10px 12px !important;
+        border-radius: 20px !important;
+        gap: 0 !important;
+        min-height: 76px !important;
+        height: auto !important;
+        aspect-ratio: auto !important;
+        position: relative !important;
+        background: var(--bg-surface-elevated, #fff) !important;
+        border: 1.5px solid rgba(212,175,55,0.12) !important;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.07), 0 1px 3px rgba(212,175,55,0.08) !important;
+        overflow: visible !important;
+    }
+    [data-theme="dark"] .ic-premium-card-item {
+        background: rgba(30,30,40,0.95) !important;
+        border-color: rgba(212,175,55,0.18) !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,175,55,0.08) !important;
+    }
+    [data-theme="light"] .ic-premium-card-item {
+        background: #ffffff !important;
+        border-color: rgba(212,175,55,0.15) !important;
+    }
+    .ic-premium-card-item:hover {
+        transform: translateY(-2px) !important;
+        border-color: rgba(212,175,55,0.4) !important;
+        box-shadow: 0 8px 24px rgba(212,175,55,0.18) !important;
+    }
 
-/* Edit action colors */
-.ic-premium-icon-btn.ic-edit:hover {
-    background: var(--primary);
-    color: #000;
-    border-color: var(--primary);
-    box-shadow: 0 0 12px var(--primary-glow);
-}
-/* Share action colors */
-.ic-premium-icon-btn.ic-share:hover {
-    background: #25d366;
-    color: #fff;
-    border-color: #25d366;
-    box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
-}
-/* Delete action colors */
-.ic-premium-icon-btn.ic-delete:hover {
-    background: #ef4444;
-    color: #fff;
-    border-color: #ef4444;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    /* Mobile thumbnail: small rounded square */
+    .ic-list-thumb {
+        width: 68px !important;
+        height: 58px !important;
+        min-width: 68px !important;
+        border-radius: 14px !important;
+        flex-shrink: 0 !important;
+        overflow: hidden !important;
+        border: 1.5px solid rgba(212,175,55,0.2) !important;
+        background: #111 !important;
+    }
+    [data-theme="light"] .ic-list-thumb {
+        background: #f0f0f0 !important;
+        border-color: rgba(0,0,0,0.08) !important;
+    }
+    .ic-list-thumb-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        border-radius: 12px !important;
+    }
+
+    /* Mobile info: center section */
+    .ic-list-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+        padding: 0 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 5px !important;
+        justify-content: center !important;
+    }
+    .ic-list-title {
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        color: var(--text-main) !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        line-height: 1.3 !important;
+    }
+    .ic-list-badge {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 3px !important;
+        background: linear-gradient(135deg, #D4AF37 0%, #A67C00 100%) !important;
+        color: #000 !important;
+        font-size: 0.7rem !important;
+        font-weight: 800 !important;
+        padding: 3px 9px !important;
+        border-radius: 20px !important;
+        width: fit-content !important;
+        box-shadow: 0 2px 8px rgba(212,175,55,0.45) !important;
+        letter-spacing: 0.2px !important;
+    }
+
+    /* Mobile actions: right side share button */
+    .ic-list-actions {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        margin-left: 6px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+    }
+    .ic-premium-icon-btn.ic-share {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 12px !important;
+        background: rgba(212,175,55,0.08) !important;
+        border: 1.5px solid rgba(212,175,55,0.25) !important;
+        color: #D4AF37 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .ic-premium-icon-btn.ic-share:active {
+        background: #25d366 !important;
+        border-color: #25d366 !important;
+        color: #fff !important;
+    }
 }
 
 .save-discard-banner.visible {
@@ -10619,60 +10564,32 @@ html, body, .app-device-shell {
 
     /* Additional Tweaks */
     
-    /* Standard Card style for mobile list */
+    /* Horizontal list card — keep row layout on mobile */
     .ic-premium-card-item {
-        flex-direction: column !important;
+        flex-direction: row !important;
         height: auto !important;
-        padding: 0 !important;
-        background: var(--bg-surface) !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
-        border: 1px solid var(--border-subtle) !important;
-        border-radius: 12px !important;
+        padding: 10px 12px !important;
+        border-radius: 16px !important;
         aspect-ratio: auto !important;
-        align-items: stretch !important;
+        align-items: center !important;
     }
     [data-theme="light"] .ic-premium-card-item {
         background: #ffffff !important;
-        border-color: rgba(0,0,0,0.05) !important;
+        border-color: rgba(0,0,0,0.07) !important;
     }
-    .ic-premium-image-wrap {
-        width: 100% !important;
-        aspect-ratio: 16/9 !important;
-        height: auto !important;
-        border-radius: 12px 12px 0 0 !important;
-        position: relative !important;
-        display: block !important;
-        background: transparent !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-        box-shadow: none !important;
+    /* Thumbnail stays square */
+    .ic-list-thumb {
+        width: 80px !important;
+        height: 64px !important;
     }
-    .ic-premium-card-img {
-        width: 100% !important;
-        height: 100% !important;
-        border-radius: 0 !important;
-        object-fit: cover !important;
-        box-shadow: none !important;
+    /* Badge stays yellow */
+    .ic-list-badge {
+        font-size: 0.75rem !important;
+        padding: 3px 9px !important;
     }
-    
-    /* Hide the overlay price tag entirely, let it show in footer */
-    .ic-premium-value-badge {
-        display: none !important;
-    }
-    
-    /* Show footer but hide actions */
-    .ic-premium-card-footer {
+    /* Share button stays visible */
+    .ic-list-actions {
         display: flex !important;
-        padding: 16px !important;
-    }
-    .ic-premium-card-details {
-        display: flex !important;
-    }
-    /* Keep card action buttons visible on mobile so users can tap edit/share/delete */
-    .ic-premium-card-actions {
-        display: flex !important;
-        gap: 4px !important;
     }
     
     /* Nav bar logo size */
