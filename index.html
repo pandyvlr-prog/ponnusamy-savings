@@ -64,9 +64,9 @@
     </script>
 <style id="wall-css">
 /* Hard State Walls to prevent screen bleeding and flickering */
-body:not([data-app-state="dashboard"]) #desktop-sidebar,
-body:not([data-app-state="dashboard"]) #bottom-nav,
-body:not([data-app-state="dashboard"]) .app-header {
+body:not([data-app-state="dashboard"]):not([data-app-state="loan"]) #desktop-sidebar,
+body:not([data-app-state="dashboard"]):not([data-app-state="loan"]) #bottom-nav,
+body:not([data-app-state="dashboard"]):not([data-app-state="loan"]) .app-header {
     display: none !important;
 }
 
@@ -4483,7 +4483,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     </script>
 
     <!-- DIALOG/MODAL: ADD LOAN -->
-    <div class="modal-backdrop" id="add-loan-modal-backdrop">
+    <div class="modal-backdrop" id="add-loan-modal-backdrop" style="display: none;">
         <div class="simple-modal" style="width: calc(100% - 40px); max-width: 500px; margin: auto;">
             <div class="modal-header">
                 <h3>Add New Loan</h3>
@@ -4531,7 +4531,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     </div>
 
     <!-- DIALOG/MODAL: CUSTOMER LOAN DETAIL -->
-    <div class="modal-backdrop" id="loan-detail-modal-backdrop">
+    <div class="modal-backdrop" id="loan-detail-modal-backdrop" style="display: none;">
         <div class="simple-modal" style="width: calc(100% - 40px); max-width: 800px; margin: auto;">
             <div class="modal-header">
                 <div>
