@@ -2766,9 +2766,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                             <span class="pnl-card-v2-label">Total Pending</span>
                         </div>
                         <span class="pnl-card-v2-value pnl-val-net" id="ln-pending">₹0</span>
-                        <span class="pnl-card-v2-desc">Currently due</span>
-                    </div>
-                    <div class="pnl-metric-card pnl-card-v2">
+                        <div class="pnl-metric-card pnl-card-v2">
                         <div class="pnl-card-v2-top">
                             <div class="pnl-card-v2-icon pnl-icon-purple"><i data-lucide="bar-chart" style="width:18px;height:18px;"></i></div>
                             <span class="pnl-card-v2-label">Outstanding</span>
@@ -2796,17 +2794,20 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             </div>
             <!-- Table -->
             <div class="pnl-summary-section">
-                <div class="pnl-section-header"><h2>Current Month Installments</h2></div>
-                <div class="table-responsive">
-                    <table class="styled-table pnl-table" id="loan-dashboard-table">
+                <div class="pnl-section-header" style="background:#d1d5db; padding:10px 15px; border-top-left-radius:8px; border-top-right-radius:8px; margin-bottom:0;">
+                    <h2 style="margin:0; font-size:1.1rem; color:#111827; font-weight:800;">Current Month Installments</h2>
+                </div>
+                <div class="table-responsive" style="margin-top:0;">
+                    <table class="styled-table pnl-table" id="loan-dashboard-table" style="width:100%; border-collapse:collapse; border:1px solid #111827;">
                         <thead>
-                            <tr>
-                                <th>S.No</th><th>Customer Name</th>
-                                <th class="number-col">Loan Amount</th>
-                                <th class="number-col">Interest</th>
-                                <th class="number-col">EMI</th>
-                                <th class="center-col">Paid Date</th>
-                                <th class="center-col">Status</th>
+                            <tr style="background:var(--primary); color:#000;">
+                                <th style="color:#000; font-weight:800;">S.No</th>
+                                <th style="color:#000; font-weight:800;">Customer Name</th>
+                                <th class="number-col" style="color:#000; font-weight:800;">Loan Amount</th>
+                                <th class="number-col" style="color:#000; font-weight:800;">Interest</th>
+                                <th class="number-col" style="color:#000; font-weight:800;">EMI</th>
+                                <th class="center-col" style="color:#000; font-weight:800;">Paid Date</th>
+                                <th class="center-col" style="color:#000; font-weight:800;">Status</th>
                             </tr>
                         </thead>
                         <tbody id="loan-tbody">
@@ -2844,23 +2845,32 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Loan Amount (₹) *</label>
                         <div style="position:relative;">
                             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
-                            <input type="number" id="ln-amount" placeholder="e.g. 50000" min="1" required style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;">
+                            <input type="number" id="ln-amount" placeholder="e.g. 50000" min="1" required style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                         </div>
                     </div>
-                    <div style="display:flex;flex-direction:column;gap:5px;">
-                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Annual Interest Rate *</label>
-                        <div style="position:relative;">
-                            <input type="number" id="ln-rate" placeholder="e.g. 36" min="0" step="0.01" required style="padding:11px 30px 11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;">
-                            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">%</span>
+                    
+                    <!-- Rate and Date row -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Annual Interest <span style="color:#D4AF37;">*</span></label>
+                            <div style="position:relative;">
+                                <input type="number" id="ln-rate" placeholder="e.g. 36" min="0" step="0.01" required style="padding:11px 30px 11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                                <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">%</span>
+                            </div>
                         </div>
-                        <span style="font-size:0.68rem;color:var(--text-secondary);">36% per year = 3% per month interest</span>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Start Month <span style="color:#D4AF37;">*</span></label>
+                            <input type="month" id="ln-start-month" required style="padding:11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                        </div>
                     </div>
+                    
+                    <!-- Mode -->
                     <div style="display:flex;flex-direction:column;gap:8px;">
-                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Payment Mode *</label>
+                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Payment Mode <span style="color:#D4AF37;">*</span></label>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                             <label style="display:flex;align-items:center;gap:9px;padding:12px 13px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
                                 <input type="radio" name="ln-mode" value="Interest Only" checked style="accent-color:#D4AF37;width:15px;height:15px;">
-                                <div><div style="font-size:0.8rem;font-weight:700;color:var(--text-main);">Interest Only</div><div style="font-size:0.65rem;color:var(--text-secondary);">Principal unchanged</div></div>
+                                <div><div style="font-size:0.8rem;font-weight:700;color:var(--text-main);">Interest Only</div><div style="font-size:0.65rem;color:var(--text-secondary);margin-top:1px;">Principal unchanged</div></div>
                             </label>
                             <label style="display:flex;align-items:center;gap:9px;padding:12px 13px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
                                 <input type="radio" name="ln-mode" value="Interest + Principal" style="accent-color:#D4AF37;width:15px;height:15px;">
@@ -2908,10 +2918,15 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             <div style="overflow-x:auto;">
                 <table class="styled-table pnl-table" style="width:100%;">
                     <thead>
-                        <tr>
-                            <th>Month</th><th class="number-col">Opening</th><th class="number-col">Interest</th>
-                            <th class="number-col">Principal</th><th class="number-col">EMI</th>
-                            <th class="center-col">Paid Date</th><th class="number-col">Closing</th><th class="center-col">Status</th>
+                        <tr style="background:var(--primary); color:#000;">
+                            <th style="color:#000; font-weight:800;">Month</th>
+                            <th class="number-col" style="color:#000; font-weight:800;">Opening</th>
+                            <th class="number-col" style="color:#000; font-weight:800;">Interest</th>
+                            <th class="number-col" style="color:#000; font-weight:800;">Principal</th>
+                            <th class="number-col" style="color:#000; font-weight:800;">EMI</th>
+                            <th class="center-col" style="color:#000; font-weight:800;">Paid Date</th>
+                            <th class="number-col" style="color:#000; font-weight:800;">Closing</th>
+                            <th class="center-col" style="color:#000; font-weight:800;">Status</th>
                         </tr>
                     </thead>
                     <tbody id="ln-det-tbody">
