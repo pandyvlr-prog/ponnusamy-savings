@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=1002">
+    <link rel="stylesheet" href="style.css?v=1003">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -2795,7 +2795,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </div>
             </div>
             <!-- Table -->
-            <div class="loan-table-section" style="padding: 24px 24px 40px 24px;">
+            <div class="loan-table-section" style="padding: 24px 24px 40px 24px; background: #f8f9fc; flex: 1; display: flex; flex-direction: column;">
                 <div class="section-header" style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
                     <h2 class="section-title" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0;">Current Month Installments</h2>
                     <span class="badge" id="loan-total-badge" style="display: flex; align-items: center; font-weight: 700;">0 Installments</span>
