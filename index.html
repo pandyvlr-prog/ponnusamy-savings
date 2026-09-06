@@ -2792,10 +2792,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <span class="pnl-card-v2-value pnl-val-net" id="ln-overdue">0</span>
                         <span class="pnl-card-v2-desc">Past due installments</span>
                     </div>
-                </div>
-
             </div>
             <!-- Table -->
+
             <div class="pnl-summary-section">
                 <div class="pnl-section-header" style="background:#d1d5db; padding:10px 15px; border-top-left-radius:8px; border-top-right-radius:8px; margin-bottom:0;">
                     <h2 style="margin:0; font-size:1.1rem; color:#111827; font-weight:800;">Current Month Installments</h2>
@@ -2863,7 +2862,12 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         </div>
                         <div style="display:flex;flex-direction:column;gap:5px;">
                             <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Start Month <span style="color:#D4AF37;">*</span></label>
-                            <input type="month" id="ln-start-month" required style="padding:11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                            <div style="position:relative;">
+                                <input type="month" id="ln-start-month" required
+                                    style="padding:11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;"
+                                    onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                                <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#D4AF37;pointer-events:none;font-size:1rem;">📅</span>
+                            </div>
                         </div>
                     </div>
                     

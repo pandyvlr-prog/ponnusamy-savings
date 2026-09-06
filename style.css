@@ -10773,3 +10773,24 @@ body.kb-transitioning *::after {
 }
 #screen-loan .pnl-hero { padding-bottom: 12px; }
 
+
+/* -- Month Input: hide browser's native grey calendar icon --------------- */
+#ln-start-month::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+    opacity: 0;
+    width: 0;
+}
+#ln-start-month::-webkit-inner-spin-button,
+#ln-start-month::-webkit-clear-button {
+    display: none;
+}
+
+/* -- Loan Hero: remove min-height gap below cards ------------------------ */
+#screen-loan .pnl-hero {
+    padding-bottom: 0;
+    min-height: unset;
+}
+#screen-loan .pnl-metric-grid {
+    padding-bottom: 12px;
+}
