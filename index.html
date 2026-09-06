@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=999">
+    <link rel="stylesheet" href="style.css?v=1001">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -2792,6 +2792,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         <span class="pnl-card-v2-value pnl-val-net" id="ln-overdue">0</span>
                         <span class="pnl-card-v2-desc">Past due installments</span>
                     </div>
+                </div>
             </div>
             <!-- Table -->
 
@@ -2902,6 +2903,15 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                                 <input type="radio" name="ln-mode" value="Interest + Principal" style="accent-color:#D4AF37;width:15px;height:15px;">
                                 <div><div style="font-size:0.8rem;font-weight:700;color:var(--text-main);">Int + Principal</div><div style="font-size:0.65rem;color:var(--text-secondary);">Reduces balance</div></div>
                             </label>
+                        </div>
+                    </div>
+
+                    <!-- Principal payment field (shown only when Interest + Principal is selected) -->
+                    <div id="ln-principal-field" style="display:none;flex-direction:column;gap:5px;">
+                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Monthly Principal Payment (₹) <span style="color:#D4AF37;">*</span></label>
+                        <div style="position:relative;">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
+                            <input type="number" id="ln-principal-amount" placeholder="e.g. 5000" min="1" style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                         </div>
                     </div>
                 </form>
@@ -4626,7 +4636,7 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         window.addEventListener('online',  updateStatus);
     })();
     </script>
-    <script src="js/loan.js"></script>
+    <script src="js/loan.js?v=1001"></script>
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
