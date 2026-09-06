@@ -7555,18 +7555,423 @@ document.addEventListener('DOMContentLoaded', () => {
     
     setTimeout(() => {
         revealElements.forEach(el => {
-            const rect = el.getBoundingClientRect();
+                const rect = el.getBoundingClientRect();
             if (rect.top < window.innerHeight) {
                 el.classList.add('active');
             }
         });
-    }, 300);
 });
 
 
 
 
+/* ==========================================
+ * LOAN MANAGEMENT MODULE
+ * ==========================================
+ */
+
+// --- 1. CORE FINANCIAL CALCULATIONS ---
+
+/**
+ * Calculates monthly interest based on annual rate.
+ * @param {number} openingPrincipal
+ * @param {number} annualRate 
+ * @returns {number}
+ */
+function calculateMonthlyInterest(openingPrincipal, annualRate) {
+    // Round to 2 decimal places to avoid floating point issues
+    const interest = openingPrincipal * (annualRate / 12 / 100);
+    return Math.round(interest * 100) / 100;
+}
+
+/**
+ * Calculates total EMI.
+ * @param {number} interestAmount
+ * @param {number} principalPaid
+ * @returns {number}
+ */
+function calculateEMI(interestAmount, principalPaid) {
+    return Math.round((interestAmount + principalPaid) * 100) / 100;
+}
+
+/**
+ * Calculates closing balance.
+ * @param {number} openingPrincipal
+ * @param {number} principalPaid
+ * @returns {number}
+ */
+function calculateClosingBalance(openingPrincipal, principalPaid) {
+    return Math.round((openingPrincipal - principalPaid) * 100) / 100;
+}
+
+// --- 2. SUPABASE DB WRAPPERS ---
+
+async function fetchLoans() {
+    if (!window.supabaseClient) return [];
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('loans')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.error("Error fetching loans:", e);
+        if(typeof showNotification === 'function') showNotification('Failed to fetch loans', 'error');
+        return [];
+    }
+}
+
+async function fetchLoanInstallments(loanId = null) {
+    if (!window.supabaseClient) return [];
+    try {
+        let query = window.supabaseClient
+            .from('loan_installments')
+            .select('*')
+            .order('month', { ascending: false });
+            
+        if (loanId) {
+            query = query.eq('loan_id', loanId);
+        }
+        
+        const { data, error } = await query;
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.error("Error fetching installments:", e);
+        return [];
+    }
+}
+
+async function insertLoanAndFirstInstallment(loanData) {
+    if (!window.supabaseClient) return null;
+    try {
+        const { data: insertedLoan, error: loanError } = await window.supabaseClient
+            .from('loans')
+            .insert([loanData])
+            .select()
+            .single();
+            
+        if (loanError) throw loanError;
+        
+        const currentMonthStr = new Date().toISOString().substring(0, 7);
+        const dueDate = new Date();
+        dueDate.setDate(5);
+        
+        const opening = parseFloat(loanData.original_amount);
+        const rate = parseFloat(loanData.annual_interest_rate);
+        const interest = calculateMonthlyInterest(opening, rate);
+        
+        let principalPaid = 0;
+        const emi = calculateEMI(interest, principalPaid);
+        const closing = calculateClosingBalance(opening, principalPaid);
+
+        const installmentData = {
+            loan_id: insertedLoan.id,
+            customer_id: insertedLoan.customer_id,
+            month: currentMonthStr,
+            due_date: dueDate.toISOString().split('T')[0],
+            opening_principal: opening,
+            annual_interest_rate: rate,
+            interest_amount: interest,
+            principal_paid: principalPaid,
+            emi_amount: emi,
+            closing_principal: closing,
+            status: 'Pending',
+            paid_at: null
+        };
+
+        const { data: insertedInst, error: instError } = await window.supabaseClient
+            .from('loan_installments')
+            .insert([installmentData])
+            .select()
+            .single();
+            
+        if (instError) {
+            await window.supabaseClient.from('loans').delete().eq('id', insertedLoan.id);
+            throw instError;
+        }
+
+        return insertedLoan;
+    } catch (e) {
+        console.error("Error creating loan:", e);
+        if(typeof showNotification === 'function') showNotification('Failed to create loan', 'error');
+        return null;
+    }
+}
+
+async function updateInstallmentStatus(installmentId, newStatus) {
+    if (!window.supabaseClient) return false;
+    try {
+        const updateData = { 
+            status: newStatus,
+            paid_at: newStatus === 'Paid' ? new Date().toISOString() : null
+        };
+        const { error } = await window.supabaseClient
+            .from('loan_installments')
+            .update(updateData)
+            .eq('id', installmentId);
+        if (error) throw error;
+        return true;
+    } catch (e) {
+        console.error("Error updating status:", e);
+        if(typeof showNotification === 'function') showNotification('Failed to update status', 'error');
+        return false;
+    }
+}
 
 
+// --- 3. UI RENDERING & LOGIC ---
 
+function formatLoanCurrency(val) {
+    return '₹' + parseFloat(val).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+}
 
+function getCustomerName(id) {
+    if (!window.State || !window.State.members) return 'Unknown';
+    const member = window.State.members.find(m => m.id === id);
+    return member ? member.name : 'Unknown';
+}
+
+async function renderLoanDashboard() {
+    if (!window.supabaseClient) return;
+
+    document.getElementById('loan-dashboard-table').querySelector('tbody').innerHTML = '<tr><td colspan="8" class="center-col">Loading data from Supabase...</td></tr>';
+    
+    const allLoans = await fetchLoans();
+    const activeLoans = allLoans.filter(l => l.status === 'Active');
+    const allInstallments = await fetchLoanInstallments();
+    
+    let totalCollected = 0, totalPending = 0, outstandingPrincipal = 0, interestEarnedThisMonth = 0, overdueCount = 0;
+
+    const currentMonthStr = new Date().toISOString().substring(0, 7);
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    activeLoans.forEach(loan => {
+        const loanInsts = allInstallments.filter(i => i.loan_id === loan.id);
+        if (loanInsts.length > 0) {
+            loanInsts.sort((a,b) => b.month.localeCompare(a.month));
+            outstandingPrincipal += parseFloat(loanInsts[0].closing_principal || 0);
+        } else {
+            outstandingPrincipal += parseFloat(loan.original_amount || 0);
+        }
+    });
+
+    allInstallments.forEach(inst => {
+        if (inst.status === 'Paid') {
+            totalCollected += parseFloat(inst.emi_amount || 0);
+            if (inst.paid_at && inst.paid_at.startsWith(currentMonthStr)) {
+                interestEarnedThisMonth += parseFloat(inst.interest_amount || 0);
+            }
+        } else if (inst.status === 'Pending') {
+            totalPending += parseFloat(inst.emi_amount || 0);
+            if (inst.due_date && inst.due_date < todayStr) {
+                overdueCount++;
+            }
+        }
+    });
+
+    document.getElementById('loan-global-collected').textContent = formatLoanCurrency(totalCollected);
+    document.getElementById('loan-global-pending').textContent = formatLoanCurrency(totalPending);
+    document.getElementById('loan-global-outstanding').textContent = formatLoanCurrency(outstandingPrincipal);
+    document.getElementById('loan-global-interest').textContent = formatLoanCurrency(interestEarnedThisMonth);
+    document.getElementById('loan-global-overdue').textContent = overdueCount;
+
+    const tbody = document.getElementById('loan-dashboard-table').querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    const currentInsts = allInstallments.filter(i => i.month === currentMonthStr);
+    
+    if (currentInsts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="center-col">No installments for current month.</td></tr>';
+        return;
+    }
+
+    currentInsts.forEach((inst, index) => {
+        const tr = document.createElement('tr');
+        const statusClass = inst.status === 'Paid' ? 'badge-success' : 'badge-danger';
+        const toggleBtn = `<button class="badge ${statusClass} status-toggle-btn" data-id="${inst.id}" data-current="${inst.status}">${inst.status}</button>`;
+        let paidDateDisplay = inst.status === 'Paid' && inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '-';
+
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td><a href="#" class="loan-customer-link" data-loan-id="${inst.loan_id}" data-customer-id="${inst.customer_id}" style="color: var(--primary); font-weight: 600; text-decoration: none;">${getCustomerName(inst.customer_id)}</a></td>
+            <td class="number-col">${formatLoanCurrency(inst.opening_principal)}</td>
+            <td class="number-col">${formatLoanCurrency(inst.interest_amount)}</td>
+            <td class="number-col" style="font-weight: 700;">${formatLoanCurrency(inst.emi_amount)}</td>
+            <td class="center-col" style="font-size: 0.8rem; color: var(--text-secondary);">${paidDateDisplay}</td>
+            <td class="number-col">${formatLoanCurrency(inst.closing_principal)}</td>
+            <td class="center-col">${toggleBtn}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.status-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            const currentStatus = e.target.getAttribute('data-current');
+            const newStatus = currentStatus === 'Paid' ? 'Pending' : 'Paid';
+            
+            e.target.textContent = 'Updating...';
+            e.target.style.opacity = '0.5';
+            
+            const success = await updateInstallmentStatus(id, newStatus);
+            if (success) {
+                renderLoanDashboard(); 
+            } else {
+                e.target.textContent = currentStatus;
+                e.target.style.opacity = '1';
+            }
+        });
+    });
+
+    document.querySelectorAll('.loan-customer-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const loanId = e.currentTarget.getAttribute('data-loan-id');
+            openLoanDetailModal(loanId);
+        });
+    });
+}
+
+async function openLoanDetailModal(loanId) {
+    if (!window.supabaseClient) return;
+    const allLoans = await fetchLoans();
+    const loan = allLoans.find(l => l.id === loanId);
+    if (!loan) return;
+    
+    const allInsts = await fetchLoanInstallments(loanId);
+    allInsts.sort((a,b) => a.month.localeCompare(b.month));
+
+    document.getElementById('loan-detail-customer-name').textContent = getCustomerName(loan.customer_id);
+    document.getElementById('loan-detail-subtitle').textContent = `Loan: ${formatLoanCurrency(loan.original_amount)} | Rate: ${loan.annual_interest_rate}%/yr | Mode: ${loan.payment_mode}`;
+
+    let totCol = 0, prinPaid = 0, intPaid = 0;
+    const tbody = document.getElementById('loan-detail-history-table').querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    if(allInsts.length === 0) {
+         tbody.innerHTML = '<tr><td colspan="8" class="center-col">No history found.</td></tr>';
+    }
+
+    allInsts.forEach(inst => {
+        if (inst.status === 'Paid') {
+            totCol += parseFloat(inst.emi_amount);
+            prinPaid += parseFloat(inst.principal_paid);
+            intPaid += parseFloat(inst.interest_amount);
+        }
+        
+        let paidDateDisplay = inst.status === 'Paid' && inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '-';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${inst.month}</td>
+            <td class="number-col">${formatLoanCurrency(inst.opening_principal)}</td>
+            <td class="number-col">${formatLoanCurrency(inst.interest_amount)}</td>
+            <td class="number-col">${formatLoanCurrency(inst.principal_paid)}</td>
+            <td class="number-col" style="font-weight: 700;">${formatLoanCurrency(inst.emi_amount)}</td>
+            <td class="center-col" style="font-size: 0.8rem;">${paidDateDisplay}</td>
+            <td class="number-col">${formatLoanCurrency(inst.closing_principal)}</td>
+            <td class="center-col"><span class="badge ${inst.status === 'Paid' ? 'badge-success' : 'badge-danger'}">${inst.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    const outstanding = allInsts.length > 0 ? allInsts[allInsts.length - 1].closing_principal : loan.original_amount;
+
+    document.getElementById('loan-detail-total-collected').textContent = formatLoanCurrency(totCol);
+    document.getElementById('loan-detail-principal-paid').textContent = formatLoanCurrency(prinPaid);
+    document.getElementById('loan-detail-interest-paid').textContent = formatLoanCurrency(intPaid);
+    document.getElementById('loan-detail-outstanding').textContent = formatLoanCurrency(outstanding);
+
+    document.getElementById('loan-detail-modal-backdrop').style.display = 'flex';
+}
+
+function openAddLoanModal() {
+    const select = document.getElementById('loan-customer-select');
+    select.innerHTML = '<option value="">Select a customer...</option>';
+    
+    if (window.State && window.State.members) {
+        window.State.members.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            opt.textContent = m.name;
+            select.appendChild(opt);
+        });
+    }
+    
+    document.getElementById('add-loan-form').reset();
+    document.getElementById('add-loan-modal-backdrop').style.display = 'flex';
+}
+
+// --- 4. BINDINGS & INIT ---
+function initLoanModule() {
+    const btnAdd = document.getElementById('btn-open-add-loan');
+    if (btnAdd) {
+        btnAdd.addEventListener('click', openAddLoanModal);
+    }
+    
+    const btnCloseAdd = document.getElementById('btn-close-add-loan-modal');
+    const btnCancelAdd = document.getElementById('btn-cancel-add-loan');
+    if (btnCloseAdd) btnCloseAdd.addEventListener('click', () => { document.getElementById('add-loan-modal-backdrop').style.display = 'none'; });
+    if (btnCancelAdd) btnCancelAdd.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('add-loan-modal-backdrop').style.display = 'none'; });
+    
+    const btnCloseDetail = document.getElementById('btn-close-loan-detail-modal');
+    if (btnCloseDetail) btnCloseDetail.addEventListener('click', () => { document.getElementById('loan-detail-modal-backdrop').style.display = 'none'; });
+    
+    const btnSaveLoan = document.getElementById('btn-save-new-loan');
+    if (btnSaveLoan) {
+        btnSaveLoan.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const form = document.getElementById('add-loan-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const custId = document.getElementById('loan-customer-select').value;
+            const amt = document.getElementById('loan-amount-input').value;
+            const rate = document.getElementById('loan-interest-input').value;
+            const mode = document.querySelector('input[name="loan-payment-mode"]:checked').value;
+            
+            const loanData = {
+                customer_id: custId,
+                original_amount: parseFloat(amt),
+                annual_interest_rate: parseFloat(rate),
+                payment_mode: mode,
+                status: 'Active'
+            };
+            
+            btnSaveLoan.disabled = true;
+            btnSaveLoan.textContent = 'Saving...';
+            
+            const success = await insertLoanAndFirstInstallment(loanData);
+            
+            btnSaveLoan.disabled = false;
+            btnSaveLoan.textContent = 'Create Loan';
+            
+            if (success) {
+                document.getElementById('add-loan-modal-backdrop').style.display = 'none';
+                if(typeof showNotification === 'function') showNotification('Loan created successfully!', 'success');
+                renderLoanDashboard();
+            }
+        });
+    }
+
+    const targetNode = document.body;
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-app-state') {
+                if (targetNode.getAttribute('data-app-state') === 'loan') {
+                    renderLoanDashboard();
+                }
+            }
+        }
+    });
+    observer.observe(targetNode, { attributes: true });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLoanModule);
+} else {
+    initLoanModule();
+}

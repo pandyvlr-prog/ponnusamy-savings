@@ -1444,6 +1444,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 <button class="sidebar-nav-item" data-target="screen-pnl" title="Profit & Loss">
                     <i data-lucide="trending-up"></i>
                 </button>
+                <button class="sidebar-nav-item" data-target="screen-loan" title="Loan">
+                    <i data-lucide="banknote"></i>
+                </button>
                 <button class="sidebar-nav-item" data-target="screen-notes" title="Notepad">
                     <i data-lucide="file-text"></i>
                 </button>
@@ -2728,6 +2731,116 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                         </div>
                     </div>
                     </section>
+
+    <!-- ===== SCREEN: LOAN MODULE ===== -->
+    <section id="screen-loan" class="app-screen" style="display: none;">
+        <div class="screen-content pnl-screen-content">
+            <div class="pnl-hero">
+                <div class="pnl-hero-topbar">
+                    <div class="pnl-hero-title-block">
+                        <div class="pnl-hero-eyebrow-row">
+                            <i data-lucide="banknote" class="pnl-hero-eyebrow-icon"></i>
+                            <p class="pnl-hero-eyebrow">Loan Management</p>
+                        </div>
+                        <h1 class="pnl-hero-title">Loan Dashboard</h1>
+                        <p class="pnl-hero-subtitle">Track and manage active loans, collections, and interest</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-open-add-loan" style="display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add Loan
+                    </button>
+                </div>
+
+                <div class="pnl-metric-grid">
+                    <!-- Card 1: Total Collected -->
+                    <div class="pnl-metric-card pnl-card-v2">
+                        <div class="pnl-card-v2-top">
+                            <div class="pnl-card-v2-icon pnl-icon-green">
+                                <i data-lucide="wallet" style="width:18px;height:18px;"></i>
+                            </div>
+                            <span class="pnl-card-v2-label">Total Collected</span>
+                        </div>
+                        <span class="pnl-card-v2-value" id="loan-global-collected">₹0</span>
+                        <span class="pnl-card-v2-desc">Paid EMI amounts</span>
+                    </div>
+
+                    <!-- Card 2: Total Pending -->
+                    <div class="pnl-metric-card pnl-card-v2">
+                        <div class="pnl-card-v2-top">
+                            <div class="pnl-card-v2-icon pnl-icon-red">
+                                <i data-lucide="clock" style="width:18px;height:18px;"></i>
+                            </div>
+                            <span class="pnl-card-v2-label">Total Pending</span>
+                        </div>
+                        <span class="pnl-card-v2-value pnl-val-net" id="loan-global-pending">₹0</span>
+                        <span class="pnl-card-v2-desc">Currently due EMI</span>
+                    </div>
+
+                    <!-- Card 3: Outstanding Principal -->
+                    <div class="pnl-metric-card pnl-card-v2">
+                        <div class="pnl-card-v2-top">
+                            <div class="pnl-card-v2-icon pnl-icon-purple">
+                                <i data-lucide="bar-chart" style="width:18px;height:18px;"></i>
+                            </div>
+                            <span class="pnl-card-v2-label">Outstanding Principal</span>
+                        </div>
+                        <span class="pnl-card-v2-value" id="loan-global-outstanding">₹0</span>
+                        <span class="pnl-card-v2-desc">Across all active loans</span>
+                    </div>
+
+                    <!-- Card 4: Interest Earned -->
+                    <div class="pnl-metric-card pnl-card-v2">
+                        <div class="pnl-card-v2-top">
+                            <div class="pnl-card-v2-icon pnl-icon-green">
+                                <i data-lucide="trending-up" style="width:18px;height:18px;"></i>
+                            </div>
+                            <span class="pnl-card-v2-label">Interest Earned</span>
+                        </div>
+                        <span class="pnl-card-v2-value" id="loan-global-interest">₹0</span>
+                        <span class="pnl-card-v2-desc">Paid this month</span>
+                    </div>
+
+                    <!-- Card 5: Overdue Count -->
+                    <div class="pnl-metric-card pnl-card-v2">
+                        <div class="pnl-card-v2-top">
+                            <div class="pnl-card-v2-icon pnl-icon-red">
+                                <i data-lucide="alert-circle" style="width:18px;height:18px;"></i>
+                            </div>
+                            <span class="pnl-card-v2-label">Overdue Count</span>
+                        </div>
+                        <span class="pnl-card-v2-value pnl-val-net" id="loan-global-overdue">0</span>
+                        <span class="pnl-card-v2-desc">Past due installments</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Table -->
+            <div class="pnl-summary-section">
+                <div class="pnl-section-header">
+                    <h2>Current Month Installments</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="styled-table pnl-table" id="loan-dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Customer Name</th>
+                                <th class="number-col">Loan Amount</th>
+                                <th class="number-col">Interest</th>
+                                <th class="number-col">EMI</th>
+                                <th class="center-col">Paid Date</th>
+                                <th class="number-col">Closing Balance</th>
+                                <th class="center-col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="8" class="center-col">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="screen-notes" class="app-screen notes-screen-prm">
                 <div id="notes-list-view" class="notes-list-prm">
                     <div class="notes-header-prm">
@@ -4094,6 +4207,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             <a href="#" class="sidebar-link" data-target="screen-pnl">
                 <i data-lucide="bar-chart-2"></i> Profit & Loss
             </a>
+            <a href="#" class="sidebar-link" data-target="screen-loan">
+                <i data-lucide="banknote"></i> Loan
+            </a>
             <a href="#" class="sidebar-link" data-target="screen-notes">
                 <i data-lucide="file-text"></i> Notepad
             </a>
@@ -4365,6 +4481,108 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             }
         })();
     </script>
+
+    <!-- DIALOG/MODAL: ADD LOAN -->
+    <div class="modal-backdrop" id="add-loan-modal-backdrop" style="display: none;">
+        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 500px; margin: auto;">
+            <div class="modal-header">
+                <h3>Add New Loan</h3>
+                <button class="icon-btn" id="btn-close-add-loan-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px; max-height: 70vh; overflow-y: auto;">
+                <form id="add-loan-form" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="loan-customer-select" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Customer Name *</label>
+                        <select id="loan-customer-select" required style="padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem;">
+                            <option value="">Select a customer...</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="loan-amount-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Loan Amount (₹) *</label>
+                        <input type="number" id="loan-amount-input" placeholder="e.g. 10000" required min="1" step="any" style="padding: 10px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="loan-interest-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Annual Interest Rate (%) *</label>
+                        <input type="number" id="loan-interest-input" placeholder="e.g. 36" required min="0" step="any" style="padding: 10px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Enter as annual percentage (e.g., 36 for 36% per year).</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Payment Mode *</label>
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+                                <input type="radio" name="loan-payment-mode" value="Interest Only" checked> Interest Only
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+                                <input type="radio" name="loan-payment-mode" value="Interest + Principal"> Interest + Principal
+                            </label>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer" style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-secondary" id="btn-cancel-add-loan">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-new-loan">Create Loan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIALOG/MODAL: CUSTOMER LOAN DETAIL -->
+    <div class="modal-backdrop" id="loan-detail-modal-backdrop" style="display: none;">
+        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 800px; margin: auto;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="loan-detail-customer-name">Customer Name</h3>
+                    <p id="loan-detail-subtitle" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;"></p>
+                </div>
+                <button class="icon-btn" id="btn-close-loan-detail-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding-top: 0;">
+                
+                <div class="pnl-metric-grid" style="margin-top: 16px; margin-bottom: 16px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                    <div class="pnl-metric-card pnl-card-v2" style="padding: 12px;">
+                        <span class="pnl-card-v2-label" style="font-size: 0.7rem;">Total Collected</span>
+                        <span class="pnl-card-v2-value" id="loan-detail-total-collected" style="font-size: 1.1rem;">₹0</span>
+                    </div>
+                    <div class="pnl-metric-card pnl-card-v2" style="padding: 12px;">
+                        <span class="pnl-card-v2-label" style="font-size: 0.7rem;">Principal Paid</span>
+                        <span class="pnl-card-v2-value" id="loan-detail-principal-paid" style="font-size: 1.1rem;">₹0</span>
+                    </div>
+                    <div class="pnl-metric-card pnl-card-v2" style="padding: 12px;">
+                        <span class="pnl-card-v2-label" style="font-size: 0.7rem;">Interest Paid</span>
+                        <span class="pnl-card-v2-value" id="loan-detail-interest-paid" style="font-size: 1.1rem;">₹0</span>
+                    </div>
+                    <div class="pnl-metric-card pnl-card-v2" style="padding: 12px;">
+                        <span class="pnl-card-v2-label" style="font-size: 0.7rem;">Outstanding</span>
+                        <span class="pnl-card-v2-value pnl-val-net" id="loan-detail-outstanding" style="font-size: 1.1rem;">₹0</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="styled-table pnl-table" id="loan-detail-history-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th class="number-col">Opening</th>
+                                <th class="number-col">Interest</th>
+                                <th class="number-col">Prin. Paid</th>
+                                <th class="number-col">EMI</th>
+                                <th class="center-col">Paid Date</th>
+                                <th class="number-col">Closing</th>
+                                <th class="center-col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <!-- ═══════════════════════════════════════════════════════
          OFFLINE INDICATOR — shows immediately when internet lost
