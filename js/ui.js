@@ -273,6 +273,10 @@ function switchView(viewId) {
             if (window.showTenureSelector) {
                 window.showTenureSelector();
             }
+        } else if (viewId === 'screen-loan') {
+            if (window.LoanApp && typeof window.LoanApp.renderDashboard === 'function') {
+                window.LoanApp.renderDashboard();
+            }
         }
     }
 }

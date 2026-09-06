@@ -222,8 +222,13 @@ const LoanApp = (() => {
         const badgeEl = document.getElementById('loan-total-badge');
         if (badgeEl) badgeEl.textContent = `${currentInsts.length} Installments`;
 
+        const mobileContainer = document.getElementById('loan-mobile-cards-container');
+
         if (currentInsts.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text-secondary);font-size:0.9rem;border-right:none;border-bottom:none;">No installments for ${cm}. Click <strong>+ Add Loan</strong> to create one.</td></tr>`;
+            if (mobileContainer) {
+                mobileContainer.innerHTML = `<div style="text-align:center;padding:36px 16px;color:var(--text-secondary);font-size:0.9rem;background:var(--bg-surface);border-radius:14px;border:1px dashed var(--border);">No installments for ${cm}. Click <strong>+ Add Loan</strong> to create one.</div>`;
+            }
             return;
         }
 
@@ -237,6 +242,8 @@ const LoanApp = (() => {
         });
 
         tbody.innerHTML = '';
+        if (mobileContainer) mobileContainer.innerHTML = '';
+
         currentInsts.forEach((inst, idx) => {
             const loan = loans.find(l => l.id === inst.loan_id) || {};
             const isPaid = inst.status === 'Paid';
@@ -271,6 +278,40 @@ const LoanApp = (() => {
                 <td style="text-align:center;">${statusHtml}</td>
             `;
             tbody.appendChild(tr);
+
+            // Render Mobile Loan Card
+            if (mobileContainer) {
+                const card = document.createElement('div');
+                card.className = 'loan-mobile-card';
+                card.innerHTML = `
+                    <div class="loan-mobile-card-header">
+                        <div class="loan-mobile-card-title-group">
+                            <div class="loan-sno-bubble">${idx + 1}</div>
+                            <a href="#" class="loan-customer-name-m ln-customer-link" data-loan-id="${inst.loan_id}">${name}</a>
+                        </div>
+                        <div>${statusHtml}</div>
+                    </div>
+                    <div class="loan-mobile-card-amount-row">
+                        <span class="loan-emi-label">EMI Amount</span>
+                        <span class="loan-emi-value">${fmt(inst.emi_amount)}</span>
+                    </div>
+                    <div class="loan-mobile-chips-row">
+                        <div class="loan-mobile-chip">
+                            <span class="loan-chip-lbl">Loan Amt</span>
+                            <span class="loan-chip-val">${fmt(loan.original_amount || 0)}</span>
+                        </div>
+                        <div class="loan-mobile-chip">
+                            <span class="loan-chip-lbl">Interest</span>
+                            <span class="loan-chip-val" style="color:#b45309;">${fmt(inst.interest_amount)}</span>
+                        </div>
+                        <div class="loan-mobile-chip">
+                            <span class="loan-chip-lbl">Paid Date</span>
+                            <span class="loan-chip-val" style="font-size:0.75rem;">${isPaid && inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '--'}</span>
+                        </div>
+                    </div>
+                `;
+                mobileContainer.appendChild(card);
+            }
         });
 
         if (window.lucide) window.lucide.createIcons();

@@ -389,14 +389,13 @@ function setupEventListeners() {
             }
         });
         
-        // Initial state from mobile default plan: keep it collapsed by default on load
+        // Initial state: default expanded so metrics are immediately visible
         const card = dashboardHeader.closest('.dashboard-card');
         const savedState = localStorage.getItem('pms_dashboard_collapsed');
         if (card) {
-            const _isMobLayout = window.innerWidth <= 768 || (window.innerWidth <= 1024 && window.matchMedia("(orientation: portrait)").matches);
-            if (savedState === 'true' || (savedState === null && _isMobLayout)) {
+            if (savedState === 'true') {
                 card.classList.add('collapsed');
-            } else if (savedState === 'false') {
+            } else {
                 card.classList.remove('collapsed');
             }
         }

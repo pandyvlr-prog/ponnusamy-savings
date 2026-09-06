@@ -10813,9 +10813,7 @@ body.kb-transitioning *::after {
 #screen-loan .pnl-screen-content,
 #screen-pnl,
 #screen-pnl .screen-content,
-#screen-pnl .pnl-screen-content,
-#screen-dashboard,
-#screen-dashboard .screen-content {
+#screen-pnl .pnl-screen-content {
     height: 100%;
     max-height: 100%;
     min-height: 0;
@@ -11010,5 +11008,350 @@ body.kb-transitioning *::after {
 #loan-dashboard-table tbody tr:last-child td {
     border-bottom: none !important;
 }
+
+/* ==========================================================================
+   MOBILE VIEW & RESPONSIVE DASHBOARD FIXES (HOME & LOAN)
+   ========================================================================== */
+
+/* 1. Home Dashboard Card & Content Flow */
+#screen-dashboard {
+    height: 100% !important;
+    position: relative;
+    overflow: hidden;
+}
+
+#screen-dashboard .screen-content {
+    display: block !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 16px 16px 90px 16px !important;
+}
+
+.dashboard-card {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 16px !important;
+}
+
+.dashboard-summary-header {
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.15s ease;
+}
+
+.dashboard-summary-header:active {
+    opacity: 0.85;
+}
+
+.dashboard-metrics-content {
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+.dashboard-card.collapsed .dashboard-metrics-content {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none;
+}
+
+.dashboard-card.collapsed .premium-arrow-dash {
+    transform: rotate(-90deg) !important;
+}
+
+.premium-arrow-dash {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Mobile Metrics Grid: Display both Collected and Pending in comfortable flow */
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
+    .dashboard-metrics-content.metrics-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    
+    .dashboard-metrics-content.metrics-grid .metric-item {
+        min-height: auto !important;
+        padding: 16px 14px !important;
+    }
+    
+    .dashboard-metrics-content.metrics-grid .metric-item:first-child > div:last-child {
+        margin-top: 12px !important;
+        padding-top: 10px !important;
+    }
+    
+    .dashboard-metrics-content.metrics-grid .metric-item:first-child > div:last-child > div {
+        padding: 8px 6px !important;
+    }
+
+    /* Mobile Header Row 2: 6 action buttons comfortably spaced */
+    .app-header-row2 {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 6px 10px 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .app-header-row2.expanded {
+        display: flex !important;
+    }
+    
+    .header-quick-btn {
+        flex: 1 1 0;
+        min-width: 46px;
+        padding: 5px 4px;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        font-size: 0.7rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-surface);
+        color: var(--text-secondary);
+        cursor: pointer;
+    }
+    
+    .header-quick-btn i {
+        width: 17px !important;
+        height: 17px !important;
+    }
+}
+
+/* 2. Responsive Loan Dashboard (Desktop Table vs Mobile Cards) */
+.loan-desktop-view {
+    display: block !important;
+    width: 100%;
+}
+
+.loan-mobile-view {
+    display: none !important;
+    width: 100%;
+}
+
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
+    .loan-desktop-view {
+        display: none !important;
+    }
+    
+    .loan-mobile-view {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    #screen-loan .loan-table-section {
+        padding: 14px 12px 90px 12px !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    #screen-loan .pnl-hero {
+        padding: 16px 14px 10px 14px !important;
+    }
+    
+    #screen-loan .pnl-hero-topbar {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+    
+    #screen-loan .pnl-metric-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+}
+
+/* Mobile Loan Card Styling (Matches Home Screen Mobile Member Cards) */
+.loan-mobile-card {
+    background: var(--bg-surface);
+    border: 2px solid #000000;
+    border-radius: 14px;
+    padding: 14px 14px 12px 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    box-sizing: border-box;
+}
+
+[data-theme='dark'] .loan-mobile-card {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--bg-surface-elevated);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.loan-mobile-card:active {
+    transform: scale(0.99);
+}
+
+.loan-mobile-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.loan-mobile-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.loan-sno-bubble {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    color: #1d4ed8;
+    font-size: 0.85rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 2px 4px rgba(37,99,235,0.1);
+}
+
+[data-theme='dark'] .loan-sno-bubble {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #60a5fa;
+    border-color: #334155;
+}
+
+.loan-customer-name-m {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #000000;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    line-height: 1.2;
+}
+
+[data-theme='dark'] .loan-customer-name-m {
+    color: #ffffff;
+}
+
+.loan-mobile-card-amount-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: rgba(212, 175, 55, 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.loan-emi-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #b45309;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+[data-theme='dark'] .loan-emi-label {
+    color: #f59e0b;
+}
+
+.loan-emi-value {
+    font-size: 1.25rem;
+    font-weight: 900;
+    font-family: var(--font-number);
+    color: #111827;
+}
+
+[data-theme='dark'] .loan-emi-value {
+    color: #f8fafc;
+}
+
+.loan-mobile-chips-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.loan-mobile-chip {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    text-align: center;
+}
+
+[data-theme='dark'] .loan-mobile-chip {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.loan-chip-lbl {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+[data-theme='dark'] .loan-chip-lbl {
+    color: #94a3b8;
+}
+
+.loan-chip-val {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #111827;
+    font-family: var(--font-number);
+}
+
+[data-theme='dark'] .loan-chip-val {
+    color: #f1f5f9;
+}
+
+/* 3. Modal z-index and Touch Optimization */
+#ln-add-modal,
+#ln-detail-modal,
+#add-member-modal-backdrop,
+#groups-list-modal-backdrop,
+#custom-date-range-modal,
+#calc-modal-overlay,
+#notes-modal-overlay {
+    z-index: 10000000 !important;
+}
+
+.ln-modal-inner {
+    max-height: 85vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
 
 

@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=1006">
+    <link rel="stylesheet" href="style.css?v=1007">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -1570,9 +1570,9 @@ body[data-app-state="loan"] .app-container {
                 <i data-lucide="bar-chart-2"></i>
                 <span>P&L</span>
             </button>
-            <button class="bottom-nav-item" id="btn-bottom-calc">
-                <i data-lucide="calculator"></i>
-                <span>Calc</span>
+            <button class="bottom-nav-item" data-target="screen-loan">
+                <i data-lucide="hand-coins"></i>
+                <span>Loan</span>
             </button>
             <button class="bottom-nav-item" data-target="screen-notes">
                 <i data-lucide="file-text"></i>
@@ -1680,6 +1680,10 @@ body[data-app-state="loan"] .app-container {
                         <button class="header-quick-btn" id="btn-global-export-pdf-m" title="Export">
                             <i data-lucide="download"></i>
                             <span>Export</span>
+                        </button>
+                        <button class="header-quick-btn" id="btn-global-calc-m" title="Calculator">
+                            <i data-lucide="calculator"></i>
+                            <span>Calc</span>
                         </button>
                         <button class="header-quick-btn" id="btn-toggle-theme-m" title="Theme">
                             <i data-lucide="sun" id="theme-icon-m"></i>
@@ -2891,6 +2895,7 @@ body[data-app-state="loan"] .app-container {
                     <h2 class="section-title" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0;">Current Month Installments</h2>
                     <span class="badge" id="loan-total-badge" style="display: flex; align-items: center; font-weight: 700;">0 Installments</span>
                 </div>
+                <div class="loan-desktop-view">
                 <div class="loan-table-card" style="border: 2px solid #000000; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px #000000, 0 12px 32px rgba(0,0,0,0.15); background: var(--bg-surface);">
                     <div class="table-responsive" style="margin: 0; overflow-x: auto;">
                         <table class="styled-table pnl-table" id="loan-dashboard-table" style="width:100%; border-collapse:collapse; margin: 0; border: none;">
@@ -2930,6 +2935,9 @@ body[data-app-state="loan"] .app-container {
                         </table>
                     </div>
                 </div>
+                </div>
+                <!-- Mobile Loan Cards Container -->
+                <div class="loan-mobile-view" id="loan-mobile-cards-container"></div>
             </div>
         </div>
     </section>

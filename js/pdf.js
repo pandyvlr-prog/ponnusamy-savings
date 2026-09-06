@@ -1353,6 +1353,7 @@ function initSidebar() {
 
     // Calculator Modal Logic
     const btnGlobalCalc = document.getElementById('btn-global-calc');
+    const btnGlobalCalcM = document.getElementById('btn-global-calc-m');
     const btnBottomCalc = document.getElementById('btn-bottom-calc');
     const calcModalOverlay = document.getElementById('calc-modal-overlay');
     const btnCloseCalcModal = document.getElementById('btn-close-calc-modal');
@@ -1395,6 +1396,13 @@ function initSidebar() {
 
     if (btnGlobalCalc) {
         btnGlobalCalc.addEventListener('click', () => {
+            if (calcModalOverlay) calcModalOverlay.classList.add('show');
+        });
+    }
+
+    if (btnGlobalCalcM) {
+        btnGlobalCalcM.addEventListener('click', (e) => {
+            e.preventDefault();
             if (calcModalOverlay) calcModalOverlay.classList.add('show');
         });
     }
