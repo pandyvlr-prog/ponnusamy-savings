@@ -7560,6 +7560,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.classList.add('active');
             }
         });
+    }, 300);
 });
 
 
