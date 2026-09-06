@@ -2836,10 +2836,9 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
             <div style="padding:22px;display:flex;flex-direction:column;gap:16px;max-height:62vh;overflow-y:auto;">
                 <form id="ln-add-form" style="display:flex;flex-direction:column;gap:16px;">
                     <div style="display:flex;flex-direction:column;gap:5px;">
-                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Customer *</label>
-                        <select id="ln-member-select" required style="padding:11px 13px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);font-size:0.9rem;font-weight:600;width:100%;">
-                            <option value="">— Select customer —</option>
-                        </select>
+                        <label for="ln-customer-name" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Customer Name *</label>
+                        <input type="text" id="ln-customer-name" placeholder="e.g. Rajan Kumar" required autocomplete="off"
+                            style="padding:11px 13px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);font-size:0.9rem;font-weight:600;width:100%;box-sizing:border-box;outline:none;">
                     </div>
                     <div style="display:flex;flex-direction:column;gap:5px;">
                         <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Loan Amount (₹) *</label>
