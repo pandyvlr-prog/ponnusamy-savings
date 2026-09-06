@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=1005">
+    <link rel="stylesheet" href="style.css?v=1006">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -1373,12 +1373,12 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 
 #screen-loan .pnl-metric-grid {
     display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 14px !important;
 }
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
     #screen-loan .pnl-metric-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+        grid-template-columns: repeat(2, 1fr) !important;
     }
 }
 
@@ -1391,12 +1391,6 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-}
-
-#screen-loan .pnl-card-v2:nth-child(5) {
-    background: linear-gradient(145deg, #831843 0%, #9d174d 50%, #be185d 100%) !important;
-    border: 2px solid rgba(244,114,182,0.55) !important;
-    box-shadow: 0 8px 32px rgba(190,24,93,0.35), 0 0 0 1px rgba(244,114,182,0.12) inset !important;
 }
 
 #screen-loan .loan-table-section {
@@ -2888,14 +2882,6 @@ body[data-app-state="loan"] .app-container {
                         </div>
                         <span class="pnl-card-v2-value" id="ln-interest">₹0</span>
                         <span class="pnl-card-v2-desc">This month</span>
-                    </div>
-                    <div class="pnl-metric-card pnl-card-v2">
-                        <div class="pnl-card-v2-top">
-                            <div class="pnl-card-v2-icon pnl-icon-red"><i data-lucide="alert-circle" style="width:18px;height:18px;"></i></div>
-                            <span class="pnl-card-v2-label">Overdue</span>
-                        </div>
-                        <span class="pnl-card-v2-value pnl-val-net" id="ln-overdue">0</span>
-                        <span class="pnl-card-v2-desc">Past due installments</span>
                     </div>
                 </div>
             </div>
