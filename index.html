@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=1009">
+    <link rel="stylesheet" href="style.css?v=1010">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -1449,6 +1449,31 @@ body[data-app-state="loan"] .app-container {
 }
 [data-theme="dark"] body[data-app-state="loan"] .app-container {
     background: #0f1117 !important;
+}
+
+/* Responsive Loan Dashboard Toggle (Desktop Table vs Mobile Cards) */
+.loan-desktop-view {
+    display: block !important;
+    width: 100% !important;
+}
+.loan-mobile-view {
+    display: none !important;
+    width: 100% !important;
+}
+
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
+    .loan-desktop-view {
+        display: none !important;
+    }
+    .loan-mobile-view {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+    #screen-loan .loan-table-section {
+        padding: 14px 12px 90px 12px !important;
+    }
 }
 </style>
     <style>
