@@ -159,7 +159,28 @@ const LoanApp = (() => {
     async function renderDashboard() {
         const tbody = document.getElementById('loan-tbody');
         if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-secondary);">Loading...</td></tr>`;
+        tbody.innerHTML = `
+            <tr class="loan-skeleton-tr">
+                <td colspan="7" style="padding: 10px 12px; border: none;">
+                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0;"></div>
+                </td>
+            </tr>
+            <tr class="loan-skeleton-tr">
+                <td colspan="7" style="padding: 10px 12px; border: none;">
+                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.15s;"></div>
+                </td>
+            </tr>
+            <tr class="loan-skeleton-tr">
+                <td colspan="7" style="padding: 10px 12px; border: none;">
+                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.3s;"></div>
+                </td>
+            </tr>
+            <tr class="loan-skeleton-tr">
+                <td colspan="7" style="padding: 10px 12px; border: none;">
+                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.45s;"></div>
+                </td>
+            </tr>
+        `;
 
         const loans = await getLoans();
         const allInsts = await getAllInstallments();
