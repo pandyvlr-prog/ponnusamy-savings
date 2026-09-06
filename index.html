@@ -4483,55 +4483,84 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     </script>
 
     <!-- DIALOG/MODAL: ADD LOAN -->
-    <div class="modal-backdrop" id="add-loan-modal-backdrop" style="display: none;">
-        <div class="simple-modal" style="width: calc(100% - 40px); max-width: 500px; margin: auto;">
-            <div class="modal-header">
-                <h3>Add New Loan</h3>
-                <button class="icon-btn" id="btn-close-add-loan-modal"><i data-lucide="x"></i></button>
+    <div class="modal-backdrop" id="add-loan-modal-backdrop">
+        <div style="width: calc(100% - 32px); max-width: 520px; margin: auto; border-radius: 20px; overflow: hidden; border: 1px solid rgba(212,175,55,0.3); box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,175,55,0.15); background: var(--bg-surface);">
+            <!-- Premium Modal Header -->
+            <div style="background: linear-gradient(135deg, #1a1400 0%, #2d2200 60%, #1a1400 100%); padding: 22px 22px 18px; border-bottom: 1px solid rgba(212,175,55,0.3); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #D4AF37, #B8860B); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(212,175,55,0.4);">
+                            <i data-lucide="indian-rupee" style="width: 20px; height: 20px; color: #1a1400; stroke-width: 2.5;"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #D4AF37; letter-spacing: 0.02em;">New Loan</h3>
+                            <p style="margin: 2px 0 0; font-size: 0.7rem; color: rgba(212,175,55,0.6); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;">Create a new loan record</p>
+                        </div>
+                    </div>
+                    <button id="btn-close-add-loan-modal" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25); color: #D4AF37; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="x" style="width: 16px; height: 16px; stroke-width: 2.5;"></i>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px; max-height: 70vh; overflow-y: auto;">
-                <form id="add-loan-form" style="display: flex; flex-direction: column; gap: 12px;">
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="loan-customer-select" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Customer Name *</label>
-                        <select id="loan-customer-select" required style="padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.85rem;">
+            <!-- Modal Body -->
+            <div style="padding: 22px; display: flex; flex-direction: column; gap: 16px; max-height: 60vh; overflow-y: auto;">
+                <form id="add-loan-form" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="loan-customer-select" style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;">Customer Name <span style="color: #D4AF37;">*</span></label>
+                        <select id="loan-customer-select" required style="padding: 11px 13px; border-radius: 10px; border: 1.5px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); font-size: 0.9rem; font-weight: 600; width: 100%;">
                             <option value="">Select a customer...</option>
                         </select>
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="loan-amount-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Loan Amount (₹) *</label>
-                        <input type="number" id="loan-amount-input" placeholder="e.g. 10000" required min="1" step="any" style="padding: 10px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="loan-amount-input" style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;">Loan Amount (₹) <span style="color: #D4AF37;">*</span></label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.95rem; font-weight: 700; color: #D4AF37; pointer-events: none;">₹</span>
+                            <input type="number" id="loan-amount-input" placeholder="e.g. 10000" required min="1" step="any" style="padding: 11px 13px 11px 28px; font-size: 0.9rem; font-weight: 600; border-radius: 10px; border: 1.5px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; box-sizing: border-box;">
+                        </div>
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="loan-interest-input" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Annual Interest Rate (%) *</label>
-                        <input type="number" id="loan-interest-input" placeholder="e.g. 36" required min="0" step="any" style="padding: 10px; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background-color: var(--bg-surface); color: var(--text-main);">
-                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Enter as annual percentage (e.g., 36 for 36% per year).</span>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="loan-interest-input" style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;">Annual Interest Rate (%) <span style="color: #D4AF37;">*</span></label>
+                        <div style="position: relative;">
+                            <input type="number" id="loan-interest-input" placeholder="e.g. 36" required min="0" step="any" style="padding: 11px 32px 11px 13px; font-size: 0.9rem; font-weight: 600; border-radius: 10px; border: 1.5px solid var(--border); background-color: var(--bg-surface); color: var(--text-main); width: 100%; box-sizing: border-box;">
+                            <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; font-weight: 700; color: #D4AF37; pointer-events: none;">%</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.18); border-radius: 8px; padding: 7px 11px;">
+                            <i data-lucide="info" style="width: 12px; height: 12px; color: #D4AF37; flex-shrink: 0;"></i>
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">36% per year = 3% per month interest</span>
+                        </div>
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Payment Mode *</label>
-                        <div style="display: flex; gap: 16px; align-items: center;">
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
-                                <input type="radio" name="loan-payment-mode" value="Interest Only" checked> Interest Only
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;">Payment Mode <span style="color: #D4AF37;">*</span></label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <label style="display: flex; align-items: center; gap: 9px; padding: 12px 13px; border-radius: 10px; border: 1.5px solid rgba(212,175,55,0.3); background: rgba(212,175,55,0.05); cursor: pointer;">
+                                <input type="radio" name="loan-payment-mode" value="Interest Only" checked style="accent-color: #D4AF37; width: 15px; height: 15px;">
+                                <div>
+                                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">Interest Only</div>
+                                    <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 1px;">Principal unchanged</div>
+                                </div>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
-                                <input type="radio" name="loan-payment-mode" value="Interest + Principal"> Interest + Principal
+                            <label style="display: flex; align-items: center; gap: 9px; padding: 12px 13px; border-radius: 10px; border: 1.5px solid rgba(212,175,55,0.3); background: rgba(212,175,55,0.05); cursor: pointer;">
+                                <input type="radio" name="loan-payment-mode" value="Interest + Principal" style="accent-color: #D4AF37; width: 15px; height: 15px;">
+                                <div>
+                                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">Int + Principal</div>
+                                    <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 1px;">Reduces balance</div>
+                                </div>
                             </label>
                         </div>
                     </div>
-
                 </form>
             </div>
-            <div class="modal-footer" style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn btn-secondary" id="btn-cancel-add-loan">Cancel</button>
-                <button class="btn btn-primary" id="btn-save-new-loan">Create Loan</button>
+            <!-- Modal Footer -->
+            <div style="padding: 14px 22px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-secondary" id="btn-cancel-add-loan" style="padding: 10px 22px; border-radius: 10px; font-weight: 700;">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-new-loan" style="padding: 10px 26px; border-radius: 10px; font-weight: 800; background: linear-gradient(135deg, #D4AF37, #B8860B); color: #1a1400; border: none; box-shadow: 0 4px 12px rgba(212,175,55,0.35);">Create Loan</button>
             </div>
         </div>
     </div>
 
     <!-- DIALOG/MODAL: CUSTOMER LOAN DETAIL -->
-    <div class="modal-backdrop" id="loan-detail-modal-backdrop" style="display: none;">
+    <div class="modal-backdrop" id="loan-detail-modal-backdrop">
         <div class="simple-modal" style="width: calc(100% - 40px); max-width: 800px; margin: auto;">
             <div class="modal-header">
                 <div>
