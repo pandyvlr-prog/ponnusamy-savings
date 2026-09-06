@@ -1,3 +1,78 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBAL VIRTUAL-KEYBOARD LAYOUT FIX
+   Fixes app-wide layout glitches when the mobile on-screen keyboard opens/
+   closes (content flicker, header/footer jumps, blur ghost-frames).
+
+   Strategy:
+   1. Sets --app-height CSS variable in realtime so all full-height containers
+      (modals, overlays, page shells) resize correctly with the keyboard.
+   2. Toggles .kb-transitioning on <body> during resize events — the CSS rule
+      for this class suppresses all transition/backdrop-filter, eliminating
+      the blur ghost-frame flash.
+   3. Global focusin → smoothly scrolls focused inputs into view after 100ms
+      (syncs with keyboard open animation), replacing jarring browser default.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function initKeyboardFix() {
+    'use strict';
+
+    var raf = null;
+    var kbTimer = null;
+
+    /** Update --app-height to match the current visual viewport height */
+    function setAppHeight() {
+        var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight) + 'px';
+        document.documentElement.style.setProperty('--app-height', h);
+    }
+
+    /** Called on every visualViewport resize / scroll event */
+    function onViewportChange() {
+        // 1. Immediately suppress transitions/backdrop-filter to kill ghost-frames
+        document.body.classList.add('kb-transitioning');
+        clearTimeout(kbTimer);
+        kbTimer = setTimeout(function () {
+            document.body.classList.remove('kb-transitioning');
+        }, 200); // remove ~200ms after resize settles
+
+        // 2. Debounce the height update via rAF — no mid-animation fires
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(setAppHeight);
+    }
+
+    // Set --app-height on first load (before any keyboard event fires)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setAppHeight);
+    } else {
+        setAppHeight();
+    }
+    // Also update on window resize (desktop / orientation change)
+    window.addEventListener('resize', onViewportChange);
+
+    // Prefer visualViewport API (Chrome 61+, Safari 13+) — reports the area
+    // ABOVE the keyboard, not the full layout viewport
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', onViewportChange);
+        window.visualViewport.addEventListener('scroll', onViewportChange);
+    }
+})();
+
+/* ─── Global Focus → ScrollIntoView ──────────────────────────────────────────
+   Replaces the browser's jarring default scroll when the keyboard opens.
+   Waits ~100ms to sync with the keyboard open animation, then smoothly
+   centers the focused input. Works across ALL modals/forms — not per-component.
+   ─────────────────────────────────────────────────────────────────────────── */
+document.addEventListener('focusin', function (e) {
+    var el = e.target;
+    if (!el) return;
+    var tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable) {
+        setTimeout(function () {
+            if (document.activeElement === el) { // only if still focused
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
+    }
+});
+
 // --- Offline Indicator (injected via JS for backward-compatibility with cached index.html) ---
 (function () {
     function ensureOfflineIndicator() {
