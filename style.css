@@ -1,4 +1,4 @@
-﻿/* Design System: Colors, Fonts, & Tokens (Ultra-Premium SaaS Theme) */
+/* Design System: Colors, Fonts, & Tokens (Ultra-Premium SaaS Theme) */
 :root {
     /* --- DESIGN TOKENS --- */
     
@@ -10766,3 +10766,10 @@ body.kb-transitioning *::after {
 @keyframes icWizExitFwd { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-12px); } }
 @keyframes icWizEnterBck { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes icWizExitBck { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(12px); } }
+
+/* Loan Screen Overrides */
+@media (min-width: 700px) {
+    #screen-loan .pnl-metric-grid { grid-template-columns: repeat(5, 1fr); }
+}
+#screen-loan .pnl-hero { padding-bottom: 12px; }
+

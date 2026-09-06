@@ -259,6 +259,14 @@ const LoanApp = (() => {
         const form = document.getElementById('ln-add-form');
         if (form) form.reset();
 
+        // Set start month default AFTER reset
+        const startMonthInput = document.getElementById('ln-start-month');
+        if (startMonthInput) startMonthInput.value = currentMonthStr();
+
+        // Hide principal field (reset to default)
+        const prinField = document.getElementById('ln-principal-field');
+        if (prinField) prinField.style.display = 'none';
+
         const modal = document.getElementById('ln-add-modal');
         if (!modal) return;
         modal.style.display = 'flex';
@@ -358,8 +366,7 @@ const LoanApp = (() => {
     // ─── INIT ────────────────────────────────────────────────────────────────────
 
     function init() {
-        const btnAdd = document.getElementById('ln-btn-add');
-        if (btnAdd) btnAdd.addEventListener('click', openAddModal);
+        // btnAdd listener is set below (with start month logic)
 
         const closeAdd = document.getElementById('ln-modal-close');
         if (closeAdd) closeAdd.addEventListener('click', closeAddModal);
@@ -446,16 +453,10 @@ const LoanApp = (() => {
             });
         });
 
-        // Set default month to current month on modal open
+        // Add Loan button — single listener
         const btnAdd = document.getElementById('ln-btn-add');
         if (btnAdd) {
-            btnAdd.addEventListener('click', () => {
-                const startMonthInput = document.getElementById('ln-start-month');
-                if (startMonthInput) {
-                    startMonthInput.value = currentMonthStr();
-                }
-                openAddModal();
-            });
+            btnAdd.addEventListener('click', openAddModal);
         }
 
         // Watch navigation to loan screen
