@@ -7884,7 +7884,7 @@ async function openLoanDetailModal(loanId) {
     document.getElementById('loan-detail-interest-paid').textContent = formatLoanCurrency(intPaid);
     document.getElementById('loan-detail-outstanding').textContent = formatLoanCurrency(outstanding);
 
-    document.getElementById('loan-detail-modal-backdrop').style.display = 'flex';
+    document.getElementById('loan-detail-modal-backdrop').classList.add('active');
 }
 
 function openAddLoanModal() {
@@ -7901,7 +7901,7 @@ function openAddLoanModal() {
     }
     
     document.getElementById('add-loan-form').reset();
-    document.getElementById('add-loan-modal-backdrop').style.display = 'flex';
+    document.getElementById('add-loan-modal-backdrop').classList.add('active');
 }
 
 // --- 4. BINDINGS & INIT ---
@@ -7913,11 +7913,11 @@ function initLoanModule() {
     
     const btnCloseAdd = document.getElementById('btn-close-add-loan-modal');
     const btnCancelAdd = document.getElementById('btn-cancel-add-loan');
-    if (btnCloseAdd) btnCloseAdd.addEventListener('click', () => { document.getElementById('add-loan-modal-backdrop').style.display = 'none'; });
-    if (btnCancelAdd) btnCancelAdd.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('add-loan-modal-backdrop').style.display = 'none'; });
+    if (btnCloseAdd) btnCloseAdd.addEventListener('click', () => { document.getElementById('add-loan-modal-backdrop').classList.remove('active'); });
+    if (btnCancelAdd) btnCancelAdd.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('add-loan-modal-backdrop').classList.remove('active'); });
     
     const btnCloseDetail = document.getElementById('btn-close-loan-detail-modal');
-    if (btnCloseDetail) btnCloseDetail.addEventListener('click', () => { document.getElementById('loan-detail-modal-backdrop').style.display = 'none'; });
+    if (btnCloseDetail) btnCloseDetail.addEventListener('click', () => { document.getElementById('loan-detail-modal-backdrop').classList.remove('active'); });
     
     const btnSaveLoan = document.getElementById('btn-save-new-loan');
     if (btnSaveLoan) {
@@ -7951,7 +7951,7 @@ function initLoanModule() {
             btnSaveLoan.textContent = 'Create Loan';
             
             if (success) {
-                document.getElementById('add-loan-modal-backdrop').style.display = 'none';
+                document.getElementById('add-loan-modal-backdrop').classList.remove('active');
                 if(typeof showNotification === 'function') showNotification('Loan created successfully!', 'success');
                 renderLoanDashboard();
             }

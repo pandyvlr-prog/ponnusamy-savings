@@ -199,6 +199,8 @@ function switchView(viewId) {
         document.body.setAttribute('data-app-state', 'landing');
     } else if (viewId === 'screen-login' || viewId === 'screen-register') {
         document.body.setAttribute('data-app-state', 'login');
+    } else if (viewId === 'screen-loan') {
+        document.body.setAttribute('data-app-state', 'loan');
     } else {
         document.body.setAttribute('data-app-state', 'dashboard');
     }
