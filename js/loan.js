@@ -97,7 +97,7 @@ const LoanApp = (() => {
         return months;
     }
 
-    async function createLoan(customerName, amount, rate, mode, startDate, principalPayment) {
+    async function createLoan(customerName, amount, rate, mode, startDate, principalPayment, fixedEmiPayment) {
         const client = getClient();
         if (!client) { alert('Database not connected.'); return null; }
 
@@ -134,12 +134,32 @@ const LoanApp = (() => {
 
             const interest = calcInterest(currentOutstanding, rate);
             let prinPaid = 0;
+            let emi = 0;
             
             if (mode === 'Interest + Principal') {
                 prinPaid = Math.min(principalPayment, currentOutstanding);
+                emi = calcEMI(interest, prinPaid);
+            } else if (mode === 'Fixed EMI') {
+                // Fixed EMI calculation:
+                // Fixed EMI amount minus interest goes to principal.
+                const rawPrin = (fixedEmiPayment || 0) - interest;
+                if (rawPrin <= 0) {
+                    prinPaid = 0;
+                    emi = interest;
+                } else if (rawPrin >= currentOutstanding) {
+                    // Final installment settles remaining loan balance
+                    prinPaid = currentOutstanding;
+                    emi = Math.round((interest + prinPaid) * 100) / 100;
+                } else {
+                    prinPaid = Math.round(rawPrin * 100) / 100;
+                    emi = Math.round((interest + prinPaid) * 100) / 100;
+                }
+            } else {
+                // Interest Only
+                prinPaid = 0;
+                emi = interest;
             }
 
-            const emi = calcEMI(interest, prinPaid);
             const closing = calcClosing(currentOutstanding, prinPaid);
 
             installments.push({
@@ -428,9 +448,11 @@ const LoanApp = (() => {
             startDateInput.value = new Date().toISOString().split('T')[0];
         }
 
-        // Hide principal field (reset to default)
+        // Hide principal and fixed emi fields (reset to default)
         const prinField = document.getElementById('ln-principal-field');
         if (prinField) prinField.style.display = 'none';
+        const fixedEmiField = document.getElementById('ln-fixed-emi-field');
+        if (fixedEmiField) fixedEmiField.style.display = 'none';
 
         const modal = document.getElementById('ln-add-modal');
         if (!modal) return;
@@ -666,6 +688,7 @@ const LoanApp = (() => {
                 const mode = modeInput ? modeInput.value : 'Interest Only';
                 
                 let principalPayment = 0;
+                let fixedEmiPayment = 0;
                 if (mode === 'Interest + Principal') {
                     principalPayment = parseFloat(prinInput && prinInput.value);
                     if (!principalPayment || principalPayment <= 0) {
@@ -678,6 +701,20 @@ const LoanApp = (() => {
                         prinInput && prinInput.focus();
                         return;
                     }
+                } else if (mode === 'Fixed EMI') {
+                    const fixedEmiInput = document.getElementById('ln-fixed-emi-amount');
+                    fixedEmiPayment = parseFloat(fixedEmiInput && fixedEmiInput.value);
+                    if (!fixedEmiPayment || fixedEmiPayment <= 0) {
+                        alert('Please enter a valid Fixed Monthly EMI amount.');
+                        fixedEmiInput && fixedEmiInput.focus();
+                        return;
+                    }
+                    const firstMonthInt = calcInterest(amt, rate);
+                    if (fixedEmiPayment <= firstMonthInt) {
+                        alert(`Fixed Monthly EMI (₹${fixedEmiPayment}) must be greater than the first month interest (₹${firstMonthInt}) to reduce the principal balance.`);
+                        fixedEmiInput && fixedEmiInput.focus();
+                        return;
+                    }
                 }
 
                 if (!name) { alert('Please enter the customer name.'); nameInput && nameInput.focus(); return; }
@@ -688,7 +725,7 @@ const LoanApp = (() => {
                 btnSave.textContent = 'Creating...';
                 btnSave.disabled = true;
 
-                const loan = await createLoan(name, amt, rate, mode, startDate, principalPayment);
+                const loan = await createLoan(name, amt, rate, mode, startDate, principalPayment, fixedEmiPayment);
 
                 btnSave.textContent = originalText;
                 btnSave.disabled = false;
@@ -743,14 +780,25 @@ const LoanApp = (() => {
         const modeRadios = document.querySelectorAll('input[name="ln-mode"]');
         const prinField = document.getElementById('ln-principal-field');
         const prinInput = document.getElementById('ln-principal-amount');
+        const fixedEmiField = document.getElementById('ln-fixed-emi-field');
+        const fixedEmiInput = document.getElementById('ln-fixed-emi-amount');
         modeRadios.forEach(radio => {
             radio.addEventListener('change', (e) => {
                 if (e.target.value === 'Interest + Principal') {
                     if (prinField) prinField.style.display = 'flex';
                     if (prinInput) prinInput.setAttribute('required', 'true');
+                    if (fixedEmiField) fixedEmiField.style.display = 'none';
+                    if (fixedEmiInput) fixedEmiInput.removeAttribute('required');
+                } else if (e.target.value === 'Fixed EMI') {
+                    if (prinField) prinField.style.display = 'none';
+                    if (prinInput) prinInput.removeAttribute('required');
+                    if (fixedEmiField) fixedEmiField.style.display = 'flex';
+                    if (fixedEmiInput) fixedEmiInput.setAttribute('required', 'true');
                 } else {
                     if (prinField) prinField.style.display = 'none';
                     if (prinInput) prinInput.removeAttribute('required');
+                    if (fixedEmiField) fixedEmiField.style.display = 'none';
+                    if (fixedEmiInput) fixedEmiInput.removeAttribute('required');
                 }
             });
         });

@@ -3559,14 +3559,18 @@ body[data-app-state="loan"] .app-container {
                     <!-- Mode -->
                     <div style="display:flex;flex-direction:column;gap:8px;">
                         <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Payment Mode <span style="color:#D4AF37;">*</span></label>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                            <label style="display:flex;align-items:center;gap:9px;padding:12px 13px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
-                                <input type="radio" name="ln-mode" value="Interest Only" checked style="accent-color:#D4AF37;width:15px;height:15px;">
-                                <div><div style="font-size:0.8rem;font-weight:700;color:var(--text-main);">Interest Only</div><div style="font-size:0.65rem;color:var(--text-secondary);margin-top:1px;">Principal unchanged</div></div>
+                        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;">
+                            <label style="display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
+                                <input type="radio" name="ln-mode" value="Interest Only" checked style="accent-color:#D4AF37;width:15px;height:15px;flex-shrink:0;">
+                                <div><div style="font-size:0.78rem;font-weight:700;color:var(--text-main);white-space:nowrap;">Interest Only</div><div style="font-size:0.62rem;color:var(--text-secondary);margin-top:1px;">Int only</div></div>
                             </label>
-                            <label style="display:flex;align-items:center;gap:9px;padding:12px 13px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
-                                <input type="radio" name="ln-mode" value="Interest + Principal" style="accent-color:#D4AF37;width:15px;height:15px;">
-                                <div><div style="font-size:0.8rem;font-weight:700;color:var(--text-main);">Int + Principal</div><div style="font-size:0.65rem;color:var(--text-secondary);">Reduces balance</div></div>
+                            <label style="display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
+                                <input type="radio" name="ln-mode" value="Interest + Principal" style="accent-color:#D4AF37;width:15px;height:15px;flex-shrink:0;">
+                                <div><div style="font-size:0.78rem;font-weight:700;color:var(--text-main);white-space:nowrap;">Int + Principal</div><div style="font-size:0.62rem;color:var(--text-secondary);margin-top:1px;">+ Prin pay</div></div>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;border:1.5px solid rgba(212,175,55,0.3);background:rgba(212,175,55,0.05);cursor:pointer;">
+                                <input type="radio" name="ln-mode" value="Fixed EMI" style="accent-color:#D4AF37;width:15px;height:15px;flex-shrink:0;">
+                                <div><div style="font-size:0.78rem;font-weight:700;color:var(--text-main);white-space:nowrap;">Fixed EMI</div><div style="font-size:0.62rem;color:var(--text-secondary);margin-top:1px;">Fixed total</div></div>
                             </label>
                         </div>
                     </div>
@@ -3577,6 +3581,15 @@ body[data-app-state="loan"] .app-container {
                         <div style="position:relative;">
                             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
                             <input type="number" id="ln-principal-amount" placeholder="e.g. 5000" min="1" style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                        </div>
+                    </div>
+
+                    <!-- Fixed EMI field (shown only when Fixed EMI is selected) -->
+                    <div id="ln-fixed-emi-field" style="display:none;flex-direction:column;gap:5px;">
+                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Fixed Monthly EMI Amount (₹) <span style="color:#D4AF37;">*</span></label>
+                        <div style="position:relative;">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
+                            <input type="number" id="ln-fixed-emi-amount" placeholder="e.g. 1000" min="1" style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                         </div>
                     </div>
                 </form>
