@@ -1,16 +1,19 @@
 /**
- * LOAN MODULE - Complete Fresh Rewrite (v2)
- * Self-contained, no connection to chit/members system.
- * Customer name is stored as free text (no FK to members table).
+ * LOAN MODULE - Complete Fresh Rewrite (v2.1)
+ * Enhanced with Image 2 typography, unique column colors,
+ * Edit & Delete client actions, DD/MM/YYYY date formatting,
+ * and minimal gold modal UI.
  */
 
 const LoanApp = (() => {
+
+    let activeLoanId = null;
 
     // ─── SUPABASE HELPERS ───────────────────────────────────────────────────────
 
     function getClient() { return window.supabaseClient; }
 
-    // ─── FINANCIAL CALCULATIONS ─────────────────────────────────────────────────
+    // ─── FINANCIAL CALCULATIONS & FORMATTING ────────────────────────────────────
 
     function calcInterest(openingBalance, annualRate) {
         return Math.round((openingBalance * (annualRate / 12 / 100)) * 100) / 100;
@@ -29,8 +32,33 @@ const LoanApp = (() => {
         const num = parseFloat(n) || 0;
         return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
+    function fmtDate(dStr) {
+        if (!dStr) return '—';
+        if (typeof dStr === 'string') {
+            // Check for YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}/.test(dStr)) {
+                const parts = dStr.split('T')[0].split('-');
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            // Check for YYYY-MM
+            if (/^\d{4}-\d{2}$/.test(dStr)) {
+                const parts = dStr.split('-');
+                return `01/${parts[1]}/${parts[0]}`;
+            }
+        }
+        try {
+            const dt = new Date(dStr);
+            if (!isNaN(dt.getTime())) {
+                const d = String(dt.getDate()).padStart(2, '0');
+                const m = String(dt.getMonth() + 1).padStart(2, '0');
+                const y = dt.getFullYear();
+                return `${d}/${m}/${y}`;
+            }
+        } catch (e) {}
+        return dStr;
+    }
 
-    // ─── DATA ────────────────────────────────────────────────────────────────────
+    // ─── DATA ACCESS ────────────────────────────────────────────────────────────
 
     async function getLoans() {
         const client = getClient();
@@ -56,8 +84,6 @@ const LoanApp = (() => {
         return data || [];
     }
 
-
-    // Helper to add months
     function getMonthsBetween(startYYYYMM, endYYYYMM) {
         const months = [];
         let curr = startYYYYMM;
@@ -71,7 +97,7 @@ const LoanApp = (() => {
         return months;
     }
 
-    async function createLoan(customerName, amount, rate, mode, startMonth, principalPayment) {
+    async function createLoan(customerName, amount, rate, mode, startDate, principalPayment) {
         const client = getClient();
         if (!client) { alert('Database not connected.'); return null; }
 
@@ -95,6 +121,8 @@ const LoanApp = (() => {
             return null;
         }
 
+        const startMonth = startDate ? startDate.substring(0, 7) : currentMonthStr();
+        const dayOfMonth = startDate && startDate.split('-')[2] ? startDate.split('-')[2] : '05';
         const currentMonth = currentMonthStr();
         const monthsToGenerate = startMonth ? getMonthsBetween(startMonth, currentMonth) : [currentMonth];
         
@@ -108,9 +136,6 @@ const LoanApp = (() => {
             let prinPaid = 0;
             
             if (mode === 'Interest + Principal') {
-                // If it's the very first month of a retro-active loan, do we charge principal? Yes, based on the user's input.
-                // However, usually the first month might just be interest, or full EMI.
-                // Let's charge the full Principal Payment for every generated month.
                 prinPaid = Math.min(principalPayment, currentOutstanding);
             }
 
@@ -127,8 +152,8 @@ const LoanApp = (() => {
                 principal_paid: prinPaid,
                 emi_amount: emi,
                 closing_principal: closing,
-                status: monthStr === currentMonth ? 'Pending' : 'Paid', // Mark past months as Paid
-                due_date: `${monthStr}-05`, // Default to 5th of the month
+                status: monthStr === currentMonth ? 'Pending' : 'Paid',
+                due_date: `${monthStr}-${dayOfMonth}`,
                 paid_at: monthStr === currentMonth ? null : new Date().toISOString()
             });
 
@@ -143,6 +168,49 @@ const LoanApp = (() => {
         }
 
         return loan;
+    }
+
+    async function updateLoan(loanId, customerName, amount, rate) {
+        const client = getClient();
+        if (!client) return false;
+
+        const { error: loanErr } = await client.from('loans').update({
+            customer_name: customerName,
+            original_amount: amount,
+            annual_interest_rate: rate
+        }).eq('id', loanId);
+
+        if (loanErr) {
+            console.error('updateLoan error:', loanErr);
+            alert('Error updating loan: ' + loanErr.message);
+            return false;
+        }
+
+        // Sync customer name in loan installments
+        await client.from('loan_installments').update({
+            customer_name: customerName
+        }).eq('loan_id', loanId);
+
+        return true;
+    }
+
+    async function deleteLoan(loanId) {
+        const client = getClient();
+        if (!client) return false;
+
+        const { error: instErr } = await client.from('loan_installments').delete().eq('loan_id', loanId);
+        if (instErr) {
+            console.error('Delete installments error:', instErr);
+        }
+
+        const { error: loanErr } = await client.from('loans').delete().eq('id', loanId);
+        if (loanErr) {
+            console.error('Delete loan error:', loanErr);
+            alert('Error deleting loan: ' + loanErr.message);
+            return false;
+        }
+
+        return true;
     }
 
     async function updateInstallmentStatus(id, newStatus) {
@@ -232,7 +300,7 @@ const LoanApp = (() => {
             return;
         }
 
-        // Sort alphabetically by customer name (matching Image 1)
+        // Sort alphabetically by customer name
         currentInsts.sort((a, b) => {
             const loanA = loans.find(l => l.id === a.loan_id) || {};
             const loanB = loans.find(l => l.id === b.loan_id) || {};
@@ -249,13 +317,16 @@ const LoanApp = (() => {
             const isPaid = inst.status === 'Paid';
             const name = (inst.customer_name || loan.customer_name || '—').trim();
             const tr = document.createElement('tr');
+            tr.style.transition = 'background-color 0.15s ease';
+            tr.onmouseover = () => { tr.style.backgroundColor = 'rgba(212,175,55,0.06)'; };
+            tr.onmouseout = () => { tr.style.backgroundColor = 'transparent'; };
             
-            // Paid date badge pill matching Image 1
+            // Paid date badge pill matching Image 2
             const paidDateHtml = isPaid && inst.paid_at 
-                ? `<span style="display:inline-block; padding:4px 10px; border-radius:4px; background-color:#dbeafe; color:#1e3a8a; font-weight:800; font-size:0.78rem; text-align:center; border:1px solid #bfdbfe;">${new Date(inst.paid_at).toLocaleDateString('en-IN')}</span>`
+                ? `<span style="display:inline-block; padding:4px 10px; border-radius:4px; background-color:#dbeafe; color:#1e3a8a; font-weight:800; font-size:0.8rem; text-align:center; border:1px solid #bfdbfe; font-family:var(--font-number);">${fmtDate(inst.paid_at)}</span>`
                 : `<span style="color:var(--text-muted); font-weight:600; font-size:0.85rem;">--</span>`;
 
-            // Status button pill matching Image 1
+            // Status button pill matching Image 2
             const statusHtml = isPaid
                 ? `<button class="ln-toggle" data-id="${inst.id}" data-status="${inst.status}"
                     style="display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:5px 14px; border-radius:20px; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem; cursor:pointer; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease;">
@@ -266,16 +337,19 @@ const LoanApp = (() => {
                     <i data-lucide="clock" style="width:12px;height:12px;"></i> DUE
                   </button>`;
 
+            // EMI color: Green if Paid, Red if Due (not paid)
+            const emiColor = isPaid ? '#15803d' : '#dc2626';
+
             tr.innerHTML = `
-                <td style="text-align:center; font-weight:700; color:#111827; font-size:0.9rem;">${idx + 1}</td>
-                <td style="text-align:left; padding-left:14px;">
-                    <a href="#" class="ln-customer-link" data-loan-id="${inst.loan_id}" style="color:#000000; font-weight:800; font-size:0.95rem; text-transform:uppercase; text-decoration:none; display:inline-block; transition:color 0.15s ease;" onmouseover="this.style.color='#b8860b'" onmouseout="this.style.color='#000000'">${name}</a>
+                <td style="text-align:center; font-weight:800; color:#111827; font-size:0.95rem; padding:14px 8px; border-bottom:1px solid var(--border-table);">${idx + 1}</td>
+                <td style="text-align:left; padding:14px 14px; border-bottom:1px solid var(--border-table);">
+                    <a href="#" class="ln-customer-link" data-loan-id="${inst.loan_id}" style="color:#000000; font-weight:900; font-size:0.95rem; text-transform:uppercase; text-decoration:none; display:inline-block; font-family:var(--font-heading); transition:color 0.15s ease;" onmouseover="this.style.color='#b8860b'" onmouseout="this.style.color='#000000'">${name}</a>
                 </td>
-                <td style="text-align:right; font-weight:800; font-size:1.1rem; font-family:var(--font-number); color:#111827; padding-right:14px;">${fmt(loan.original_amount || 0)}</td>
-                <td style="text-align:right; font-weight:800; font-size:1.05rem; font-family:var(--font-number); color:#b45309; padding-right:14px;">${fmt(inst.interest_amount)}</td>
-                <td style="text-align:right; font-weight:900; font-size:1.15rem; font-family:var(--font-number); color:#111827; padding-right:14px;">${fmt(inst.emi_amount)}</td>
-                <td style="text-align:center;">${paidDateHtml}</td>
-                <td style="text-align:center;">${statusHtml}</td>
+                <td style="text-align:right; font-weight:800; font-size:1.15rem; font-family:var(--font-number); color:#4338ca; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(loan.original_amount || 0)}</td>
+                <td style="text-align:right; font-weight:800; font-size:1.15rem; font-family:var(--font-number); color:#b45309; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(inst.interest_amount)}</td>
+                <td style="text-align:right; font-weight:900; font-size:1.15rem; font-family:var(--font-number); color:${emiColor}; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(inst.emi_amount)}</td>
+                <td style="text-align:center; padding:14px 8px; border-bottom:1px solid var(--border-table);">${paidDateHtml}</td>
+                <td style="text-align:center; padding:14px 8px; border-bottom:1px solid var(--border-table);">${statusHtml}</td>
             `;
             tbody.appendChild(tr);
 
@@ -293,12 +367,12 @@ const LoanApp = (() => {
                     </div>
                     <div class="loan-mobile-card-amount-row">
                         <span class="loan-emi-label">EMI Amount</span>
-                        <span class="loan-emi-value">${fmt(inst.emi_amount)}</span>
+                        <span class="loan-emi-value" style="color:${emiColor};">${fmt(inst.emi_amount)}</span>
                     </div>
                     <div class="loan-mobile-chips-row">
                         <div class="loan-mobile-chip">
                             <span class="loan-chip-lbl">Loan Amt</span>
-                            <span class="loan-chip-val">${fmt(loan.original_amount || 0)}</span>
+                            <span class="loan-chip-val" style="color:#4338ca;">${fmt(loan.original_amount || 0)}</span>
                         </div>
                         <div class="loan-mobile-chip">
                             <span class="loan-chip-lbl">Interest</span>
@@ -306,7 +380,7 @@ const LoanApp = (() => {
                         </div>
                         <div class="loan-mobile-chip">
                             <span class="loan-chip-lbl">Paid Date</span>
-                            <span class="loan-chip-val" style="font-size:0.75rem;">${isPaid && inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '--'}</span>
+                            <span class="loan-chip-val" style="font-size:0.75rem;">${isPaid && inst.paid_at ? fmtDate(inst.paid_at) : '--'}</span>
                         </div>
                     </div>
                 `;
@@ -348,9 +422,11 @@ const LoanApp = (() => {
         const form = document.getElementById('ln-add-form');
         if (form) form.reset();
 
-        // Set start month default AFTER reset
-        const startMonthInput = document.getElementById('ln-start-month');
-        if (startMonthInput) startMonthInput.value = currentMonthStr();
+        // Set start date default to today (YYYY-MM-DD)
+        const startDateInput = document.getElementById('ln-start-date');
+        if (startDateInput) {
+            startDateInput.value = new Date().toISOString().split('T')[0];
+        }
 
         // Hide principal field (reset to default)
         const prinField = document.getElementById('ln-principal-field');
@@ -364,6 +440,8 @@ const LoanApp = (() => {
             const inner = modal.querySelector('.ln-modal-inner');
             if (inner) inner.style.transform = 'translateY(0) scale(1)';
         }));
+
+        if (window.lucide) window.lucide.createIcons();
 
         // Focus the customer name field
         setTimeout(() => {
@@ -381,16 +459,53 @@ const LoanApp = (() => {
         setTimeout(() => { modal.style.display = 'none'; }, 280);
     }
 
-    // ─── DETAIL MODAL ────────────────────────────────────────────────────────────
+    // ─── EDIT LOAN MODAL ─────────────────────────────────────────────────────────
+
+    function openEditModal(loan) {
+        if (!loan) return;
+        const el = id => document.getElementById(id);
+        if (el('ln-edit-loan-id')) el('ln-edit-loan-id').value = loan.id;
+        if (el('ln-edit-customer-name')) el('ln-edit-customer-name').value = loan.customer_name || '';
+        if (el('ln-edit-amount')) el('ln-edit-amount').value = loan.original_amount || '';
+        if (el('ln-edit-rate')) el('ln-edit-rate').value = loan.annual_interest_rate || '';
+
+        const modal = document.getElementById('ln-edit-modal');
+        if (!modal) return;
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            modal.style.opacity = '1';
+            const inner = modal.querySelector('.ln-modal-inner');
+            if (inner) inner.style.transform = 'translateY(0) scale(1)';
+        }));
+
+        if (window.lucide) window.lucide.createIcons();
+
+        setTimeout(() => {
+            if (el('ln-edit-customer-name')) el('ln-edit-customer-name').focus();
+        }, 300);
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('ln-edit-modal');
+        if (!modal) return;
+        modal.style.opacity = '0';
+        const inner = modal.querySelector('.ln-modal-inner');
+        if (inner) inner.style.transform = 'translateY(40px) scale(0.97)';
+        setTimeout(() => { modal.style.display = 'none'; }, 280);
+    }
+
+    // ─── DETAIL MODAL (Passbook) ─────────────────────────────────────────────────
 
     function openDetailModal(loanId, loans, allInsts) {
         const loan = loans.find(l => l.id === loanId);
         if (!loan) return;
+        activeLoanId = loanId;
 
         const insts = allInsts.filter(i => i.loan_id === loanId).sort((a, b) => a.month.localeCompare(b.month));
         const name = loan.customer_name || '—';
 
         const el = id => document.getElementById(id);
+        // Customer Name: large, bold, dark black
         if (el('ln-det-name')) el('ln-det-name').textContent = name;
         if (el('ln-det-info')) el('ln-det-info').textContent = `${fmt(loan.original_amount)} loan · ${loan.annual_interest_rate}%/yr · ${loan.payment_mode}`;
 
@@ -402,36 +517,89 @@ const LoanApp = (() => {
         if (tbody) {
             tbody.innerHTML = '';
             if (insts.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-secondary);">No history yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-secondary);font-size:0.9rem;">No history yet.</td></tr>';
             } else {
                 insts.forEach(inst => {
-                    if (inst.status === 'Paid') {
+                    const isPaid = inst.status === 'Paid';
+                    if (isPaid) {
                         totalCol += parseFloat(inst.emi_amount) || 0;
                         prinPaid += parseFloat(inst.principal_paid) || 0;
                         intPaid += parseFloat(inst.interest_amount) || 0;
                     }
+
+                    // Format date as DD/MM/YYYY
+                    const dateDisplay = fmtDate(inst.due_date || inst.month);
+                    const detEmiColor = isPaid ? '#15803d' : '#dc2626';
+
+                    // Paid date pill badge
+                    const detPaidDateHtml = isPaid && inst.paid_at
+                        ? `<span style="display:inline-block; padding:3px 8px; border-radius:4px; background-color:#dbeafe; color:#1e3a8a; font-weight:800; font-size:0.75rem; text-align:center; border:1px solid #bfdbfe; font-family:var(--font-number);">${fmtDate(inst.paid_at)}</span>`
+                        : `<span style="color:var(--text-muted); font-weight:600; font-size:0.85rem;">--</span>`;
+
+                    // Status badge pill matching Image 2
+                    const detStatusHtml = isPaid
+                        ? `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.72rem;">✓ PAID</span>`
+                        : `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; border:1px solid #fca5a5; background:#fee2e2; color:#b91c1c; font-weight:800; font-size:0.72rem;">⏱ DUE</span>`;
+
                     const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid var(--border-table)';
+                    tr.style.transition = 'background-color 0.15s ease';
+                    tr.onmouseover = () => { tr.style.backgroundColor = 'rgba(212,175,55,0.05)'; };
+                    tr.onmouseout = () => { tr.style.backgroundColor = 'transparent'; };
+
                     tr.innerHTML = `
-                        <td style="padding:10px 8px;font-weight:600;color:var(--text-secondary);">${inst.month}</td>
-                        <td style="padding:10px 8px;text-align:right;">${fmt(inst.opening_principal)}</td>
-                        <td style="padding:10px 8px;text-align:right;color:var(--primary);">${fmt(inst.interest_amount)}</td>
-                        <td style="padding:10px 8px;text-align:right;">${fmt(inst.principal_paid)}</td>
-                        <td style="padding:10px 8px;text-align:right;font-weight:800;">${fmt(inst.emi_amount)}</td>
-                        <td style="padding:10px 8px;text-align:center;font-size:0.75rem;">${inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '—'}</td>
-                        <td style="padding:10px 8px;text-align:right;">${fmt(inst.closing_principal)}</td>
-                        <td style="padding:10px 8px;text-align:center;">
-                            <span style="padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:700;background:${inst.status === 'Paid' ? '#1a6e3c' : '#7a1515'};color:#fff;">${inst.status}</span>
-                        </td>
+                        <td style="padding:12px 10px; text-align:center; font-weight:800; font-family:var(--font-number); color:#1e293b; font-size:0.9rem; border-right:1px solid var(--border-table);">${dateDisplay}</td>
+                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#4338ca; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.opening_principal)}</td>
+                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#b45309; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.interest_amount)}</td>
+                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#6b21a8; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.principal_paid)}</td>
+                        <td style="padding:12px 10px; text-align:right; font-weight:900; font-family:var(--font-number); color:${detEmiColor}; font-size:1.15rem; border-right:1px solid var(--border-table);">${fmt(inst.emi_amount)}</td>
+                        <td style="padding:12px 8px; text-align:center; border-right:1px solid var(--border-table);">${detPaidDateHtml}</td>
+                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#475569; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.closing_principal)}</td>
+                        <td style="padding:12px 8px; text-align:center;">${detStatusHtml}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
         }
 
+        // Summary Metric Cards
         if (el('ln-det-collected')) el('ln-det-collected').textContent = fmt(totalCol);
         if (el('ln-det-outstanding')) el('ln-det-outstanding').textContent = fmt(outstanding);
         if (el('ln-det-prinpaid')) el('ln-det-prinpaid').textContent = fmt(prinPaid);
         if (el('ln-det-intpaid')) el('ln-det-intpaid').textContent = fmt(intPaid);
+
+        // Edit Button Handler
+        const editBtn = document.getElementById('ln-det-btn-edit');
+        if (editBtn) {
+            editBtn.onclick = () => {
+                openEditModal(loan);
+            };
+        }
+
+        // Delete Button Handler
+        const deleteBtn = document.getElementById('ln-det-btn-delete');
+        if (deleteBtn) {
+            deleteBtn.onclick = async () => {
+                const confirmed = confirm(`Are you sure you want to delete the loan for "${name}"?\nThis action will delete all installment records.`);
+                if (!confirmed) return;
+
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = 'Deleting...';
+
+                const ok = await deleteLoan(loan.id);
+                if (ok) {
+                    closeDetailModal();
+                    await renderDashboard();
+                    if (typeof showNotification === 'function') {
+                        showNotification(`Loan for "${name}" deleted successfully!`, 'success');
+                    }
+                } else {
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i data-lucide="trash-2" style="width:14px;height:14px;"></i> Delete';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            };
+        }
 
         const modal = document.getElementById('ln-detail-modal');
         if (!modal) return;
@@ -441,6 +609,8 @@ const LoanApp = (() => {
             const inner = modal.querySelector('.ln-modal-inner');
             if (inner) inner.style.transform = 'translateY(0) scale(1)';
         }));
+
+        if (window.lucide) window.lucide.createIcons();
     }
 
     function closeDetailModal() {
@@ -449,14 +619,13 @@ const LoanApp = (() => {
         modal.style.opacity = '0';
         const inner = modal.querySelector('.ln-modal-inner');
         if (inner) inner.style.transform = 'translateY(40px) scale(0.97)';
-        setTimeout(() => { modal.style.display = 'none'; }, 280);
+        setTimeout(() => { modal.style.display = 'none'; activeLoanId = null; }, 280);
     }
 
     // ─── INIT ────────────────────────────────────────────────────────────────────
 
     function init() {
-        // btnAdd listener is set below (with start month logic)
-
+        // Modal close buttons
         const closeAdd = document.getElementById('ln-modal-close');
         if (closeAdd) closeAdd.addEventListener('click', closeAddModal);
         const cancelAdd = document.getElementById('ln-modal-cancel');
@@ -465,14 +634,20 @@ const LoanApp = (() => {
         const closeDetail = document.getElementById('ln-det-close');
         if (closeDetail) closeDetail.addEventListener('click', closeDetailModal);
 
+        const closeEdit = document.getElementById('ln-edit-modal-close');
+        if (closeEdit) closeEdit.addEventListener('click', closeEditModal);
+        const cancelEdit = document.getElementById('ln-edit-modal-cancel');
+        if (cancelEdit) cancelEdit.addEventListener('click', closeEditModal);
+
         // Backdrop click to close
         const addModal = document.getElementById('ln-add-modal');
         if (addModal) addModal.addEventListener('click', e => { if (e.target === addModal) closeAddModal(); });
         const detModal = document.getElementById('ln-detail-modal');
         if (detModal) detModal.addEventListener('click', e => { if (e.target === detModal) closeDetailModal(); });
+        const editModal = document.getElementById('ln-edit-modal');
+        if (editModal) editModal.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
 
-
-        // Save loan
+        // Save loan (Create)
         const btnSave = document.getElementById('ln-btn-save');
         if (btnSave) {
             btnSave.addEventListener('click', async (e) => {
@@ -480,14 +655,14 @@ const LoanApp = (() => {
                 const nameInput = document.getElementById('ln-customer-name');
                 const amtInput = document.getElementById('ln-amount');
                 const rateInput = document.getElementById('ln-rate');
-                const startMonthInput = document.getElementById('ln-start-month');
+                const startDateInput = document.getElementById('ln-start-date');
                 const prinInput = document.getElementById('ln-principal-amount');
                 const modeInput = document.querySelector('input[name="ln-mode"]:checked');
 
                 const name = (nameInput && nameInput.value.trim()) || '';
                 const amt = parseFloat(amtInput && amtInput.value);
                 const rate = parseFloat(rateInput && rateInput.value);
-                const startMonth = (startMonthInput && startMonthInput.value) || currentMonthStr();
+                const startDate = (startDateInput && startDateInput.value) || new Date().toISOString().split('T')[0];
                 const mode = modeInput ? modeInput.value : 'Interest Only';
                 
                 let principalPayment = 0;
@@ -513,7 +688,7 @@ const LoanApp = (() => {
                 btnSave.textContent = 'Creating...';
                 btnSave.disabled = true;
 
-                const loan = await createLoan(name, amt, rate, mode, startMonth, principalPayment);
+                const loan = await createLoan(name, amt, rate, mode, startDate, principalPayment);
 
                 btnSave.textContent = originalText;
                 btnSave.disabled = false;
@@ -525,8 +700,46 @@ const LoanApp = (() => {
                 }
             });
         }
+
+        // Save Edit Loan
+        const btnEditSave = document.getElementById('ln-btn-edit-save');
+        if (btnEditSave) {
+            btnEditSave.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const idInput = document.getElementById('ln-edit-loan-id');
+                const nameInput = document.getElementById('ln-edit-customer-name');
+                const amtInput = document.getElementById('ln-edit-amount');
+                const rateInput = document.getElementById('ln-edit-rate');
+
+                const loanId = idInput && idInput.value;
+                const name = (nameInput && nameInput.value.trim()) || '';
+                const amt = parseFloat(amtInput && amtInput.value);
+                const rate = parseFloat(rateInput && rateInput.value);
+
+                if (!name) { alert('Please enter customer name.'); nameInput && nameInput.focus(); return; }
+                if (!amt || amt <= 0) { alert('Please enter valid amount.'); amtInput && amtInput.focus(); return; }
+                if (!rate || rate <= 0) { alert('Please enter valid interest rate.'); rateInput && rateInput.focus(); return; }
+
+                btnEditSave.textContent = 'Saving...';
+                btnEditSave.disabled = true;
+
+                const ok = await updateLoan(loanId, name, amt, rate);
+
+                btnEditSave.textContent = 'Save Changes';
+                btnEditSave.disabled = false;
+
+                if (ok) {
+                    closeEditModal();
+                    await renderDashboard();
+                    const allL = await getLoans();
+                    const allI = await getAllInstallments();
+                    openDetailModal(loanId, allL, allI);
+                    if (typeof showNotification === 'function') showNotification('Loan details updated!', 'success');
+                }
+            });
+        }
         
-        // Handle Payment Mode change
+        // Handle Payment Mode change in Add Modal
         const modeRadios = document.querySelectorAll('input[name="ln-mode"]');
         const prinField = document.getElementById('ln-principal-field');
         const prinInput = document.getElementById('ln-principal-amount');
@@ -542,7 +755,7 @@ const LoanApp = (() => {
             });
         });
 
-        // Add Loan button — single listener
+        // Add Loan button
         const btnAdd = document.getElementById('ln-btn-add');
         if (btnAdd) {
             btnAdd.addEventListener('click', openAddModal);

@@ -79,7 +79,7 @@ document.addEventListener('focusin', function (e) {
         setTimeout(function () {
             if (document.activeElement === el) { // only if still focused
                 // If inside a modal with its own scroll container, only scroll inside that modal
-                var modalBody = el.closest('#ln-add-modal, #ln-detail-modal, .ln-modal-inner, .modal-backdrop, .simple-modal');
+                var modalBody = el.closest('#ln-add-modal, #ln-detail-modal, #ln-edit-modal, .ln-modal-inner, .modal-backdrop, .simple-modal');
                 if (modalBody) {
                     var scrollContainer = el.closest('[style*="overflow-y:auto"], [style*="overflow-y: auto"], .modal-body');
                     if (scrollContainer) {
