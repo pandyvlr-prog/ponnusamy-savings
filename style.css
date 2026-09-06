@@ -10752,3 +10752,17 @@ body.kb-transitioning *::after {
 .ic-modal-premium.closing { animation: icModalZoomOut var(--motion-modal) var(--ease-out) forwards; }
 @keyframes icModalZoomOut { from { transform: translateY(0) scale(1); opacity: 1; } to { transform: translateY(12px) scale(0.985); opacity: 0; } }
 
+
+/* Wizard Transition Animations */
+.ic-modal-premium-body { position: relative; }
+.ic-wizard-step { display: none; flex-direction: column; width: 100%; box-sizing: border-box; }
+.ic-wizard-step.active { display: flex; animation: none; }
+.ic-wizard-step.transitioning { display: flex; position: absolute; top: 0; left: 0; padding: 28px; }
+.ic-wizard-step.entering-fwd { animation: icWizEnterFwd var(--motion-standard) var(--ease-out) forwards; }
+.ic-wizard-step.exiting-fwd { animation: icWizExitFwd var(--motion-standard) var(--ease-out) forwards; }
+.ic-wizard-step.entering-bck { animation: icWizEnterBck var(--motion-standard) var(--ease-out) forwards; }
+.ic-wizard-step.exiting-bck { animation: icWizExitBck var(--motion-standard) var(--ease-out) forwards; }
+@keyframes icWizEnterFwd { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes icWizExitFwd { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-12px); } }
+@keyframes icWizEnterBck { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes icWizExitBck { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(12px); } }
