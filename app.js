@@ -25,13 +25,29 @@
     }
 
     /** Called on every visualViewport resize / scroll event */
-    function onViewportChange() {
-        // 1. Immediately suppress transitions/backdrop-filter to kill ghost-frames
-        document.body.classList.add('kb-transitioning');
-        clearTimeout(kbTimer);
-        kbTimer = setTimeout(function () {
-            document.body.classList.remove('kb-transitioning');
-        }, 200); // remove ~200ms after resize settles
+        function onViewportChange() {
+        if (raf) return; // Already scheduled
+        raf = requestAnimationFrame(() => {
+            raf = null;
+            
+            // READ
+            var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+            
+            // WRITE
+            document.body.classList.add('kb-transitioning');
+            document.documentElement.style.setProperty('--app-height', h + 'px');
+            
+            clearTimeout(kbTimer);
+            kbTimer = setTimeout(function () {
+                document.body.classList.remove('kb-transitioning');
+            }, 200);
+        });
+    }
+
+    function setAppHeight() {
+        var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight) + 'px';
+        document.documentElement.style.setProperty('--app-height', h);
+    }, 200); // remove ~200ms after resize settles
 
         // 2. Debounce the height update via rAF â€” no mid-animation fires
         if (raf) cancelAnimationFrame(raf);
@@ -6662,17 +6678,64 @@ async function deleteGroup() {
         setTimeout(() => { if (backdrop.classList.contains('closing')) finalize(); }, 350);
     }
 
+    let isWizardTransitioning = false;
+    function getStepIndex(id) {
+        if (id === 'ic-wizard-step-type') return 1;
+        if (id === 'ic-wizard-step-file') return 2;
+        if (id === 'ic-wizard-step-value') return 3;
+        if (id === 'ic-wizard-step-review') return 4;
+        return 0;
+    }
+
     function advanceWizardStep(stepId) {
-        document.querySelectorAll('.ic-wizard-step').forEach(step => step.classList.remove('active'));
+        if (isWizardTransitioning) return;
+        
         const targetStep = document.getElementById(stepId);
-        if (targetStep) targetStep.classList.add('active');
+        if (!targetStep) return;
+        
+        const currentStep = document.querySelector('.ic-wizard-step.active');
+        const container = document.querySelector('.ic-modal-premium-body');
+        
+        if (currentStep && currentStep.id !== stepId) {
+            isWizardTransitioning = true;
+            const currentIndex = getStepIndex(currentStep.id);
+            const targetIndex = getStepIndex(stepId);
+            const isFwd = targetIndex > currentIndex;
+            
+            // Measure and freeze container height
+            const currentHeight = container.getBoundingClientRect().height;
+            container.style.height = currentHeight + 'px';
+            container.style.overflow = 'hidden';
+            
+            // Prepare for animation
+            currentStep.classList.remove('active');
+            currentStep.classList.add('transitioning', isFwd ? 'exiting-fwd' : 'exiting-bck');
+            targetStep.classList.add('transitioning', isFwd ? 'entering-fwd' : 'entering-bck');
+            
+            const finalize = () => {
+                currentStep.classList.remove('transitioning', 'exiting-fwd', 'exiting-bck');
+                targetStep.classList.remove('transitioning', 'entering-fwd', 'entering-bck');
+                targetStep.classList.add('active');
+                
+                // Release height constraints
+                container.style.height = '';
+                container.style.overflow = '';
+                
+                targetStep.removeEventListener('animationend', finalize);
+                isWizardTransitioning = false;
+            };
+            
+            targetStep.addEventListener('animationend', finalize);
+            setTimeout(() => { if (isWizardTransitioning) finalize(); }, 250);
+        } else if (!currentStep) {
+            targetStep.classList.add('active');
+        }
 
         if (stepId === 'ic-wizard-step-type') updateWizardStepper(1);
         else if (stepId === 'ic-wizard-step-file') updateWizardStepper(2);
         else if (stepId === 'ic-wizard-step-value') updateWizardStepper(3);
         else if (stepId === 'ic-wizard-step-review') updateWizardStepper(4);
 
-        // Back button toggles
         const backBtn = document.getElementById('btn-wizard-back');
         if (stepId === 'ic-wizard-step-type') {
             backBtn.style.display = 'none';
@@ -6680,10 +6743,9 @@ async function deleteGroup() {
             backBtn.style.display = 'block';
         }
 
-        // Title changes based on step
         const titleEl = document.getElementById('ic-wizard-title');
         if (stepId === 'ic-wizard-step-value') {
-            titleEl.textContent = `Assign Values (${wizardIndex + 1} of ${wizardQueue.length})`;
+            titleEl.textContent = "Assign Values (" + (wizardIndex + 1) + " of " + wizardQueue.length + ")";
             document.getElementById('btn-wizard-next').style.display = 'block';
             document.getElementById('btn-wizard-next').textContent = (wizardIndex === wizardQueue.length - 1) ? 'Review' : 'Next';
             loadWizardImageValueStep();
@@ -6693,6 +6755,7 @@ async function deleteGroup() {
             document.getElementById('btn-wizard-next').textContent = 'Submit Upload';
             renderWizardReview();
         } else {
+            titleEl.textContent = 'Upload Scheme Cards';
             document.getElementById('btn-wizard-next').style.display = 'none';
         }
     }
@@ -7508,6 +7571,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 300);
 });
+
+
 
 
 

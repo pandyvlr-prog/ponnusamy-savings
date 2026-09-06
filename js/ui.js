@@ -107,9 +107,12 @@ function setupTheme() {
 
 // --- Custom Toast Notifications ---
 function showNotification(message, type = 'success') {
-    // Remove existing notification if any
+    // Remove existing notification if any, gracefully if possible
     const existing = document.querySelector('.toast-notification');
-    if (existing) existing.remove();
+    if (existing) {
+        if (existing.dismissTimeout) clearTimeout(existing.dismissTimeout);
+        existing.remove(); // Remove immediately to prevent duplicate stacking
+    }
     
     const toast = document.createElement('div');
     toast.className = `toast-notification ${type}`;
@@ -117,12 +120,12 @@ function showNotification(message, type = 'success') {
         <span class="toast-message">${message}</span>
     `;
     
-    // Style toast dynamically
+    // Style toast dynamically using standard motion variables
     Object.assign(toast.style, {
         position: 'absolute',
         bottom: '80px',
         left: '50%',
-        transform: 'translateX(-50%) translateY(20px)',
+        transform: 'translateX(-50%) translateY(8px) scale(0.98)',
         padding: '10px 20px',
         borderRadius: '30px',
         backgroundColor: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6',
@@ -132,7 +135,7 @@ function showNotification(message, type = 'success') {
         boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
         zIndex: '20000000',
         opacity: '0',
-        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        transition: 'transform var(--motion-standard) var(--ease-out), opacity var(--motion-standard) var(--ease-out)',
         pointerEvents: 'none',
         whiteSpace: 'nowrap'
     });
@@ -140,16 +143,22 @@ function showNotification(message, type = 'success') {
     document.querySelector('.app-device-shell').appendChild(toast);
     
     // Trigger animation
-    setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateX(-50%) translateY(0)';
-    }, 50);
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+        });
+    });
     
     // Dismiss after 3s
-    setTimeout(() => {
+    toast.dismissTimeout = setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(-50%) translateY(20px)';
-        setTimeout(() => toast.remove(), 300);
+        toast.style.transform = 'translateX(-50%) translateY(4px) scale(0.98)';
+        
+        toast.addEventListener('transitionend', () => {
+            toast.remove();
+        });
+        setTimeout(() => toast.remove(), 250); // safety fallback
     }, 3000);
 }
 
