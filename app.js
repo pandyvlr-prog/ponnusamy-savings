@@ -44,15 +44,6 @@
         });
     }
 
-    function setAppHeight() {
-        var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight) + 'px';
-        document.documentElement.style.setProperty('--app-height', h);
-    }, 200); // remove ~200ms after resize settles
-
-        // 2. Debounce the height update via rAF â€” no mid-animation fires
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(setAppHeight);
-    }
 
     // Set --app-height on first load (before any keyboard event fires)
     if (document.readyState === 'loading') {
