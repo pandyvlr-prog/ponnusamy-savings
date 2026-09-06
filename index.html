@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     
     <!-- App Core Styles -->
-    <link rel="stylesheet" href="style.css?v=1003">
+    <link rel="stylesheet" href="style.css?v=1004">
     <link rel="stylesheet" href="auth.css">
 
     <!-- [PHASE 2] Removed blocking html2pdf.js script from head. It will be loaded lazily on demand. -->
@@ -1243,6 +1243,18 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
 
 /* SIDEBAR TABLET FIT & SETTINGS ICON VISIBILITY FIX */
 @media (min-width: 769px) and (orientation: landscape), (min-width: 1025px) {
+    body {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    .app-device-shell {
+        height: 100% !important;
+        height: 100dvh !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        margin: 0 !important;
+        padding-bottom: 0 !important;
+    }
     .desktop-sidebar {
         height: 100% !important;
         display: flex !important;
@@ -1250,8 +1262,18 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         justify-content: space-between !important;
         padding: 0 !important;
         box-sizing: border-box !important;
-    margin-bottom: 24px !important;
+        margin-bottom: 0 !important;
         overflow-y: auto !important;
+    }
+    .app-container {
+        height: 100% !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .app-screens-wrapper {
+        height: 100% !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
     }
 
     .desktop-sidebar-logo {
@@ -1268,7 +1290,6 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
         position: relative !important;
         background: var(--bg-surface) !important;
         box-sizing: border-box !important;
-    margin-bottom: 24px !important;
     }
     
     /* Add the matching gold accent line to the top of the sidebar */
@@ -1306,11 +1327,60 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
     }
 
     .desktop-sidebar-footer {
-        padding: 10px 0 14px !important;
+        padding: 10px 0 16px !important;
         border-top: 1px solid var(--border) !important;
         flex-shrink: 0 !important;
         margin-top: auto !important;
     }
+}
+
+/* LOAN SCREEN FULL-HEIGHT SEAMLESS DESKTOP FIX */
+#screen-loan {
+    background: #f8f9fc !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+[data-theme="dark"] #screen-loan {
+    background: #0f1117 !important;
+}
+
+#screen-loan .screen-content,
+#screen-loan .pnl-screen-content {
+    background: #f8f9fc !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+}
+[data-theme="dark"] #screen-loan .screen-content,
+[data-theme="dark"] #screen-loan .pnl-screen-content {
+    background: #0f1117 !important;
+}
+
+#screen-loan .loan-table-section {
+    background: #f8f9fc !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 0 !important;
+    padding: 24px 24px 40px 24px !important;
+}
+[data-theme="dark"] #screen-loan .loan-table-section {
+    background: #0f1117 !important;
+}
+
+body[data-app-state="loan"] .app-container {
+    background: #f8f9fc !important;
+}
+[data-theme="dark"] body[data-app-state="loan"] .app-container {
+    background: #0f1117 !important;
 }
 </style>
     <style>
