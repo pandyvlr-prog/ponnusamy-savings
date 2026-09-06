@@ -71,10 +71,36 @@ document.addEventListener('focusin', function (e) {
     var el = e.target;
     if (!el) return;
     var tag = el.tagName;
+    // Never trigger for non-text inputs (radio, checkbox, button, etc.)
+    if (el.type === 'radio' || el.type === 'checkbox' || el.type === 'button' || el.type === 'submit' || el.type === 'color' || el.type === 'range' || el.type === 'file') {
+        return;
+    }
     if (tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable) {
         setTimeout(function () {
             if (document.activeElement === el) { // only if still focused
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // If inside a modal with its own scroll container, only scroll inside that modal
+                var modalBody = el.closest('#ln-add-modal, #ln-detail-modal, .ln-modal-inner, .modal-backdrop, .simple-modal');
+                if (modalBody) {
+                    var scrollContainer = el.closest('[style*="overflow-y:auto"], [style*="overflow-y: auto"], .modal-body');
+                    if (scrollContainer) {
+                        var cRect = scrollContainer.getBoundingClientRect();
+                        var eRect = el.getBoundingClientRect();
+                        if (eRect.bottom > cRect.bottom || eRect.top < cRect.top) {
+                            scrollContainer.scrollTop += (eRect.top - cRect.top - 20);
+                        }
+                    }
+                    if (window.scrollY !== 0) window.scrollTo(0, 0);
+                    return;
+                }
+
+                // Only on mobile touch devices when virtual keyboard might open
+                var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if (isTouch) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                if (window.scrollY !== 0) {
+                    window.scrollTo(0, 0);
+                }
             }
         }, 100);
     }
