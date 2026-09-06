@@ -2795,47 +2795,49 @@ body[data-app-state="login"] .app-screen:not(#screen-login) {
                 </div>
             </div>
             <!-- Table -->
-
-            <div class="pnl-summary-section">
-                <div class="pnl-section-header" style="background:#d1d5db; padding:10px 15px; border-top-left-radius:8px; border-top-right-radius:8px; margin-bottom:0;">
-                    <h2 style="margin:0; font-size:1.1rem; color:#111827; font-weight:800;">Current Month Installments</h2>
+            <div class="loan-table-section" style="padding: 24px 24px 40px 24px;">
+                <div class="section-header" style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="section-title" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0;">Current Month Installments</h2>
+                    <span class="badge" id="loan-total-badge" style="display: flex; align-items: center; font-weight: 700;">0 Installments</span>
                 </div>
-                <div class="table-responsive" style="margin-top:0;">
-                    <table class="styled-table pnl-table" id="loan-dashboard-table" style="width:100%; border-collapse:collapse; border:1px solid #111827;">
-                        <thead>
-                            <tr style="background:var(--primary); color:#000;">
-                                <th style="color:#000; font-weight:800;">S.No</th>
-                                <th style="color:#000; font-weight:800;">Customer Name</th>
-                                <th class="number-col" style="color:#000; font-weight:800;">Loan Amount</th>
-                                <th class="number-col" style="color:#000; font-weight:800;">Interest</th>
-                                <th class="number-col" style="color:#000; font-weight:800;">EMI</th>
-                                <th class="center-col" style="color:#000; font-weight:800;">Paid Date</th>
-                                <th class="center-col" style="color:#000; font-weight:800;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="loan-tbody">
-                            <tr class="loan-skeleton-tr">
-                                <td colspan="7" style="padding: 10px 12px; border: none;">
-                                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0;"></div>
-                                </td>
-                            </tr>
-                            <tr class="loan-skeleton-tr">
-                                <td colspan="7" style="padding: 10px 12px; border: none;">
-                                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.15s;"></div>
-                                </td>
-                            </tr>
-                            <tr class="loan-skeleton-tr">
-                                <td colspan="7" style="padding: 10px 12px; border: none;">
-                                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.3s;"></div>
-                                </td>
-                            </tr>
-                            <tr class="loan-skeleton-tr">
-                                <td colspan="7" style="padding: 10px 12px; border: none;">
-                                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.45s;"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="loan-table-card" style="border: 2px solid #000000; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px #000000, 0 12px 32px rgba(0,0,0,0.15); background: var(--bg-surface);">
+                    <div class="table-responsive" style="margin: 0; overflow-x: auto;">
+                        <table class="styled-table pnl-table" id="loan-dashboard-table" style="width:100%; border-collapse:collapse; margin: 0; border: none;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%) !important;">
+                                    <th style="width: 5%; text-align: center;">S.NO</th>
+                                    <th style="width: 25%; text-align: center;">CUSTOMER NAME</th>
+                                    <th style="width: 15%; text-align: center;">LOAN AMOUNT</th>
+                                    <th style="width: 12%; text-align: center;">INTEREST</th>
+                                    <th style="width: 15%; text-align: center;">EMI</th>
+                                    <th style="width: 14%; text-align: center;">PAID DATE</th>
+                                    <th style="width: 14%; text-align: center;">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loan-tbody">
+                                <tr class="loan-skeleton-tr">
+                                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0;"></div>
+                                    </td>
+                                </tr>
+                                <tr class="loan-skeleton-tr">
+                                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.15s;"></div>
+                                    </td>
+                                </tr>
+                                <tr class="loan-skeleton-tr">
+                                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.3s;"></div>
+                                    </td>
+                                </tr>
+                                <tr class="loan-skeleton-tr">
+                                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.45s;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -217,36 +217,63 @@ const LoanApp = (() => {
 
         // Table — current month
         const currentInsts = allInsts.filter(i => i.month === cm);
+        
+        // Update total badge count
+        const badgeEl = document.getElementById('loan-total-badge');
+        if (badgeEl) badgeEl.textContent = `${currentInsts.length} Installments`;
+
         if (currentInsts.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text-secondary);font-size:0.9rem;">No installments for ${cm}. Click <strong>+ Add Loan</strong> to create one.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text-secondary);font-size:0.9rem;border-right:none;border-bottom:none;">No installments for ${cm}. Click <strong>+ Add Loan</strong> to create one.</td></tr>`;
             return;
         }
+
+        // Sort alphabetically by customer name (matching Image 1)
+        currentInsts.sort((a, b) => {
+            const loanA = loans.find(l => l.id === a.loan_id) || {};
+            const loanB = loans.find(l => l.id === b.loan_id) || {};
+            const nameA = (a.customer_name || loanA.customer_name || '').trim().toLowerCase();
+            const nameB = (b.customer_name || loanB.customer_name || '').trim().toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
 
         tbody.innerHTML = '';
         currentInsts.forEach((inst, idx) => {
             const loan = loans.find(l => l.id === inst.loan_id) || {};
             const isPaid = inst.status === 'Paid';
-            const name = inst.customer_name || loan.customer_name || '—';
+            const name = (inst.customer_name || loan.customer_name || '—').trim();
             const tr = document.createElement('tr');
+            
+            // Paid date badge pill matching Image 1
+            const paidDateHtml = isPaid && inst.paid_at 
+                ? `<span style="display:inline-block; padding:4px 10px; border-radius:4px; background-color:#dbeafe; color:#1e3a8a; font-weight:800; font-size:0.78rem; text-align:center; border:1px solid #bfdbfe;">${new Date(inst.paid_at).toLocaleDateString('en-IN')}</span>`
+                : `<span style="color:var(--text-muted); font-weight:600; font-size:0.85rem;">--</span>`;
+
+            // Status button pill matching Image 1
+            const statusHtml = isPaid
+                ? `<button class="ln-toggle" data-id="${inst.id}" data-status="${inst.status}"
+                    style="display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:5px 14px; border-radius:20px; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem; cursor:pointer; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease;">
+                    <i data-lucide="check" style="width:12px;height:12px;"></i> PAID
+                  </button>`
+                : `<button class="ln-toggle" data-id="${inst.id}" data-status="${inst.status}"
+                    style="display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:5px 14px; border-radius:20px; border:1px solid #fca5a5; background:#fee2e2; color:#b91c1c; font-weight:800; font-size:0.75rem; cursor:pointer; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease;">
+                    <i data-lucide="clock" style="width:12px;height:12px;"></i> DUE
+                  </button>`;
+
             tr.innerHTML = `
-                <td style="padding:12px 10px;text-align:center;font-weight:700;color:var(--text-secondary);">${idx + 1}</td>
-                <td style="padding:12px 10px;">
-                    <a href="#" class="ln-customer-link" data-loan-id="${inst.loan_id}" style="color:var(--primary);font-weight:700;text-decoration:none;">${name}</a>
+                <td style="text-align:center; font-weight:700; color:#111827; font-size:0.9rem;">${idx + 1}</td>
+                <td style="text-align:left; padding-left:14px;">
+                    <a href="#" class="ln-customer-link" data-loan-id="${inst.loan_id}" style="color:#000000; font-weight:800; font-size:0.95rem; text-transform:uppercase; text-decoration:none; display:inline-block; transition:color 0.15s ease;" onmouseover="this.style.color='#b8860b'" onmouseout="this.style.color='#000000'">${name}</a>
                 </td>
-                <td style="padding:12px 10px;text-align:right;font-weight:700;">${fmt(loan.original_amount || 0)}</td>
-                <td style="padding:12px 10px;text-align:right;color:var(--primary);font-weight:700;">${fmt(inst.interest_amount)}</td>
-                <td style="padding:12px 10px;text-align:right;font-weight:800;font-size:1.05rem;">${fmt(inst.emi_amount)}</td>
-                <td style="padding:12px 10px;text-align:center;font-size:0.78rem;color:var(--text-secondary);">${isPaid && inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '—'}</td>
-                <td style="padding:12px 10px;text-align:center;">
-                    <button class="ln-toggle" data-id="${inst.id}" data-status="${inst.status}"
-                        style="padding:5px 14px;border-radius:20px;border:none;cursor:pointer;font-weight:700;font-size:0.78rem;
-                        background:${isPaid ? '#1a6e3c' : '#7a1515'};color:#fff;min-width:80px;">
-                        ${isPaid ? '✓ Paid' : '⏳ Pending'}
-                    </button>
-                </td>
+                <td style="text-align:right; font-weight:800; font-size:1.1rem; font-family:var(--font-number); color:#111827; padding-right:14px;">${fmt(loan.original_amount || 0)}</td>
+                <td style="text-align:right; font-weight:800; font-size:1.05rem; font-family:var(--font-number); color:#b45309; padding-right:14px;">${fmt(inst.interest_amount)}</td>
+                <td style="text-align:right; font-weight:900; font-size:1.15rem; font-family:var(--font-number); color:#111827; padding-right:14px;">${fmt(inst.emi_amount)}</td>
+                <td style="text-align:center;">${paidDateHtml}</td>
+                <td style="text-align:center;">${statusHtml}</td>
             `;
             tbody.appendChild(tr);
         });
+
+        if (window.lucide) window.lucide.createIcons();
 
         // Bind toggle buttons
         document.querySelectorAll('.ln-toggle').forEach(btn => {
