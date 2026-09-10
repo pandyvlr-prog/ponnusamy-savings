@@ -1475,6 +1475,706 @@ body[data-app-state="loan"] .app-container {
         padding: 14px 12px 90px 12px !important;
     }
 }
+
+/* ==========================================================================
+   ADVANCED LOAN DASHBOARD TOOLBAR & FOOTER STYLES (PHASE 1)
+   ========================================================================== */
+.loan-toolbar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+    background: var(--bg-surface, #ffffff);
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--border, #e2e8f0);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .loan-toolbar-container {
+    background: #151821;
+    border-color: rgba(212, 175, 55, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.loan-toolbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+/* Month Navigation */
+.loan-month-nav {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-surface-elevated, #f1f5f9);
+    border: 1px solid var(--border, #cbd5e1);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 6px;
+}
+
+[data-theme="dark"] .loan-month-nav {
+    background: #1c202d;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.loan-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-main, #1e293b);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.loan-nav-btn:hover {
+    background: rgba(212, 175, 55, 0.18);
+    color: #b8860b;
+}
+
+[data-theme="dark"] .loan-nav-btn {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .loan-nav-btn:hover {
+    background: rgba(212, 175, 55, 0.25);
+    color: #ffd700;
+}
+
+.loan-month-display-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.loan-month-icon {
+    width: 16px;
+    height: 16px;
+    color: #b8860b;
+}
+
+[data-theme="dark"] .loan-month-icon {
+    color: #ffd700;
+}
+
+.loan-month-title {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+    min-width: 140px;
+    text-align: center;
+    letter-spacing: 0.2px;
+    user-select: none;
+}
+
+[data-theme="dark"] .loan-month-title {
+    color: #f8fafc;
+}
+
+.loan-month-picker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.loan-today-btn {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 6px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: rgba(212, 175, 55, 0.12);
+    color: #b8860b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-left: 2px;
+}
+
+.loan-today-btn:hover {
+    background: #b8860b;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .loan-today-btn {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.2);
+    color: #ffd700;
+}
+
+[data-theme="dark"] .loan-today-btn:hover {
+    background: #ffd700;
+    color: #000000;
+}
+
+/* Filter Pills */
+.loan-filter-pills {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-surface-elevated, #f1f5f9);
+    border: 1px solid var(--border, #cbd5e1);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+}
+
+[data-theme="dark"] .loan-filter-pills {
+    background: #1c202d;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.loan-filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary, #64748b);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.loan-filter-pill:hover {
+    color: var(--text-main, #0f172a);
+    background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .loan-filter-pill:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.loan-filter-pill.active {
+    background: #ffffff;
+    color: #1a1400;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .loan-filter-pill.active {
+    background: #282e42;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.loan-filter-pill.filter-due.active {
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.loan-filter-pill.filter-paid.active {
+    color: #16a34a;
+    border-color: rgba(22, 163, 74, 0.3);
+}
+
+.loan-pill-count {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-family: var(--font-number, monospace);
+    background: rgba(0, 0, 0, 0.06);
+    color: inherit;
+}
+
+[data-theme="dark"] .loan-pill-count {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.loan-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot-due {
+    background: #dc2626;
+    box-shadow: 0 0 6px rgba(220, 38, 38, 0.4);
+}
+
+.dot-paid {
+    background: #16a34a;
+    box-shadow: 0 0 6px rgba(22, 163, 74, 0.4);
+}
+
+/* Search Toolbar Row */
+.loan-toolbar-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.loan-search-box {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+}
+
+.loan-search-icon {
+    position: absolute;
+    left: 14px;
+    width: 17px;
+    height: 17px;
+    color: var(--text-secondary, #94a3b8);
+    pointer-events: none;
+}
+
+.loan-search-input {
+    width: 100%;
+    padding: 10px 38px 10px 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border, #cbd5e1);
+    background: var(--bg-surface-elevated, #f8fafc);
+    color: var(--text-main, #0f172a);
+    font-size: 0.9rem;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.loan-search-input:focus {
+    border-color: #d4af37;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+}
+
+[data-theme="dark"] .loan-search-input {
+    background: #1c202d;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .loan-search-input:focus {
+    border-color: #ffd700;
+    background: #232838;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+.loan-search-clear {
+    position: absolute;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary, #64748b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+[data-theme="dark"] .loan-search-clear {
+    background: rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+}
+
+.loan-search-clear svg {
+    width: 13px;
+    height: 13px;
+}
+
+.loan-toolbar-summary {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #64748b);
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .loan-toolbar-summary {
+    color: #94a3b8;
+}
+
+.loan-toolbar-summary strong {
+    color: var(--text-main, #0f172a);
+    font-family: var(--font-number, monospace);
+}
+
+[data-theme="dark"] .loan-toolbar-summary strong {
+    color: #ffd700;
+}
+
+/* Footer Table Row */
+#loan-tfoot tr {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.16) 0%, rgba(212, 175, 55, 0.1) 100%) !important;
+    border-top: 2px solid #b8860b !important;
+}
+
+[data-theme="dark"] #loan-tfoot tr {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(25, 30, 42, 0.95) 100%) !important;
+    border-top: 2px solid #ffd700 !important;
+}
+
+#loan-tfoot td {
+    padding: 14px 10px;
+    border-bottom: none;
+}
+
+[data-theme="dark"] #loan-tfoot td {
+    color: #f1f5f9;
+}
+
+/* Mobile Sticky Summary Card */
+.loan-mobile-summary-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    color: #ffffff;
+}
+
+.loan-mobile-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loan-mobile-summary-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #ffd700;
+}
+
+.loan-mobile-summary-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.loan-mobile-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.loan-mobile-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.loan-mobile-summary-lbl {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.loan-mobile-summary-val {
+    font-size: 0.95rem;
+    font-weight: 800;
+    font-family: var(--font-number, monospace);
+}
+
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
+    .loan-toolbar-top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .loan-month-nav {
+        justify-content: space-between;
+        width: 100%;
+    }
+    .loan-month-display-wrap {
+        flex: 1;
+        justify-content: center;
+    }
+    .loan-filter-pills {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .loan-filter-pill {
+        justify-content: center;
+        padding: 8px 6px;
+    }
+    .loan-toolbar-bottom {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .loan-search-box {
+        max-width: 100%;
+    }
+    .loan-toolbar-summary {
+        text-align: right;
+        font-size: 0.8rem;
+    }
+}
+
+.ln-customer-link {
+    color: #111827;
+    font-weight: 900;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    font-family: var(--font-heading);
+    transition: color 0.15s ease;
+}
+.ln-customer-link:hover {
+    color: #b8860b;
+}
+[data-theme="dark"] .ln-customer-link {
+    color: #f8fafc;
+}
+[data-theme="dark"] .ln-customer-link:hover {
+    color: #ffd700;
+}
+
+/* ==========================================================================
+   PHASE 2: ADD LOAN MODAL INTELLIGENCE & EMI PREVIEW STYLES
+   ========================================================================== */
+.ln-tenure-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ln-tenure-btn {
+    flex: 1;
+    min-width: 58px;
+    padding: 7px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1.5px solid var(--border, #cbd5e1);
+    background: var(--bg-surface-elevated, #f8fafc);
+    color: var(--text-secondary, #64748b);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+
+.ln-tenure-btn:hover {
+    border-color: #d4af37;
+    color: var(--text-main, #0f172a);
+}
+
+.ln-tenure-btn.active {
+    border-color: #d4af37;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(212, 175, 55, 0.15) 100%);
+    color: #1a1400;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.2);
+}
+
+[data-theme="dark"] .ln-tenure-btn {
+    background: #1c202d;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .ln-tenure-btn.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(184, 134, 11, 0.2) 100%);
+    color: #ffd700;
+    border-color: #ffd700;
+}
+
+/* EMI Calculator Preview Card */
+.ln-calc-preview-card {
+    border-radius: 14px;
+    border: 1.5px solid rgba(212, 175, 55, 0.45);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(212, 175, 55, 0.04) 100%);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.08);
+}
+
+[data-theme="dark"] .ln-calc-preview-card {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, #151821 100%);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.ln-calc-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+    padding-bottom: 6px;
+}
+
+.ln-calc-preview-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b8860b;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+[data-theme="dark"] .ln-calc-preview-title {
+    color: #ffd700;
+}
+
+.ln-calc-preview-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(212, 175, 55, 0.18);
+    color: #b8860b;
+}
+
+[data-theme="dark"] .ln-calc-preview-badge {
+    color: #ffd700;
+    background: rgba(212, 175, 55, 0.25);
+}
+
+.ln-calc-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.ln-calc-stat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ln-calc-stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text-secondary, #64748b);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+[data-theme="dark"] .ln-calc-stat-lbl {
+    color: #94a3b8;
+}
+
+.ln-calc-stat-val {
+    font-size: 1.05rem;
+    font-weight: 900;
+    font-family: var(--font-number, monospace);
+    letter-spacing: 0.2px;
+}
+
+@media (max-width: 600px) {
+    .ln-calc-preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px 8px;
+    }
+}
+
+/* ==========================================================================
+   PHASE 3: LOAN WHATSAPP, CALL & PASSBOOK ACTION STYLES
+   ========================================================================== */
+.ln-row-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #16a34a;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(22, 163, 74, 0.15);
+}
+.ln-row-wa-btn:hover {
+    background: #22c55e;
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(34, 197, 94, 0.35);
+}
+[data-theme="dark"] .ln-row-wa-btn {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.35);
+    color: #4ade80;
+}
+[data-theme="dark"] .ln-row-wa-btn:hover {
+    background: #22c55e;
+    color: #ffffff;
+}
+
+.ln-row-call-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.15);
+    text-decoration: none;
+}
+.ln-row-call-btn:hover {
+    background: #2563eb;
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(37, 99, 235, 0.35);
+}
+[data-theme="dark"] .ln-row-call-btn {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.35);
+    color: #60a5fa;
+}
+[data-theme="dark"] .ln-row-call-btn:hover {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+.ln-det-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
 </style>
     <style>
         .toolbar-toggle-btn { display: none; }
@@ -2954,12 +3654,66 @@ body[data-app-state="loan"] .app-container {
                     </div>
                 </div>
             </div>
-            <!-- Table -->
+            <!-- Table Section with Toolbar -->
             <div class="loan-table-section" style="padding: 24px 24px 40px 24px; background: #f8f9fc; flex: 1; display: flex; flex-direction: column;">
-                <div class="section-header" style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
-                    <h2 class="section-title" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0;">Current Month Installments</h2>
+                <div class="section-header" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display:flex; align-items:baseline; gap:10px;">
+                        <h2 class="section-title" id="loan-section-title" style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin: 0;">Monthly Installments</h2>
+                        <span id="loan-active-month-sub" style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);"></span>
+                    </div>
                     <span class="badge" id="loan-total-badge" style="display: flex; align-items: center; font-weight: 700;">0 Installments</span>
                 </div>
+
+                <!-- Loan Dashboard Toolbar -->
+                <div class="loan-toolbar-container">
+                    <div class="loan-toolbar-top">
+                        <!-- Month & Year Navigation -->
+                        <div class="loan-month-nav">
+                            <button id="ln-btn-prev-month" class="loan-nav-btn" title="Previous Month" aria-label="Previous Month">
+                                <i data-lucide="chevron-left" style="width:18px;height:18px;"></i>
+                            </button>
+                            <div class="loan-month-display-wrap" id="ln-month-wrap">
+                                <i data-lucide="calendar" class="loan-month-icon"></i>
+                                <span id="ln-month-title" class="loan-month-title">Current Month</span>
+                                <input type="month" id="ln-month-picker" class="loan-month-picker" title="Select Month & Year" aria-label="Select Month & Year">
+                            </div>
+                            <button id="ln-btn-next-month" class="loan-nav-btn" title="Next Month" aria-label="Next Month">
+                                <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+                            </button>
+                            <button id="ln-btn-today" class="loan-today-btn" title="Jump to Current Month">
+                                Today
+                            </button>
+                        </div>
+
+                        <!-- Status Filter Pills -->
+                        <div class="loan-filter-pills" role="tablist" aria-label="Installment Status Filter">
+                            <button class="loan-filter-pill active" data-filter="all" id="ln-filter-all">
+                                All <span class="loan-pill-count" id="ln-count-all">0</span>
+                            </button>
+                            <button class="loan-filter-pill filter-due" data-filter="due" id="ln-filter-due">
+                                <span class="loan-dot dot-due"></span> Due <span class="loan-pill-count" id="ln-count-due">0</span>
+                            </button>
+                            <button class="loan-filter-pill filter-paid" data-filter="paid" id="ln-filter-paid">
+                                <span class="loan-dot dot-paid"></span> Paid <span class="loan-pill-count" id="ln-count-paid">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search & Stats Toolbar Row -->
+                    <div class="loan-toolbar-bottom">
+                        <div class="loan-search-box">
+                            <i data-lucide="search" class="loan-search-icon"></i>
+                            <input type="text" id="ln-search-input" class="loan-search-input" placeholder="Search by customer name..." autocomplete="off">
+                            <button id="ln-search-clear" class="loan-search-clear" title="Clear search" style="display:none;" aria-label="Clear Search">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                        <div class="loan-toolbar-summary" id="ln-toolbar-summary">
+                            Showing <strong id="ln-visible-count">0</strong> of <span id="ln-month-total-count">0</span> installments
+                        </div>
+                    </div>
+                </div>
+
                 <div class="loan-desktop-view">
                 <div class="loan-table-card" style="border: 2px solid #000000; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px #000000, 0 12px 32px rgba(0,0,0,0.15); background: var(--bg-surface);">
                     <div class="table-responsive" style="margin: 0; overflow-x: auto;">
@@ -2997,6 +3751,17 @@ body[data-app-state="loan"] .app-container {
                                     </td>
                                 </tr>
                             </tbody>
+                            <tfoot id="loan-tfoot" style="display: none;">
+                                <tr>
+                                    <td style="text-align: center; font-weight: 900; font-size: 0.85rem; padding: 14px 8px; color: var(--text-main); border-right: 1px solid var(--border-table);">TOTAL</td>
+                                    <td style="text-align: left; padding: 14px 14px; font-weight: 800; font-size: 0.95rem; font-family: var(--font-heading); color: var(--text-main); border-right: 1px solid var(--border-table);" id="ln-foot-summary">0 Loans</td>
+                                    <td style="text-align: right; font-weight: 900; font-size: 1.15rem; font-family: var(--font-number); color: #4338ca; padding: 14px 14px; border-right: 1px solid var(--border-table);" id="ln-foot-total-loan">₹0</td>
+                                    <td style="text-align: right; font-weight: 900; font-size: 1.15rem; font-family: var(--font-number); color: #b45309; padding: 14px 14px; border-right: 1px solid var(--border-table);" id="ln-foot-total-interest">₹0</td>
+                                    <td style="text-align: right; font-weight: 900; font-size: 1.2rem; font-family: var(--font-number); color: #15803d; padding: 14px 14px; border-right: 1px solid var(--border-table);" id="ln-foot-total-emi">₹0</td>
+                                    <td style="text-align: center; padding: 14px 8px; font-size: 0.85rem; font-weight: 800; color: #1e3a8a; border-right: 1px solid var(--border-table);" id="ln-foot-paid-count">0 Paid</td>
+                                    <td style="text-align: center; padding: 14px 8px;" id="ln-foot-completion-badge">—</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -3509,7 +4274,7 @@ body[data-app-state="loan"] .app-container {
                     </div>
     <!-- ADD LOAN MODAL -->
     <div id="ln-add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);z-index:9999999;align-items:center;justify-content:center;transition:opacity 0.25s;opacity:0;">
-        <div class="ln-modal-inner" style="width:calc(100% - 32px);max-width:480px;border-radius:20px;overflow:hidden;border:1.5px solid rgba(212,175,55,0.4);box-shadow:0 24px 64px rgba(0,0,0,0.4);background:var(--bg-surface);transform:translateY(40px) scale(0.97);transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s;">
+        <div class="ln-modal-inner" style="width:calc(100% - 32px);max-width:540px;border-radius:20px;overflow:hidden;border:1.5px solid rgba(212,175,55,0.45);box-shadow:0 24px 64px rgba(0,0,0,0.4);background:var(--bg-surface);transform:translateY(40px) scale(0.97);transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s;">
             <div style="background:#ffffff;padding:18px 22px;border-bottom:2px solid #eab308;display:flex;align-items:center;justify-content:space-between;">
                 <div style="display:flex;align-items:center;gap:12px;">
                     <div style="width:40px;height:40px;background:linear-gradient(135deg,#FFD700,#D4AF37);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(212,175,55,0.3);">
@@ -3517,43 +4282,85 @@ body[data-app-state="loan"] .app-container {
                     </div>
                     <div>
                         <div style="font-size:1.15rem;font-weight:800;color:#111827;font-family:var(--font-heading);">Add New Loan</div>
-                        <div style="font-size:0.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;font-weight:600;">Create loan record</div>
+                        <div style="font-size:0.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;font-weight:600;">Create & schedule loan record</div>
                     </div>
                 </div>
                 <button id="ln-modal-close" style="width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:1px solid #e5e7eb;color:#374151;cursor:pointer;font-size:1.2rem;font-weight:bold;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.15s ease;" onmouseover="this.style.background='#fee2e2';this.style.color='#ef4444';" onmouseout="this.style.background='#f3f4f6';this.style.color='#374151';">&times;</button>
             </div>
-            <div style="padding:22px;display:flex;flex-direction:column;gap:16px;max-height:62vh;overflow-y:auto;">
-                <form id="ln-add-form" style="display:flex;flex-direction:column;gap:16px;">
-                    <div style="display:flex;flex-direction:column;gap:5px;">
-                        <label for="ln-customer-name" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Customer Name *</label>
-                        <input type="text" id="ln-customer-name" placeholder="e.g. Rajan Kumar" required autocomplete="off"
-                            style="padding:11px 13px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);font-size:0.9rem;font-weight:600;width:100%;box-sizing:border-box;outline:none;">
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:5px;">
-                        <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Loan Amount (₹) *</label>
-                        <div style="position:relative;">
-                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
-                            <input type="number" id="ln-amount" placeholder="e.g. 50000" min="1" required style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+            <div style="padding:22px;display:flex;flex-direction:column;gap:16px;max-height:72vh;overflow-y:auto;">
+                <form id="ln-add-form" style="display:flex;flex-direction:column;gap:15px;">
+                    <!-- Customer Name & Phone Row -->
+                    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px;">
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-customer-name" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Customer Name <span style="color:#D4AF37;">*</span></label>
+                            <input type="text" id="ln-customer-name" list="ln-members-datalist" placeholder="Type or pick chit member" required autocomplete="off"
+                                style="padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);font-size:0.9rem;font-weight:600;width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                            <datalist id="ln-members-datalist"></datalist>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-customer-phone" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Phone Number</label>
+                            <div style="position:relative;">
+                                <input type="tel" id="ln-customer-phone" placeholder="e.g. 9841012345" autocomplete="tel"
+                                    style="padding:10px 12px 10px 32px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                                <i data-lucide="phone" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#D4AF37;pointer-events:none;"></i>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Rate and Date row -->
+
+                    <!-- Amount and Rate row -->
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Loan Amount (₹) <span style="color:#D4AF37;">*</span></label>
+                            <div style="position:relative;">
+                                <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
+                                <input type="number" id="ln-amount" placeholder="e.g. 50000" min="1" required style="padding:10px 12px 10px 26px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                            </div>
+                        </div>
                         <div style="display:flex;flex-direction:column;gap:5px;">
                             <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Annual Interest <span style="color:#D4AF37;">*</span></label>
                             <div style="position:relative;">
-                                <input type="number" id="ln-rate" placeholder="e.g. 36" min="0" step="0.01" required style="padding:11px 30px 11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                                <input type="number" id="ln-rate" placeholder="e.g. 36" min="0" step="0.01" required style="padding:10px 28px 10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                                 <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">%</span>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Start Date and Due Day row -->
+                    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px;">
                         <div style="display:flex;flex-direction:column;gap:5px;">
-                            <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Start Date (DD/MM/YYYY) <span style="color:#D4AF37;">*</span></label>
-                            <div style="position:relative;">
-                                <input type="date" id="ln-start-date" required
-                                    style="padding:11px 13px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;cursor:pointer;"
-                                    onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
-                            </div>
+                            <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Start Date <span style="color:#D4AF37;">*</span></label>
+                            <input type="date" id="ln-start-date" required
+                                style="padding:10px 12px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;cursor:pointer;"
+                                onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                         </div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-due-day" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Due Day of Month</label>
+                            <select id="ln-due-day" style="padding:10px 12px;font-size:0.88rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;cursor:pointer;">
+                                <option value="01">1st of Month</option>
+                                <option value="05" selected>5th of Month</option>
+                                <option value="10">10th of Month</option>
+                                <option value="15">15th of Month</option>
+                                <option value="20">20th of Month</option>
+                                <option value="25">25th of Month</option>
+                                <option value="28">28th of Month</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Repayment Tenure Duration -->
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Repayment Tenure</label>
+                            <span style="font-size:0.75rem;font-weight:800;color:#b8860b;font-family:var(--font-number);" id="ln-tenure-display">12 Months</span>
+                        </div>
+                        <div class="ln-tenure-group">
+                            <button type="button" class="ln-tenure-btn" data-months="6">6 Mo</button>
+                            <button type="button" class="ln-tenure-btn active" data-months="12">12 Mo</button>
+                            <button type="button" class="ln-tenure-btn" data-months="24">24 Mo</button>
+                            <button type="button" class="ln-tenure-btn" data-months="36">36 Mo</button>
+                            <button type="button" class="ln-tenure-btn" data-months="0">Ongoing</button>
+                        </div>
+                        <input type="hidden" id="ln-tenure-months" value="12">
                     </div>
                     
                     <!-- Mode -->
@@ -3580,7 +4387,7 @@ body[data-app-state="loan"] .app-container {
                         <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Monthly Principal Payment (₹) <span style="color:#D4AF37;">*</span></label>
                         <div style="position:relative;">
                             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
-                            <input type="number" id="ln-principal-amount" placeholder="e.g. 5000" min="1" style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                            <input type="number" id="ln-principal-amount" placeholder="e.g. 5000" min="1" style="padding:10px 12px 10px 26px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                         </div>
                     </div>
 
@@ -3589,8 +4396,43 @@ body[data-app-state="loan"] .app-container {
                         <label style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Fixed Monthly EMI Amount (₹) <span style="color:#D4AF37;">*</span></label>
                         <div style="position:relative;">
                             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:#D4AF37;pointer-events:none;">₹</span>
-                            <input type="number" id="ln-fixed-emi-amount" placeholder="e.g. 1000" min="1" style="padding:11px 13px 11px 26px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
+                            <input type="number" id="ln-fixed-emi-amount" placeholder="e.g. 1000" min="1" style="padding:10px 12px 10px 26px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='var(--border)'">
                         </div>
+                    </div>
+
+                    <!-- Live Interactive EMI Calculator Preview Card -->
+                    <div class="ln-calc-preview-card" id="ln-calc-preview-box">
+                        <div class="ln-calc-preview-header">
+                            <span class="ln-calc-preview-title">
+                                <i data-lucide="calculator" style="width:14px;height:14px;"></i> Live Repayment Preview
+                            </span>
+                            <span class="ln-calc-preview-badge" id="ln-prev-tenure-badge">12 Months</span>
+                        </div>
+                        <div class="ln-calc-preview-grid">
+                            <div class="ln-calc-stat-block">
+                                <span class="ln-calc-stat-lbl">Monthly Interest</span>
+                                <span class="ln-calc-stat-val" style="color:#fbbf24;" id="ln-prev-interest">₹0</span>
+                            </div>
+                            <div class="ln-calc-stat-block">
+                                <span class="ln-calc-stat-lbl">Monthly EMI</span>
+                                <span class="ln-calc-stat-val" style="color:#16a34a;" id="ln-prev-emi">₹0</span>
+                            </div>
+                            <div class="ln-calc-stat-block">
+                                <span class="ln-calc-stat-lbl">Total Interest</span>
+                                <span class="ln-calc-stat-val" style="color:#818cf8;" id="ln-prev-total-int">₹0</span>
+                            </div>
+                            <div class="ln-calc-stat-block">
+                                <span class="ln-calc-stat-lbl">Maturity Date</span>
+                                <span class="ln-calc-stat-val" style="color:var(--text-main);font-size:0.88rem;" id="ln-prev-maturity">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guarantor / Collateral Notes (Optional) -->
+                    <div style="display:flex;flex-direction:column;gap:5px;">
+                        <label for="ln-notes" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Guarantor / Collateral Notes (Optional)</label>
+                        <textarea id="ln-notes" rows="2" placeholder="e.g. Gold 16g pledged / Vehicle RC / Ref: Ramesh (98410...)"
+                            style="padding:9px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);font-size:0.85rem;font-weight:500;width:100%;box-sizing:border-box;outline:none;resize:vertical;font-family:var(--font-body);"></textarea>
                     </div>
                 </form>
             </div>
@@ -3609,14 +4451,39 @@ body[data-app-state="loan"] .app-container {
                     <div id="ln-det-name" style="font-size:1.6rem;font-weight:900;color:#000000;font-family:var(--font-heading);text-transform:uppercase;letter-spacing:0.5px;line-height:1.2;"></div>
                     <div id="ln-det-info" style="font-size:0.8rem;color:#4b5563;font-weight:600;margin-top:4px;"></div>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <button id="ln-det-btn-edit" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1.5px solid #d4af37;background:#fffdf0;color:#92400e;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.15s ease;" onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fffdf0'">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <button id="ln-det-btn-foreclose" class="ln-det-action-btn" style="border:1.5px solid #ca8a04;background:linear-gradient(135deg,#fef08a,#fde047);color:#713f12;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        <i data-lucide="zap" style="width:14px;height:14px;color:#713f12;"></i> Settle Loan
+                    </button>
+                    <button id="ln-det-btn-nodue-wa" class="ln-det-action-btn" style="display:none;border:1.5px solid #86efac;background:#f0fdf4;color:#15803d;" onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                        <i data-lucide="award" style="width:14px;height:14px;color:#16a34a;"></i> No-Due Cert
+                    </button>
+                    <button id="ln-det-btn-wa" class="ln-det-action-btn" style="border:1.5px solid #86efac;background:#f0fdf4;color:#15803d;" onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                        <i data-lucide="message-circle" style="width:14px;height:14px;"></i> WhatsApp
+                    </button>
+                    <button id="ln-det-btn-pdf" class="ln-det-action-btn" style="border:1.5px solid #cbd5e1;background:#f8fafc;color:#1e293b;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">
+                        <i data-lucide="download" style="width:14px;height:14px;"></i> Statement PDF
+                    </button>
+                    <button id="ln-det-btn-edit" class="ln-det-action-btn" style="border:1.5px solid #d4af37;background:#fffdf0;color:#92400e;" onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fffdf0'">
                         <i data-lucide="edit-3" style="width:14px;height:14px;"></i> Edit Loan
                     </button>
-                    <button id="ln-det-btn-delete" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1.5px solid #fecaca;background:#fef2f2;color:#b91c1c;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.15s ease;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                    <button id="ln-det-btn-delete" class="ln-det-action-btn" style="border:1.5px solid #fecaca;background:#fef2f2;color:#b91c1c;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
                         <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Delete
                     </button>
                     <button id="ln-det-close" style="width:34px;height:34px;border-radius:50%;background:#f3f4f6;border:1px solid #e5e7eb;color:#374151;cursor:pointer;font-size:1.3rem;font-weight:bold;display:flex;align-items:center;justify-content:center;line-height:1;margin-left:4px;transition:all 0.15s ease;" onmouseover="this.style.background='#fee2e2';this.style.color='#ef4444';" onmouseout="this.style.background='#f3f4f6';this.style.color='#374151';">&times;</button>
+                </div>
+            </div>
+            <!-- Settled / Closed Loan Banner (Shown when loan status is Settled) -->
+            <div id="ln-det-settled-banner" style="display:none;background:linear-gradient(135deg,rgba(34,197,94,0.12) 0%,rgba(212,175,55,0.15) 100%);border-bottom:2px solid #22c55e;padding:12px 24px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#22c55e;color:#fff;font-weight:900;font-size:0.95rem;">✓</span>
+                    <div>
+                        <div style="font-weight:900;font-size:0.95rem;color:#15803d;letter-spacing:0.04em;">LOAN ACCOUNT FULLY SETTLED & CLOSED</div>
+                        <div id="ln-det-settled-sub" style="font-size:0.75rem;color:var(--text-secondary);margin-top:2px;">All principal and interest dues cleared</div>
+                    </div>
+                </div>
+                <div id="ln-det-settled-badge" style="font-size:0.75rem;font-weight:800;padding:4px 12px;border-radius:20px;background:#dcfce7;color:#15803d;border:1px solid #86efac;">
+                    NOC ISSUED
                 </div>
             </div>
             <!-- Summary Metric Cards -->
@@ -3644,6 +4511,18 @@ body[data-app-state="loan"] .app-container {
                         <i data-lucide="trending-up" style="width:12px;height:12px;"></i> Interest Paid
                     </div>
                     <div id="ln-det-intpaid" style="font-size:1.25rem;font-weight:900;color:#b45309;font-family:var(--font-number);margin-top:6px;">₹0</div>
+                </div>
+            </div>
+            <!-- Repayment Progress Bar -->
+            <div id="ln-det-progress-container" style="padding:12px 24px;background:var(--bg-surface);border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-weight:700;">
+                    <span style="color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
+                        <i data-lucide="activity" style="width:14px;height:14px;color:#D4AF37;"></i> Repayment Progress
+                    </span>
+                    <span id="ln-det-progress-text" style="color:var(--text-main);font-family:var(--font-number);font-weight:800;">₹0 / ₹0 (0%)</span>
+                </div>
+                <div style="width:100%;height:10px;background:rgba(212,175,55,0.15);border-radius:10px;overflow:hidden;position:relative;">
+                    <div id="ln-det-progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:10px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);"></div>
                 </div>
             </div>
             <!-- Passbook Installment Table -->
@@ -3711,6 +4590,103 @@ body[data-app-state="loan"] .app-container {
             <div style="padding:14px 22px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
                 <button id="ln-edit-modal-cancel" class="btn btn-secondary" style="padding:10px 22px;border-radius:10px;font-weight:700;">Cancel</button>
                 <button id="ln-btn-edit-save" style="padding:10px 26px;border-radius:10px;font-weight:800;background:linear-gradient(135deg,#FFD700,#D4AF37);color:#1a1400;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(212,175,55,0.35);font-size:0.9rem;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOAN FORECLOSURE / EARLY SETTLEMENT MODAL -->
+    <div id="ln-foreclose-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);z-index:10000001;align-items:center;justify-content:center;transition:opacity 0.25s;opacity:0;">
+        <div class="ln-modal-inner" style="width:calc(100% - 32px);max-width:540px;border-radius:20px;overflow:hidden;border:1.5px solid rgba(212,175,55,0.45);box-shadow:0 24px 64px rgba(0,0,0,0.7);background:var(--bg-surface);transform:translateY(40px) scale(0.97);transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s;">
+            <div style="background:#ffffff;padding:18px 22px;border-bottom:2px solid #eab308;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#FFD700,#D4AF37);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(212,175,55,0.3);">
+                        <i data-lucide="zap" style="width:20px;height:20px;color:#1a1400;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:1.15rem;font-weight:800;color:#111827;font-family:var(--font-heading);">Early Loan Settlement</div>
+                        <div id="ln-fc-sub" style="font-size:0.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;font-weight:600;">Close loan & issue clearance NOC</div>
+                    </div>
+                </div>
+                <button id="ln-fc-modal-close" style="width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:1px solid #e5e7eb;color:#374151;cursor:pointer;font-size:1.2rem;font-weight:bold;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.15s ease;" onmouseover="this.style.background='#fee2e2';this.style.color='#ef4444';" onmouseout="this.style.background='#f3f4f6';this.style.color='#374151';">&times;</button>
+            </div>
+
+            <div style="padding:22px;display:flex;flex-direction:column;gap:16px;max-height:68vh;overflow-y:auto;">
+                <form id="ln-foreclose-form" style="display:flex;flex-direction:column;gap:15px;">
+                    <input type="hidden" id="ln-fc-loan-id">
+
+                    <!-- Customer & Outstanding Quick Stats -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px;background:#f8fafc;border-radius:12px;border:1px solid var(--border);">
+                        <div>
+                            <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Customer</div>
+                            <div id="ln-fc-customer-name" style="font-size:1rem;font-weight:900;color:var(--text-main);margin-top:2px;">—</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Outstanding Principal</div>
+                            <div id="ln-fc-outstanding-disp" style="font-size:1.15rem;font-weight:900;color:#dc2626;font-family:var(--font-number);margin-top:2px;">₹0</div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Accrued Interest -->
+                    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px;">
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-fc-date" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Settlement Date <span style="color:#D4AF37;">*</span></label>
+                            <input type="date" id="ln-fc-date" required
+                                style="padding:10px 12px;font-size:0.9rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-fc-accrued-int" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Accrued Interest (₹)</label>
+                            <input type="number" id="ln-fc-accrued-int" min="0" step="1"
+                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
+                        </div>
+                    </div>
+
+                    <!-- Discount / Waiver & Fee Charges -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-fc-waiver" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Interest Waiver / Rebate (₹)</label>
+                            <input type="number" id="ln-fc-waiver" placeholder="0" min="0" value="0"
+                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:#16a34a;width:100%;box-sizing:border-box;outline:none;">
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <label for="ln-fc-charges" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Foreclosure Charges (₹)</label>
+                            <input type="number" id="ln-fc-charges" placeholder="0" min="0" value="0"
+                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
+                        </div>
+                    </div>
+
+                    <!-- Net Final Payoff Card -->
+                    <div style="padding:16px;border-radius:12px;background:linear-gradient(135deg,rgba(212,175,55,0.12) 0%,rgba(34,197,94,0.12) 100%);border:1.5px solid rgba(212,175,55,0.45);display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div style="font-size:0.72rem;color:var(--text-secondary);font-weight:800;text-transform:uppercase;letter-spacing:0.06em;">Net Payoff Amount to Collect</div>
+                            <div style="font-size:0.68rem;color:#b45309;margin-top:2px;">Principal + Interest − Waiver + Charges</div>
+                        </div>
+                        <div id="ln-fc-net-payoff" style="font-size:1.6rem;font-weight:900;color:#15803d;font-family:var(--font-number);">₹0</div>
+                    </div>
+
+                    <!-- Payment Mode & Notes -->
+                    <div style="display:flex;flex-direction:column;gap:5px;">
+                        <label for="ln-fc-mode" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Payment Mode <span style="color:#D4AF37;">*</span></label>
+                        <select id="ln-fc-mode" style="padding:10px 12px;font-size:0.88rem;font-weight:600;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
+                            <option value="Cash" selected>Cash</option>
+                            <option value="UPI / GPay / PhonePe">UPI / GPay / PhonePe</option>
+                            <option value="Bank Transfer">Bank Transfer (NEFT/IMPS)</option>
+                            <option value="Cheque">Cheque</option>
+                        </select>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:5px;">
+                        <label for="ln-fc-notes" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Settlement / Collateral Release Notes</label>
+                        <textarea id="ln-fc-notes" rows="2" placeholder="e.g. Paid in full via GPay. Pledged gold ornaments returned in original condition."
+                            style="padding:9px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);font-size:0.85rem;font-weight:500;width:100%;box-sizing:border-box;outline:none;resize:vertical;font-family:var(--font-body);"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div style="padding:14px 22px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+                <button id="ln-fc-btn-cancel" class="btn btn-secondary" style="padding:10px 22px;border-radius:10px;font-weight:700;">Cancel</button>
+                <button id="ln-fc-btn-confirm" style="padding:10px 26px;border-radius:10px;font-weight:800;background:linear-gradient(135deg,#22c55e,#16a34a);color:#ffffff;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(34,197,94,0.35);font-size:0.9rem;display:flex;align-items:center;gap:6px;">
+                    <i data-lucide="check-circle-2" style="width:16px;height:16px;"></i> Confirm Settlement & Close
+                </button>
             </div>
         </div>
     </div>
@@ -4879,7 +5855,7 @@ body[data-app-state="loan"] .app-container {
         window.addEventListener('online',  updateStatus);
     })();
     </script>
-    <script src="js/loan.js?v=1003"></script>
+    <script src="js/loan.js?v=1005"></script>
 </body>
 </html>
 <script>window.onerror = function(msg, url, lineNo, columnNo, error) { console.error("App Error:", msg, "Line:", lineNo, error); return true; }</script>
