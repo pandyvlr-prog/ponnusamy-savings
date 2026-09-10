@@ -8,6 +8,16 @@
 const LoanApp = (() => {
 
     let activeLoanId = null;
+    let cachedLoans = null;
+    let cachedInstallments = null;
+
+    function invalidateCache() {
+        cachedLoans = null;
+        cachedInstallments = null;
+        if (window.State && State.isDirty) {
+            State.isDirty.loan = true;
+        }
+    }
 
     // ─── SUPABASE HELPERS ───────────────────────────────────────────────────────
 
@@ -60,20 +70,24 @@ const LoanApp = (() => {
 
     // ─── DATA ACCESS ────────────────────────────────────────────────────────────
 
-    async function getLoans() {
+    async function getLoans(forceRefresh = false) {
+        if (!forceRefresh && cachedLoans) return cachedLoans;
         const client = getClient();
-        if (!client) return [];
+        if (!client) return cachedLoans || [];
         const { data, error } = await client.from('loans').select('*').order('created_at', { ascending: false });
-        if (error) { console.error('getLoans error:', error); return []; }
-        return data || [];
+        if (error) { console.error('getLoans error:', error); return cachedLoans || []; }
+        cachedLoans = data || [];
+        return cachedLoans;
     }
 
-    async function getAllInstallments() {
+    async function getAllInstallments(forceRefresh = false) {
+        if (!forceRefresh && cachedInstallments) return cachedInstallments;
         const client = getClient();
-        if (!client) return [];
+        if (!client) return cachedInstallments || [];
         const { data, error } = await client.from('loan_installments').select('*');
-        if (error) { console.error('getAllInstallments error:', error); return []; }
-        return data || [];
+        if (error) { console.error('getAllInstallments error:', error); return cachedInstallments || []; }
+        cachedInstallments = data || [];
+        return cachedInstallments;
     }
 
     async function getInstallmentsForLoan(loanId) {
@@ -187,6 +201,7 @@ const LoanApp = (() => {
             }
         }
 
+        invalidateCache();
         return loan;
     }
 
@@ -211,6 +226,7 @@ const LoanApp = (() => {
             customer_name: customerName
         }).eq('loan_id', loanId);
 
+        invalidateCache();
         return true;
     }
 
@@ -230,6 +246,7 @@ const LoanApp = (() => {
             return false;
         }
 
+        invalidateCache();
         return true;
     }
 
@@ -239,39 +256,57 @@ const LoanApp = (() => {
         const update = { status: newStatus, paid_at: newStatus === 'Paid' ? new Date().toISOString() : null };
         const { error } = await client.from('loan_installments').update(update).eq('id', id);
         if (error) { console.error('Status update error:', error); return false; }
+        
+        // Instant in-memory cache update
+        if (cachedInstallments) {
+            const inst = cachedInstallments.find(i => i.id === id);
+            if (inst) {
+                inst.status = newStatus;
+                inst.paid_at = update.paid_at;
+            }
+        }
+        if (window.State && State.isDirty) {
+            State.isDirty.loan = true;
+        }
         return true;
     }
 
     // ─── RENDER DASHBOARD ────────────────────────────────────────────────────────
 
-    async function renderDashboard() {
+    async function renderDashboard(forceRefresh = false) {
         const tbody = document.getElementById('loan-tbody');
         if (!tbody) return;
-        tbody.innerHTML = `
-            <tr class="loan-skeleton-tr">
-                <td colspan="7" style="padding: 10px 12px; border: none;">
-                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0;"></div>
-                </td>
-            </tr>
-            <tr class="loan-skeleton-tr">
-                <td colspan="7" style="padding: 10px 12px; border: none;">
-                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.15s;"></div>
-                </td>
-            </tr>
-            <tr class="loan-skeleton-tr">
-                <td colspan="7" style="padding: 10px 12px; border: none;">
-                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.3s;"></div>
-                </td>
-            </tr>
-            <tr class="loan-skeleton-tr">
-                <td colspan="7" style="padding: 10px 12px; border: none;">
-                    <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.45s;"></div>
-                </td>
-            </tr>
-        `;
 
-        const loans = await getLoans();
-        const allInsts = await getAllInstallments();
+        const hasExistingContent = tbody.children.length > 0 && !tbody.querySelector('.loan-skeleton-tr');
+
+        // Only show skeleton placeholders if there is no content on screen yet and cache is empty
+        if (!hasExistingContent && (!cachedLoans || !cachedInstallments)) {
+            tbody.innerHTML = `
+                <tr class="loan-skeleton-tr">
+                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0;"></div>
+                    </td>
+                </tr>
+                <tr class="loan-skeleton-tr">
+                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.15s;"></div>
+                    </td>
+                </tr>
+                <tr class="loan-skeleton-tr">
+                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.3s;"></div>
+                    </td>
+                </tr>
+                <tr class="loan-skeleton-tr">
+                    <td colspan="7" style="padding: 10px 12px; border: none;">
+                        <div class="loan-skeleton-row" style="height: 48px; border-radius: 8px; margin: 0; animation-delay: 0.45s;"></div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        const loans = await getLoans(forceRefresh);
+        const allInsts = await getAllInstallments(forceRefresh);
         const cm = currentMonthStr();
         const today = new Date().toISOString().split('T')[0];
 
@@ -434,6 +469,11 @@ const LoanApp = (() => {
                 openDetailModal(loanId, allL, allI);
             });
         });
+
+        // Clean up dirty state now that render is complete
+        if (window.State && State.isDirty) {
+            State.isDirty.loan = false;
+        }
     }
 
     // ─── ADD LOAN MODAL ──────────────────────────────────────────────────────────
@@ -809,17 +849,17 @@ const LoanApp = (() => {
             btnAdd.addEventListener('click', openAddModal);
         }
 
-        // Watch navigation to loan screen
-        const observer = new MutationObserver(() => {
-            if (document.body.getAttribute('data-app-state') === 'loan') renderDashboard();
-        });
-        observer.observe(document.body, { attributes: true, attributeFilter: ['data-app-state'] });
-
-        if (document.body.getAttribute('data-app-state') === 'loan') renderDashboard();
+        // Preload loan data in background so the first visit is instant
+        setTimeout(() => {
+            renderDashboard();
+        }, 150);
     }
 
-    return { init, renderDashboard };
+    return { init, renderDashboard, invalidateCache };
 })();
+
+// Explicitly bind to window for global access
+window.LoanApp = LoanApp;
 
 // Boot
 if (document.readyState === 'loading') {

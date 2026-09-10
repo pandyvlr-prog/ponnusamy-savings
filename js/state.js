@@ -19,7 +19,8 @@ const State = {
         dashboard: true,
         pnl: true,
         notes: true,
-        members: true
+        members: true,
+        loan: true
     }
 };
 
@@ -683,7 +684,8 @@ async function loadState() {
                     dashboard: true,
                     pnl: true,
                     notes: true,
-                    members: true
+                    members: true,
+                    loan: true
                 };
                 
                 // Force a UI refresh of the currently active view
@@ -977,7 +979,8 @@ async function saveState() {
         dashboard: true,
         pnl: true,
         notes: true,
-        members: true
+        members: true,
+        loan: true
     };
     
     // Immediately auto-commit to Supabase Cloud for real-time cross-device sync!

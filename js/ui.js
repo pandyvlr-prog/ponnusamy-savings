@@ -274,8 +274,11 @@ function switchView(viewId) {
                 window.showTenureSelector();
             }
         } else if (viewId === 'screen-loan') {
-            if (window.LoanApp && typeof window.LoanApp.renderDashboard === 'function') {
-                window.LoanApp.renderDashboard();
+            if (State.isDirty.loan) {
+                if (window.LoanApp && typeof window.LoanApp.renderDashboard === 'function') {
+                    window.LoanApp.renderDashboard();
+                }
+                State.isDirty.loan = false;
             }
         }
     }
