@@ -4492,25 +4492,25 @@ body[data-app-state="loan"] .app-container {
                     <div style="font-size:0.68rem;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;display:flex;align-items:center;gap:4px;">
                         <i data-lucide="check-circle" style="width:12px;height:12px;"></i> Collected
                     </div>
-                    <div id="ln-det-collected" style="font-size:1.25rem;font-weight:900;color:#15803d;font-family:var(--font-number);margin-top:6px;">₹0</div>
+                    <div id="ln-det-collected" style="font-size:1.25rem;font-weight:900;color:#15803d;font-family:var(--font-body);font-variant-numeric:tabular-nums;margin-top:6px;">₹0</div>
                 </div>
                 <div style="background:#ffffff;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
                     <div style="font-size:0.68rem;color:#b91c1c;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;display:flex;align-items:center;gap:4px;">
                         <i data-lucide="clock" style="width:12px;height:12px;"></i> Outstanding
                     </div>
-                    <div id="ln-det-outstanding" style="font-size:1.25rem;font-weight:900;color:#dc2626;font-family:var(--font-number);margin-top:6px;">₹0</div>
+                    <div id="ln-det-outstanding" style="font-size:1.25rem;font-weight:900;color:#dc2626;font-family:var(--font-body);font-variant-numeric:tabular-nums;margin-top:6px;">₹0</div>
                 </div>
                 <div style="background:#ffffff;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
                     <div style="font-size:0.68rem;color:#4338ca;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;display:flex;align-items:center;gap:4px;">
                         <i data-lucide="pie-chart" style="width:12px;height:12px;"></i> Principal Paid
                     </div>
-                    <div id="ln-det-prinpaid" style="font-size:1.25rem;font-weight:900;color:#4338ca;font-family:var(--font-number);margin-top:6px;">₹0</div>
+                    <div id="ln-det-prinpaid" style="font-size:1.25rem;font-weight:900;color:#4338ca;font-family:var(--font-body);font-variant-numeric:tabular-nums;margin-top:6px;">₹0</div>
                 </div>
                 <div style="background:#ffffff;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
                     <div style="font-size:0.68rem;color:#b45309;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;display:flex;align-items:center;gap:4px;">
                         <i data-lucide="trending-up" style="width:12px;height:12px;"></i> Interest Paid
                     </div>
-                    <div id="ln-det-intpaid" style="font-size:1.25rem;font-weight:900;color:#b45309;font-family:var(--font-number);margin-top:6px;">₹0</div>
+                    <div id="ln-det-intpaid" style="font-size:1.25rem;font-weight:900;color:#b45309;font-family:var(--font-body);font-variant-numeric:tabular-nums;margin-top:6px;">₹0</div>
                 </div>
             </div>
             <!-- Repayment Progress Bar -->
@@ -4519,7 +4519,7 @@ body[data-app-state="loan"] .app-container {
                     <span style="color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
                         <i data-lucide="activity" style="width:14px;height:14px;color:#D4AF37;"></i> Repayment Progress
                     </span>
-                    <span id="ln-det-progress-text" style="color:var(--text-main);font-family:var(--font-number);font-weight:800;">₹0 / ₹0 (0%)</span>
+                    <span id="ln-det-progress-text" style="color:var(--text-main);font-family:var(--font-body);font-variant-numeric:tabular-nums;font-weight:800;">₹0 / ₹0 (0%)</span>
                 </div>
                 <div style="width:100%;height:10px;background:rgba(212,175,55,0.15);border-radius:10px;overflow:hidden;position:relative;">
                     <div id="ln-det-progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:10px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);"></div>
@@ -4618,11 +4618,11 @@ body[data-app-state="loan"] .app-container {
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px;background:#f8fafc;border-radius:12px;border:1px solid var(--border);">
                         <div>
                             <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Customer</div>
-                            <div id="ln-fc-customer-name" style="font-size:1rem;font-weight:900;color:var(--text-main);margin-top:2px;">—</div>
+                            <div id="ln-fc-customer-name" style="font-size:1rem;font-weight:900;color:var(--text-main);font-family:var(--font-body);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;">—</div>
                         </div>
                         <div style="text-align:right;">
                             <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Outstanding Principal</div>
-                            <div id="ln-fc-outstanding-disp" style="font-size:1.15rem;font-weight:900;color:#dc2626;font-family:var(--font-number);margin-top:2px;">₹0</div>
+                            <div id="ln-fc-outstanding-disp" style="font-size:1.15rem;font-weight:900;color:#dc2626;font-family:var(--font-body);font-variant-numeric:tabular-nums;margin-top:2px;">₹0</div>
                         </div>
                     </div>
 
@@ -4636,7 +4636,7 @@ body[data-app-state="loan"] .app-container {
                         <div style="display:flex;flex-direction:column;gap:5px;">
                             <label for="ln-fc-accrued-int" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Accrued Interest (₹)</label>
                             <input type="number" id="ln-fc-accrued-int" min="0" step="1"
-                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
+                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-body);font-variant-numeric:tabular-nums;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
                         </div>
                     </div>
 
@@ -4645,12 +4645,12 @@ body[data-app-state="loan"] .app-container {
                         <div style="display:flex;flex-direction:column;gap:5px;">
                             <label for="ln-fc-waiver" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Interest Waiver / Rebate (₹)</label>
                             <input type="number" id="ln-fc-waiver" placeholder="0" min="0" value="0"
-                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:#16a34a;width:100%;box-sizing:border-box;outline:none;">
+                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-body);font-variant-numeric:tabular-nums;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:#16a34a;width:100%;box-sizing:border-box;outline:none;">
                         </div>
                         <div style="display:flex;flex-direction:column;gap:5px;">
                             <label for="ln-fc-charges" style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Foreclosure Charges (₹)</label>
                             <input type="number" id="ln-fc-charges" placeholder="0" min="0" value="0"
-                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-number);border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
+                                style="padding:10px 12px;font-size:0.95rem;font-weight:700;font-family:var(--font-body);font-variant-numeric:tabular-nums;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-surface);color:var(--text-main);width:100%;box-sizing:border-box;outline:none;">
                         </div>
                     </div>
 
@@ -4660,7 +4660,7 @@ body[data-app-state="loan"] .app-container {
                             <div style="font-size:0.72rem;color:var(--text-secondary);font-weight:800;text-transform:uppercase;letter-spacing:0.06em;">Net Payoff Amount to Collect</div>
                             <div style="font-size:0.68rem;color:#b45309;margin-top:2px;">Principal + Interest − Waiver + Charges</div>
                         </div>
-                        <div id="ln-fc-net-payoff" style="font-size:1.6rem;font-weight:900;color:#15803d;font-family:var(--font-number);">₹0</div>
+                        <div id="ln-fc-net-payoff" style="font-size:1.6rem;font-weight:900;color:#15803d;font-family:var(--font-body);font-variant-numeric:tabular-nums;">&#8377;0</div>
                     </div>
 
                     <!-- Payment Mode & Notes -->

@@ -134,7 +134,7 @@ function renderPnLDashboard() {
             row.innerHTML = `
                 <td class="pnl-td-num" data-label="#">${index + 1}</td>
                 <td class="pnl-td-name" data-label="Group Name">${groupNameHtml}</td>
-                <td class="pnl-td-center" data-label="Duration">${group.duration}M / ${schemeString}</td>
+                <td class="pnl-td-center" data-label="Duration"><span class="app-scheme-pill">${schemeString} / ${group.duration}M</span></td>
                 <td class="pnl-td-right pnl-val-green" data-label="Collected">₹${formatNumberIndian(pnl.realizedCollection)}</td>
                 <td class="pnl-td-right pnl-val-purple" data-label="Payout">₹${formatNumberIndian(pnl.realizedPayout)}</td>
                 <td class="pnl-td-right ${netClass}" data-label="Net">₹${formatNumberIndian(pnl.netProfit)}</td>

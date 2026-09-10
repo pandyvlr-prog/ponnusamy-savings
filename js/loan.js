@@ -402,18 +402,18 @@ _Official Loan Statement Record_`;
         const rowsHtml = insts.map((inst, idx) => {
             const isPaid = inst.status === 'Paid';
             const stBadge = isPaid 
-                ? '<span style="color:#15803d;font-weight:bold;">PAID</span>'
-                : '<span style="color:#b91c1c;font-weight:bold;">DUE</span>';
-            const paidDt = isPaid && inst.paid_at ? fmtDate(inst.paid_at) : '--';
+                ? '<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;border:1px solid #86efac;background:#dcfce7;color:#15803d;font-weight:800;font-size:10px;">✓ PAID</span>'
+                : '<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;border:1px solid #fca5a5;background:#fee2e2;color:#b91c1c;font-weight:800;font-size:10px;">⏱ DUE</span>';
+            const paidDt = isPaid && inst.paid_at ? `<span style="display:inline-block;padding:2px 7px;border-radius:3px;background:#dbeafe;color:#1e3a8a;border:1px solid #bfdbfe;font-weight:800;font-size:10px;">${fmtDate(inst.paid_at)}</span>` : '--';
             return `
                 <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px;">
-                    <td style="padding: 8px 6px; text-align: center; font-weight: 700;">${fmtDate(inst.due_date || inst.month)}</td>
-                    <td style="padding: 8px 6px; text-align: right;">${fmt(inst.opening_principal)}</td>
-                    <td style="padding: 8px 6px; text-align: right; color:#b45309;">${fmt(inst.interest_amount)}</td>
-                    <td style="padding: 8px 6px; text-align: right; color:#4338ca;">${fmt(inst.principal_paid)}</td>
-                    <td style="padding: 8px 6px; text-align: right; font-weight: 800; color:${isPaid ? '#15803d' : '#dc2626'};">${fmt(inst.emi_amount)}</td>
+                    <td style="padding: 8px 6px; text-align: center; font-weight: 800; font-family: 'Inter', sans-serif;">${fmtDate(inst.due_date || inst.month)}</td>
+                    <td style="padding: 8px 6px; text-align: right; font-family: 'Inter', sans-serif; font-weight: 800; color: #4338ca;">${fmt(inst.opening_principal)}</td>
+                    <td style="padding: 8px 6px; text-align: right; font-family: 'Inter', sans-serif; font-weight: 800; color:#b45309;">${fmt(inst.interest_amount)}</td>
+                    <td style="padding: 8px 6px; text-align: right; font-family: 'Inter', sans-serif; font-weight: 800; color:#6b21a8;">${fmt(inst.principal_paid)}</td>
+                    <td style="padding: 8px 6px; text-align: right; font-family: 'Inter', sans-serif; font-weight: 800; color:${isPaid ? '#15803d' : '#dc2626'};">${fmt(inst.emi_amount)}</td>
                     <td style="padding: 8px 6px; text-align: center;">${paidDt}</td>
-                    <td style="padding: 8px 6px; text-align: right;">${fmt(inst.closing_principal)}</td>
+                    <td style="padding: 8px 6px; text-align: right; font-family: 'Inter', sans-serif; font-weight: 800; color: #475569;">${fmt(inst.closing_principal)}</td>
                     <td style="padding: 8px 6px; text-align: center;">${stBadge}</td>
                 </tr>
             `;
@@ -1327,24 +1327,24 @@ _Authorized Signatory - Ponnusamy Savings_`;
             tr.onmouseover = () => { tr.style.backgroundColor = 'rgba(212,175,55,0.06)'; };
             tr.onmouseout = () => { tr.style.backgroundColor = 'transparent'; };
             
-            // Paid date badge pill matching Image 2
+            // Paid date badge pill matching reference image style
             const paidDateHtml = isPaid && inst.paid_at 
-                ? `<span style="display:inline-block; padding:4px 10px; border-radius:4px; background-color:#dbeafe; color:#1e3a8a; font-weight:800; font-size:0.8rem; text-align:center; border:1px solid #bfdbfe; font-family:var(--font-number);">${fmtDate(inst.paid_at)}</span>`
+                ? `<span class="app-date-pill">${fmtDate(inst.paid_at)}</span>`
                 : `<span style="color:var(--text-muted); font-weight:600; font-size:0.85rem;">--</span>`;
 
             const isLoanSettled = loan.status === 'Settled';
             // Status button pill matching Image 2
             let statusHtml;
             if (isLoanSettled) {
-                statusHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:5px 12px; border-radius:20px; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05);"><i data-lucide="shield-check" style="width:12px;height:12px;"></i> SETTLED</span>`;
+                statusHtml = `<span class="app-status-paid"><i data-lucide="shield-check" style="width:12px;height:12px;"></i> SETTLED</span>`;
             } else if (isPaid) {
                 statusHtml = `<button class="ln-toggle" data-id="${inst.id}" data-status="${inst.status}"
-                    style="display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:5px 14px; border-radius:20px; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem; cursor:pointer; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease;">
+                    class="app-status-paid" style="cursor:pointer; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem; padding:4px 14px; border-radius:20px; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease; display:inline-flex; align-items:center; justify-content:center; gap:4px;">
                     <i data-lucide="check" style="width:12px;height:12px;"></i> PAID
                   </button>`;
             } else {
                 statusHtml = `<button class="ln-toggle" data-id="${inst.id}" data-status="${inst.status}"
-                    style="display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:5px 14px; border-radius:20px; border:1px solid #fca5a5; background:#fee2e2; color:#b91c1c; font-weight:800; font-size:0.75rem; cursor:pointer; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease;">
+                    class="app-status-due" style="cursor:pointer; border:1px solid #fca5a5; background:#fee2e2; color:#b91c1c; font-weight:800; font-size:0.75rem; padding:4px 14px; border-radius:20px; min-width:85px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease; display:inline-flex; align-items:center; justify-content:center; gap:4px;">
                     <i data-lucide="clock" style="width:12px;height:12px;"></i> DUE
                   </button>`;
             }
@@ -1354,12 +1354,12 @@ _Authorized Signatory - Ponnusamy Savings_`;
             const phone = getCustomerPhone(inst.loan_id, name);
 
             tr.innerHTML = `
-                <td style="text-align:center; font-weight:800; color:var(--text-main, #111827); font-size:0.95rem; padding:14px 8px; border-bottom:1px solid var(--border-table);">${idx + 1}</td>
+                <td style="text-align:center; font-weight:700; color:var(--text-secondary); font-size:0.85rem; padding:14px 8px; border-bottom:1px solid var(--border-table);">${idx + 1}</td>
                 <td style="text-align:left; padding:12px 14px; border-bottom:1px solid var(--border-table);">
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
                         <div style="display:flex;flex-direction:column;gap:2px;">
                             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                                <a href="#" class="ln-customer-link" data-loan-id="${inst.loan_id}" style="font-weight:700;">${name}</a>
+                                <a href="#" class="ln-customer-link" data-loan-id="${inst.loan_id}" style="font-family:var(--font-body);font-size:0.95rem;font-weight:800;text-transform:uppercase;color:var(--text-main);text-decoration:none;letter-spacing:0.3px;">${name.toUpperCase()}</a>
                                 ${isLoanSettled ? `<span style="font-size:0.65rem; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; border-radius:4px; padding:1px 5px; font-weight:800;">SETTLED</span>` : ''}
                             </div>
                             ${phone ? `<span style="font-size:0.75rem;color:var(--text-secondary);display:inline-flex;align-items:center;gap:3px;"><i data-lucide="phone" style="width:10px;height:10px;"></i> ${phone}</span>` : ''}
@@ -1375,9 +1375,9 @@ _Authorized Signatory - Ponnusamy Savings_`;
                         </div>
                     </div>
                 </td>
-                <td style="text-align:right; font-weight:800; font-size:1.15rem; font-family:var(--font-number); color:#4338ca; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(loan.original_amount || 0)}</td>
-                <td style="text-align:right; font-weight:800; font-size:1.15rem; font-family:var(--font-number); color:#b45309; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(inst.interest_amount)}</td>
-                <td style="text-align:right; font-weight:900; font-size:1.15rem; font-family:var(--font-number); color:${emiColor}; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(inst.emi_amount)}</td>
+                <td style="text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.05rem; color:#4338ca; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(loan.original_amount || 0)}</td>
+                <td style="text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.05rem; color:#b45309; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(inst.interest_amount)}</td>
+                <td style="text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.05rem; color:${emiColor}; padding:14px 14px; border-bottom:1px solid var(--border-table);">${fmt(inst.emi_amount)}</td>
                 <td style="text-align:center; padding:14px 8px; border-bottom:1px solid var(--border-table);">${paidDateHtml}</td>
                 <td style="text-align:center; padding:14px 8px; border-bottom:1px solid var(--border-table);">${statusHtml}</td>
             `;
@@ -1686,13 +1686,13 @@ _Authorized Signatory - Ponnusamy Savings_`;
 
                     // Paid date pill badge
                     const detPaidDateHtml = isPaid && inst.paid_at
-                        ? `<span style="display:inline-block; padding:3px 8px; border-radius:4px; background-color:#dbeafe; color:#1e3a8a; font-weight:800; font-size:0.75rem; text-align:center; border:1px solid #bfdbfe; font-family:var(--font-number);">${fmtDate(inst.paid_at)}</span>`
+                        ? `<span class="app-date-pill">${fmtDate(inst.paid_at)}</span>`
                         : `<span style="color:var(--text-muted); font-weight:600; font-size:0.85rem;">--</span>`;
 
-                    // Status badge pill matching Image 2
+                    // Status badge pill
                     const detStatusHtml = isPaid
-                        ? `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; border:1px solid #86efac; background:#dcfce7; color:#15803d; font-weight:800; font-size:0.72rem;">✓ PAID</span>`
-                        : `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; border:1px solid #fca5a5; background:#fee2e2; color:#b91c1c; font-weight:800; font-size:0.72rem;">⏱ DUE</span>`;
+                        ? `<span class="app-status-paid">✓ PAID</span>`
+                        : `<span class="app-status-due">⏱ DUE</span>`;
 
                     const tr = document.createElement('tr');
                     tr.style.borderBottom = '1px solid var(--border-table)';
@@ -1701,13 +1701,13 @@ _Authorized Signatory - Ponnusamy Savings_`;
                     tr.onmouseout = () => { tr.style.backgroundColor = 'transparent'; };
 
                     tr.innerHTML = `
-                        <td style="padding:12px 10px; text-align:center; font-weight:800; font-family:var(--font-number); color:#1e293b; font-size:0.9rem; border-right:1px solid var(--border-table);">${dateDisplay}</td>
-                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#4338ca; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.opening_principal)}</td>
-                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#b45309; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.interest_amount)}</td>
-                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#6b21a8; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.principal_paid)}</td>
-                        <td style="padding:12px 10px; text-align:right; font-weight:900; font-family:var(--font-number); color:${detEmiColor}; font-size:1.15rem; border-right:1px solid var(--border-table);">${fmt(inst.emi_amount)}</td>
+                        <td style="padding:12px 10px; text-align:center; font-family:var(--font-body); font-weight:800; color:#1e293b; font-size:0.9rem; border-right:1px solid var(--border-table);"><span class="app-date-pill" style="background:#f1f5f9;color:#1e293b;border-color:#e2e8f0;">${dateDisplay}</span></td>
+                        <td style="padding:12px 10px; text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; color:#4338ca; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.opening_principal)}</td>
+                        <td style="padding:12px 10px; text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; color:#b45309; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.interest_amount)}</td>
+                        <td style="padding:12px 10px; text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; color:#6b21a8; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.principal_paid)}</td>
+                        <td style="padding:12px 10px; text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; color:${detEmiColor}; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.emi_amount)}</td>
                         <td style="padding:12px 8px; text-align:center; border-right:1px solid var(--border-table);">${detPaidDateHtml}</td>
-                        <td style="padding:12px 10px; text-align:right; font-weight:800; font-family:var(--font-number); color:#475569; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.closing_principal)}</td>
+                        <td style="padding:12px 10px; text-align:left; font-family:var(--font-body); font-variant-numeric:tabular-nums; font-weight:800; color:#475569; font-size:1.05rem; border-right:1px solid var(--border-table);">${fmt(inst.closing_principal)}</td>
                         <td style="padding:12px 8px; text-align:center;">${detStatusHtml}</td>
                     `;
                     tbody.appendChild(tr);
